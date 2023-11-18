@@ -19,6 +19,7 @@ A bun-first discord client written in TS that focus on performance and UX
       - [Usage](#usage-1)
     - [Crude](#crude)
     - [Future Plans](#future-plans)
+- [Contributing](#contributing)
 
 # Installation
 
@@ -31,6 +32,8 @@ bun add lilybird
 As of now there are no docs so you have to rely on the types to guide you.
 
 If you have any questions/doubts you can open a new issue.
+
+You can find a small test client [here](https://github.com/Didas-git/lilybird-test).
 
 ## Connecting
 
@@ -114,3 +117,7 @@ Its just as it sounds, just plain old JS objects.
 ### Future Plans
 
 There are plans to add a builder like djs for this but that will sit on the backlog for a moment since there are other priorities, if you want to contribute you can open a pr for this.
+
+# Contributing
+
+Please refer to the [contributing guide](./CONTRIBUTING.md).

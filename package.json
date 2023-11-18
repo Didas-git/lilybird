@@ -26,7 +26,7 @@
     "dev": "bun run build && bun test.tsx",
     "lint": "eslint src/**/*.ts",
     "build": "rm -rf dist && tsc",
-    "test": "bun test"
+    "build:lint": "bun run lint && bun run build"
   },
   "repository": {
     "type": "git",
