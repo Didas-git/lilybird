@@ -82,7 +82,7 @@ Its really simple to setup jsx, there are 3 ways of doing this with bun:
   - Add the following
 
 ```toml
-jsx = "react-jsx",
+jsx = "react-jsx"
 jsxImportSource = "lilybird"
 ```
 
