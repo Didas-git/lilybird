@@ -115,6 +115,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         "message" in interaction && (this.message = <never>interaction.message);
     }
 
+    public async reply(content: string, options?: ReplyOptions): Promise<void>;
     public async reply(options: ReplyOptions): Promise<void>;
     public async reply(content: string | ReplyOptionsWithContent, options?: ReplyOptions): Promise<void> {
         let flags = 0;
@@ -154,6 +155,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         });
     }
 
+    public async followUp(content: string, options?: ReplyOptions): Promise<void>;
     public async followUp(options: ReplyOptions): Promise<void>;
     public async followUp(content: string | ReplyOptionsWithContent, options?: ReplyOptions): Promise<void> {
         let flags = 0;
@@ -182,6 +184,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         await this.client.rest.createFollowupMessage(this.client.id, this.token, data);
     }
 
+    public async editReply(content: string, options?: EditReplyOptions): Promise<void>;
     public async editReply(options: EditReplyOptions): Promise<void>;
     public async editReply(content: string | EditReplyOptions, options?: EditReplyOptions): Promise<void> {
         await this.client.rest.editOriginalInteractionResponse(this.client.id, this.token, typeof content === "string"
