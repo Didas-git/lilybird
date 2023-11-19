@@ -19,6 +19,8 @@ A bun-first discord client written in TS that focus on performance and UX
       - [Usage](#usage-1)
     - [Crude](#crude)
     - [Future Plans](#future-plans)
+- [Command handling](#command-handling)
+  - [The api](#the-api)
 - [Contributing](#contributing)
 
 # Installation
@@ -117,6 +119,35 @@ Its just as it sounds, just plain old JS objects.
 ### Future Plans
 
 There are plans to add a builder like djs for this but that will sit on the backlog for a moment since there are other priorities, if you want to contribute you can open a pr for this.
+
+# Command handling
+
+While you can create your own command handler we also provide a command and event handler of our own. It is still in its early stages and will probably change in the future.
+
+## The api
+
+We provide a `Handler` class that you can extend that is responsible for reading and storing the commands and events.
+
+Since some of the functions are async and there are also other limitations regarding listeners we provide a function that generates everything for you and returns the listeners and setup functions that are intended to be injected into the client.
+
+```ts
+import {
+    createHandler,
+    createClient
+} from "lilybird";
+
+const listeners = await createHandler({
+    // listeners = event listeners
+    listeners: `${import.meta.dir}/events`
+});
+
+await createClient({
+    ..., // your stuff
+    ...listeners
+});
+```
+
+You can check the test client mentioned before to see this in action.
 
 # Contributing
 
