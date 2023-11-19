@@ -31,6 +31,7 @@ export class Client {
             switch (data.t) {
                 case GatewayEvent.Ready: {
                     Object.assign(this, data.d.user);
+                    await options.setup?.(this);
                     res(this);
                     await options.listeners.ready?.(this, data.d);
                     break;

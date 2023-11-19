@@ -24,6 +24,7 @@ export interface ClientEventListeners {
 export interface BaseClientOptions {
     intents: Array<Intents> | number;
     listeners: ClientEventListeners;
+    setup?: (client: Client) => Awaitable<any>;
 }
 
 export interface ClientOptions extends BaseClientOptions {

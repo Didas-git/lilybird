@@ -20,5 +20,6 @@ export type * from "./oauth2";
 export type * from "./emoji";
 export type * from "./guild";
 export type * from "./voice";
+export type * from "./utils";
 export type * from "./team";
 export type * from "./user";

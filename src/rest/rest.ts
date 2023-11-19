@@ -101,7 +101,7 @@ export class REST {
         return await this.#makeRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
     }
 
-    public async postGlobalApplicationCommands(clientId: string, body: POSTApplicationCommandStructure): Promise<LocalizationGlobalApplicationCommandStructure> {
+    public async createGlobalApplicationCommands(clientId: string, body: POSTApplicationCommandStructure): Promise<LocalizationGlobalApplicationCommandStructure> {
         return await this.#makeRequest("POST", `applications/${clientId}/commands`, body);
     }
 
@@ -118,7 +118,7 @@ export class REST {
     }
 
     public async bulkOverwriteGlobalApplicationCommand(clientId: string, body: Array<POSTApplicationCommandStructure>): Promise<Array<LocalizationGlobalApplicationCommandStructure>> {
-        return await this.#makeRequest("PATCH", `applications/${clientId}/commands`, body);
+        return await this.#makeRequest("PUT", `applications/${clientId}/commands`, body);
     }
 
     public async getGuildApplicationCommands(clientId: string): Promise<Array<LocalizedGuildApplicationCommandStructure>>;

@@ -5,13 +5,14 @@ import type { ClientOptions } from "./typings";
 export type * from "./typings";
 
 export * from "./builders";
+export * from "./handlers";
 export * from "./enums";
 
 export async function createClient(options: ClientOptions): Promise<Client> {
     return new Promise((res) => {
         new Client(
             res,
-            { intents: options.intents, listeners: options.listeners },
+            { intents: options.intents, listeners: options.listeners, setup: options.setup },
             options.attachDebugListener
                 ? options.debugListener ?? ((identifier, payload) => {
                     if (identifier === "Received:") return;

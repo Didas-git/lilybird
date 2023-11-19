@@ -60,7 +60,7 @@ function interactionDataFactory(interaction: InteractionStructure): InteractionD
 
 export type InteractionData = ApplicationCommandData<undefined | string | number> | AutocompleteData | MessageComponentData | ModalSubmitData | undefined;
 
-interface AutocompleteData extends Omit<ApplicationCommandDataStructure, "options"> {
+export interface AutocompleteData extends Omit<ApplicationCommandDataStructure, "options"> {
     options: ApplicationCommandOptions<string | number>;
 }
 
@@ -224,7 +224,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
     }
 }
 
-interface GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
+export interface GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     isPingInteraction: () => this is GuildInteraction<undefined>;
     isApplicationCommandInteraction: () => this is GuildInteraction<ApplicationCommandData<undefined>>;
     isAutocompleteInteraction: () => this is GuildInteraction<AutocompleteData>;
@@ -232,7 +232,7 @@ interface GuildInteraction<T extends InteractionData, M extends undefined | Mess
     isModalSubmitInteraction: () => this is GuildInteraction<ModalSubmitData>;
 }
 
-class GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
+export class GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     public readonly guildId: string;
     public readonly channel: PartialChannel;
     public readonly channelId: string;
@@ -288,7 +288,7 @@ interface UIApplicationCommandData<T> extends ApplicationCommandData<T> {
     readonly targetId: string;
 }
 
-class ApplicationCommandData<T> {
+export class ApplicationCommandData<T> {
     public readonly id: string;
     public readonly name: string;
     public readonly type: ApplicationCommandType;
