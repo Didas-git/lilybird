@@ -119,7 +119,7 @@ export function UserSelectMenu({
 }: BaseSelectMenuOptions & {
     children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    typeof children !== "undefined" && !Array.isArray(children) && (children = [children]);
+    children != null && !Array.isArray(children) && (children = [children]);
     return {
         type: ComponentType.UserSelect,
         custom_id: id,
@@ -141,7 +141,7 @@ export function RoleSelectMenu({
 }: BaseSelectMenuOptions & {
     children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    typeof children !== "undefined" && !Array.isArray(children) && (children = [children]);
+    children != null && !Array.isArray(children) && (children = [children]);
     return {
         type: ComponentType.RoleSelect,
         custom_id: id,
@@ -163,7 +163,7 @@ export function MentionableSelectMenu({
 }: BaseSelectMenuOptions & {
     children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    typeof children !== "undefined" && !Array.isArray(children) && (children = [children]);
+    children != null && !Array.isArray(children) && (children = [children]);
     return {
         type: ComponentType.MentionableSelect,
         custom_id: id,
@@ -187,7 +187,7 @@ export function ChannelSelectMenu({
     channel_types?: Array<ChannelType>,
     children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    typeof children !== "undefined" && !Array.isArray(children) && (children = [children]);
+    children != null && !Array.isArray(children) && (children = [children]);
     return {
         type: ComponentType.RoleSelect,
         custom_id: id,

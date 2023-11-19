@@ -20,7 +20,7 @@ function parseEmbedChildren(children: Array<EmbedComponent> | EmbedComponent | u
         | "timestamp"
         | "color"
     > | undefined {
-    if (typeof children === "undefined") return;
+    if (children == null) return;
     if (!(children instanceof Array)) return { [children.type]: children.data };
 
     let obj: ReturnType<typeof parseEmbedChildren> & { fields: Array<EmbedFieldStructure> } = { fields: [] };

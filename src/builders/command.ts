@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommandOptionType, ApplicationCommandType, type PermissionFlag } from "../enums";
+import { ApplicationCommandOptionType, ApplicationCommandType, type Locale, type PermissionFlag } from "../enums";
 
 import type {
     ApplicationCommandOptionChoiceStructure,
@@ -16,22 +16,31 @@ export function Command({
     name,
     description,
     defaultMemberPermissions,
+    dmPermission,
+    name_localizations,
+    description_localizations,
     nsfw,
     children
 }: {
     name: string,
-    description?: string,
+    description: string,
     defaultMemberPermissions?: Array<PermissionFlag> | null,
+    dmPermission?: boolean | null,
     nsfw?: boolean,
+    name_localizations?: Record<Locale, string> | null,
+    description_localizations?: Record<Locale, string> | null,
     children?: Array<ApplicationCommandOptionStructure>
 }): POSTApplicationCommandStructure {
 
-    typeof children !== "undefined" && !Array.isArray(children) && (children = [children]);
+    children != null && !Array.isArray(children) && (children = [children]);
 
     return {
         type: ApplicationCommandType.CHAT_INPUT,
         name,
         description,
+        dm_permission: dmPermission,
+        name_localizations,
+        description_localizations,
         nsfw,
         default_member_permissions: defaultMemberPermissions?.reduce((prev, curr) => prev | curr, 0n).toString(),
         options: children
@@ -65,7 +74,7 @@ export function CommandStringOption(props: Omit<CommandWithChildren<StringApplic
     | CommandWithAutocomplete<StringApplicationCommandOptionStructure>, "type">): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
-    !Array.isArray(choices) && (choices = [choices]);
+    choices != null && !Array.isArray(choices) && (choices = [choices]);
     return commandComponent(ApplicationCommandOptionType.STRING, { ...obj, choices });
 }
 
@@ -73,7 +82,7 @@ export function CommandIntegerOption(props: Omit<CommandWithChildren<NumericAppl
     | CommandWithAutocomplete<NumericApplicationCommandOptionStructure>, "type">): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
-    !Array.isArray(choices) && (choices = [choices]);
+    choices != null && !Array.isArray(choices) && (choices = [choices]);
     return commandComponent(ApplicationCommandOptionType.INTEGER, { ...obj, choices });
 }
 
@@ -101,7 +110,7 @@ export function CommandNumberOption(props: Omit<CommandWithChildren<NumericAppli
     | CommandWithAutocomplete<NumericApplicationCommandOptionStructure>, "type">): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
-    !Array.isArray(choices) && (choices = [choices]);
+    choices != null && !Array.isArray(choices) && (choices = [choices]);
     return commandComponent(ApplicationCommandOptionType.NUMBER, { ...obj, choices });
 }
 
