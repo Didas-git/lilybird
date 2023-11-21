@@ -30,7 +30,7 @@ jobs:
       - name: Install Dependencies
         run: bun i
       - name: Build
-        run: bun build
+        run: bun run build
       - name: Publish
         run: npm publish --access public --registry https://registry.npmjs.org --no-git-checks
         env:
