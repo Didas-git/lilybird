@@ -1,7 +1,7 @@
 import type { AttachmentFlags, EmbedType } from "../../enums";
 
 export interface AttachmentStructure {
-    id: string;
+    id: number | string;
     filename: string;
     description?: string;
     content_type?: string;

@@ -23,7 +23,6 @@
     "./dist"
   ],
   "scripts": {
-    "dev": "bun run build && bun test.tsx",
     "lint": "eslint src/**/*.ts",
     "build": "rm -rf dist && tsc",
     "build:lint": "bun run lint && bun run build"
@@ -47,9 +46,6 @@
     "url": "https://github.com/Didas-git/lilybird/issues"
   },
   "homepage": "https://github.com/Didas-git/lilybird#readme",
-  "dependencies": {
-    "tslib": "^2.6.2"
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",

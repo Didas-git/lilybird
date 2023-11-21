@@ -29,7 +29,8 @@ import type {
     CreateThreadStructure,
     CreateForumMediaThreadStructure,
     ThreadMemberStructure,
-    ListArchivedThreadsReturnStructure
+    ListArchivedThreadsReturnStructure,
+    AttachmentStructure
 } from "../typings";
 
 export class REST {
@@ -46,14 +47,12 @@ export class REST {
     async #makeRequest<T>(
         method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT",
         path: string,
-        data?: unknown,
+        data?: Record<string, any>,
         cdn: boolean = false
     ): Promise<T> {
         const opts: RequestInit = {
             method,
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                "Content-Type": "application/json",
                 "Authorization": `Bot ${this.#token}`,
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 "User-Agent": `DiscordBot/LilyBird/${version}`
@@ -61,29 +60,36 @@ export class REST {
         };
 
         if (typeof data !== "undefined") {
-            opts.body = JSON.stringify(data);
+            const { files, ...obj } = data;
+
+            if (typeof files !== "undefined" && files.length > 0) {
+                const temp: Array<Partial<AttachmentStructure>> = [];
+                const form = new FormData();
+
+                for (let i = 0, length = files.length; i < length; i++) {
+                    form.append(`files[${i}]`, files[i].file, files[i].name);
+                    temp.push({
+                        id: i,
+                        filename: files[i].name
+                    });
+                }
+
+                obj.attachments = [...temp, ...obj.attachments ?? []];
+                form.append("payload_json", JSON.stringify(obj));
+
+                opts.body = form;
+            } else {
+                // @ts-expect-error No comments
+                opts.headers["Content-Type"] = "application/json";
+                opts.body = JSON.stringify(data);
+            }
         }
 
         const response = await fetch(`${cdn ? REST.cdnUrl : REST.baseUrl}${path}`, opts);
 
         if (!response.ok) {
             const errorMessage: ErrorMessage = await response.json();
-            throw new Error(errorMessage.message);//, {
-            //     code: errorMessage.code.toString(),
-            //     reference: "LilyBird",
-            //     lines: [
-            //         {
-            //             marker: {
-            //                 text: "Errors:",
-            //                 spacedBefore: true,
-            //                 newLine: true
-            //             },
-            //             error: typeof errorMessage.errors !== "undefined"
-            //                 ? inspect(errorMessage.errors, false, null, true)
-            //                 : "Discord did not specify any error details."
-            //         }
-            //     ]
-            // });
+            throw new Error(errorMessage.message);
         }
 
         /*

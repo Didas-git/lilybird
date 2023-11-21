@@ -1,3 +1,5 @@
+import type { Attachment } from "../../builders";
+
 import type {
     AllowedMentionsStructure,
     AttachmentStructure,
@@ -11,7 +13,7 @@ export interface EditWebhookStructure {
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     allowed_mentions?: AllowedMentionsStructure | null;
     components?: Array<MessageComponentStructure> | null;
-    // files[n] ???
+    files?: Array<Attachment>;
     payload_json?: string | null;
     attachments?: Array<Partial<AttachmentStructure>> | null;
 }
@@ -24,7 +26,7 @@ export interface ExecuteWebhookStructure {
     embeds?: Array<EmbedStructure>;
     allowed_mentions?: AllowedMentionsStructure;
     components?: Array<MessageComponentStructure>;
-    // files[n] ???
+    files?: Array<Attachment>;
     payload_json?: string;
     attachments?: Array<Partial<AttachmentStructure>>;
     /** MessageFlags.EPHEMERAL | MessageFlags.SUPPRESS_EMBEDS */

@@ -19,6 +19,7 @@ A bun-first discord client written in TS that focus on performance and UX
       - [Usage](#usage-1)
     - [Crude](#crude)
     - [Future Plans](#future-plans)
+  - [Attachments](#attachments)
 - [Command handling](#command-handling)
   - [The api](#the-api)
 - [Contributing](#contributing)
@@ -119,6 +120,30 @@ Its just as it sounds, just plain old JS objects.
 ### Future Plans
 
 There are plans to add a builder like djs for this but that will sit on the backlog for a moment since there are other priorities, if you want to contribute you can open a pr for this.
+
+## Attachments
+
+Attachments work just like [embeds and components](#embeds--components) but they have to be passed to `files` instead of the `attachments` property, this is because the attachments properly is to define whats available to use in your embeds and edits, if you pass an attachment to `files` the library will auto generate the `attachments` property for you.
+
+In short, just pass the `attachments` property if you want to override something.
+
+> **Note**
+> Passing a string to `path` is not working properly yet so we highly recommend passing a BunFile
+
+```tsx
+const attachment = (
+    <Attachment path={Bun.file(join(import.meta.dir, "../shiro.png"))} name="shiro.png" />
+);
+
+const embed = (
+    <Embed title="Lilybird" description="For bun, with bun">
+        <EmbedThumbnail url={`attachment://${attachment.name}`} />
+        <EmbedImage url={`attachment://${attachment.name}`} />
+    </Embed>
+)
+
+await interaction.reply({ embeds: [embed], files: [attachment] })
+```
 
 # Command handling
 

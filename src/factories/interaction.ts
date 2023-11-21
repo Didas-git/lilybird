@@ -10,6 +10,7 @@ import {
     MessageFlags
 } from "../enums";
 
+import type { Attachment } from "../builders";
 import type { Client } from "../client";
 import type {
     ApplicationCommandType,
@@ -23,6 +24,7 @@ import type {
     GuildInteractionStructure,
     MessageComponentStructure,
     ModalSubmitDataStructure,
+    InteractionCallbackData,
     DMInteractionStructure,
     SelectOptionStructure,
     ResolvedDataStructure,
@@ -31,8 +33,7 @@ import type {
     AttachmentStructure,
     MessageStructure,
     EmbedStructure,
-    EmojiStructure,
-    InteractionCallbackData
+    EmojiStructure
 } from "../typings";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
@@ -64,20 +65,21 @@ export interface AutocompleteData extends Omit<ApplicationCommandDataStructure, 
     options: ApplicationCommandOptions<string | number>;
 }
 
-interface ReplyOptions {
+interface InteractionReplyOptions {
     tts?: boolean;
     ephemeral?: boolean;
     suppressEmbeds?: boolean;
     embeds?: Array<EmbedStructure>;
     components?: Array<MessageComponentStructure>;
     attachments?: Array<Partial<AttachmentStructure>>;
+    files?: Array<Attachment>;
 }
 
-interface ReplyOptionsWithContent extends ReplyOptions {
+interface InteractionReplyOptionsWithContent extends InteractionReplyOptions {
     content?: string;
 }
 
-interface EditReplyOptions extends Pick<ReplyOptions, "embeds" | "components" | "attachments"> { }
+interface EditReplyOptions extends Pick<InteractionReplyOptions, "embeds" | "components" | "attachments"> { }
 
 export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {
     public readonly client: Client;
@@ -115,9 +117,9 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         "message" in interaction && (this.message = <never>interaction.message);
     }
 
-    public async reply(content: string, options?: ReplyOptions): Promise<void>;
-    public async reply(options: ReplyOptions): Promise<void>;
-    public async reply(content: string | ReplyOptionsWithContent, options?: ReplyOptions): Promise<void> {
+    public async reply(content: string, options?: InteractionReplyOptions): Promise<void>;
+    public async reply(options: InteractionReplyOptions): Promise<void>;
+    public async reply(content: string | InteractionReplyOptionsWithContent, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
         let data: InteractionCallbackData;
 
@@ -155,9 +157,9 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         });
     }
 
-    public async followUp(content: string, options?: ReplyOptions): Promise<void>;
-    public async followUp(options: ReplyOptions): Promise<void>;
-    public async followUp(content: string | ReplyOptionsWithContent, options?: ReplyOptions): Promise<void> {
+    public async followUp(content: string, options?: InteractionReplyOptions): Promise<void>;
+    public async followUp(options: InteractionReplyOptions): Promise<void>;
+    public async followUp(content: string | InteractionReplyOptionsWithContent, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
 
         let data: InteractionCallbackData;

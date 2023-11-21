@@ -1,3 +1,5 @@
+import type { Attachment } from "../../builders";
+
 import type {
     AllowedMentionsStructure,
     AttachmentStructure,
@@ -165,6 +167,7 @@ export interface MessageCallbackDataStructure {
     flags?: number;
     components?: Array<MessageComponentStructure>;
     attachments?: Array<Partial<AttachmentStructure>>;
+    files?: Array<Attachment>;
 }
 
 export interface AutocompleteCallbackDataStructure {
