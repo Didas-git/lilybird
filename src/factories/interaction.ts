@@ -65,7 +65,8 @@ export interface AutocompleteData extends Omit<ApplicationCommandDataStructure, 
     options: ApplicationCommandOptions<string | number>;
 }
 
-interface InteractionReplyOptions {
+export interface InteractionReplyOptions {
+    content?: string;
     tts?: boolean;
     ephemeral?: boolean;
     suppressEmbeds?: boolean;
@@ -75,11 +76,7 @@ interface InteractionReplyOptions {
     files?: Array<Attachment>;
 }
 
-interface InteractionReplyOptionsWithContent extends InteractionReplyOptions {
-    content?: string;
-}
-
-interface EditReplyOptions extends Pick<InteractionReplyOptions, "embeds" | "components" | "attachments"> { }
+interface EditReplyOptions extends Pick<InteractionReplyOptions, "embeds" | "components" | "attachments" | "content" | "files"> { }
 
 export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {
     public readonly client: Client;
@@ -119,25 +116,36 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
 
     public async reply(content: string, options?: InteractionReplyOptions): Promise<void>;
     public async reply(options: InteractionReplyOptions): Promise<void>;
-    public async reply(content: string | InteractionReplyOptionsWithContent, options?: InteractionReplyOptions): Promise<void> {
+    public async reply(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
         let data: InteractionCallbackData;
 
         if (typeof content === "string") {
-            if (options?.ephemeral) flags |= MessageFlags.EPHEMERAL;
-            if (options?.suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (typeof options !== "undefined") {
+                const { ephemeral, suppressEmbeds, ...obj } = options;
 
-            data = {
-                ...options,
-                content,
-                flags
-            };
+                if (ephemeral) flags |= MessageFlags.EPHEMERAL;
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+
+                data = {
+                    ...obj,
+                    content,
+                    flags
+                };
+            } else {
+                data = {
+                    content,
+                    flags
+                };
+            }
         } else {
-            if (content.ephemeral) flags |= MessageFlags.EPHEMERAL;
-            if (content.suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            const { ephemeral, suppressEmbeds, ...obj } = content;
+
+            if (ephemeral) flags |= MessageFlags.EPHEMERAL;
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
             data = {
-                ...content,
+                ...obj,
                 flags
             };
         }
@@ -159,26 +167,37 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
 
     public async followUp(content: string, options?: InteractionReplyOptions): Promise<void>;
     public async followUp(options: InteractionReplyOptions): Promise<void>;
-    public async followUp(content: string | InteractionReplyOptionsWithContent, options?: InteractionReplyOptions): Promise<void> {
+    public async followUp(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
 
         let data: InteractionCallbackData;
 
         if (typeof content === "string") {
-            if (options?.ephemeral) flags |= MessageFlags.EPHEMERAL;
-            if (options?.suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (typeof options !== "undefined") {
+                const { ephemeral, suppressEmbeds, ...obj } = options;
 
-            data = {
-                ...options,
-                content,
-                flags
-            };
+                if (ephemeral) flags |= MessageFlags.EPHEMERAL;
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+
+                data = {
+                    ...obj,
+                    content,
+                    flags
+                };
+            } else {
+                data = {
+                    content,
+                    flags
+                };
+            }
         } else {
-            if (content.ephemeral) flags |= MessageFlags.EPHEMERAL;
-            if (content.suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            const { ephemeral, suppressEmbeds, ...obj } = content;
+
+            if (ephemeral) flags |= MessageFlags.EPHEMERAL;
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
             data = {
-                ...content,
+                ...obj,
                 flags
             };
         }
