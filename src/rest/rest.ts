@@ -60,7 +60,7 @@ export class REST {
         };
 
         if (typeof data !== "undefined") {
-            const { files, ...obj } = data;
+            const { files, reason, ...obj } = data;
 
             if (typeof files !== "undefined" && files.length > 0) {
                 const temp: Array<Partial<AttachmentStructure>> = [];
@@ -82,6 +82,11 @@ export class REST {
                 // @ts-expect-error No comments
                 opts.headers["Content-Type"] = "application/json";
                 opts.body = JSON.stringify(data);
+            }
+
+            if (typeof reason !== "undefined") {
+                // @ts-expect-error No comments
+                opts.headers["X-Audit-Log-Reason"] = reason;
             }
         }
 
@@ -210,8 +215,8 @@ export class REST {
         return await this.#makeRequest("PATCH", `channels/${channelId}`, body);
     }
 
-    public async deleteChannel(channelId: string): Promise<ChannelStructure> {
-        return await this.#makeRequest("DELETE", `channels/${channelId}`);
+    public async deleteChannel(channelId: string, reason?: string): Promise<ChannelStructure> {
+        return await this.#makeRequest("DELETE", `channels/${channelId}`, { reason });
     }
 
     public async getChannelMessages(channelId: string, params: GetChannelMessagesStructure): Promise<Array<MessageStructure>> {
@@ -273,18 +278,19 @@ export class REST {
         return await this.#makeRequest("PATCH", `channels/${channelId}/messages/${messageId}`, params);
     }
 
-    public async deleteMessage(channelId: string, messageId: string): Promise<null> {
-        return await this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}`);
+    public async deleteMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}`, { reason });
     }
 
-    public async bulkDeleteMessages(channelId: string, messageIds: Array<string>): Promise<null> {
-        return await this.#makeRequest("POST", `channels/${channelId}/messages/bulk-delete`, messageIds);
+    public async bulkDeleteMessages(channelId: string, messageIds: Array<string>, reason?: string): Promise<null> {
+        return await this.#makeRequest("POST", `channels/${channelId}/messages/bulk-delete`, { messages: messageIds, reason });
     }
 
     public async editChannelPermissions(
         channelId: string,
         overwriteId: string,
         params: {
+            reason?: string,
             allow?: string | null,
             deny?: string | null,
             /** 0 for a role or 1 for a member */
@@ -302,8 +308,8 @@ export class REST {
         return await this.#makeRequest("POST", `channels/${channelId}/invites`, body);
     }
 
-    public async deleteChannelPermission(channelId: string, overwriteId: string): Promise<null> {
-        return await this.#makeRequest("DELETE", `channels/${channelId}/permissions/${overwriteId}`);
+    public async deleteChannelPermission(channelId: string, overwriteId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `channels/${channelId}/permissions/${overwriteId}`, { reason });
     }
 
     public async followAnnouncementChannel(channelId: string, body: { webhook_channel_id?: string }): Promise<FollowedChannelStructure> {
@@ -318,12 +324,12 @@ export class REST {
         return await this.#makeRequest("GET", `channels/${channelId}/pins`);
     }
 
-    public async pinMessage(channelId: string, messageId: string): Promise<null> {
-        return await this.#makeRequest("PUT", `channels/${channelId}/pins/${messageId}`);
+    public async pinMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("PUT", `channels/${channelId}/pins/${messageId}`, { reason });
     }
 
-    public async unpinMessage(channelId: string, messageId: string): Promise<null> {
-        return await this.#makeRequest("DELETE", `channels/${channelId}/pins/${messageId}`);
+    public async unpinMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `channels/${channelId}/pins/${messageId}`, { reason });
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention

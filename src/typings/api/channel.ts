@@ -88,6 +88,7 @@ export interface EditMessageStructure {
 }
 
 export interface CreateChannelInviteStructure {
+    reason?: string;
     max_age?: number;
     max_uses?: number;
     temporary?: boolean;
@@ -106,6 +107,7 @@ export interface CreateThreadFromMessageStructure {
     name: string;
     auto_archive_duration?: number;
     rate_limit_per_user?: number | null;
+    reason?: string;
 }
 
 export interface CreateThreadStructure extends CreateThreadFromMessageStructure {
