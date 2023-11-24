@@ -10,7 +10,6 @@ import {
     MessageFlags
 } from "../enums";
 
-import type { Attachment } from "../builders";
 import type { Client } from "../client";
 import type {
     ApplicationCommandType,
@@ -30,10 +29,9 @@ import type {
     ResolvedDataStructure,
     EntitlementStructure,
     InteractionStructure,
-    AttachmentStructure,
     MessageStructure,
-    EmbedStructure,
-    EmojiStructure
+    EmojiStructure,
+    ReplyOptions
 } from "../typings";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
@@ -65,18 +63,13 @@ export interface AutocompleteData extends Omit<ApplicationCommandDataStructure, 
     options: ApplicationCommandOptions<string | number>;
 }
 
-export interface InteractionReplyOptions {
-    content?: string;
-    tts?: boolean;
+export interface InteractionReplyOptions extends ReplyOptions {
     ephemeral?: boolean;
+    tts?: boolean;
     suppressEmbeds?: boolean;
-    embeds?: Array<EmbedStructure>;
-    components?: Array<MessageComponentStructure>;
-    attachments?: Array<Partial<AttachmentStructure>>;
-    files?: Array<Attachment>;
 }
 
-interface EditReplyOptions extends Pick<InteractionReplyOptions, "embeds" | "components" | "attachments" | "content" | "files"> { }
+interface InteractionEditOptions extends ReplyOptions { }
 
 export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {
     public readonly client: Client;
@@ -202,13 +195,13 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
             };
         }
 
-        await this.client.rest.createFollowupMessage(this.client.id, this.token, data);
+        await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data);
     }
 
-    public async editReply(content: string, options?: EditReplyOptions): Promise<void>;
-    public async editReply(options: EditReplyOptions): Promise<void>;
-    public async editReply(content: string | EditReplyOptions, options?: EditReplyOptions): Promise<void> {
-        await this.client.rest.editOriginalInteractionResponse(this.client.id, this.token, typeof content === "string"
+    public async editReply(content: string, options?: InteractionEditOptions): Promise<void>;
+    public async editReply(options: InteractionEditOptions): Promise<void>;
+    public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
+        await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, typeof content === "string"
             ? {
                 content,
                 ...options
@@ -297,7 +290,7 @@ class DMInteraction<T extends InteractionData, M extends undefined | MessageStru
     ) {
         super(client, interaction, isDM, data);
 
-        this.user = new User(interaction.user);
+        this.user = new User(client, interaction.user);
     }
 }
 

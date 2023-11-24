@@ -6,9 +6,18 @@ import { User } from "./factories/user";
 import { GatewayEvent } from "./enums";
 import { REST } from "./rest/rest";
 
-import type { BaseClientOptions, UserStructure } from "./typings";
+import type {
+    UnavailableGuildStructure,
+    ApplicationStructure,
+    BaseClientOptions
+} from "./typings";
 
-export interface Client extends UserStructure { }
+export interface Client {
+    readonly user: User;
+    readonly guilds: Array<UnavailableGuildStructure>;
+    readonly sessionId: string;
+    readonly application: ApplicationStructure;
+}
 
 export class Client {
     public readonly rest: REST = new REST();
@@ -31,9 +40,16 @@ export class Client {
 
             switch (data.t) {
                 case GatewayEvent.Ready: {
-                    Object.assign(this, data.d.user);
+                    Object.assign(this, {
+                        user: new User(this, data.d.user),
+                        guilds: data.d.guilds,
+                        sessionId: data.d.session_id,
+                        application: data.d.application
+                    });
+
                     await options.setup?.(this);
                     res(this);
+
                     await options.listeners.ready?.(this, data.d);
                     break;
                 }
@@ -62,7 +78,7 @@ export class Client {
                     break;
                 }
                 case GatewayEvent.GuildMemberRemove: {
-                    await options.listeners.guildMemberRemove?.(data.d.guild_id, new User(data.d.user));
+                    await options.listeners.guildMemberRemove?.(data.d.guild_id, new User(this, data.d.user));
                     break;
                 }
                 case GatewayEvent.GuildMemberUpdate: {
@@ -70,7 +86,7 @@ export class Client {
                     break;
                 }
                 case GatewayEvent.UserUpdate: {
-                    await options.listeners.userUpdate?.(new User(data.d));
+                    await options.listeners.userUpdate?.(new User(this, data.d));
                     break;
                 }
                 case GatewayEvent.InteractionCreate: {

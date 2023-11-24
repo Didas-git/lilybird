@@ -22,7 +22,7 @@ export class Handler {
 
     public async registerGlobalCommands(client: Client): Promise<void> {
         for await (const command of this.globalSlashCommands.values()) {
-            await client.rest.createGlobalApplicationCommands(client.id, command.data);
+            await client.rest.createGlobalApplicationCommands(client.user.id, command.data);
         }
     }
 
@@ -30,10 +30,10 @@ export class Handler {
         for await (const command of this.guildSlashCommands.values()) {
             if (Array.isArray(command.post)) {
                 for (let i = 0; i < command.post.length; i++) {
-                    await client.rest.createGuildApplicationCommand(client.id, command.post[i], command.data);
+                    await client.rest.createGuildApplicationCommand(client.user.id, command.post[i], command.data);
                 }
             } else {
-                await client.rest.createGuildApplicationCommand(client.id, command.post, command.data);
+                await client.rest.createGuildApplicationCommand(client.user.id, command.post, command.data);
             }
         }
 
@@ -86,13 +86,13 @@ export class Handler {
     }
 
     public buildListeners(): ClientEventListeners {
-        let icfn: Exclude<ClientEventListeners["interactionCreate"], undefined> = () => { return; };
+        let interactionCreateFn: Exclude<ClientEventListeners["interactionCreate"], undefined> = () => { return; };
 
         const listeners: ClientEventListeners = {};
 
         this.events.forEach((event, name) => {
             if (name === "interactionCreate") {
-                icfn = event.run;
+                interactionCreateFn = event.run;
                 return;
             }
 
@@ -100,7 +100,7 @@ export class Handler {
         });
 
         listeners.interactionCreate = (interaction) => {
-            icfn(interaction);
+            interactionCreateFn(interaction);
 
             if (interaction.isApplicationCommandInteraction()) {
                 this.globalSlashCommands.get(interaction.data.name)?.run(interaction);

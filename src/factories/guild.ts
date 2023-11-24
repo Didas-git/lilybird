@@ -37,16 +37,16 @@ export class GuildMember {
         this.nick = member.nick;
         this.avatar = member.avatar;
         this.roles = member.roles;
-        this.joinedAt = new Date(member.joined_at);
         this.deaf = member.deaf;
         this.mute = member.mute;
+        this.joinedAt = new Date(member.joined_at);
         // GuildMemberUpdate does not have `flags`
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         this.flags = member.flags ?? 0;
         this.pending = member.pending ?? false;
         this.permissions = member.permissions;
 
-        member.user && (this.user = new User(member.user));
+        member.user && (this.user = new User(client, member.user));
         member.premium_since && (this.premiumSince = new Date(member.premium_since));
         member.communication_disabled_until && (this.communicationDisabledUntil = new Date(member.communication_disabled_until));
 

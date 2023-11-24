@@ -1,4 +1,4 @@
-import { ChannelType, type ForumLayoutType, type SortOrderType, VideoQualityMode } from "../enums";
+import { ChannelType, type ForumLayoutType, type SortOrderType, VideoQualityMode, MessageFlags } from "../enums";
 import { GuildMember } from "./guild";
 import { User } from "./user";
 
@@ -18,8 +18,12 @@ import type {
     DMChannelStructure,
     OverwriteStructure,
     ForumTagStructure,
-    ChannelStructure
+    ChannelStructure,
+    ReplyOptions,
+    CreateMessageStructure,
+    ChannelMentionStructure
 } from "../typings";
+import { Message } from "./message";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialChannel = Partial<Channel> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };
@@ -67,6 +71,12 @@ export function channelFactory(client: Client, channel: ChannelStructure | Parti
     }
 }
 
+export interface MessageSendOptions extends ReplyOptions {
+    tts?: boolean;
+    suppressEmbeds?: boolean;
+    suppressNotifications?: boolean;
+}
+
 export class Channel {
     public readonly id: string;
     public readonly type: ChannelType;
@@ -86,6 +96,41 @@ export class Channel {
         if (resolved) {
             channel.permissions && ((<ResolvedChannel><unknown>this).permissions = channel.permissions);
         }
+    }
+
+    public async send(content: string, options?: MessageSendOptions): Promise<Message>;
+    public async send(options: MessageSendOptions): Promise<Message>;
+    public async send(content: string | MessageSendOptions, options?: MessageSendOptions): Promise<Message> {
+        let flags = 0;
+        let data: CreateMessageStructure;
+
+        if (typeof content === "string") {
+            if (typeof options !== "undefined") {
+                const { suppressEmbeds, suppressNotifications, ...obj } = options;
+
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+                if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+
+                data = {
+                    ...obj,
+                    content
+                };
+            } else {
+                data = { content };
+            }
+        } else {
+            const { suppressEmbeds, suppressNotifications, ...obj } = content;
+
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+
+            data = obj;
+        }
+
+        return new Message(this.client, await this.client.rest.createMessage(this.id, {
+            ...data,
+            flags
+        }));
     }
 
     public isText(): this is GuildTextChannel {
@@ -140,6 +185,18 @@ export class Channel {
 
     public isMedia(): this is ThreadLikeChannel {
         return this.type === ChannelType.GUILD_MEDIA;
+    }
+}
+
+export class MentionChannel extends Channel {
+    public readonly guildId: string;
+    public readonly name: string;
+
+    public constructor(client: Client, channel: ChannelMentionStructure) {
+        super(client, <never>channel, false);
+
+        this.guildId = channel.guild_id;
+        this.name = channel.name;
     }
 }
 
@@ -221,7 +278,7 @@ class DMChannel extends Channel {
         super(client, channel, resolved);
 
         this.lastMessageId = channel.last_message_id;
-        this.recipients = channel.recipients.map((user) => new User(user));
+        this.recipients = channel.recipients.map((user) => new User(client, user));
     }
 }
 

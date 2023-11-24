@@ -3,12 +3,13 @@ import type { MessageActivityType, MessageFlags, MessageType } from "../enums";
 import type {
     RoleSubscriptionDataStructure,
     MessageInteractionStructure,
+    MessageComponentStructure,
     ChannelMentionStructure,
     ResolvedDataStructure,
+    GuildMemberStructure,
     StickerItemStructure,
     ApplicationStructure,
     AttachmentStructure,
-    MessageComponentStructure,
     ChannelStructure,
     StickerStructure,
     EmbedStructure,
@@ -21,6 +22,7 @@ export interface MessageStructure {
     id: string;
     channel_id: string;
     author: UserStructure;
+    // This does not exist without the intent
     content: string;
     /** ISO8601 Timestamp */
     timestamp: string;
@@ -31,14 +33,16 @@ export interface MessageStructure {
     mentions: Array<UserStructure>;
     mention_roles: Array<RoleStructure>;
     mention_channels: Array<ChannelMentionStructure>;
+    // This does not exist without the intent
     attachments: Array<AttachmentStructure>;
+    // This does not exist without the intent
     embeds: Array<EmbedStructure>;
     reactions: Array<ReactionStructure>;
     nonce?: number | string;
     pinned: boolean;
     webhook_id?: string;
     type: MessageType;
-    activity: MessageActivityStructure;
+    activity?: MessageActivityStructure;
     application?: Partial<ApplicationStructure>;
     application_id?: string;
     message_reference?: MessageReferenceStructure;
@@ -46,12 +50,19 @@ export interface MessageStructure {
     referenced_message?: MessageStructure | null;
     interaction?: MessageInteractionStructure;
     thread?: ChannelStructure;
+    // This does not exist without the intent
     components?: Array<MessageComponentStructure>;
     sticker_items?: Array<StickerItemStructure>;
     stickers?: Array<StickerStructure>;
     position?: number;
     role_subscription_data?: RoleSubscriptionDataStructure;
     resolved?: ResolvedDataStructure;
+}
+
+export interface GuildMessageStructure extends MessageStructure {
+    guild_id?: string;
+    member?: Partial<GuildMemberStructure>;
+    mentions: Array<UserStructure & { member?: Partial<GuildMemberStructure> }>;
 }
 
 export interface MessageActivityStructure {

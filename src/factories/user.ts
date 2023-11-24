@@ -1,6 +1,8 @@
 import { PremiumType } from "../enums";
 
 import type { UserStructure } from "../typings";
+import type { Client } from "../client";
+import { GuildMember } from "./guild";
 
 export class User {
     public readonly id: string;
@@ -20,8 +22,9 @@ export class User {
     public readonly premiumType: PremiumType;
     public readonly publicFlags: number;
     public readonly avatarDecoration: string | undefined | null;
+    public readonly member: GuildMember | undefined;
 
-    public constructor(user: UserStructure) {
+    public constructor(client: Client, user: UserStructure) {
         this.id = user.id;
         this.username = user.username;
         this.discriminator = user.discriminator;
@@ -39,5 +42,7 @@ export class User {
         this.premiumType = user.premium_type ?? PremiumType.None;
         this.publicFlags = user.public_flags ?? 0;
         this.avatarDecoration = user.avatar_decoration;
+
+        if ("member" in user) this.member = new GuildMember(client, <never>user.member);
     }
 }

@@ -23,11 +23,11 @@ import type {
     ActivityStructure,
     ChannelStructure,
     StickerStructure,
-    MessageStructure,
     GuildStructure,
     EmojiStructure,
     UserStructure,
-    RoleStructure
+    RoleStructure,
+    GuildMessageStructure
 } from ".";
 
 export interface GetGatewayResponse {
@@ -617,20 +617,12 @@ export interface InviteDelete extends DispatchPayload {
 }
 
 export interface MessageCreate extends DispatchPayload {
-    d: MessageStructure & {
-        guild_id?: string,
-        member?: Partial<GuildMemberStructure>,
-        mentions: Array<UserStructure & { member?: Partial<GuildMemberStructure> }>
-    };
+    d: GuildMessageStructure;
     t: GatewayEvent.MessageCreate;
 }
 
 export interface MessageUpdate extends DispatchPayload {
-    d: Partial<MessageStructure> & {
-        guild_id?: string,
-        member?: Partial<GuildMemberStructure>,
-        mentions: Array<UserStructure & { member?: Partial<GuildMemberStructure> }>
-    };
+    d: Partial<GuildMessageStructure>;
     t: GatewayEvent.MessageUpdate;
 }
 
