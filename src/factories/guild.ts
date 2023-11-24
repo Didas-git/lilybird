@@ -3,6 +3,10 @@ import { User } from "./user";
 import type { GuildMemberStructure } from "../typings";
 import type { Client } from "../client";
 
+export interface GuildMemberWithGuildId extends GuildMember {
+    readonly guildId: string;
+}
+
 export interface PartialGuildMember extends Omit<GuildMember, "user"> {
     readonly user: undefined;
 }
@@ -21,6 +25,9 @@ export class GuildMember {
     public readonly permissions: string | undefined;
     public readonly communicationDisabledUntil: Date | undefined;
 
+    /** @internal */
+    public readonly guildId: string | undefined;
+
     //@ts-expect-error Still unused
     readonly #client: Client;
 
@@ -33,12 +40,16 @@ export class GuildMember {
         this.joinedAt = new Date(member.joined_at);
         this.deaf = member.deaf;
         this.mute = member.mute;
-        this.flags = member.flags;
+        // GuildMemberUpdate does not have `flags`
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        this.flags = member.flags ?? 0;
         this.pending = member.pending ?? false;
         this.permissions = member.permissions;
 
         member.user && (this.user = new User(member.user));
         member.premium_since && (this.premiumSince = new Date(member.premium_since));
         member.communication_disabled_until && (this.communicationDisabledUntil = new Date(member.communication_disabled_until));
+
+        if ("guild_id" in member) this.guildId = <string>member.guild_id;
     }
 }

@@ -1,5 +1,6 @@
 import type { Interaction, InteractionData } from "../factories/interaction";
-import type { Channel } from "../factories/channel";
+import type { Channel, ThreadChannel } from "../factories/channel";
+import type { GuildMemberWithGuildId } from "../factories/guild";
 import type { User } from "../factories/user";
 import type { Awaitable } from "./utils";
 import type { Intents } from "../enums";
@@ -17,6 +18,10 @@ export interface ClientEventListeners {
     channelUpdate?: (channel: Channel) => Awaitable<unknown>;
     channelDelete?: (channel: Channel) => Awaitable<unknown>;
     threadUpdate?: (channel: Channel) => Awaitable<unknown>;
+    threadDelete?: (channel: Pick<ThreadChannel, "id" | "guildId" | "parentId" | "type">) => Awaitable<unknown>;
+    guildMemberAdd?: (member: GuildMemberWithGuildId) => Awaitable<unknown>;
+    guildMemberRemove?: (id: string, user: User) => Awaitable<unknown>;
+    guildMemberUpdate?: (member: GuildMemberWithGuildId) => Awaitable<unknown>;
     userUpdate?: (user: User) => Awaitable<unknown>;
     interactionCreate?: (interaction: Interaction<InteractionData>) => Awaitable<unknown>;
 }

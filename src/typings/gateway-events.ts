@@ -338,8 +338,10 @@ export interface ChannelPinsUpdate extends DispatchPayload {
 
 export interface ThreadCreate extends DispatchPayload {
     d: ChannelStructure & {
-        newly_created: boolean
-    } & (ThreadMemberStructure | undefined);
+        newly_created: boolean,
+        // ThreadChannelStructure
+        member: ThreadMemberStructure | undefined
+    };
     t: GatewayEvent.ThreadCreate;
 }
 

@@ -1,3 +1,4 @@
+import { GuildMember, type GuildMemberWithGuildId } from "./factories/guild";
 import { type DebugFunction, WebSocketManager } from "./ws/ws";
 import { interactionFactory } from "./factories/interaction";
 import { channelFactory } from "./factories/channel";
@@ -54,6 +55,18 @@ export class Client {
                 }
                 case GatewayEvent.ThreadUpdate: {
                     await options.listeners.threadUpdate?.(channelFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.GuildMemberAdd: {
+                    await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId>new GuildMember(this, data.d));
+                    break;
+                }
+                case GatewayEvent.GuildMemberRemove: {
+                    await options.listeners.guildMemberRemove?.(data.d.guild_id, new User(data.d.user));
+                    break;
+                }
+                case GatewayEvent.GuildMemberUpdate: {
+                    await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId>new GuildMember(this, <never>data.d));
                     break;
                 }
                 case GatewayEvent.UserUpdate: {

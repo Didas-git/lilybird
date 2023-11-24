@@ -267,7 +267,7 @@ class GuildChannelCategory extends Channel {
     }
 }
 
-class ThreadChannel extends Channel {
+export class ThreadChannel extends Channel {
     public readonly guildId: string;
     public readonly parentId: string | null;
     public readonly ownerId: string;
