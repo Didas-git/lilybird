@@ -162,8 +162,10 @@ import {
 } from "lilybird";
 
 const listeners = await createHandler({
-    // listeners = event listeners
-    listeners: `${import.meta.dir}/events`
+    dirs: {
+        // listeners = event listeners
+        listeners: `${import.meta.dir}/events`
+    }
 });
 
 await createClient({
