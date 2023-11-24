@@ -159,6 +159,14 @@ export class Message {
         return new Message(this.client, await this.client.rest.editMessage(this.channelId, this.id, data));
     }
 
+    public async react(emoji: string, isCustomEmoji: boolean = false): Promise<void> {
+        await this.client.rest.createReaction(this.channelId, this.id, emoji, isCustomEmoji);
+    }
+
+    public async delete(reason?: string): Promise<void> {
+        await this.client.rest.deleteMessage(this.channelId, this.id, reason);
+    }
+
     public hasContent(): this is this & { content: string } {
         return typeof this.content !== "undefined";
     }
