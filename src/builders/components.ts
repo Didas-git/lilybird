@@ -32,7 +32,7 @@ export function Button(props: {
     disabled?: boolean
 } | {
     url: string,
-    style: Exclude<ButtonStyle, ButtonStyle.Link>,
+    style: ButtonStyle.Link,
     label?: string,
     emoji?: Pick<EmojiStructure, "name" | "id" | "animated">,
     disabled?: boolean

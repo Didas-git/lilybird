@@ -30,7 +30,10 @@ import type {
     CreateForumMediaThreadStructure,
     ThreadMemberStructure,
     ListArchivedThreadsReturnStructure,
-    AttachmentStructure
+    AttachmentStructure,
+    GuildStructure,
+    GuildMemberStructure,
+    DMChannelStructure
 } from "../typings";
 
 export class REST {
@@ -400,6 +403,51 @@ export class REST {
         if (typeof params.before !== "undefined") url += `before=${params.before}&`;
         if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
         return await this.#makeRequest("GET", url);
+    }
+
+    public async getCurrentUser(): Promise<UserStructure> {
+        return await this.#makeRequest("GET", "users/@me");
+    }
+
+    public async getUser(userId: string): Promise<UserStructure> {
+        return await this.#makeRequest("GET", `users/${userId}`);
+    }
+
+    public async modifyCurrentUser(body?: { username?: string, avatar?: /** Image Data */ string }): Promise<UserStructure> {
+        return await this.#makeRequest("PATCH", "users/@me", body);
+    }
+
+    public async getCurrentUserGuilds(params: {
+        before: string,
+        after: string,
+        limit: string,
+        with_counts: boolean
+    }): Promise<Array<Partial<GuildStructure>>> {
+        let url = "users/@me/guilds";
+        if (typeof params.with_counts !== "undefined") url += `with_counts=${params.with_counts}&`;
+        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
+        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
+        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+
+        return await this.#makeRequest("GET", url);
+    }
+
+    public async getCurrentUserGuildMember(guildId: string): Promise<GuildMemberStructure> {
+        return await this.#makeRequest("GET", `users/@me/guilds/${guildId}/member`);
+    }
+
+    public async leaveGuild(guildId: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `users/@me/guilds/${guildId}`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public async createDM(userId: string): Promise<DMChannelStructure> {
+        return await this.#makeRequest("POST", "users/@me/channels", { recipient_id: userId });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public async createGroupDM(tokens: Array<string>, nicks: Record<string, string>): Promise<DMChannelStructure> {
+        return await this.#makeRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
     }
 
     public setToken(token: string | undefined): void {

@@ -200,7 +200,7 @@ export class MentionChannel extends Channel {
     }
 }
 
-class GuildChannel extends Channel {
+export class GuildChannel extends Channel {
     public readonly guildId: string;
     public readonly name: string;
     public readonly position: number;
@@ -226,7 +226,7 @@ class GuildChannel extends Channel {
     }
 }
 
-class GuildTextChannel extends GuildChannel {
+export class GuildTextChannel extends GuildChannel {
     public readonly rateLimitPerUser: number;
 
     public constructor(client: Client, channel: GuildTextChannelStructure, resolved: boolean) {
@@ -236,9 +236,9 @@ class GuildTextChannel extends GuildChannel {
     }
 }
 
-class GuildAnnouncementChannel extends GuildChannel { }
+export class GuildAnnouncementChannel extends GuildChannel { }
 
-class GuildVoiceChannel extends Channel {
+export class GuildVoiceChannel extends Channel {
     public readonly guildId: string;
     public readonly name: string;
     public readonly position: number;
@@ -270,7 +270,7 @@ class GuildVoiceChannel extends Channel {
     }
 }
 
-class DMChannel extends Channel {
+export class DMChannel extends Channel {
     public readonly lastMessageId: string | null;
     public readonly recipients: Array<User>;
 
@@ -282,7 +282,7 @@ class DMChannel extends Channel {
     }
 }
 
-class GroupDMChannel extends DMChannel {
+export class GroupDMChannel extends DMChannel {
     public readonly name: string;
     public readonly icon: string | null;
     public readonly ownerId: string;
@@ -304,7 +304,7 @@ class GroupDMChannel extends DMChannel {
     }
 }
 
-class GuildChannelCategory extends Channel {
+export class GuildChannelCategory extends Channel {
     public readonly permissionOverwrites: Array<OverwriteStructure>;
     public readonly name: string;
     public readonly nsfw: boolean;
@@ -360,7 +360,7 @@ export class ThreadChannel extends Channel {
     }
 }
 
-class ThreadMember {
+export class ThreadMember {
     public readonly id: string | undefined;
     public readonly userId: string | undefined;
     public readonly joinTimestamp: Date;
@@ -378,7 +378,7 @@ class ThreadMember {
     }
 }
 
-class ThreadLikeChannel extends Channel {
+export class ThreadLikeChannel extends Channel {
     public readonly availableTags: Array<ForumTagStructure> | undefined;
     public readonly appliedTags: Array<string> | undefined;
     public readonly defaultThreadRateLimitPerUser: number | undefined;

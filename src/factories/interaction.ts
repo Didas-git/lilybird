@@ -18,6 +18,7 @@ import type {
 } from "../enums";
 
 import type {
+    AutocompleteCallbackDataStructure,
     ApplicationCommandDataStructure,
     MessageComponentDataStructure,
     GuildInteractionStructure,
@@ -69,7 +70,7 @@ export interface InteractionReplyOptions extends ReplyOptions {
     suppressEmbeds?: boolean;
 }
 
-interface InteractionEditOptions extends ReplyOptions { }
+export interface InteractionEditOptions extends ReplyOptions { }
 
 export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {
     public readonly client: Client;
@@ -146,6 +147,13 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
             data
+        });
+    }
+
+    public async respond(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
+        await this.client.rest.createInteractionResponse(this.id, this.token, {
+            type: InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
+            data: { choices }
         });
     }
 
@@ -271,7 +279,7 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
     }
 }
 
-interface DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
+export interface DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     isPingInteraction: () => this is DMInteraction<undefined>;
     isApplicationCommandInteraction: () => this is DMInteraction<ApplicationCommandData<undefined>>;
     isAutocompleteInteraction: () => this is DMInteraction<AutocompleteData>;
@@ -279,7 +287,7 @@ interface DMInteraction<T extends InteractionData, M extends undefined | Message
     isModalSubmitInteraction: () => this is DMInteraction<ModalSubmitData>;
 }
 
-class DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
+export class DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     public readonly user: User;
 
     public constructor(
