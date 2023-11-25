@@ -70,3 +70,13 @@ export enum PrivacyLevel {
     PUBLIC = 1,
     GUILD_ONLY
 }
+
+export enum OnboardingMode {
+    ONBOARDING_DEFAULT,
+    ONBOARDING_ADVANCED
+}
+
+export enum PromptType {
+    MULTIPLE_CHOICE,
+    DROPDOWN
+}

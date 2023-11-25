@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const { version }: { version: number } = require("../../package.json");
 
+import type { MFALevel, OnboardingMode } from "../enums";
+
 import type {
     LocalizationGlobalApplicationCommandStructure,
     LocalizationGuildApplicationCommandStructure,
@@ -8,32 +10,49 @@ import type {
     LocalizedGlobalApplicationCommandStructure,
     LocalizedGuildApplicationCommandStructure,
     ApplicationCommandPermissionsStructure,
+    ListArchivedThreadsReturnStructure,
+    CreateThreadFromMessageStructure,
     POSTApplicationCommandStructure,
+    CreateForumMediaThreadStructure,
+    ModifyChannelPositionStructure,
+    WelcomeScreenChannelStructure,
     InteractionResponseStructure,
     ModifyThreadChannelStructure,
+    CreateChannelInviteStructure,
+    GuildWidgetSettingsStructure,
     ModifyGuildChannelStructure,
     GetChannelMessagesStructure,
+    CreateGuildChannelStructure,
+    OnboardingPromptStructure,
+    FollowedChannelStructure,
     ModifyDMChannelStructure,
+    GuildOnboardingStructure,
     ExecuteWebhookStructure,
-    EditWebhookStructure,
     CreateMessageStructure,
+    ThreadChannelStructure,
+    WelcomeScreenStructure,
+    CreateThreadStructure,
+    ThreadMemberStructure,
+    GuildPreviewStructure,
+    EditWebhookStructure,
     EditMessageStructure,
+    GuildMemberStructure,
+    CreateGuildStructure,
+    ModifyGuildStructure,
+    VoiceRegionStructure,
+    IntegrationStructure,
+    GuildWidgetStructure,
+    AttachmentStructure,
+    DMChannelStructure,
     MessageStructure,
     ChannelStructure,
+    APIRoleStructure,
     InviteStructure,
-    ErrorMessage,
-    UserStructure,
-    CreateChannelInviteStructure,
-    FollowedChannelStructure,
-    CreateThreadFromMessageStructure,
-    CreateThreadStructure,
-    CreateForumMediaThreadStructure,
-    ThreadMemberStructure,
-    ListArchivedThreadsReturnStructure,
-    AttachmentStructure,
     GuildStructure,
-    GuildMemberStructure,
-    DMChannelStructure
+    UserStructure,
+    RoleStructure,
+    ErrorMessage,
+    BanStructure
 } from "../typings";
 
 export class REST {
@@ -421,10 +440,10 @@ export class REST {
         before: string,
         after: string,
         limit: string,
-        with_counts: boolean
+        withCounts: boolean
     }): Promise<Array<Partial<GuildStructure>>> {
-        let url = "users/@me/guilds";
-        if (typeof params.with_counts !== "undefined") url += `with_counts=${params.with_counts}&`;
+        let url = "users/@me/guilds?";
+        if (typeof params.withCounts !== "undefined") url += `with_counts=${params.withCounts}&`;
         if (typeof params.before !== "undefined") url += `before=${params.before}&`;
         if (typeof params.after !== "undefined") url += `after=${params.after}&`;
         if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
@@ -448,6 +467,258 @@ export class REST {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public async createGroupDM(tokens: Array<string>, nicks: Record<string, string>): Promise<DMChannelStructure> {
         return await this.#makeRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
+    }
+
+    public async createGuild(body: CreateGuildStructure): Promise<GuildStructure> {
+        return await this.#makeRequest("POST", "guilds", body);
+    }
+
+    public async getGuild(guildId: string, withCounts: boolean = false): Promise<GuildStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}?with_counts=${withCounts}`);
+    }
+
+    public async getGuildPreview(guildId: string): Promise<GuildPreviewStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/preview`);
+    }
+
+    public async modifyGuild(guildId: string, body: ModifyGuildStructure): Promise<GuildStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}`, body);
+    }
+
+    public async deleteGuild(guildId: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `guilds/${guildId}`);
+    }
+
+    public async getGuildChannels(guildId: string): Promise<Array<ChannelStructure>> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/channels`);
+    }
+
+    public async createGuildChannel(guildId: string, body: CreateGuildChannelStructure): Promise<ChannelStructure> {
+        return await this.#makeRequest("POST", `guilds/${guildId}/channels`, body);
+    }
+
+    public async modifyGuildChannelPositions(guildId: string, body: Array<ModifyChannelPositionStructure>): Promise<ChannelStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/channels`, body);
+    }
+
+    public async listActiveGuildThreads(guildId: string): Promise<{
+        threads: Array<ThreadChannelStructure>,
+        members: Array<ThreadMemberStructure>
+    }> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/threads/active`);
+    }
+
+    public async getGuildMember(guildId: string, userId: string): Promise<GuildMemberStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/members/${userId}`);
+    }
+
+    public async listGuildMembers(guildId: string, params: { limit: number, after: string }): Promise<Array<GuildMemberStructure>> {
+        let url = `guilds/${guildId}/members`;
+        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
+        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+
+        return await this.#makeRequest("GET", url);
+    }
+
+    public async searchGuildMembers(guildId: string, params: { query: string, limit: number }): Promise<Array<GuildMemberStructure>> {
+        let url = `guilds/${guildId}/members/search`;
+        if (typeof params.query !== "undefined") url += `query=${params.query}&`;
+        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+
+        return await this.#makeRequest("GET", url);
+    }
+
+    public async addGuildMember(guildId: string, userId: string, body: {
+        access_token: string,
+        nick?: string,
+        roles?: Array<string>,
+        mute?: boolean,
+        deaf?: boolean
+    }): Promise<GuildMemberStructure> {
+        return await this.#makeRequest("PUT", `guilds/${guildId}/members/${userId}`, body);
+    }
+
+    public async modifyGuildMember(guildId: string, userId: string, body: {
+        reason?: string | null,
+        nick?: string | null,
+        roles?: Array<string> | null,
+        mute?: boolean | null,
+        deaf?: boolean | null,
+        channel_id?: string | null,
+        /** ISO8601 timestamp */
+        communication_disabled_until?: string | null,
+        flags?: number | null
+    }): Promise<GuildMemberStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/members/${userId}`, body);
+    }
+
+    public async modifyCurrentMember(guildId: string, body: {
+        reason?: string | null,
+        nick?: string | null
+    }): Promise<GuildMemberStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/members/@me`, body);
+    }
+
+    public async addGuildMemberRole(guildId: string, userId: string, roleId: string, reason: string): Promise<null> {
+        return await this.#makeRequest("PUT", `guilds/${guildId}/members/${userId}/roles/${roleId}`, { reason });
+    }
+
+    public async removeGuildMemberRole(guildId: string, userId: string, roleId: string, reason: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `guilds/${guildId}/members/${userId}/roles/${roleId}`, { reason });
+    }
+
+    public async removeGuildMember(guildId: string, userId: string, reason: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `guilds/${guildId}/members/${userId}`, { reason });
+    }
+
+    public async getGuildBans(guildId: string, params: {
+        before: string,
+        after: string,
+        limit: string
+    }): Promise<Array<BanStructure>> {
+        let url = `guilds/${guildId}/bans`;
+        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
+        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
+        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+
+        return await this.#makeRequest("GET", url);
+    }
+
+    public async getGuildBan(guildId: string, userId: string): Promise<BanStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/bans/${userId}`);
+    }
+
+    public async createGuildBan(guildId: string, userId: string, body: {
+        reason?: string,
+        delete_message_seconds?: number
+    }): Promise<null> {
+        return await this.#makeRequest("PUT", `guilds/${guildId}/bans/${userId}`, body);
+    }
+
+    public async removeGuildBan(guildId: string, userId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("PUT", `guilds/${guildId}/bans/${userId}`, { reason });
+    }
+
+    public async getGuildRoles(guildId: string): Promise<Array<RoleStructure>> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/roles`);
+    }
+
+    public async createGuildRole(guildId: string, body: APIRoleStructure): Promise<RoleStructure> {
+        return await this.#makeRequest("POST", `guilds/${guildId}/roles`, body);
+
+    }
+
+    public async modifyGuildRolePosition(guildId: string, body: { reason?: string, id: string, position?: number | null }): Promise<Array<RoleStructure>> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/roles`, body);
+    }
+
+    public async modifyGuildRole(guildId: string, roleId: string, body: Partial<APIRoleStructure>): Promise<RoleStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/roles/${roleId}`, body);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public async modifyGuildMFALevel(guildId: string, level: MFALevel): Promise<MFALevel> {
+        return await this.#makeRequest("POST", `guilds/${guildId}/mfa`, { level });
+    }
+
+    public async deleteGuildRole(guildId: string, roleId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `guilds/${guildId}/roles/${roleId}`, { reason });
+    }
+
+    public async getGuildPruneCount(guildId: string, params: { days: number, include_roles?: string }): Promise<{ pruned: number }> {
+        let url = `guilds/${guildId}/prune`;
+        if (typeof params.days !== "undefined") url += `days=${params.days}&`;
+        if (typeof params.include_roles !== "undefined") url += `include_roles=${params.include_roles}`;
+
+        return await this.#makeRequest("GET", url);
+    }
+
+    public async beginGuildPrune(guildId: string, body: {
+        days?: number,
+        compute_prune_count?: boolean,
+        include_roles?: Array<string>,
+        reason?: string
+    }): Promise<{ pruned: number | null }> {
+        return await this.#makeRequest("POST", `guilds/${guildId}/prune`, body);
+    }
+
+    public async getGuildVoiceRegions(guildId: string): Promise<Array<VoiceRegionStructure>> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/regions`);
+    }
+
+    public async getGuildInvites(guildId: string): Promise<Array<InviteStructure>> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/invites`);
+    }
+
+    public async getGuildIntegrations(guildId: string): Promise<Array<IntegrationStructure>> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/integrations`);
+    }
+
+    public async deleteGuildIntegration(guildId: string, integrationId: string, reason?: string): Promise<null> {
+        return await this.#makeRequest("DELETE", `guilds/${guildId}/integrations/${integrationId}`, { reason });
+    }
+
+    public async getGuildWidgetSettings(guildId: string): Promise<GuildWidgetSettingsStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/widget`);
+    }
+
+    public async modifyGuildWidget(guildId: string, body: GuildWidgetSettingsStructure & { reason?: string }): Promise<GuildWidgetSettingsStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/widget`, body);
+    }
+
+    public async getGuildWidget(guildId: string): Promise<GuildWidgetStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/widget.json`);
+    }
+
+    public async getGuildVanityUrl(guildId: string): Promise<Partial<InviteStructure>> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/vanity-url`);
+    }
+
+    /** Yeah... this probably doesn't work */
+    public async getGuildWidgetImage(guildId: string, style: string = "shield"): Promise<string> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/widget.png?style=${style}`);
+    }
+
+    public async getGuildWelcomeScreen(guildId: string): Promise<WelcomeScreenStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/welcome-screen`);
+    }
+
+    public async modifyGuildWelcomeScreen(guildId: string, body: {
+        reason?: string,
+        enabled?: boolean | null,
+        welcome_channels?: Array<WelcomeScreenChannelStructure> | null,
+        description?: string | null
+    }): Promise<WelcomeScreenStructure> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/welcome-screen`, body);
+    }
+
+    public async getGuildOnboarding(guildId: string): Promise<GuildOnboardingStructure> {
+        return await this.#makeRequest("GET", `guilds/${guildId}/onboarding`);
+    }
+
+    public async modifyGuildOnboarding(guildId: string, body: {
+        reason?: string,
+        prompts: Array<OnboardingPromptStructure>,
+        default_channel_ids: Array<string>,
+        enabled: boolean,
+        mode: OnboardingMode
+    }): Promise<GuildOnboardingStructure> {
+        return await this.#makeRequest("PUT", `guilds/${guildId}/onboarding`, body);
+    }
+
+    public async modifyCurrentUserVoiceState(guildId: string, body: {
+        channel_id?: string,
+        suppress?: boolean,
+        request_to_speak_timestamp?: string | null
+    }): Promise<null> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/voice-states/@me`, body);
+    }
+
+    public async modifyUserVoiceState(guildId: string, userId: string, body: {
+        channel_id: string,
+        suppress?: boolean
+    }): Promise<null> {
+        return await this.#makeRequest("PATCH", `guilds/${guildId}/voice-states/${userId}`, body);
     }
 
     public setToken(token: string | undefined): void {

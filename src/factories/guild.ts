@@ -1,6 +1,7 @@
 import { User } from "./user";
 
 import type { GuildMemberStructure } from "../typings";
+import type { GuildMemberFlags } from "../enums";
 import type { Client } from "../client";
 
 export interface GuildMemberWithGuildId extends GuildMember {
@@ -9,6 +10,17 @@ export interface GuildMemberWithGuildId extends GuildMember {
 
 export interface PartialGuildMember extends Omit<GuildMember, "user"> {
     readonly user: undefined;
+}
+
+export interface ModifyMemberOptions {
+    reason?: string;
+    nick?: string;
+    roles?: Array<string>;
+    mute?: boolean;
+    deaf?: boolean;
+    channel_id?: string;
+    communication_disabled_until?: Date | string;
+    flags?: Array<GuildMemberFlags>;
 }
 
 export class GuildMember {
@@ -28,11 +40,10 @@ export class GuildMember {
     /** @internal */
     public readonly guildId: string | undefined;
 
-    //@ts-expect-error Still unused
-    readonly #client: Client;
+    public readonly client: Client;
 
     public constructor(client: Client, member: GuildMemberStructure) {
-        this.#client = client;
+        this.client = client;
 
         this.nick = member.nick;
         this.avatar = member.avatar;
@@ -51,5 +62,19 @@ export class GuildMember {
         member.communication_disabled_until && (this.communicationDisabledUntil = new Date(member.communication_disabled_until));
 
         if ("guild_id" in member) this.guildId = <string>member.guild_id;
+    }
+
+    public async modify(options: ModifyMemberOptions): Promise<void> {
+        if (!this.guildId) throw new Error("Something went wrong trying to modify the member");
+
+        if (typeof options.communication_disabled_until !== "undefined" && options.communication_disabled_until instanceof Date) {
+            options.communication_disabled_until = options.communication_disabled_until.toISOString();
+        }
+
+        if (typeof options.flags !== "undefined") {
+            options.flags.reduce((prev, curr) => prev | curr, 0);
+        }
+
+        await this.client.rest.modifyGuildMember(this.guildId, this.user.id, <never>options);
     }
 }
