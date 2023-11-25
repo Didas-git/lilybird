@@ -11,7 +11,9 @@ import type {
     DefaultReactionStructure,
     ThreadMetadataStructure,
     GroupDMChannelStructure,
+    ChannelMentionStructure,
     ThreadChannelStructure,
+    CreateMessageStructure,
     GuildChannelStructure,
     ThreadMemberStructure,
     AutoArchiveDuration,
@@ -19,9 +21,7 @@ import type {
     OverwriteStructure,
     ForumTagStructure,
     ChannelStructure,
-    ReplyOptions,
-    CreateMessageStructure,
-    ChannelMentionStructure
+    ReplyOptions
 } from "../typings";
 import { Message } from "./message";
 

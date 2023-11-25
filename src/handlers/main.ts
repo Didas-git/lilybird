@@ -174,27 +174,6 @@ export class Handler {
 
         return listeners;
     }
-
-    // public async readMessageCommandDir(dir: string | undefined = this.#dirs.messageCommands): Promise<void> {
-
-    //     if (typeof dir === "undefined") throw new Error("Attempt to load slash commands failed");
-
-    //     const router = new Bun.FileSystemRouter({
-    //         fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-    //         style: "nextjs",
-    //         dir
-    //     });
-
-    //     for (let i = 0, entries = Object.entries(router.routes), length = entries.length; i < length; i++) {
-    //         const [key, val] = entries[i];
-
-    //         const file: SlashCommand = (await import(val)).default;
-
-    //         if (typeof file === "undefined") continue;
-
-    //         this.#messageCommands.set([file.name, ...file.aliases], file);
-    //     }
-    // }
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
