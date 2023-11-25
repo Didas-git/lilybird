@@ -195,6 +195,12 @@ export class WebSocketManager {
         this.#ws.send(JSON.stringify(payload));
     }
 
+    public ping(): number {
+        const now = performance.now();
+        this.#ws.ping();
+        return performance.now() - now;
+    }
+
     public set options(options: Partial<ManagerOptions>) {
         this.#options = { ...this.#options, ...options };
     }
