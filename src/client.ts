@@ -1,7 +1,7 @@
 import { GuildMember, type GuildMemberWithGuildId } from "./factories/guild";
 import { type DebugFunction, WebSocketManager } from "./ws/ws";
 import { interactionFactory } from "./factories/interaction";
-import { channelFactory } from "./factories/channel";
+import { ThreadChannel, channelFactory } from "./factories/channel";
 import { User } from "./factories/user";
 import { GatewayEvent } from "./enums";
 import { REST } from "./rest/rest";
@@ -11,6 +11,7 @@ import type {
     ApplicationStructure,
     BaseClientOptions
 } from "./typings";
+import { Message } from ".";
 
 export interface Client {
     readonly user: User;
@@ -73,6 +74,10 @@ export class Client {
                     await options.listeners.threadUpdate?.(channelFactory(this, data.d));
                     break;
                 }
+                case GatewayEvent.ThreadDelete: {
+                    await options.listeners.threadDelete?.(new ThreadChannel(this, <never>data.d, false));
+                    break;
+                }
                 case GatewayEvent.GuildMemberAdd: {
                     await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId>new GuildMember(this, data.d));
                     break;
@@ -83,6 +88,22 @@ export class Client {
                 }
                 case GatewayEvent.GuildMemberUpdate: {
                     await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId>new GuildMember(this, <never>data.d));
+                    break;
+                }
+                case GatewayEvent.MessageCreate: {
+                    await options.listeners.messageCreate?.(new Message(this, data.d));
+                    break;
+                }
+                case GatewayEvent.MessageUpdate: {
+                    await options.listeners.messageUpdate?.(new Message(this, <never>data.d));
+                    break;
+                }
+                case GatewayEvent.MessageDelete: {
+                    await options.listeners.messageDelete?.(data.d);
+                    break;
+                }
+                case GatewayEvent.MessageDeleteBulk: {
+                    await options.listeners.messageDeleteBulk?.(data.d);
                     break;
                 }
                 case GatewayEvent.UserUpdate: {
