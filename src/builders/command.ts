@@ -2,14 +2,14 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, type Locale, type PermissionFlag } from "../enums";
 
 import type {
-    ApplicationCommandOptionChoiceStructure,
-    ApplicationCommandOptionStructure,
-    BaseApplicationCommandOptionStructure,
-    CommandWithAutocomplete,
+    SubCommandApplicationCommandOptionStructure,
     NumericApplicationCommandOptionStructure,
-    POSTApplicationCommandStructure,
+    ApplicationCommandOptionChoiceStructure,
     StringApplicationCommandOptionStructure,
-    SubCommandApplicationCommandOptionStructure
+    BaseApplicationCommandOptionStructure,
+    ApplicationCommandOptionStructure,
+    POSTApplicationCommandStructure,
+    CommandWithAutocomplete
 } from "../typings";
 
 export function Command({
@@ -56,6 +56,10 @@ function commandComponent(type: ApplicationCommandOptionType, data: Partial<Appl
     };
 }
 
+export function CommandOptions(props: ApplicationCommandOptionChoiceStructure): ApplicationCommandOptionChoiceStructure {
+    return props;
+}
+
 export function CommandSubCommandOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
     & { children: Array<ApplicationCommandOptionStructure> }), "type">): ApplicationCommandOptionStructure {
     let { children: options, ...obj } = props;
@@ -70,16 +74,18 @@ export function CommandSubCommandGroupOption(props: Omit<(Omit<SubCommandApplica
     return commandComponent(ApplicationCommandOptionType.SUB_COMMAND_GROUP, { ...obj, options });
 }
 
-export function CommandStringOption(props: Omit<CommandWithChildren<StringApplicationCommandOptionStructure>
-    | CommandWithAutocomplete<StringApplicationCommandOptionStructure>, "type">): ApplicationCommandOptionStructure {
+type StringCommandOption = Omit<StringApplicationCommandOptionStructure, "type">;
+
+export function CommandStringOption(props: CommandWithChildren<StringCommandOption> | CommandWithAutocomplete<StringCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
     choices != null && !Array.isArray(choices) && (choices = [choices]);
     return commandComponent(ApplicationCommandOptionType.STRING, { ...obj, choices });
 }
 
-export function CommandIntegerOption(props: Omit<CommandWithChildren<NumericApplicationCommandOptionStructure>
-    | CommandWithAutocomplete<NumericApplicationCommandOptionStructure>, "type">): ApplicationCommandOptionStructure {
+type NumericCommandOption = Omit<NumericApplicationCommandOptionStructure, "type">;
+
+export function CommandIntegerOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
     choices != null && !Array.isArray(choices) && (choices = [choices]);
@@ -106,8 +112,7 @@ export function CommandMentionableOption(props: Omit<BaseApplicationCommandOptio
     return commandComponent(ApplicationCommandOptionType.MENTIONABLE, props);
 }
 
-export function CommandNumberOption(props: Omit<CommandWithChildren<NumericApplicationCommandOptionStructure>
-    | CommandWithAutocomplete<NumericApplicationCommandOptionStructure>, "type">): ApplicationCommandOptionStructure {
+export function CommandNumberOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
     choices != null && !Array.isArray(choices) && (choices = [choices]);
