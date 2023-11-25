@@ -26,7 +26,7 @@ import type {
 import { Message } from "./message";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type PartialChannel = Partial<Channel> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };
+export type PartialChannel<T extends Channel = Channel> = Partial<T> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };
 export interface ResolvedChannel extends Channel {
     permissions: string;
 }
