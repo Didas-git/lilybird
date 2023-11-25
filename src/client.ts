@@ -130,4 +130,10 @@ export class Client {
         this.rest.setToken(void 0);
         this.#ws.close();
     }
+
+    public ping(): number {
+        const now = performance.now();
+        this.#ws.ping();
+        return performance.now() - now;
+    }
 }
