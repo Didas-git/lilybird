@@ -138,18 +138,6 @@ export interface GuildWidgetStructure {
     presence_count: number;
 }
 
-export interface WelcomeScreenStructure {
-    description: string | null;
-    welcome_channels: Array<WelcomeScreenChannelStructure>;
-}
-
-export interface WelcomeScreenChannelStructure {
-    channel_id: string;
-    description: string;
-    emoji_id?: string | null;
-    emoji_name?: string | null;
-}
-
 export interface GuildOnboardingStructure {
     guild_id: string;
     prompts: Array<OnboardingPromptStructure>;
