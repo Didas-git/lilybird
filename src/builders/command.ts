@@ -12,7 +12,7 @@ import type {
     CommandWithAutocomplete
 } from "../typings";
 
-export function Command({
+export function SlashCommand({
     name,
     description,
     defaultMemberPermissions,
@@ -60,14 +60,14 @@ export function CommandOptions(props: ApplicationCommandOptionChoiceStructure): 
     return props;
 }
 
-export function CommandSubCommandOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
+export function SubCommandOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
     & { children: Array<ApplicationCommandOptionStructure> }), "type">): ApplicationCommandOptionStructure {
     let { children: options, ...obj } = props;
     !Array.isArray(options) && (options = [options]);
     return commandComponent(ApplicationCommandOptionType.SUB_COMMAND, { ...obj, options });
 }
 
-export function CommandSubCommandGroupOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
+export function SubCommandGroupOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
     & { children: Array<ApplicationCommandOptionStructure> }), "type">): ApplicationCommandOptionStructure {
     let { children: options, ...obj } = props;
     !Array.isArray(options) && (options = [options]);
@@ -76,7 +76,7 @@ export function CommandSubCommandGroupOption(props: Omit<(Omit<SubCommandApplica
 
 type StringCommandOption = Omit<StringApplicationCommandOptionStructure, "type">;
 
-export function CommandStringOption(props: CommandWithChildren<StringCommandOption> | CommandWithAutocomplete<StringCommandOption>): ApplicationCommandOptionStructure {
+export function StringOption(props: CommandWithChildren<StringCommandOption> | CommandWithAutocomplete<StringCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
     choices != null && !Array.isArray(choices) && (choices = [choices]);
@@ -85,40 +85,40 @@ export function CommandStringOption(props: CommandWithChildren<StringCommandOpti
 
 type NumericCommandOption = Omit<NumericApplicationCommandOptionStructure, "type">;
 
-export function CommandIntegerOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
+export function IntegerOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
     choices != null && !Array.isArray(choices) && (choices = [choices]);
     return commandComponent(ApplicationCommandOptionType.INTEGER, { ...obj, choices });
 }
 
-export function CommandBooleanOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
+export function BooleanOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
     return commandComponent(ApplicationCommandOptionType.BOOLEAN, props);
 }
 
-export function CommandUserOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
+export function UserOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
     return commandComponent(ApplicationCommandOptionType.USER, props);
 }
 
-export function CommandChannelOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
+export function ChannelOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
     return commandComponent(ApplicationCommandOptionType.CHANNEL, props);
 }
 
-export function CommandRoleOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
+export function RoleOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
     return commandComponent(ApplicationCommandOptionType.ROLE, props);
 }
 
-export function CommandMentionableOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
+export function MentionableOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
     return commandComponent(ApplicationCommandOptionType.MENTIONABLE, props);
 }
 
-export function CommandNumberOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
+export function NumberOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
     choices != null && !Array.isArray(choices) && (choices = [choices]);
     return commandComponent(ApplicationCommandOptionType.NUMBER, { ...obj, choices });
 }
 
-export function CommandAttachmentOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
+export function AttachmentOption(props: Omit<BaseApplicationCommandOptionStructure, "type">): ApplicationCommandOptionStructure {
     return commandComponent(ApplicationCommandOptionType.ATTACHMENT, props);
 }

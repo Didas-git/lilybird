@@ -5,7 +5,6 @@ import type { ClientOptions } from "./typings";
 export type * from "./typings";
 
 export * from "./factories";
-export * from "./builders";
 export * from "./handlers";
 export * from "./enums";
 export * from "./utils";

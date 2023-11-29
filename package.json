@@ -14,6 +14,11 @@
       "require": "./dist/tsx/index.js",
       "default": "./dist/tsx/index.js"
     },
+    "./jsx": {
+      "types": "./dist/builders/index.d.ts",
+      "require": "./dist/builders/index.js",
+      "default": "./dist/builders/index.js"
+    },
     "./package.json": "./package.json"
   },
   "engines": {
