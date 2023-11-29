@@ -1,5 +1,6 @@
 import { MessageFlags, type MessageType } from "../enums";
-import { MentionChannel } from "./channel";
+import { MentionChannel, channelFactory, type Channel } from "./channel";
+import { GuildMember } from "./guild";
 import { User } from "./user";
 
 import type { Client } from "../client";
@@ -16,7 +17,6 @@ import type {
     RoleStructure,
     ReplyOptions
 } from "../typings";
-import { GuildMember } from "./guild";
 
 export interface MessageEditOptions extends ReplyOptions {
     suppressEmbeds?: boolean;
@@ -69,7 +69,7 @@ export class Message {
         this.mentionsEveryone = message.mention_everyone;
         this.mentions = message.mentions.map((mention) => new User(client, mention));
         this.mentionedRoles = message.mention_roles;
-        this.mentionedChannel = message.mention_channels.map((channel) => new MentionChannel(client, channel));
+        this.mentionedChannel = message.mention_channels?.map((channel) => new MentionChannel(client, channel)) ?? [];
         this.attachments = message.attachments;
         this.embeds = message.embeds;
         this.reactions = message.reactions;
@@ -165,6 +165,10 @@ export class Message {
 
     public async delete(reason?: string): Promise<void> {
         await this.client.rest.deleteMessage(this.channelId, this.id, reason);
+    }
+
+    public async fetchChannel(): Promise<Channel> {
+        return channelFactory(this.client, await this.client.rest.getChannel(this.channelId));
     }
 
     public hasContent(): this is this & { content: string } {

@@ -32,7 +32,7 @@ export interface MessageStructure {
     mention_everyone: boolean;
     mentions: Array<UserStructure>;
     mention_roles: Array<RoleStructure>;
-    mention_channels: Array<ChannelMentionStructure>;
+    mention_channels?: Array<ChannelMentionStructure>;
     // This does not exist without the intent
     attachments: Array<AttachmentStructure>;
     // This does not exist without the intent
