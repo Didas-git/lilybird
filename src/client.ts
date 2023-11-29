@@ -131,9 +131,15 @@ export class Client {
         this.#ws.close();
     }
 
-    public ping(): number {
-        const now = performance.now();
-        this.#ws.ping();
-        return performance.now() - now;
+    /** Both are returned in `ms` */
+    public async ping(): Promise<{ ws: number, rest: number }> {
+        const start = performance.now();
+        await this.rest.getGateway();
+        const final = Math.floor(performance.now() - start);
+
+        return {
+            ws: await this.#ws.ping(),
+            rest: final
+        };
     }
 }

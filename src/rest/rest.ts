@@ -128,6 +128,10 @@ export class REST {
         return <T>await response.json();
     }
 
+    public async getGateway(): Promise<{ url: string }> {
+        return await this.#makeRequest("GET", "gateway");
+    }
+
     public async getGlobalApplicationCommands(clientId: string): Promise<Array<LocalizedGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations: true): Promise<Array<LocalizationGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations: boolean = false): Promise<Array<LocalizationGlobalApplicationCommandStructure | LocalizedGlobalApplicationCommandStructure>> {

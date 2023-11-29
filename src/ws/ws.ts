@@ -195,8 +195,16 @@ export class WebSocketManager {
         this.#ws.send(JSON.stringify(payload));
     }
 
-    public ping(): void {
-        this.#ws.ping();
+    /** Returns time taken in ms */
+    public async ping(): Promise<number> {
+        return new Promise((res) => {
+            this.#ws.addEventListener("pong", () => {
+                res(Math.round(performance.now() - start));
+            }, { once: true });
+
+            const start = performance.now();
+            this.#ws.ping();
+        });
     }
 
     public set options(options: Partial<ManagerOptions>) {
