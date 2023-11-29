@@ -8,6 +8,7 @@ export * from "./factories";
 export * from "./builders";
 export * from "./handlers";
 export * from "./enums";
+export * from "./utils";
 
 export async function createClient(options: ClientOptions): Promise<Client> {
     return new Promise((res) => {

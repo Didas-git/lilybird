@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { type PartialChannel, channelFactory } from "./channel";
 import { GuildMember } from "./guild";
+import { Message } from "./message";
 import { User } from "./user";
 
 import {
@@ -166,9 +167,9 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         });
     }
 
-    public async followUp(content: string, options?: InteractionReplyOptions): Promise<void>;
-    public async followUp(options: InteractionReplyOptions): Promise<void>;
-    public async followUp(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
+    public async followUp(content: string, options?: InteractionReplyOptions): Promise<Message>;
+    public async followUp(options: InteractionReplyOptions): Promise<Message>;
+    public async followUp(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<Message> {
         let flags = 0;
 
         let data: InteractionCallbackData;
@@ -203,7 +204,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
             };
         }
 
-        await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data);
+        return new Message(this.client, await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data));
     }
 
     public async editReply(content: string, options?: InteractionEditOptions): Promise<void>;
@@ -215,6 +216,25 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
                 ...options
             }
             : content);
+    }
+
+    public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<void>;
+    public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<void>;
+    public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
+        await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, typeof content === "string"
+            ? {
+                content,
+                ...options
+            }
+            : content);
+    }
+
+    public async deleteReply(): Promise<void> {
+        await this.client.rest.deleteOriginalInteractionResponse(this.client.application.id, this.token);
+    }
+
+    public async deleteFollowUp(messageId: string): Promise<void> {
+        await this.client.rest.deleteFollowupMessage(this.client.application.id, this.token, messageId);
     }
 
     public isPingInteraction(): this is Interaction<undefined> {

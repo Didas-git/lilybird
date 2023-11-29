@@ -217,7 +217,7 @@ export class REST {
         return await this.#makeRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/@original`);
     }
 
-    public async createFollowupMessage(clientId: string, interactionToken: string, body: ExecuteWebhookStructure): Promise<null> {
+    public async createFollowupMessage(clientId: string, interactionToken: string, body: ExecuteWebhookStructure): Promise<MessageStructure> {
         return await this.#makeRequest("POST", `webhooks/${clientId}/${interactionToken}`, body);
     }
 
