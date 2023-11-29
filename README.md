@@ -127,9 +127,6 @@ Attachments work just like [embeds and components](#embeds--components) but they
 
 In short, just pass the `attachments` property if you want to override something.
 
-> **Note**
-> Passing a string to `path` is not working properly yet so we highly recommend passing a BunFile
-
 ```tsx
 const attachment = (
     <Attachment path={Bun.file(join(import.meta.dir, "../shiro.png"))} name="shiro.png" />

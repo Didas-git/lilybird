@@ -14,8 +14,7 @@ export function Attachment({
     name: string
 }): Attachment {
     return {
-        // @ts-expect-error This works in bun
-        file: typeof path === "string" ? Bun.file(`${import.meta.dir}/${path}`) : path,
+        file: typeof path === "string" ? Bun.file(path) : path,
         name
     };
 }
