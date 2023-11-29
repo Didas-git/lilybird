@@ -12,7 +12,7 @@ import type {
     CommandWithAutocomplete
 } from "../typings";
 
-export function SlashCommand({
+export function ApplicationCommand({
     name,
     description,
     defaultMemberPermissions,
