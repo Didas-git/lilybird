@@ -1,6 +1,5 @@
 import type { AllowedMentionsStructure, AttachmentStructure, EmbedStructure, OverwriteStructure } from "../shared";
 import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "../../enums";
-import { type Attachment } from "../../builders";
 
 import type {
     MessageComponentStructure,
@@ -9,7 +8,8 @@ import type {
     ThreadMemberStructure,
     AutoArchiveDuration,
     ForumTagStructure,
-    ChannelStructure
+    ChannelStructure,
+    Attachment
 } from "..";
 
 export interface ModifyDMChannelStructure {

@@ -1,5 +1,4 @@
-import type { AttachmentStructure, EmbedStructure, MessageComponentStructure } from "..";
-import type { Attachment } from "../../builders";
+import type { Attachment, AttachmentStructure, EmbedStructure, MessageComponentStructure } from "..";
 
 export interface ReplyOptions {
     content?: string;

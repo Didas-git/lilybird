@@ -1,10 +1,9 @@
-import type { Attachment } from "../../builders";
-
 import type {
     AllowedMentionsStructure,
     AttachmentStructure,
     MessageComponentStructure,
-    EmbedStructure
+    EmbedStructure,
+    Attachment
 } from "../";
 
 import type {

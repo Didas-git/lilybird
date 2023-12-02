@@ -1,62 +1,16 @@
 {
-  "name": "lilybird",
-  "version": "0.2.4",
-  "description": "A bun-first discord client written in TS",
-  "main": "./dist/index.js",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
-    },
-    "./jsx-runtime": {
-      "types": "./dist/tsx/index.d.ts",
-      "require": "./dist/tsx/index.js",
-      "default": "./dist/tsx/index.js"
-    },
-    "./jsx": {
-      "types": "./dist/builders/index.d.ts",
-      "require": "./dist/builders/index.js",
-      "default": "./dist/builders/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "engines": {
-    "node": ">=21"
-  },
-  "files": [
-    "./dist"
-  ],
-  "scripts": {
-    "lint": "eslint src/**/*.ts",
-    "build": "rm -rf dist && tsc",
-    "build:lint": "bun run lint && bun run build"
-  },
+  "private": true,
+  "author": "DidaS",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Didas-git/lilybird"
   },
-  "keywords": [
-    "discord",
-    "wrapper",
-    "client",
-    "discord-client",
-    "discord-wrapper",
-    "bun",
-    "bun-first"
-  ],
-  "author": "DidaS",
-  "license": "MIT",
+  "homepage": "https://github.com/Didas-git/lilybird#readme",
   "bugs": {
     "url": "https://github.com/Didas-git/lilybird/issues"
   },
-  "homepage": "https://github.com/Didas-git/lilybird#readme",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "bun-types": "^1.0.14",
-    "eslint": "^8.54.0",
-    "eslint-plugin-tsdoc": "^0.2.17",
-    "typescript": "^5.3.2"
-  }
+  "workspaces": [
+    "packages/*"
+  ]
 }

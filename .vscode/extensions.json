@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "biomejs.biome",
+        "oven.bun-vscode",
+        "astro-build.astro-vscode",
+        "unifiedjs.vscode-mdx"
+    ]
+}

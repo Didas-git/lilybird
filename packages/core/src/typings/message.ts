@@ -1,3 +1,4 @@
+import { BunFile } from "bun";
 import type { MessageActivityType, MessageFlags, MessageType } from "../enums";
 
 import type {
@@ -17,6 +18,11 @@ import type {
     UserStructure,
     RoleStructure
 } from ".";
+
+export interface Attachment {
+    file: BunFile;
+    name: string;
+}
 
 export interface MessageStructure {
     id: string;
