@@ -7,7 +7,7 @@ optional = false
 dev = true
 
 # whether to install peerDependencies
-peer = true
+peer = false
 
 [test]
 

@@ -19,15 +19,17 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.0.14"
+    "bun": ">=1.0.14",
+    "node": ">=21.0.0"
   },
   "files": [
     "./dist"
   ],
   "scripts": {
-    "lint": "eslint src/**/*.ts",
-    "build": "rm -rf dist && tsc",
-    "build:lint": "bun run lint && bun run build"
+    "lint": "biome lint .",
+    "format": "biome format .",
+    "check": "biome check --verbose .",
+    "build": "rm -rf dist && tsc"
   },
   "repository": {
     "type": "git",
@@ -38,12 +40,17 @@
     "url": "https://github.com/Didas-git/lilybird/issues"
   },
   "keywords": [
+    "lilybird",
+    "jsx",
+    "lilybird-jsx",
+    "tsx",
     "discord",
     "wrapper",
     "client",
     "discord-client",
     "discord-wrapper",
     "bun",
+    "bunjs",
     "bun-first"
   ],
   "peerDependencies": {
