@@ -46,7 +46,7 @@
     "bun",
     "bun-first"
   ],
-  "dependencies": {
+  "peerDependencies": {
     "lilybird": "workspace:*"
   },
   "devDependencies": {
