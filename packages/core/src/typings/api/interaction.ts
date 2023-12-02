@@ -1,4 +1,4 @@
-import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, Attachment } from "../";
+import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "../";
 
 import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "../../enums";
 
@@ -155,7 +155,7 @@ export interface MessageCallbackDataStructure {
     flags?: number;
     components?: Array<MessageComponentStructure>;
     attachments?: Array<Partial<AttachmentStructure>>;
-    files?: Array<Attachment>;
+    files?: Array<LilybirdAttachment>;
 }
 
 export interface AutocompleteCallbackDataStructure {

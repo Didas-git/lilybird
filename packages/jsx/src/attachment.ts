@@ -1,15 +1,15 @@
-import { Attachment as Att } from "lilybird";
-import type { BunFile } from "bun";
+import { LilybirdAttachment } from "lilybird";
 
-export function Attachment({
-    path,
-    name,
-}: {
-    path: string | BunFile;
-    name: string;
-}): Att {
+export function Attachment(
+    props:
+        | LilybirdAttachment
+        | {
+              path: string;
+              name: string;
+          },
+): LilybirdAttachment {
     return {
-        file: typeof path === "string" ? Bun.file(path) : path,
-        name,
+        file: "path" in props ? Bun.file(props.path) : props.file,
+        name: props.name,
     };
 }

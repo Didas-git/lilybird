@@ -1,4 +1,3 @@
-import { BunFile } from "bun";
 import type { MessageActivityType, MessageFlags, MessageType } from "../enums";
 
 import type {
@@ -19,8 +18,8 @@ import type {
     RoleStructure,
 } from ".";
 
-export interface Attachment {
-    file: BunFile;
+export interface LilybirdAttachment {
+    file: Blob;
     name: string;
 }
 

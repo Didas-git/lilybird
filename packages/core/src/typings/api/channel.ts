@@ -1,7 +1,7 @@
 import type { AllowedMentionsStructure, AttachmentStructure, EmbedStructure, OverwriteStructure } from "../shared";
 import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "../../enums";
 
-import type { MessageComponentStructure, MessageReferenceStructure, DefaultReactionStructure, ThreadMemberStructure, AutoArchiveDuration, ForumTagStructure, ChannelStructure, Attachment } from "..";
+import type { MessageComponentStructure, MessageReferenceStructure, DefaultReactionStructure, ThreadMemberStructure, AutoArchiveDuration, ForumTagStructure, ChannelStructure, LilybirdAttachment } from "..";
 
 export interface ModifyDMChannelStructure {
     name?: string;
@@ -61,7 +61,7 @@ export interface CreateMessageStructure {
     message_reference?: MessageReferenceStructure;
     components?: Array<MessageComponentStructure>;
     sticker_ids?: Array<string>;
-    files?: Array<Attachment>;
+    files?: Array<LilybirdAttachment>;
     payload_json?: string;
     attachments?: Array<Partial<AttachmentStructure>>;
     flags?: number;
@@ -73,7 +73,7 @@ export interface EditMessageStructure {
     flags?: number;
     allowed_mentions?: AllowedMentionsStructure;
     components?: Array<MessageComponentStructure>;
-    files?: Array<Attachment>;
+    files?: Array<LilybirdAttachment>;
     payload_json?: string;
     attachments?: Array<AttachmentStructure>;
 }
@@ -110,7 +110,7 @@ export interface CreateThreadStructure extends CreateThreadFromMessageStructure 
 export interface CreateForumMediaThreadStructure extends CreateThreadFromMessageStructure {
     message: ForumThreadMessageParamsStructure;
     applied_tags?: Array<string>;
-    files?: Array<Attachment>;
+    files?: Array<LilybirdAttachment>;
     payload_json?: string;
 }
 
