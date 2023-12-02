@@ -12,9 +12,9 @@
       "default": "./dist/index.js"
     },
     "./jsx-runtime": {
-      "types": "./dist/tsx/index.d.ts",
-      "require": "./dist/tsx/index.js",
-      "default": "./dist/tsx/index.js"
+      "types": "./dist/runtime/index.d.ts",
+      "require": "./dist/runtime/index.js",
+      "default": "./dist/runtime/index.js"
     },
     "./package.json": "./package.json"
   },
