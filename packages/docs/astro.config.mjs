@@ -5,10 +5,26 @@ import starlight from "@astrojs/starlight";
 export default defineConfig({
     integrations: [
         starlight({
-            title: "My Docs",
+            title: "Lilybird",
             social: {
-                github: "https://github.com/withastro/starlight",
+                github: "https://github.com/Didas-git/lilybird",
             },
+            head: [
+                {
+                    tag: "link",
+                    attrs: {
+                        type: "application/json+oembed",
+                        href: "oembed/main.json"
+                    }
+                },
+                {
+                    tag: "meta",
+                    attrs: {
+                        name: "theme-color",
+                        content: "#ff00ef"
+                    }
+                }
+            ],
             sidebar: [
                 {
                     label: "Guides",
