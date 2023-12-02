@@ -1,16 +1,7 @@
 import type { AllowedMentionsStructure, AttachmentStructure, EmbedStructure, OverwriteStructure } from "../shared";
 import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "../../enums";
 
-import type {
-    MessageComponentStructure,
-    MessageReferenceStructure,
-    DefaultReactionStructure,
-    ThreadMemberStructure,
-    AutoArchiveDuration,
-    ForumTagStructure,
-    ChannelStructure,
-    Attachment
-} from "..";
+import type { MessageComponentStructure, MessageReferenceStructure, DefaultReactionStructure, ThreadMemberStructure, AutoArchiveDuration, ForumTagStructure, ChannelStructure, Attachment } from "..";
 
 export interface ModifyDMChannelStructure {
     name?: string;
@@ -57,7 +48,7 @@ export interface GetChannelMessagesStructure {
     /**
      *  0-100
      * @defaultValue 50
-    */
+     */
     limit?: number;
 }
 

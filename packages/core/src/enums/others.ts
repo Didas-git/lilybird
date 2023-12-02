@@ -29,10 +29,10 @@ export enum Locale {
     ChineseChina = "zh-CN",
     Japanese = "ja",
     ChineseTaiwan = "zh-TW",
-    Korean = "ko"
+    Korean = "ko",
 }
 
 export enum MembershipState {
     INVITED = 1,
-    ACCEPTED
+    ACCEPTED,
 }

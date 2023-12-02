@@ -57,15 +57,25 @@ export class GuildMember {
         this.pending = member.pending ?? false;
         this.permissions = member.permissions;
 
-        member.user && (this.user = new User(client, member.user));
-        member.premium_since && (this.premiumSince = new Date(member.premium_since));
-        member.communication_disabled_until && (this.communicationDisabledUntil = new Date(member.communication_disabled_until));
+        if (typeof member.user !== "undefined") {
+            this.user = new User(client, member.user);
+        }
+        if (member.premium_since != null) {
+            this.premiumSince = new Date(member.premium_since);
+        }
+        if (member.communication_disabled_until != null) {
+            this.communicationDisabledUntil = new Date(member.communication_disabled_until);
+        }
 
-        if ("guild_id" in member) this.guildId = <string>member.guild_id;
+        if ("guild_id" in member) {
+            this.guildId = <string>member.guild_id;
+        }
     }
 
     public async modify(options: ModifyMemberOptions): Promise<void> {
-        if (!this.guildId) throw new Error("Something went wrong trying to modify the member");
+        if (!this.guildId) {
+            throw new Error("Something went wrong trying to modify the member");
+        }
 
         if (typeof options.communication_disabled_until !== "undefined" && options.communication_disabled_until instanceof Date) {
             options.communication_disabled_until = options.communication_disabled_until.toISOString();

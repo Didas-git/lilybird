@@ -4,19 +4,10 @@ import { GuildMember } from "./guild";
 import { Message } from "./message";
 import { User } from "./user";
 
-import {
-    ApplicationCommandOptionType,
-    InteractionCallbackType,
-    InteractionType,
-    MessageFlags
-} from "../enums";
+import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums";
 
 import type { Client } from "../client";
-import type {
-    ApplicationCommandType,
-    ComponentType,
-    Locale
-} from "../enums";
+import type { ApplicationCommandType, ComponentType, Locale } from "../enums";
 
 import type {
     AutocompleteCallbackDataStructure,
@@ -33,12 +24,14 @@ import type {
     InteractionStructure,
     MessageStructure,
     EmojiStructure,
-    ReplyOptions
+    ReplyOptions,
 } from "../typings";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
     const data = interactionDataFactory(interaction);
-    if ("guild_id" in interaction) return new GuildInteraction(client, interaction, true, data);
+    if ("guild_id" in interaction) {
+        return new GuildInteraction(client, interaction, true, data);
+    }
     return new DMInteraction(client, interaction, false, data);
 }
 
@@ -71,7 +64,8 @@ export interface InteractionReplyOptions extends ReplyOptions {
     suppressEmbeds?: boolean;
 }
 
-export interface InteractionEditOptions extends ReplyOptions { }
+// biome-ignore lint/suspicious/noEmptyInterface: This is for future proofing
+export interface InteractionEditOptions extends ReplyOptions {}
 
 export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {
     public readonly client: Client;
@@ -79,7 +73,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
     public readonly applicationId: string;
     public readonly type: InteractionType;
     public readonly token: string;
-    public readonly version: 1 = 1;
+    public readonly version = 1;
     /** This is only undefined if type is PING */
     public readonly locale: Locale | undefined;
     public readonly entitlements: Array<EntitlementStructure>;
@@ -88,12 +82,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
 
     readonly #inGuild: boolean;
 
-    protected constructor(
-        client: Client,
-        interaction: GuildInteractionStructure | DMInteractionStructure,
-        isGuild: boolean,
-        data?: T
-    ) {
+    protected constructor(client: Client, interaction: GuildInteractionStructure | DMInteractionStructure, isGuild: boolean, data?: T) {
         this.#inGuild = isGuild;
 
         this.client = client;
@@ -106,7 +95,9 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
 
         this.data = <never>data;
 
-        "message" in interaction && (this.message = <never>interaction.message);
+        if ("message" in interaction) {
+            this.message = <never>interaction.message;
+        }
     }
 
     public async reply(content: string, options?: InteractionReplyOptions): Promise<void>;
@@ -119,51 +110,59 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
             if (typeof options !== "undefined") {
                 const { ephemeral, suppressEmbeds, ...obj } = options;
 
-                if (ephemeral) flags |= MessageFlags.EPHEMERAL;
-                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+                if (ephemeral) {
+                    flags |= MessageFlags.EPHEMERAL;
+                }
+                if (suppressEmbeds) {
+                    flags |= MessageFlags.SUPPRESS_EMBEDS;
+                }
 
                 data = {
                     ...obj,
                     content,
-                    flags
+                    flags,
                 };
             } else {
                 data = {
                     content,
-                    flags
+                    flags,
                 };
             }
         } else {
             const { ephemeral, suppressEmbeds, ...obj } = content;
 
-            if (ephemeral) flags |= MessageFlags.EPHEMERAL;
-            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (ephemeral) {
+                flags |= MessageFlags.EPHEMERAL;
+            }
+            if (suppressEmbeds) {
+                flags |= MessageFlags.SUPPRESS_EMBEDS;
+            }
 
             data = {
                 ...obj,
-                flags
+                flags,
             };
         }
 
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data
+            data,
         });
     }
 
     public async respond(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
-            data: { choices }
+            data: { choices },
         });
     }
 
-    public async deferReply(ephemeral: boolean = false): Promise<void> {
+    public async deferReply(ephemeral = false): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
             data: {
-                flags: ephemeral ? MessageFlags.EPHEMERAL : 0
-            }
+                flags: ephemeral ? MessageFlags.EPHEMERAL : 0,
+            },
         });
     }
 
@@ -178,29 +177,37 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
             if (typeof options !== "undefined") {
                 const { ephemeral, suppressEmbeds, ...obj } = options;
 
-                if (ephemeral) flags |= MessageFlags.EPHEMERAL;
-                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+                if (ephemeral) {
+                    flags |= MessageFlags.EPHEMERAL;
+                }
+                if (suppressEmbeds) {
+                    flags |= MessageFlags.SUPPRESS_EMBEDS;
+                }
 
                 data = {
                     ...obj,
                     content,
-                    flags
+                    flags,
                 };
             } else {
                 data = {
                     content,
-                    flags
+                    flags,
                 };
             }
         } else {
             const { ephemeral, suppressEmbeds, ...obj } = content;
 
-            if (ephemeral) flags |= MessageFlags.EPHEMERAL;
-            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (ephemeral) {
+                flags |= MessageFlags.EPHEMERAL;
+            }
+            if (suppressEmbeds) {
+                flags |= MessageFlags.SUPPRESS_EMBEDS;
+            }
 
             data = {
                 ...obj,
-                flags
+                flags,
             };
         }
 
@@ -210,23 +217,32 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
     public async editReply(content: string, options?: InteractionEditOptions): Promise<void>;
     public async editReply(options: InteractionEditOptions): Promise<void>;
     public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
-        await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, typeof content === "string"
-            ? {
-                content,
-                ...options
-            }
-            : content);
+        await this.client.rest.editOriginalInteractionResponse(
+            this.client.user.id,
+            this.token,
+            typeof content === "string"
+                ? {
+                      content,
+                      ...options,
+                  }
+                : content,
+        );
     }
 
     public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<void>;
     public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<void>;
     public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
-        await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, typeof content === "string"
-            ? {
-                content,
-                ...options
-            }
-            : content);
+        await this.client.rest.editFollowupMessage(
+            this.client.user.id,
+            this.token,
+            messageId,
+            typeof content === "string"
+                ? {
+                      content,
+                      ...options,
+                  }
+                : content,
+        );
     }
 
     public async deleteReply(): Promise<void> {
@@ -274,6 +290,7 @@ export interface GuildInteraction<T extends InteractionData, M extends undefined
     isModalSubmitInteraction: () => this is GuildInteraction<ModalSubmitData>;
 }
 
+// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: This is intentional
 export class GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     public readonly guildId: string;
     public readonly channel: PartialChannel;
@@ -282,12 +299,7 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
     public readonly appPermissions: string;
     public readonly guildLocale: Locale;
 
-    public constructor(
-        client: Client,
-        interaction: GuildInteractionStructure,
-        isDM: boolean,
-        data?: T
-    ) {
+    public constructor(client: Client, interaction: GuildInteractionStructure, isDM: boolean, data?: T) {
         super(client, interaction, isDM, data);
 
         this.guildId = interaction.guild_id;
@@ -307,15 +319,11 @@ export interface DMInteraction<T extends InteractionData, M extends undefined | 
     isModalSubmitInteraction: () => this is DMInteraction<ModalSubmitData>;
 }
 
+// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: This is intentional
 export class DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     public readonly user: User;
 
-    public constructor(
-        client: Client,
-        interaction: DMInteractionStructure,
-        isDM: boolean,
-        data?: T
-    ) {
+    public constructor(client: Client, interaction: DMInteractionStructure, isDM: boolean, data?: T) {
         super(client, interaction, isDM, data);
 
         this.user = new User(client, interaction.user);
@@ -377,7 +385,9 @@ class ApplicationCommandOptions<T> {
     }
 
     #parseOptions(options: ApplicationCommandDataStructure["options"]): void {
-        if (!options) return;
+        if (!options) {
+            return;
+        }
         for (let i = 0, length = options.length; i < length; i++) {
             const option = options[i];
 
@@ -389,53 +399,72 @@ class ApplicationCommandOptions<T> {
             switch (option.type) {
                 case ApplicationCommandOptionType.SUB_COMMAND: {
                     this.#subCommand = option.name;
-                    return this.#parseOptions(option.options);
+                    this.#parseOptions(option.options);
+                    return;
                 }
                 case ApplicationCommandOptionType.SUB_COMMAND_GROUP: {
                     this.#subCommandGroup = option.name;
-                    return this.#parseOptions(option.options);
+                    this.#parseOptions(option.options);
+                    return;
                 }
 
                 case ApplicationCommandOptionType.STRING: {
-                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#stringOptions.set(option.name, option.value);
                     break;
                 }
 
                 case ApplicationCommandOptionType.INTEGER: {
-                    if (typeof option.value !== "number") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "number") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#integerOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.NUMBER: {
-                    if (typeof option.value !== "number") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "number") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#numberOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.BOOLEAN: {
-                    if (typeof option.value !== "boolean") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "boolean") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#booleanOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.USER: {
-                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#userOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.CHANNEL: {
-                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#channelOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.ROLE: {
-                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#roleOptions.set(option.name, option.value);
                     break;
                 }
-                case ApplicationCommandOptionType.MENTIONABLE: { }
-                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
+                case ApplicationCommandOptionType.MENTIONABLE: {
+                    if (typeof option.value !== "string") {
+                        throw new Error("Something unexpected happened");
+                    }
                     this.#mentionableOptions.set(option.name, option.value);
                     break;
+                }
                 case ApplicationCommandOptionType.ATTACHMENT:
             }
         }
@@ -453,81 +482,97 @@ class ApplicationCommandOptions<T> {
         return this.#subCommandGroup;
     }
 
-    public getString(name: string): string | void;
+    public getString(name: string): string | undefined;
     public getString(name: string, assert: true): string;
-    public getString(name: string, assert: boolean = false): string | void {
+    public getString(name: string, assert = false): string | undefined {
         if (assert) {
-            if (!this.#stringOptions.has(name)) throw new NotFoundError("String");
+            if (!this.#stringOptions.has(name)) {
+                throw new NotFoundError("String");
+            }
         }
 
         return this.#stringOptions.get(name);
     }
 
-    public getNumber(name: string): number | void;
+    public getNumber(name: string): number | undefined;
     public getNumber(name: string, assert: true): number;
-    public getNumber(name: string, assert: boolean = false): number | void {
+    public getNumber(name: string, assert = false): number | undefined {
         if (assert) {
-            if (!this.#numberOptions.has(name)) throw new NotFoundError("Number");
+            if (!this.#numberOptions.has(name)) {
+                throw new NotFoundError("Number");
+            }
         }
 
         return this.#numberOptions.get(name);
     }
 
-    public getInteger(name: string): number | void;
+    public getInteger(name: string): number | undefined;
     public getInteger(name: string, assert: true): number;
-    public getInteger(name: string, assert: boolean = false): number | void {
+    public getInteger(name: string, assert = false): number | undefined {
         if (assert) {
-            if (!this.#integerOptions.has(name)) throw new NotFoundError("Integer");
+            if (!this.#integerOptions.has(name)) {
+                throw new NotFoundError("Integer");
+            }
         }
 
         return this.#integerOptions.get(name);
     }
 
-    public getBoolean(name: string): boolean | void;
+    public getBoolean(name: string): boolean | undefined;
     public getBoolean(name: string, assert: true): boolean;
-    public getBoolean(name: string, assert: boolean = false): boolean | void {
+    public getBoolean(name: string, assert = false): boolean | undefined {
         if (assert) {
-            if (!this.#booleanOptions.has(name)) throw new NotFoundError("Boolean");
+            if (!this.#booleanOptions.has(name)) {
+                throw new NotFoundError("Boolean");
+            }
         }
 
         return this.#booleanOptions.get(name);
     }
 
-    public getUser(name: string): string | void;
+    public getUser(name: string): string | undefined;
     public getUser(name: string, assert: true): string;
-    public getUser(name: string, assert: boolean = false): string | void {
+    public getUser(name: string, assert = false): string | undefined {
         if (assert) {
-            if (!this.#userOptions.has(name)) throw new NotFoundError("User");
+            if (!this.#userOptions.has(name)) {
+                throw new NotFoundError("User");
+            }
         }
 
         return this.#userOptions.get(name);
     }
 
-    public getChannel(name: string): string | void;
+    public getChannel(name: string): string | undefined;
     public getChannel(name: string, assert: true): string;
-    public getChannel(name: string, assert: boolean = false): string | void {
+    public getChannel(name: string, assert = false): string | undefined {
         if (assert) {
-            if (!this.#channelOptions.has(name)) throw new NotFoundError("Channel");
+            if (!this.#channelOptions.has(name)) {
+                throw new NotFoundError("Channel");
+            }
         }
 
         return this.#channelOptions.get(name);
     }
 
-    public getRole(name: string): string | void;
+    public getRole(name: string): string | undefined;
     public getRole(name: string, assert: true): string;
-    public getRole(name: string, assert: boolean = false): string | void {
+    public getRole(name: string, assert = false): string | undefined {
         if (assert) {
-            if (!this.#roleOptions.has(name)) throw new NotFoundError("Role");
+            if (!this.#roleOptions.has(name)) {
+                throw new NotFoundError("Role");
+            }
         }
 
         return this.#roleOptions.get(name);
     }
 
-    public getMentionable(name: string): string | void;
+    public getMentionable(name: string): string | undefined;
     public getMentionable(name: string, assert: true): string;
-    public getMentionable(name: string, assert: boolean = false): string | void {
+    public getMentionable(name: string, assert = false): string | undefined {
         if (assert) {
-            if (!this.#mentionableOptions.has(name)) throw new NotFoundError("Mentionable");
+            if (!this.#mentionableOptions.has(name)) {
+                throw new NotFoundError("Mentionable");
+            }
         }
 
         return this.#mentionableOptions.get(name);

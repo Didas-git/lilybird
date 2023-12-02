@@ -1,12 +1,6 @@
 import type { GuildMemberStructure, OverwriteStructure, UserStructure } from ".";
 
-import type {
-    VideoQualityMode,
-    ForumLayoutType,
-    SortOrderType,
-    ChannelFlags,
-    ChannelType
-} from "../enums";
+import type { VideoQualityMode, ForumLayoutType, SortOrderType, ChannelFlags, ChannelType } from "../enums";
 
 export interface BaseChannelStructure {
     id: string;
@@ -111,7 +105,8 @@ export interface ProbablyBaseChannelsStructure extends GuildChannelStructure {
     type: ChannelType.GUILD_STAGE_VOICE | ChannelType.GUILD_DIRECTORY;
 }
 
-export type ChannelStructure = GuildTextChannelStructure
+export type ChannelStructure =
+    | GuildTextChannelStructure
     | GuildAnnouncementChannelStructure
     | GuildVoiceChannelStructure
     | DMChannelStructure

@@ -7,11 +7,7 @@ import type { Awaitable } from "./utils";
 import type { Intents } from "../enums";
 import type { Client } from "../client";
 
-import type {
-    MessageDeleteBulk,
-    MessageDelete,
-    Ready
-} from "./gateway-events";
+import type { MessageDeleteBulk, MessageDelete, Ready } from "./gateway-events";
 
 export interface ClientEventListeners {
     raw?: (data: unknown) => Awaitable<unknown>;

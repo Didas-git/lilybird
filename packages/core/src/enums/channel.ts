@@ -11,38 +11,38 @@ export enum ChannelType {
     GUILD_STAGE_VOICE,
     GUILD_DIRECTORY,
     GUILD_FORUM,
-    GUILD_MEDIA
+    GUILD_MEDIA,
 }
 
 export enum OverwriteType {
     ROLE,
-    MEMBER
+    MEMBER,
 }
 
 export enum VideoQualityMode {
     AUTO = 1,
-    FULL
+    FULL,
 }
 
 export enum ChannelFlags {
     PINNED = 2,
     REQUIRE_TAG = 16,
-    HIDE_MEDIA_DOWNLOAD_OPTIONS = 32768
+    HIDE_MEDIA_DOWNLOAD_OPTIONS = 32768,
 }
 
 export enum SortOrderType {
     LATEST_ACTIVITY,
-    CREATION_DATE
+    CREATION_DATE,
 }
 
 export enum ForumLayoutType {
     NOT_SET,
     LIST_VIEW,
-    GALLERY_VIEW
+    GALLERY_VIEW,
 }
 
 export enum AllowedMentionType {
     RoleMentions = "roles",
     UserMentions = "users",
-    EveryoneMentions = "everyone"
+    EveryoneMentions = "everyone",
 }

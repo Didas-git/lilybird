@@ -5,18 +5,7 @@ import { User } from "./user";
 
 import type { Client } from "../client";
 
-import type {
-    MessageComponentStructure,
-    CreateMessageStructure,
-    GuildMessageStructure,
-    EditMessageStructure,
-    AttachmentStructure,
-    ReactionStructure,
-    StickerStructure,
-    EmbedStructure,
-    RoleStructure,
-    ReplyOptions
-} from "../typings";
+import type { MessageComponentStructure, CreateMessageStructure, GuildMessageStructure, EditMessageStructure, AttachmentStructure, ReactionStructure, StickerStructure, EmbedStructure, RoleStructure, ReplyOptions } from "../typings";
 
 export interface MessageEditOptions extends ReplyOptions {
     suppressEmbeds?: boolean;
@@ -84,8 +73,13 @@ export class Message {
 
         this.guildId = message.guild_id;
 
-        message.edited_timestamp && (this.editedTimestamp = new Date(message.edited_timestamp));
-        message.member && (this.member = new GuildMember(client, <never>message.member));
+        if (message.edited_timestamp != null) {
+            this.editedTimestamp = new Date(message.edited_timestamp);
+        }
+
+        if (typeof message.member !== "undefined") {
+            this.member = new GuildMember(client, <never>message.member);
+        }
     }
 
     public async reply(content: string, options?: MessageReplyOptions): Promise<Message>;
@@ -98,12 +92,16 @@ export class Message {
             if (typeof options !== "undefined") {
                 const { suppressEmbeds, suppressNotifications, ...obj } = options;
 
-                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
-                if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+                if (suppressEmbeds) {
+                    flags |= MessageFlags.SUPPRESS_EMBEDS;
+                }
+                if (suppressNotifications) {
+                    flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+                }
 
                 data = {
                     ...obj,
-                    content
+                    content,
                 };
             } else {
                 data = { content };
@@ -111,19 +109,26 @@ export class Message {
         } else {
             const { suppressEmbeds, suppressNotifications, ...obj } = content;
 
-            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
-            if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+            if (suppressEmbeds) {
+                flags |= MessageFlags.SUPPRESS_EMBEDS;
+            }
+            if (suppressNotifications) {
+                flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+            }
 
             data = obj;
         }
 
-        return new Message(this.client, await this.client.rest.createMessage(this.channelId, {
-            ...data,
-            flags,
-            message_reference: {
-                message_id: this.id
-            }
-        }));
+        return new Message(
+            this.client,
+            await this.client.rest.createMessage(this.channelId, {
+                ...data,
+                flags,
+                message_reference: {
+                    message_id: this.id,
+                },
+            }),
+        );
     }
 
     public async edit(content: string, options?: MessageEditOptions): Promise<Message>;
@@ -136,30 +141,34 @@ export class Message {
             if (typeof options !== "undefined") {
                 const { suppressEmbeds, ...obj } = options;
 
-                if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
+                if (suppressEmbeds) {
+                    flags = MessageFlags.SUPPRESS_EMBEDS;
+                }
 
                 data = <never>{
                     ...obj,
                     content,
-                    flags
+                    flags,
                 };
             } else {
                 data = { content, flags };
             }
         } else {
             const { suppressEmbeds, ...obj } = content;
-            if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
+            if (suppressEmbeds) {
+                flags = MessageFlags.SUPPRESS_EMBEDS;
+            }
 
             data = <never>{
                 ...obj,
-                flags
+                flags,
             };
         }
 
         return new Message(this.client, await this.client.rest.editMessage(this.channelId, this.id, data));
     }
 
-    public async react(emoji: string, isCustomEmoji: boolean = false): Promise<void> {
+    public async react(emoji: string, isCustomEmoji = false): Promise<void> {
         await this.client.rest.createReaction(this.channelId, this.id, emoji, isCustomEmoji);
     }
 

@@ -59,7 +59,7 @@ export enum GatewayEvent {
     UserUpdate = "USER_UPDATE",
     VoiceStateUpdate = "VOICE_STATE_UPDATE",
     VoiceServerUpdate = "VOICE_SERVER_UPDATE",
-    WebhookUpdate = "WEBHOOK_UPDATE"
+    WebhookUpdate = "WEBHOOK_UPDATE",
 }
 
 export enum GatewayOpCode {
@@ -73,7 +73,7 @@ export enum GatewayOpCode {
     RequestGuildMembers,
     InvalidSession,
     Hello,
-    HeartbeatACK
+    HeartbeatACK,
 }
 
 export enum Intents {
@@ -95,7 +95,7 @@ export enum Intents {
     MESSAGE_CONTENT = 32768,
     GUILD_SCHEDULED_EVENTS = 65536,
     AUTO_MODERATION_CONFIGURATION = 1048576,
-    AUTO_MODERATION_EXECUTION = 2097152
+    AUTO_MODERATION_EXECUTION = 2097152,
 }
 
 export enum GatewayCloseEventCode {
@@ -112,5 +112,5 @@ export enum GatewayCloseEventCode {
     ShardingRequired,
     InvalidAPIVersion,
     InvalidIntents,
-    DisallowedIntents
+    DisallowedIntents,
 }

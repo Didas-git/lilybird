@@ -29,7 +29,7 @@ export enum MessageType {
     STAGE_END,
     STAGE_SPEAKER,
     STAGE_TOPIC = 31,
-    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION,
 }
 
 export enum MessageFlags {
@@ -43,11 +43,11 @@ export enum MessageFlags {
     LOADING = 128,
     FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 256,
     SUPPRESS_NOTIFICATIONS = 4096,
-    IS_VOICE_MESSAGE = 8192
+    IS_VOICE_MESSAGE = 8192,
 }
 
 export enum AttachmentFlags {
-    IS_REMIX = 4
+    IS_REMIX = 4,
 }
 
 export enum EmbedType {
@@ -56,24 +56,24 @@ export enum EmbedType {
     Video = "video",
     Gif = "gifv",
     Article = "article",
-    Link = "link"
+    Link = "link",
 }
 
 export enum MessageActivityType {
     JOIN = 1,
     SPECTATE,
     LISTEN,
-    JOIN_REQUEST = 5
+    JOIN_REQUEST = 5,
 }
 
 export enum StickerType {
     STANDARD = 1,
-    GUILD
+    GUILD,
 }
 
 export enum StickerFormatType {
     PNG = 1,
     APNG,
     LOTTIE,
-    GIF
+    GIF,
 }

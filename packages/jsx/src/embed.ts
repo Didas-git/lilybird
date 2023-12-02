@@ -1,34 +1,22 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { EmbedType } from "../enums";
+import { EmbedType } from "lilybird";
 
-import type {
-    EmbedThumbnailStructure,
-    EmbedProviderStructure,
-    EmbedAuthorStructure,
-    EmbedFooterStructure,
-    EmbedFieldStructure,
-    EmbedImageStructure,
-    EmbedVideoStructure,
-    EmbedStructure
-} from "../typings";
+import type { EmbedThumbnailStructure, EmbedProviderStructure, EmbedAuthorStructure, EmbedFooterStructure, EmbedFieldStructure, EmbedImageStructure, EmbedVideoStructure, EmbedStructure } from "lilybird";
 
-function parseEmbedChildren(children: Array<EmbedComponent> | EmbedComponent | undefined):
-    Omit<EmbedStructure, "title"
-        | "type"
-        | "description"
-        | "url"
-        | "timestamp"
-        | "color"
-    > | undefined {
-    if (children == null) return;
-    if (!(children instanceof Array)) return { [children.type]: children.data };
+function parseEmbedChildren(children: Array<EmbedComponent> | EmbedComponent | undefined): Omit<EmbedStructure, "title" | "type" | "description" | "url" | "timestamp" | "color"> | undefined {
+    if (children == null) {
+        return;
+    }
+    if (!Array.isArray(children)) {
+        return { [children.type]: children.data };
+    }
 
     let obj: ReturnType<typeof parseEmbedChildren> & { fields: Array<EmbedFieldStructure> } = { fields: [] };
 
     for (let i = 0, length = children.length; i < length; i++) {
         const child = children[i];
 
-        if (child instanceof Array) {
+        if (Array.isArray(child)) {
             obj = { ...obj, ...parseEmbedChildren(child) };
             continue;
         }
@@ -50,17 +38,21 @@ export function Embed({
     url,
     timestamp,
     color,
-    children
+    children,
 }: {
-    title?: string,
-    description?: string,
-    url?: string,
-    timestamp?: boolean | Date | number,
-    color?: number,
-    children?: Array<EmbedComponent> | EmbedComponent
+    title?: string;
+    description?: string;
+    url?: string;
+    timestamp?: boolean | Date | number;
+    color?: number;
+    children?: Array<EmbedComponent> | EmbedComponent;
 }): EmbedStructure {
-    if (typeof timestamp === "number") timestamp = new Date(timestamp);
-    if (typeof timestamp === "boolean") timestamp = new Date();
+    if (typeof timestamp === "number") {
+        timestamp = new Date(timestamp);
+    }
+    if (typeof timestamp === "boolean") {
+        timestamp = new Date();
+    }
 
     return {
         title,
@@ -69,7 +61,7 @@ export function Embed({
         url,
         timestamp: timestamp?.toISOString(),
         color,
-        ...parseEmbedChildren(children)
+        ...parseEmbedChildren(children),
     };
 }
 

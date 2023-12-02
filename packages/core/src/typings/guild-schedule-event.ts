@@ -1,10 +1,6 @@
 import type { UserStructure } from ".";
 
-import type {
-    GuildScheduledEventPrivacyLevel,
-    GuildScheduledEventEntityTypes,
-    GuildScheduledEventStatus
-} from "../enums";
+import type { GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityTypes, GuildScheduledEventStatus } from "../enums";
 
 export interface GuildScheduleEventStructure {
     id: string;

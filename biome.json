@@ -1,5 +1,13 @@
 {
     "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "files": {
+        "ignore": [
+            ".astro/"
+        ],
+        "include": [
+            "packages/*/src/**/*.ts"
+        ]
+    },
     "json": {
         "formatter": {
             "enabled": false
@@ -14,6 +22,9 @@
         "enabled": false
     },
     "javascript": {
+        "globals": [
+            "Bun"
+        ],
         "formatter": {
             "enabled": true,
             "bracketSameLine": true,
@@ -59,16 +70,15 @@
                 "noShoutyConstants": "warn",
                 "useBlockStatements": "error",
                 "useCollapsedElseIf": "warn",
-                "useNamingConvention": {
-                    "level": "error"
-                },
                 "useShorthandAssign": "error",
-                "useSingleCaseStatement": "warn"
+                "useSingleCaseStatement": "warn",
+                "useEnumInitializers": "off"
             },
             "suspicious": {
                 "recommended": true,
                 "noApproximativeNumericConstant": "warn",
-                "noMisrefactoredShorthandAssign": "warn"
+                "noMisrefactoredShorthandAssign": "warn",
+                "noExplicitAny": "off"
             },
             "nursery": {
                 "noDuplicateJsonKeys": "error",

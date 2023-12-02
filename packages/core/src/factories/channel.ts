@@ -21,11 +21,11 @@ import type {
     OverwriteStructure,
     ForumTagStructure,
     ChannelStructure,
-    ReplyOptions
+    ReplyOptions,
 } from "../typings";
 import { Message } from "./message";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// biome-ignore lint/complexity/noBannedTypes: We don't want functions to be marked as optional
 export type PartialChannel<T extends Channel = Channel> = Partial<T> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };
 export interface ResolvedChannel extends Channel {
     permissions: string;
@@ -34,8 +34,8 @@ export interface ResolvedChannel extends Channel {
 export function channelFactory(client: Client, channel: ChannelStructure): Channel;
 export function channelFactory(client: Client, channel: Partial<ChannelStructure>): PartialChannel;
 export function channelFactory(client: Client, channel: ChannelStructure, resolved: true): ResolvedChannel;
-export function channelFactory(client: Client, channel: ChannelStructure | Partial<ChannelStructure>, resolved: boolean = false): Channel | PartialChannel | ResolvedChannel {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+export function channelFactory(client: Client, channel: ChannelStructure | Partial<ChannelStructure>, resolved = false): Channel | PartialChannel | ResolvedChannel {
+    // biome-ignore lint/style/noNonNullAssertion: `type` is always present even in partial channels
     switch (channel.type!) {
         case ChannelType.GUILD_TEXT: {
             return new GuildTextChannel(client, <never>channel, resolved);
@@ -94,7 +94,9 @@ export class Channel {
         this.flags = channel.flags ?? 0;
 
         if (resolved) {
-            channel.permissions && ((<ResolvedChannel><unknown>this).permissions = channel.permissions);
+            if (typeof channel.permissions !== "undefined") {
+                (<ResolvedChannel>(<unknown>this)).permissions = channel.permissions;
+            }
         }
     }
 
@@ -108,12 +110,16 @@ export class Channel {
             if (typeof options !== "undefined") {
                 const { suppressEmbeds, suppressNotifications, ...obj } = options;
 
-                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
-                if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+                if (suppressEmbeds) {
+                    flags |= MessageFlags.SUPPRESS_EMBEDS;
+                }
+                if (suppressNotifications) {
+                    flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+                }
 
                 data = {
                     ...obj,
-                    content
+                    content,
                 };
             } else {
                 data = { content };
@@ -121,16 +127,23 @@ export class Channel {
         } else {
             const { suppressEmbeds, suppressNotifications, ...obj } = content;
 
-            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
-            if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+            if (suppressEmbeds) {
+                flags |= MessageFlags.SUPPRESS_EMBEDS;
+            }
+            if (suppressNotifications) {
+                flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+            }
 
             data = obj;
         }
 
-        return new Message(this.client, await this.client.rest.createMessage(this.id, {
-            ...data,
-            flags
-        }));
+        return new Message(
+            this.client,
+            await this.client.rest.createMessage(this.id, {
+                ...data,
+                flags,
+            }),
+        );
     }
 
     public isText(): this is GuildTextChannel {
@@ -236,7 +249,7 @@ export class GuildTextChannel extends GuildChannel {
     }
 }
 
-export class GuildAnnouncementChannel extends GuildChannel { }
+export class GuildAnnouncementChannel extends GuildChannel {}
 
 export class GuildVoiceChannel extends Channel {
     public readonly guildId: string;
@@ -299,7 +312,7 @@ export class GroupDMChannel extends DMChannel {
         this.managed = channel.managed;
     }
 
-    public isManaged(): this is GroupDMChannel & { readonly applicationId: string, readonly managed: true } {
+    public isManaged(): this is GroupDMChannel & { readonly applicationId: string; readonly managed: true } {
         return !!this.managed;
     }
 }
@@ -351,8 +364,9 @@ export class ThreadChannel extends Channel {
         this.totalMessageSent = channel.total_message_sent;
         this.defaultThreadRateLimitPerUser = channel.default_thread_rate_limit_per_user ?? 0;
 
-        if (typeof channel.member !== "undefined")
+        if (typeof channel.member !== "undefined") {
             this.member = new ThreadMember(client, channel.member);
+        }
     }
 
     public hasMember(): this is ThreadChannel & { member: ThreadMember } {
@@ -373,8 +387,9 @@ export class ThreadMember {
         this.joinTimestamp = new Date(member.join_timestamp);
         this.flags = member.flags;
 
-        if (typeof member.member !== "undefined")
+        if (typeof member.member !== "undefined") {
             this.member = new GuildMember(client, member.member);
+        }
     }
 }
 

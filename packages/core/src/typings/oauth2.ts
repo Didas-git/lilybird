@@ -1,4 +1,5 @@
-export type OAuthScopes = "activities.read"
+export type OAuthScopes =
+    | "activities.read"
     | "activities.write"
     | "applications.builds.read"
     | "applications.builds.upload"

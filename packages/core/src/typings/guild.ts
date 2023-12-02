@@ -1,24 +1,6 @@
-import type {
-    WelcomeScreenStructure,
-    StickerStructure,
-    EmojiStructure,
-    UserStructure,
-    RoleStructure,
-    OAuthScopes
-} from ".";
+import type { WelcomeScreenStructure, StickerStructure, EmojiStructure, UserStructure, RoleStructure, OAuthScopes } from ".";
 
-import type {
-    DefaultMessageNotificationLevel,
-    ExplicitContentFilterLevel,
-    IntegrationExpireBehavior,
-    SystemChannelFlags,
-    VerificationLevel,
-    GuildMemberFlags,
-    GuildNSFWLevel,
-    PremiumTier,
-    MFALevel,
-    Locale
-} from "../enums";
+import type { DefaultMessageNotificationLevel, ExplicitContentFilterLevel, IntegrationExpireBehavior, SystemChannelFlags, VerificationLevel, GuildMemberFlags, GuildNSFWLevel, PremiumTier, MFALevel, Locale } from "../enums";
 
 export interface UnavailableGuildStructure {
     id: string;
@@ -70,7 +52,8 @@ export interface GuildStructure {
     safety_alerts_channel_id: string | null;
 }
 
-export type GuildFeatures = "ANIMATED_BANNER"
+export type GuildFeatures =
+    | "ANIMATED_BANNER"
     | "ANIMATED_ICON"
     | "APPLICATION_COMMAND_PERMISSIONS_V2"
     | "AUTO_MODERATION"
@@ -98,10 +81,7 @@ export type GuildFeatures = "ANIMATED_BANNER"
     | "VIP_REGIONS"
     | "WELCOME_SCREEN_ENABLED";
 
-export type MutableGuildFeatures = "COMMUNITY"
-    | "DISCOVERABLE"
-    | "INVITES_DISABLED"
-    | "RAID_ALERTS_DISABLED";
+export type MutableGuildFeatures = "COMMUNITY" | "DISCOVERABLE" | "INVITES_DISABLED" | "RAID_ALERTS_DISABLED";
 
 export interface GuildMemberStructure {
     user?: UserStructure;

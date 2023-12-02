@@ -16,7 +16,7 @@ import type {
     EmbedStructure,
     EmojiStructure,
     UserStructure,
-    RoleStructure
+    RoleStructure,
 } from ".";
 
 export interface Attachment {

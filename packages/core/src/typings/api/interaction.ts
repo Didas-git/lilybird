@@ -1,18 +1,6 @@
-import type {
-    AllowedMentionsStructure,
-    AttachmentStructure,
-    MessageComponentStructure,
-    EmbedStructure,
-    Attachment
-} from "../";
+import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, Attachment } from "../";
 
-import type {
-    ApplicationCommandOptionType,
-    InteractionCallbackType,
-    ApplicationCommandType,
-    ChannelType,
-    Locale
-} from "../../enums";
+import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "../../enums";
 
 export interface POSTApplicationCommandStructure extends LocalizationsShared {
     name: string;
@@ -97,7 +85,8 @@ export interface ChannelApplicationCommandOptionStructure extends BaseApplicatio
 type CommandWithChoices<T> = T & { choices?: Array<ApplicationCommandOptionChoiceStructure> };
 export type CommandWithAutocomplete<T> = T & { autocomplete?: boolean };
 
-export type ApplicationCommandOptionStructure = ChannelApplicationCommandOptionStructure
+export type ApplicationCommandOptionStructure =
+    | ChannelApplicationCommandOptionStructure
     | CommandWithChoices<StringApplicationCommandOptionStructure>
     | CommandWithAutocomplete<StringApplicationCommandOptionStructure>
     | CommandWithChoices<NumericApplicationCommandOptionStructure>
@@ -146,9 +135,9 @@ export interface LocalizationApplicationCommandOptionStructure extends ReturnApp
     options?: Array<LocalizationApplicationCommandOptionStructure>;
 }
 
-export interface LocalizedApplicationCommandOptionChoiceStructure extends ApplicationCommandOptionChoiceStructure, LocalizedShared { }
+export interface LocalizedApplicationCommandOptionChoiceStructure extends ApplicationCommandOptionChoiceStructure, LocalizedShared {}
 
-export interface LocalizationApplicationCommandOptionChoiceStructure extends ApplicationCommandOptionChoiceStructure, LocalizationsShared { }
+export interface LocalizationApplicationCommandOptionChoiceStructure extends ApplicationCommandOptionChoiceStructure, LocalizationsShared {}
 
 export interface InteractionResponseStructure {
     type: InteractionCallbackType;
@@ -178,4 +167,3 @@ export interface ModalCallbackDataStructure {
     title: string;
     components: Array<MessageComponentStructure>;
 }
-

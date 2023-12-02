@@ -1,46 +1,33 @@
 import { GatewayEvent, GatewayOpCode } from "../enums";
 import { closeCodeAllowsReconnection } from "./utils";
 
-import type {
-    UpdatePresenceStructure,
-    GetGatewayBotResponse,
-    ReceiveDispatchEvent,
-    Identify,
-    Payload,
-    Resume
-} from "../typings/gateway-events";
+import type { UpdatePresenceStructure, GetGatewayBotResponse, ReceiveDispatchEvent, Identify, Payload, Resume } from "../typings/gateway-events";
 
 interface ManagerOptions {
     token?: string;
     intents: number;
     presence?: UpdatePresenceStructure;
-
 }
 
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
 export type DebugFunction = (data: string, payload?: unknown) => any;
 
 export class WebSocketManager {
-
     readonly #dispatch: DispatchFunction;
     readonly #debug: DebugFunction | undefined;
 
     #sequenceNumber: number | null = null;
-    #isResuming: boolean = false;
+    #isResuming = false;
     #ws!: WebSocket;
     #gatewayInfo!: GetGatewayBotResponse;
     #options: Required<ManagerOptions>;
     //@ts-expect-error Ignore for now
     #resumeInfo: {
-        url: string,
-        id: string
+        url: string;
+        id: string;
     };
 
-    public constructor(
-        options: ManagerOptions,
-        dispatch: DispatchFunction,
-        debug?: DebugFunction
-    ) {
+    public constructor(options: ManagerOptions, dispatch: DispatchFunction, debug?: DebugFunction) {
         if (!options.intents) {
             throw new Error("No intents were passed");
         }
@@ -58,8 +45,8 @@ export class WebSocketManager {
         if (typeof this.#gatewayInfo === "undefined") {
             const response = await fetch("https://discord.com/api/v10/gateway/bot", {
                 headers: {
-                    Authorization: `Bot ${this.#options.token}`
-                }
+                    Authorization: `Bot ${this.#options.token}`,
+                },
             });
 
             if (!response.ok) {
@@ -94,14 +81,16 @@ export class WebSocketManager {
         this.#ws.addEventListener("message", (event) => {
             this.#debug?.("Received:", event.data);
             const payload: Payload = JSON.parse(event.data.toString());
-            typeof payload.s === "number" && (this.#sequenceNumber = payload.s);
+            if (typeof payload.s === "number") {
+                this.#sequenceNumber = payload.s;
+            }
 
             switch (payload.op) {
                 case GatewayOpCode.Dispatch: {
                     if (payload.t === GatewayEvent.Ready) {
                         this.#resumeInfo = {
                             url: payload.d.resume_gateway_url,
-                            id: payload.d.session_id
+                            id: payload.d.session_id,
                         };
                     }
 
@@ -144,7 +133,8 @@ export class WebSocketManager {
                     break;
                 }
 
-                default: break;
+                default:
+                    break;
             }
 
             return;
@@ -156,7 +146,9 @@ export class WebSocketManager {
     }
 
     #identify(): void {
-        if (typeof this.#options.token === "undefined") throw new Error("No token was found");
+        if (typeof this.#options.token === "undefined") {
+            throw new Error("No token was found");
+        }
 
         const payload: Identify = {
             op: GatewayOpCode.Identify,
@@ -166,12 +158,12 @@ export class WebSocketManager {
                 properties: {
                     os: process.platform,
                     browser: "LilyBird",
-                    device: "LilyBird"
+                    device: "LilyBird",
                 },
-                presence: this.#options.presence
+                presence: this.#options.presence,
             },
             s: null,
-            t: null
+            t: null,
         };
 
         this.#ws.send(JSON.stringify(payload));
@@ -185,10 +177,10 @@ export class WebSocketManager {
             d: {
                 token: this.#options.token,
                 session_id: this.#resumeInfo.id,
-                seq: <number>this.#sequenceNumber
+                seq: <number>this.#sequenceNumber,
             },
             s: null,
-            t: null
+            t: null,
         };
 
         this.connect(this.#resumeInfo.url);
@@ -198,9 +190,13 @@ export class WebSocketManager {
     /** Returns time taken in ms */
     public async ping(): Promise<number> {
         return new Promise((res) => {
-            this.#ws.addEventListener("pong", () => {
-                res(Math.round(performance.now() - start));
-            }, { once: true });
+            this.#ws.addEventListener(
+                "pong",
+                () => {
+                    res(Math.round(performance.now() - start));
+                },
+                { once: true },
+            );
 
             const start = performance.now();
             this.#ws.ping();

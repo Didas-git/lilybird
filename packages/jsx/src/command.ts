@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommandOptionType, ApplicationCommandType, type Locale, type PermissionFlag } from "../enums";
+import { ApplicationCommandOptionType, ApplicationCommandType } from "lilybird";
 
 import type {
     SubCommandApplicationCommandOptionStructure,
@@ -9,8 +9,10 @@ import type {
     BaseApplicationCommandOptionStructure,
     ApplicationCommandOptionStructure,
     POSTApplicationCommandStructure,
-    CommandWithAutocomplete
-} from "../typings";
+    CommandWithAutocomplete,
+    PermissionFlag,
+    Locale,
+} from "lilybird";
 
 export function ApplicationCommand({
     name,
@@ -20,19 +22,20 @@ export function ApplicationCommand({
     name_localizations,
     description_localizations,
     nsfw,
-    children
+    children,
 }: {
-    name: string,
-    description: string,
-    defaultMemberPermissions?: Array<PermissionFlag> | null,
-    dmPermission?: boolean | null,
-    nsfw?: boolean,
-    name_localizations?: Record<Locale, string> | null,
-    description_localizations?: Record<Locale, string> | null,
-    children?: Array<ApplicationCommandOptionStructure>
+    name: string;
+    description: string;
+    defaultMemberPermissions?: Array<PermissionFlag> | null;
+    dmPermission?: boolean | null;
+    nsfw?: boolean;
+    name_localizations?: Record<Locale, string> | null;
+    description_localizations?: Record<Locale, string> | null;
+    children?: Array<ApplicationCommandOptionStructure>;
 }): POSTApplicationCommandStructure {
-
-    children != null && !Array.isArray(children) && (children = [children]);
+    if (children != null && !Array.isArray(children)) {
+        children = [children];
+    }
 
     return {
         type: ApplicationCommandType.CHAT_INPUT,
@@ -43,7 +46,7 @@ export function ApplicationCommand({
         description_localizations,
         nsfw,
         default_member_permissions: defaultMemberPermissions?.reduce((prev, curr) => prev | curr, 0n).toString(),
-        options: children
+        options: children,
     };
 }
 
@@ -52,7 +55,7 @@ type CommandWithChildren<T> = T & { children?: Array<ApplicationCommandOptionCho
 function commandComponent(type: ApplicationCommandOptionType, data: Partial<ApplicationCommandOptionStructure>): ApplicationCommandOptionStructure {
     return <never>{
         type,
-        ...data
+        ...data,
     };
 }
 
@@ -60,17 +63,21 @@ export function CommandOptions(props: ApplicationCommandOptionChoiceStructure): 
     return props;
 }
 
-export function SubCommandOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
-    & { children: Array<ApplicationCommandOptionStructure> }), "type">): ApplicationCommandOptionStructure {
+export function SubCommandOption(props: Omit<Omit<SubCommandApplicationCommandOptionStructure, "options"> & { children: Array<ApplicationCommandOptionStructure> }, "type">): ApplicationCommandOptionStructure {
     let { children: options, ...obj } = props;
-    !Array.isArray(options) && (options = [options]);
+    if (!Array.isArray(options)) {
+        options = [options];
+    }
+
     return commandComponent(ApplicationCommandOptionType.SUB_COMMAND, { ...obj, options });
 }
 
-export function SubCommandGroupOption(props: Omit<(Omit<SubCommandApplicationCommandOptionStructure, "options">
-    & { children: Array<ApplicationCommandOptionStructure> }), "type">): ApplicationCommandOptionStructure {
+export function SubCommandGroupOption(props: Omit<Omit<SubCommandApplicationCommandOptionStructure, "options"> & { children: Array<ApplicationCommandOptionStructure> }, "type">): ApplicationCommandOptionStructure {
     let { children: options, ...obj } = props;
-    !Array.isArray(options) && (options = [options]);
+    if (!Array.isArray(options)) {
+        options = [options];
+    }
+
     return commandComponent(ApplicationCommandOptionType.SUB_COMMAND_GROUP, { ...obj, options });
 }
 
@@ -79,7 +86,10 @@ type StringCommandOption = Omit<StringApplicationCommandOptionStructure, "type">
 export function StringOption(props: CommandWithChildren<StringCommandOption> | CommandWithAutocomplete<StringCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
-    choices != null && !Array.isArray(choices) && (choices = [choices]);
+    if (choices != null && !Array.isArray(choices)) {
+        choices = [choices];
+    }
+
     return commandComponent(ApplicationCommandOptionType.STRING, { ...obj, choices });
 }
 
@@ -88,7 +98,10 @@ type NumericCommandOption = Omit<NumericApplicationCommandOptionStructure, "type
 export function IntegerOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
-    choices != null && !Array.isArray(choices) && (choices = [choices]);
+    if (choices != null && !Array.isArray(choices)) {
+        choices = [choices];
+    }
+
     return commandComponent(ApplicationCommandOptionType.INTEGER, { ...obj, choices });
 }
 
@@ -115,7 +128,10 @@ export function MentionableOption(props: Omit<BaseApplicationCommandOptionStruct
 export function NumberOption(props: CommandWithChildren<NumericCommandOption> | CommandWithAutocomplete<NumericCommandOption>): ApplicationCommandOptionStructure {
     //@ts-expect-error The type does exist
     let { children: choices, ...obj } = props;
-    choices != null && !Array.isArray(choices) && (choices = [choices]);
+    if (choices != null && !Array.isArray(choices)) {
+        choices = [choices];
+    }
+
     return commandComponent(ApplicationCommandOptionType.NUMBER, { ...obj, choices });
 }
 

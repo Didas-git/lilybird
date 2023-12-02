@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+import { Attachment as Att } from "lilybird";
 import type { BunFile } from "bun";
 
 export function Attachment({
@@ -7,7 +7,7 @@ export function Attachment({
 }: {
     path: string | BunFile;
     name: string;
-}): Attachment {
+}): Att {
     return {
         file: typeof path === "string" ? Bun.file(path) : path,
         name,

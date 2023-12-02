@@ -52,7 +52,7 @@ import type {
     UserStructure,
     RoleStructure,
     ErrorMessage,
-    BanStructure
+    BanStructure,
 } from "../typings";
 
 export class REST {
@@ -62,23 +62,20 @@ export class REST {
     #token?: string | undefined;
 
     public constructor(token?: string) {
-        if (typeof token === "undefined") return;
+        if (typeof token === "undefined") {
+            return;
+        }
         this.#token = token;
     }
 
-    async #makeRequest<T>(
-        method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT",
-        path: string,
-        data?: Record<string, any>,
-        cdn: boolean = false
-    ): Promise<T> {
+    async #makeRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>, cdn = false): Promise<T> {
         const opts: RequestInit = {
             method,
             headers: {
-                "Authorization": `Bot ${this.#token}`,
+                Authorization: `Bot ${this.#token}`,
                 // eslint-disable-next-line @typescript-eslint/naming-convention
-                "User-Agent": `DiscordBot/LilyBird/${version}`
-            }
+                "User-Agent": `DiscordBot/LilyBird/${version}`,
+            },
         };
 
         if (typeof data !== "undefined") {
@@ -92,11 +89,11 @@ export class REST {
                     form.append(`files[${i}]`, files[i].file, files[i].name);
                     temp.push({
                         id: i,
-                        filename: files[i].name
+                        filename: files[i].name,
                     });
                 }
 
-                obj.attachments = [...temp, ...obj.attachments ?? []];
+                obj.attachments = [...temp, ...(obj.attachments ?? [])];
                 form.append("payload_json", JSON.stringify(obj));
 
                 opts.body = form;
@@ -123,7 +120,9 @@ export class REST {
             This assertion is a bit dangerous to make
             but since this is internal we should be fine
         */
-        if (response.status === 204) return <T>null;
+        if (response.status === 204) {
+            return <T>null;
+        }
 
         return <T>await response.json();
     }
@@ -134,7 +133,7 @@ export class REST {
 
     public async getGlobalApplicationCommands(clientId: string): Promise<Array<LocalizedGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations: true): Promise<Array<LocalizationGlobalApplicationCommandStructure>>;
-    public async getGlobalApplicationCommands(clientId: string, withLocalizations: boolean = false): Promise<Array<LocalizationGlobalApplicationCommandStructure | LocalizedGlobalApplicationCommandStructure>> {
+    public async getGlobalApplicationCommands(clientId: string, withLocalizations = false): Promise<Array<LocalizationGlobalApplicationCommandStructure | LocalizedGlobalApplicationCommandStructure>> {
         return await this.#makeRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
     }
 
@@ -160,7 +159,7 @@ export class REST {
 
     public async getGuildApplicationCommands(clientId: string): Promise<Array<LocalizedGuildApplicationCommandStructure>>;
     public async getGuildApplicationCommands(clientId: string, withLocalizations: true): Promise<Array<LocalizationGuildApplicationCommandStructure>>;
-    public async getGuildApplicationCommands(clientId: string, withLocalizations: boolean = false): Promise<Array<LocalizationGuildApplicationCommandStructure | LocalizedGuildApplicationCommandStructure>> {
+    public async getGuildApplicationCommands(clientId: string, withLocalizations = false): Promise<Array<LocalizationGuildApplicationCommandStructure | LocalizedGuildApplicationCommandStructure>> {
         return await this.#makeRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
     }
 
@@ -192,12 +191,7 @@ export class REST {
         return await this.#makeRequest("GET", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`);
     }
 
-    public async editApplicationCommandPermissions(
-        clientId: string,
-        guildId: string,
-        commandId: string,
-        body: { permissions: Array<ApplicationCommandPermissionsStructure> }
-    ): Promise<GuildApplicationCommandPermissionsStructure> {
+    public async editApplicationCommandPermissions(clientId: string, guildId: string, commandId: string, body: { permissions: Array<ApplicationCommandPermissionsStructure> }): Promise<GuildApplicationCommandPermissionsStructure> {
         return await this.#makeRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`, body);
     }
 
@@ -247,10 +241,18 @@ export class REST {
 
     public async getChannelMessages(channelId: string, params: GetChannelMessagesStructure): Promise<Array<MessageStructure>> {
         let url = `channels/${channelId}/messages?`;
-        if (typeof params.around !== "undefined") url += `around=${params.around}&`;
-        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
-        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.around !== "undefined") {
+            url += `around=${params.around}&`;
+        }
+        if (typeof params.before !== "undefined") {
+            url += `before=${params.before}&`;
+        }
+        if (typeof params.after !== "undefined") {
+            url += `after=${params.after}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
         return await this.#makeRequest("GET", url);
     }
 
@@ -266,27 +268,43 @@ export class REST {
         return await this.#makeRequest("POST", `channels/${channelId}/messages/${messageId}/crosspost`);
     }
 
-    public async createReaction(channelId: string, messageId: string, emoji: string, isCustom: boolean = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
+    public async createReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) {
+            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
+            emoji = encodeURIComponent(emoji);
+        }
         return await this.#makeRequest("PUT", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
     }
 
-    public async deleteOwnReaction(channelId: string, messageId: string, emoji: string, isCustom: boolean = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
+    public async deleteOwnReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) {
+            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
+            emoji = encodeURIComponent(emoji);
+        }
         return await this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
     }
 
-    public async deleteUserReaction(channelId: string, messageId: string, userId: string, emoji: string, isCustom: boolean = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
+    public async deleteUserReaction(channelId: string, messageId: string, userId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) {
+            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
+            emoji = encodeURIComponent(emoji);
+        }
         return await this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/${userId}`);
     }
 
-    public async getReactions(channelId: string, messageId: string, emoji: string, isCustom: boolean = false, params: { after?: number, limit?: string } = {}): Promise<Array<UserStructure>> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
+    public async getReactions(channelId: string, messageId: string, emoji: string, isCustom = false, params: { after?: number; limit?: string } = {}): Promise<Array<UserStructure>> {
+        if (!isCustom) {
+            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
+            emoji = encodeURIComponent(emoji);
+        }
 
         let url = `channels/${channelId}/messages/${messageId}/reactions/${emoji}?`;
-        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.after !== "undefined") {
+            url += `after=${params.after}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
 
         return await this.#makeRequest("GET", url);
     }
@@ -295,8 +313,11 @@ export class REST {
         return await this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions`);
     }
 
-    public async deleteAllReactionsForEmoji(channelId: string, messageId: string, emoji: string, isCustom: boolean = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
+    public async deleteAllReactionsForEmoji(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) {
+            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
+            emoji = encodeURIComponent(emoji);
+        }
         return await this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
     }
 
@@ -316,12 +337,12 @@ export class REST {
         channelId: string,
         overwriteId: string,
         params: {
-            reason?: string,
-            allow?: string | null,
-            deny?: string | null,
+            reason?: string;
+            allow?: string | null;
+            deny?: string | null;
             /** 0 for a role or 1 for a member */
-            type: 0 | 1
-        }
+            type: 0 | 1;
+        },
     ): Promise<null> {
         return await this.#makeRequest("PUT", `channels/${channelId}/permissions/${overwriteId}`, params);
     }
@@ -359,7 +380,7 @@ export class REST {
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    public async groupDMAddRecipient(channelId: string, userId: string, body: { access_token: string, nick: string }): Promise<null> {
+    public async groupDMAddRecipient(channelId: string, userId: string, body: { access_token: string; nick: string }): Promise<null> {
         return await this.#makeRequest("PUT", `channels/${channelId}/recipients/${userId}`, body);
     }
 
@@ -396,35 +417,51 @@ export class REST {
         return await this.#makeRequest("DELETE", `channels/${channelId}/thread-members/${userId}`);
     }
 
-    public async getThreadMember(channelId: string, userId: string, withMember: boolean = false): Promise<ThreadMemberStructure> {
+    public async getThreadMember(channelId: string, userId: string, withMember = false): Promise<ThreadMemberStructure> {
         return await this.#makeRequest("GET", `channels/${channelId}/thread-members/${userId}?with_member=${withMember}`);
     }
 
-    public async listThreadMembers(channelId: string, params: { after?: number, limit?: string } = {}): Promise<Array<ThreadMemberStructure>> {
+    public async listThreadMembers(channelId: string, params: { after?: number; limit?: string } = {}): Promise<Array<ThreadMemberStructure>> {
         let url = `channels/${channelId}/thread-members`;
-        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.after !== "undefined") {
+            url += `after=${params.after}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
         return await this.#makeRequest("GET", url);
     }
 
-    public async listPublicArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string, limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
+    public async listPublicArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string; limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
         let url = `channels/${channelId}/threads/archived/public`;
-        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.before !== "undefined") {
+            url += `before=${params.before}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
         return await this.#makeRequest("GET", url);
     }
 
-    public async listPrivateArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string, limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
+    public async listPrivateArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string; limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
         let url = `channels/${channelId}/threads/archived/private`;
-        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.before !== "undefined") {
+            url += `before=${params.before}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
         return await this.#makeRequest("GET", url);
     }
 
-    public async listJoinedPrivateArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string, limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
+    public async listJoinedPrivateArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string; limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
         let url = `channels/${channelId}/users/@me/threads/archived/private`;
-        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.before !== "undefined") {
+            url += `before=${params.before}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
         return await this.#makeRequest("GET", url);
     }
 
@@ -436,21 +473,29 @@ export class REST {
         return await this.#makeRequest("GET", `users/${userId}`);
     }
 
-    public async modifyCurrentUser(body?: { username?: string, avatar?: /** Image Data */ string }): Promise<UserStructure> {
+    public async modifyCurrentUser(body?: { username?: string; avatar?: /** Image Data */ string }): Promise<UserStructure> {
         return await this.#makeRequest("PATCH", "users/@me", body);
     }
 
     public async getCurrentUserGuilds(params: {
-        before: string,
-        after: string,
-        limit: string,
-        withCounts: boolean
+        before: string;
+        after: string;
+        limit: string;
+        withCounts: boolean;
     }): Promise<Array<Partial<GuildStructure>>> {
         let url = "users/@me/guilds?";
-        if (typeof params.withCounts !== "undefined") url += `with_counts=${params.withCounts}&`;
-        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
-        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.withCounts !== "undefined") {
+            url += `with_counts=${params.withCounts}&`;
+        }
+        if (typeof params.before !== "undefined") {
+            url += `before=${params.before}&`;
+        }
+        if (typeof params.after !== "undefined") {
+            url += `after=${params.after}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
 
         return await this.#makeRequest("GET", url);
     }
@@ -477,7 +522,7 @@ export class REST {
         return await this.#makeRequest("POST", "guilds", body);
     }
 
-    public async getGuild(guildId: string, withCounts: boolean = false): Promise<GuildStructure> {
+    public async getGuild(guildId: string, withCounts = false): Promise<GuildStructure> {
         return await this.#makeRequest("GET", `guilds/${guildId}?with_counts=${withCounts}`);
     }
 
@@ -506,8 +551,8 @@ export class REST {
     }
 
     public async listActiveGuildThreads(guildId: string): Promise<{
-        threads: Array<ThreadChannelStructure>,
-        members: Array<ThreadMemberStructure>
+        threads: Array<ThreadChannelStructure>;
+        members: Array<ThreadMemberStructure>;
     }> {
         return await this.#makeRequest("GET", `guilds/${guildId}/threads/active`);
     }
@@ -516,50 +561,69 @@ export class REST {
         return await this.#makeRequest("GET", `guilds/${guildId}/members/${userId}`);
     }
 
-    public async listGuildMembers(guildId: string, params: { limit: number, after: string }): Promise<Array<GuildMemberStructure>> {
+    public async listGuildMembers(guildId: string, params: { limit: number; after: string }): Promise<Array<GuildMemberStructure>> {
         let url = `guilds/${guildId}/members`;
-        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.after !== "undefined") {
+            url += `after=${params.after}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
 
         return await this.#makeRequest("GET", url);
     }
 
-    public async searchGuildMembers(guildId: string, params: { query: string, limit: number }): Promise<Array<GuildMemberStructure>> {
+    public async searchGuildMembers(guildId: string, params: { query: string; limit: number }): Promise<Array<GuildMemberStructure>> {
         let url = `guilds/${guildId}/members/search`;
-        if (typeof params.query !== "undefined") url += `query=${params.query}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.query !== "undefined") {
+            url += `query=${params.query}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
 
         return await this.#makeRequest("GET", url);
     }
 
-    public async addGuildMember(guildId: string, userId: string, body: {
-        access_token: string,
-        nick?: string,
-        roles?: Array<string>,
-        mute?: boolean,
-        deaf?: boolean
-    }): Promise<GuildMemberStructure> {
+    public async addGuildMember(
+        guildId: string,
+        userId: string,
+        body: {
+            access_token: string;
+            nick?: string;
+            roles?: Array<string>;
+            mute?: boolean;
+            deaf?: boolean;
+        },
+    ): Promise<GuildMemberStructure> {
         return await this.#makeRequest("PUT", `guilds/${guildId}/members/${userId}`, body);
     }
 
-    public async modifyGuildMember(guildId: string, userId: string, body: {
-        reason?: string | null,
-        nick?: string | null,
-        roles?: Array<string> | null,
-        mute?: boolean | null,
-        deaf?: boolean | null,
-        channel_id?: string | null,
-        /** ISO8601 timestamp */
-        communication_disabled_until?: string | null,
-        flags?: number | null
-    }): Promise<GuildMemberStructure> {
+    public async modifyGuildMember(
+        guildId: string,
+        userId: string,
+        body: {
+            reason?: string | null;
+            nick?: string | null;
+            roles?: Array<string> | null;
+            mute?: boolean | null;
+            deaf?: boolean | null;
+            channel_id?: string | null;
+            /** ISO8601 timestamp */
+            communication_disabled_until?: string | null;
+            flags?: number | null;
+        },
+    ): Promise<GuildMemberStructure> {
         return await this.#makeRequest("PATCH", `guilds/${guildId}/members/${userId}`, body);
     }
 
-    public async modifyCurrentMember(guildId: string, body: {
-        reason?: string | null,
-        nick?: string | null
-    }): Promise<GuildMemberStructure> {
+    public async modifyCurrentMember(
+        guildId: string,
+        body: {
+            reason?: string | null;
+            nick?: string | null;
+        },
+    ): Promise<GuildMemberStructure> {
         return await this.#makeRequest("PATCH", `guilds/${guildId}/members/@me`, body);
     }
 
@@ -575,15 +639,24 @@ export class REST {
         return await this.#makeRequest("DELETE", `guilds/${guildId}/members/${userId}`, { reason });
     }
 
-    public async getGuildBans(guildId: string, params: {
-        before: string,
-        after: string,
-        limit: string
-    }): Promise<Array<BanStructure>> {
+    public async getGuildBans(
+        guildId: string,
+        params: {
+            before: string;
+            after: string;
+            limit: string;
+        },
+    ): Promise<Array<BanStructure>> {
         let url = `guilds/${guildId}/bans`;
-        if (typeof params.before !== "undefined") url += `before=${params.before}&`;
-        if (typeof params.after !== "undefined") url += `after=${params.after}&`;
-        if (typeof params.limit !== "undefined") url += `limit=${params.limit}`;
+        if (typeof params.before !== "undefined") {
+            url += `before=${params.before}&`;
+        }
+        if (typeof params.after !== "undefined") {
+            url += `after=${params.after}&`;
+        }
+        if (typeof params.limit !== "undefined") {
+            url += `limit=${params.limit}`;
+        }
 
         return await this.#makeRequest("GET", url);
     }
@@ -592,10 +665,14 @@ export class REST {
         return await this.#makeRequest("GET", `guilds/${guildId}/bans/${userId}`);
     }
 
-    public async createGuildBan(guildId: string, userId: string, body: {
-        reason?: string,
-        delete_message_seconds?: number
-    }): Promise<null> {
+    public async createGuildBan(
+        guildId: string,
+        userId: string,
+        body: {
+            reason?: string;
+            delete_message_seconds?: number;
+        },
+    ): Promise<null> {
         return await this.#makeRequest("PUT", `guilds/${guildId}/bans/${userId}`, body);
     }
 
@@ -609,10 +686,9 @@ export class REST {
 
     public async createGuildRole(guildId: string, body: APIRoleStructure): Promise<RoleStructure> {
         return await this.#makeRequest("POST", `guilds/${guildId}/roles`, body);
-
     }
 
-    public async modifyGuildRolePosition(guildId: string, body: { reason?: string, id: string, position?: number | null }): Promise<Array<RoleStructure>> {
+    public async modifyGuildRolePosition(guildId: string, body: { reason?: string; id: string; position?: number | null }): Promise<Array<RoleStructure>> {
         return await this.#makeRequest("PATCH", `guilds/${guildId}/roles`, body);
     }
 
@@ -629,20 +705,27 @@ export class REST {
         return await this.#makeRequest("DELETE", `guilds/${guildId}/roles/${roleId}`, { reason });
     }
 
-    public async getGuildPruneCount(guildId: string, params: { days: number, include_roles?: string }): Promise<{ pruned: number }> {
+    public async getGuildPruneCount(guildId: string, params: { days: number; include_roles?: string }): Promise<{ pruned: number }> {
         let url = `guilds/${guildId}/prune`;
-        if (typeof params.days !== "undefined") url += `days=${params.days}&`;
-        if (typeof params.include_roles !== "undefined") url += `include_roles=${params.include_roles}`;
+        if (typeof params.days !== "undefined") {
+            url += `days=${params.days}&`;
+        }
+        if (typeof params.include_roles !== "undefined") {
+            url += `include_roles=${params.include_roles}`;
+        }
 
         return await this.#makeRequest("GET", url);
     }
 
-    public async beginGuildPrune(guildId: string, body: {
-        days?: number,
-        compute_prune_count?: boolean,
-        include_roles?: Array<string>,
-        reason?: string
-    }): Promise<{ pruned: number | null }> {
+    public async beginGuildPrune(
+        guildId: string,
+        body: {
+            days?: number;
+            compute_prune_count?: boolean;
+            include_roles?: Array<string>;
+            reason?: string;
+        },
+    ): Promise<{ pruned: number | null }> {
         return await this.#makeRequest("POST", `guilds/${guildId}/prune`, body);
     }
 
@@ -679,7 +762,7 @@ export class REST {
     }
 
     /** Yeah... this probably doesn't work */
-    public async getGuildWidgetImage(guildId: string, style: string = "shield"): Promise<string> {
+    public async getGuildWidgetImage(guildId: string, style = "shield"): Promise<string> {
         return await this.#makeRequest("GET", `guilds/${guildId}/widget.png?style=${style}`);
     }
 
@@ -687,12 +770,15 @@ export class REST {
         return await this.#makeRequest("GET", `guilds/${guildId}/welcome-screen`);
     }
 
-    public async modifyGuildWelcomeScreen(guildId: string, body: {
-        reason?: string,
-        enabled?: boolean | null,
-        welcome_channels?: Array<WelcomeScreenChannelStructure> | null,
-        description?: string | null
-    }): Promise<WelcomeScreenStructure> {
+    public async modifyGuildWelcomeScreen(
+        guildId: string,
+        body: {
+            reason?: string;
+            enabled?: boolean | null;
+            welcome_channels?: Array<WelcomeScreenChannelStructure> | null;
+            description?: string | null;
+        },
+    ): Promise<WelcomeScreenStructure> {
         return await this.#makeRequest("PATCH", `guilds/${guildId}/welcome-screen`, body);
     }
 
@@ -700,28 +786,38 @@ export class REST {
         return await this.#makeRequest("GET", `guilds/${guildId}/onboarding`);
     }
 
-    public async modifyGuildOnboarding(guildId: string, body: {
-        reason?: string,
-        prompts: Array<OnboardingPromptStructure>,
-        default_channel_ids: Array<string>,
-        enabled: boolean,
-        mode: OnboardingMode
-    }): Promise<GuildOnboardingStructure> {
+    public async modifyGuildOnboarding(
+        guildId: string,
+        body: {
+            reason?: string;
+            prompts: Array<OnboardingPromptStructure>;
+            default_channel_ids: Array<string>;
+            enabled: boolean;
+            mode: OnboardingMode;
+        },
+    ): Promise<GuildOnboardingStructure> {
         return await this.#makeRequest("PUT", `guilds/${guildId}/onboarding`, body);
     }
 
-    public async modifyCurrentUserVoiceState(guildId: string, body: {
-        channel_id?: string,
-        suppress?: boolean,
-        request_to_speak_timestamp?: string | null
-    }): Promise<null> {
+    public async modifyCurrentUserVoiceState(
+        guildId: string,
+        body: {
+            channel_id?: string;
+            suppress?: boolean;
+            request_to_speak_timestamp?: string | null;
+        },
+    ): Promise<null> {
         return await this.#makeRequest("PATCH", `guilds/${guildId}/voice-states/@me`, body);
     }
 
-    public async modifyUserVoiceState(guildId: string, userId: string, body: {
-        channel_id: string,
-        suppress?: boolean
-    }): Promise<null> {
+    public async modifyUserVoiceState(
+        guildId: string,
+        userId: string,
+        body: {
+            channel_id: string;
+            suppress?: boolean;
+        },
+    ): Promise<null> {
         return await this.#makeRequest("PATCH", `guilds/${guildId}/voice-states/${userId}`, body);
     }
 

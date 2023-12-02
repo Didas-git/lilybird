@@ -1,17 +1,5 @@
 import type { ChannelStructure, DefaultReactionStructure, EmojiStructure, ForumTagStructure, GuildFeatures, GuildMemberStructure, OverwriteStructure, RoleStructure, StickerStructure, UserStructure } from "..";
-import type {
-    DefaultMessageNotificationLevel,
-    ExplicitContentFilterLevel,
-    SystemChannelFlags,
-    VerificationLevel,
-    VideoQualityMode,
-    ForumLayoutType,
-    OnboardingMode,
-    SortOrderType,
-    ChannelType,
-    PromptType,
-    Locale
-} from "../../enums";
+import type { DefaultMessageNotificationLevel, ExplicitContentFilterLevel, SystemChannelFlags, VerificationLevel, VideoQualityMode, ForumLayoutType, OnboardingMode, SortOrderType, ChannelType, PromptType, Locale } from "../../enums";
 
 export interface CreateGuildStructure {
     name: string;

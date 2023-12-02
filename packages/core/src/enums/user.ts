@@ -13,7 +13,7 @@ export enum UserFlags {
     VERIFIED_DEVELOPER = 131072,
     CERTIFIED_MODERATOR = 262144,
     BOT_HTTP_INTERACTIONS = 524288,
-    ACTIVE_DEVELOPER = 4194304
+    ACTIVE_DEVELOPER = 4194304,
 }
 
 /** Nitro Level */
@@ -21,5 +21,5 @@ export enum PremiumType {
     None,
     NitroClassic,
     Nitro,
-    NitroBasic
+    NitroBasic,
 }
