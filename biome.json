@@ -65,7 +65,6 @@
             },
             "style": {
                 "recommended": true,
-                "noImplicitBoolean": "error",
                 "noNamespace": "error",
                 "noNegationElse": "warn",
                 "noParameterProperties": "warn",
