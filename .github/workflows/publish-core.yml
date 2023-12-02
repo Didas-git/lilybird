@@ -1,0 +1,27 @@
+name: "Publish Lilybird"
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install Dependencies
+        run: bun i
+      # bun doesnt support methods like `-ws`, `-w or similar yet
+      - name: Hop into the folder
+        run: cd packages/core
+      - name: Build
+        run: bun run build
+      - name: Publish core
+      # Bun doesnt have any publish methods yet
+        run: npm publish --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM}}
