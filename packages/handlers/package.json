@@ -1,7 +1,7 @@
 {
-  "name": "@lilybird/jsx",
+  "name": "@lilybird/handlers",
   "version": "0.1.0",
-  "description": "JSX support & builders for lilybird",
+  "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
   "license": "Apache-2.0",
@@ -10,11 +10,6 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
-    },
-    "./jsx-runtime": {
-      "types": "./dist/runtime/index.d.ts",
-      "require": "./dist/runtime/index.js",
-      "default": "./dist/runtime/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -35,7 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/Didas-git/lilybird"
   },
-  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/jsx",
+  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/handlers",
   "bugs": {
     "url": "https://github.com/Didas-git/lilybird/issues"
   },

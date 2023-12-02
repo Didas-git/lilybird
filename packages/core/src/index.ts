@@ -5,9 +5,10 @@ import type { ClientOptions } from "./typings";
 export type * from "./typings";
 
 export * from "./factories";
-export * from "./handlers";
 export * from "./enums";
 export * from "./utils";
+
+export * from "./client";
 
 export async function createClient(options: ClientOptions): Promise<Client> {
     return new Promise((res) => {

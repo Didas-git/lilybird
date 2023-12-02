@@ -1,5 +1,4 @@
-import type { ApplicationCommandData, AutocompleteData, GuildInteraction, Interaction } from "../factories/interaction";
-import type { Awaitable, POSTApplicationCommandStructure } from "../typings";
+import type { ApplicationCommandData, AutocompleteData, GuildInteraction, Interaction, Awaitable, POSTApplicationCommandStructure } from "lilybird";
 
 export interface GlobalSlashCommand {
     data: POSTApplicationCommandStructure;

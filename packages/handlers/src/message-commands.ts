@@ -1,5 +1,4 @@
-import type { Message } from "../factories/message";
-import type { Awaitable } from "../typings";
+import type { Message, Awaitable } from "lilybird";
 
 export interface MessageCommand {
     name: string;

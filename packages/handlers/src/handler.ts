@@ -1,9 +1,7 @@
-import { ChannelType, type BaseClientOptions, type ClientEventListeners } from "..";
-import type { SlashCommand, Event, GlobalSlashCommand, GuildSlashCommand } from ".";
-import type { Interaction, InteractionData } from "../factories/interaction";
+import { ChannelType, ClientEventListeners, type Client, type Interaction, type InteractionData, type Message, type BaseClientOptions } from "lilybird";
+import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command";
 import type { MessageCommand } from "./message-commands";
-import type { Message } from "../factories/message";
-import type { Client } from "../client";
+import type { Event } from "./events";
 
 interface HandlerDirectories {
     slashCommands?: string;
