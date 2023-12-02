@@ -7,8 +7,14 @@ export default defineConfig({
         starlight({
             title: "Lilybird",
             social: {
-                github: "https://github.com/Didas-git/lilybird",
+                github: "https://github.com/Didas-git/lilybird"
             },
+            editLink: {
+                baseUrl: "https://github.com/Didas-git/lilybird/edit/main/packages/docs"
+            },
+            customCss: [
+				"./src/styles/index.css",
+			],
             head: [
                 {
                     tag: "link",
@@ -28,10 +34,7 @@ export default defineConfig({
             sidebar: [
                 {
                     label: "Guides",
-                    items: [
-                        // Each item here is one entry in the navigation menu.
-                        { label: "Example Guide", link: "/guides/example/" },
-                    ],
+                    autogenerate: { directory: "guides" }
                 },
                 {
                     label: "Reference",
