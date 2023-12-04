@@ -9,6 +9,12 @@
     "preview": "astro preview"
   },
   "devDependencies": {
+    "eslint": "^8.55.0",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@stylistic/eslint-plugin": "^1.4.1",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
     "@astrojs/check": "^0.3.1",
     "@astrojs/starlight": "^0.14.0",
     "astro": "^3.2.3",

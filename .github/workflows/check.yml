@@ -19,4 +19,4 @@ jobs:
       - name: Install Dependencies
         run: bun i
       - name: Run Biome
-        run: bun run biome:ci
+        run: bun run check

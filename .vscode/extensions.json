@@ -1,6 +1,6 @@
 {
     "recommendations": [
-        "biomejs.biome",
+        "dbaeumer.vscode-eslint",
         "oven.bun-vscode",
         "astro-build.astro-vscode",
         "unifiedjs.vscode-mdx"
