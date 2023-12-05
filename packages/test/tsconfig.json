@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "baseUrl": ".",
+        "jsx": "react-jsx",
+        "jsxImportSource": "@lilybird/jsx",
+        "types": [
+            "bun-types",
+            "./globals"
+        ]
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

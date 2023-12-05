@@ -1,18 +1,17 @@
 # Contributing to lilybird
 
 > **Note**
-> Is recommend that you have some degree of typescript knowledge to contribute ot the library
+> Is recommended that you have some degree of typescript knowledge to contribute to the library
 
 # Setup
 
-We highly encourage you to also fork or clone the [test repository](https://github.com/Didas-git/lilybird-test) specially if you are doing something related to jsx.
-
+- Clone the repository
 - Run `bun i --frozen-lockfile`
-- To build the package you can run `bun run build:lint`
+- Run the `build.sh` script (or build each package individually)
+- Move into the packages you want to change
 
-# Testing changes locally
+# Building and testing
 
-To test changes locally you can just link the package.
-
-- Run `bun link`
-- On your test project run `bun link lilybird`
+- To build the package you can run `bun run build` on the package you modified
+- Usually you will also need to restart the typescript server so you don't have errors on the IDE
+- There is a [test bot](./packages/test) that you can use as template to test the changes

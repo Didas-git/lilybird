@@ -1,0 +1,14 @@
+[install]
+
+# whether to install optionalDependencies
+optional = false
+
+# whether to install devDependencies
+dev = true
+
+# whether to install peerDependencies
+peer = true
+
+[test]
+
+coverage = true

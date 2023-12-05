@@ -1,9 +1,18 @@
 {
     "cSpell.words": [
+        "astro",
+        "astrojs",
         "crosspost",
         "HYPESQUAD",
         "invitable",
         "lilybird"
     ],
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "eslint.format.enable": true,
+    "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    }
 }
