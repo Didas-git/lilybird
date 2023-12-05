@@ -7,6 +7,7 @@
 
 - Clone the repository
 - Run `bun i --frozen-lockfile`
+- Run the `build.sh` script (or build each package individually)
 - Move into the packages you want to change
 
 # Building and testing

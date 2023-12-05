@@ -42,6 +42,7 @@ import type {
     GuildWidgetStructure,
     AttachmentStructure,
     DMChannelStructure,
+    LilybirdAttachment,
     MessageStructure,
     ChannelStructure,
     APIRoleStructure,
@@ -50,8 +51,7 @@ import type {
     UserStructure,
     RoleStructure,
     ErrorMessage,
-    BanStructure,
-    LilybirdAttachment
+    BanStructure
 } from "../typings";
 
 // There is no other way to do this...
