@@ -3,8 +3,6 @@ title: Embeds
 description: How to use lilybird's Embed components.
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
-
 ## Creating embeds
 
 Embeds can easily be created using the main `Embed` component, for properties of the embed you can use the `Embed<x>` versions of said properties.

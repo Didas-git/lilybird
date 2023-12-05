@@ -71,6 +71,10 @@ export default defineConfig({
                                     link: "docs/jsx/command"
                                 },
                                 {
+                                    label: "Message Components",
+                                    link: "docs/jsx/components"
+                                },
+                                {
                                     label: "Attachments",
                                     link: "docs/jsx/attachment"
                                 }
