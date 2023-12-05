@@ -6,37 +6,37 @@ export interface ActivityStructure {
     url?: string | null;
     created_at: number;
     timestamps?: {
-        start?: number;
-        end?: number;
+        start?: number,
+        end?: number
     };
     application_id?: string;
     details?: string | null;
     state?: string | null;
     emoji?: {
-        name: string;
-        id?: string;
-        animated?: boolean;
+        name: string,
+        id?: string,
+        animated?: boolean
     };
     party?: {
-        id?: string;
-        size?: [number, number];
+        id?: string,
+        size?: [number, number]
     };
     assets?: {
-        large_image?: string;
-        large_text?: string;
-        small_image?: string;
-        small_text?: string;
+        large_image?: string,
+        large_text?: string,
+        small_image?: string,
+        small_text?: string
     };
     secrets?: {
-        join?: string;
-        spectate?: string;
-        match?: string;
+        join?: string,
+        spectate?: string,
+        match?: string
     };
     instance?: boolean;
     /** `OR`ed ActivityFlags */
     flags?: ActivityFlags;
     buttons?: Array<{
-        label: string;
-        url: string;
+        label: string,
+        url: string
     }>;
 }

@@ -1,7 +1,9 @@
 {
     "ignorePatterns": [
+        "*.d.ts",
         "*.json",
-        "dist/**/*"
+        "dist/",
+        "node_modules/**/*"
     ],
     "root": true,
     "parser": "@typescript-eslint/parser",
@@ -15,7 +17,7 @@
     },
     "settings": {
         "import/resolver": {
-            " typescript": true
+            "typescript": true
         }
     },
     "plugins": [
@@ -68,7 +70,7 @@
         "require-atomic-updates": "error",
         "use-isnan": "error",
         "accessor-pairs": "error",
-        "consistent-return": "error",
+        // "consistent-return": "error", For some reason is not working with TS
         "grouped-accessor-pairs": "error",
         "logical-assignment-operators": "warn",
         "no-array-constructor": "error",
@@ -90,15 +92,12 @@
         "no-octal": "error",
         "no-octal-escape": "error",
         "no-proto": "error",
-        "no-redeclare": "error",
         "no-regex-spaces": "warn",
         "no-return-assign": "error",
         "no-sequences": "error",
         "no-shadow-restricted-names": "error",
-        "no-undefined": "error",
         "no-underscore-dangle": "error",
         "no-unneeded-ternary": "warn",
-        "no-unused-expressions": "error",
         "no-unused-labels": "warn",
         "no-useless-call": "error",
         "no-useless-catch": "error",
@@ -110,7 +109,6 @@
         "no-void": "error",
         "no-with": "error",
         "operator-assignment": "error",
-        "prefer-const": "error",
         "prefer-promise-reject-errors": "error",
         "prefer-regex-literals": "error",
         "prefer-rest-params": "error",
@@ -140,6 +138,12 @@
         "one-var": [
             "error",
             "never"
+        ],
+        "prefer-const": [
+            "error",
+            {
+                "destructuring": "all"
+            }
         ],
         // #endregion Eslint
         // #region TSLint
@@ -195,12 +199,12 @@
         "@typescript-eslint/no-unsafe-return": "error",
         "@typescript-eslint/no-unsafe-unary-minus": "error",
         "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/no-use-before-define": "error",
         "@typescript-eslint/no-useless-constructor": "error",
         "@typescript-eslint/no-useless-empty-export": "warn",
         "@typescript-eslint/no-var-requires": "error",
         "@typescript-eslint/non-nullable-type-assertion-style": "error",
         "@typescript-eslint/parameter-properties": "error",
+        "@typescript-eslint/prefer-destructuring": "warn",
         "@typescript-eslint/prefer-function-type": "warn",
         "@typescript-eslint/prefer-includes": "warn",
         "@typescript-eslint/prefer-literal-enum-member": "error",
@@ -411,10 +415,11 @@
                 "allowShortCircuit": true
             }
         ],
-        "@typescript-eslint/prefer-destructuring": [
-            "warn",
+        "@typescript-eslint/no-use-before-define": [
+            "error",
             {
-                "enforceForDeclarationWithTypeAnnotation": true
+                "functions": false,
+                "classes": false
             }
         ],
         "@typescript-eslint/require-array-sort-compare": [
@@ -523,10 +528,10 @@
                 "SwitchCase": 1
             }
         ],
-        "@stylistic/indent-binary-ops": [
-            "warn",
-            4
-        ],
+        // "@stylistic/indent-binary-ops": [
+        //     "warn",
+        //     4
+        // ],
         "@stylistic/keyword-spacing": [
             "error",
             {
@@ -692,10 +697,8 @@
         "import/no-named-as-default": "warn",
         "import/no-namespace": "warn",
         "import/no-self-import": "error",
-        "import/no-unresolved": "error",
         "import/no-useless-path-segments": "warn",
         "import/no-webpack-loader-syntax": "error",
-        "import/order": "warn",
         "import/consistent-type-specifier-style": [
             "warn",
             "prefer-top-level"
@@ -704,6 +707,21 @@
             "error",
             {
                 "allowObject": true
+            }
+        ],
+        "import/order": [
+            "warn",
+            {
+                "groups": [
+                    "index",
+                    "parent",
+                    "sibling",
+                    "internal",
+                    "external",
+                    "builtin",
+                    "object",
+                    "type"
+                ]
             }
         ]
         // #endregion Import

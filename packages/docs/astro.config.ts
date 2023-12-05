@@ -12,9 +12,7 @@ export default defineConfig({
             editLink: {
                 baseUrl: "https://github.com/Didas-git/lilybird/edit/main/packages/docs"
             },
-            customCss: [
-				"./src/styles/index.css",
-			],
+            customCss: ["./src/styles/index.css"],
             head: [
                 {
                     tag: "link",
@@ -38,9 +36,9 @@ export default defineConfig({
                 },
                 {
                     label: "Reference",
-                    autogenerate: { directory: "reference" },
-                },
-            ],
-        }),
-    ],
+                    autogenerate: { directory: "reference" }
+                }
+            ]
+        })
+    ]
 });

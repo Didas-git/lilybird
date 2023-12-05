@@ -1,4 +1,4 @@
-import type { ThreadChannelStructure, GuildMemberStructure, AttachmentStructure, MessageStructure, ChannelStructure, EmojiStructure, RoleStructure, UserStructure } from "../";
+import type { ThreadChannelStructure, GuildMemberStructure, AttachmentStructure, MessageStructure, ChannelStructure, EmojiStructure, RoleStructure, UserStructure } from "..";
 
 import type { ApplicationCommandOptionType, ApplicationCommandType, InteractionType, EntitlementType, TextInputStyle, ComponentType, ChannelType, ButtonStyle, Locale } from "../../enums";
 

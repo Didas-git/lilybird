@@ -1,6 +1,17 @@
 import type { WelcomeScreenStructure, StickerStructure, EmojiStructure, UserStructure, RoleStructure, OAuthScopes } from ".";
 
-import type { DefaultMessageNotificationLevel, ExplicitContentFilterLevel, IntegrationExpireBehavior, SystemChannelFlags, VerificationLevel, GuildMemberFlags, GuildNSFWLevel, PremiumTier, MFALevel, Locale } from "../enums";
+import type {
+    DefaultMessageNotificationLevel,
+    ExplicitContentFilterLevel,
+    IntegrationExpireBehavior,
+    SystemChannelFlags,
+    VerificationLevel,
+    GuildMemberFlags,
+    GuildNSFWLevel,
+    PremiumTier,
+    MFALevel,
+    Locale
+} from "../enums";
 
 export interface UnavailableGuildStructure {
     id: string;

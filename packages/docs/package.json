@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "eslint \"src/**/*.ts\""
   },
   "devDependencies": {
     "eslint": "^8.55.0",

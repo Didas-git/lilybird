@@ -8,12 +8,12 @@ export interface AutoModerationRuleStructure {
     event_type: AutoModerationEventType;
     trigger_type: AutoModerationTriggerType;
     trigger_metadata: {
-        keyword_filter?: Array<string>;
-        regex_patterns?: Array<string>;
-        presets?: Array<AutoModerationKeywordPresetTypes>;
-        allow_list?: Array<string>;
-        mention_total_limit?: number;
-        mention_raid_protection_enabled?: boolean;
+        keyword_filter?: Array<string>,
+        regex_patterns?: Array<string>,
+        presets?: Array<AutoModerationKeywordPresetTypes>,
+        allow_list?: Array<string>,
+        mention_total_limit?: number,
+        mention_raid_protection_enabled?: boolean
     };
     actions: Array<AutoModerationActionStructure>;
     enabled: true;
@@ -24,8 +24,8 @@ export interface AutoModerationRuleStructure {
 export interface AutoModerationActionStructure {
     type: AutoModerationActionType;
     metadata?: {
-        channel_id: string;
-        duration_seconds: number;
-        custom_message?: string;
+        channel_id: string,
+        duration_seconds: number,
+        custom_message?: string
     };
 }

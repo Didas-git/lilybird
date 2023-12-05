@@ -3,13 +3,13 @@ export enum InteractionType {
     APPLICATION_COMMAND,
     MESSAGE_COMPONENT,
     APPLICATION_COMMAND_AUTOCOMPLETE,
-    MODAL_SUBMIT,
+    MODAL_SUBMIT
 }
 
 export enum ApplicationCommandType {
     CHAT_INPUT = 1,
     USER,
-    MESSAGE,
+    MESSAGE
 }
 
 export enum ApplicationCommandOptionType {
@@ -23,13 +23,13 @@ export enum ApplicationCommandOptionType {
     ROLE,
     MENTIONABLE,
     NUMBER,
-    ATTACHMENT,
+    ATTACHMENT
 }
 
 export enum ApplicationCommandPermissionType {
     ROLE = 1,
     USER,
-    CHANNEL,
+    CHANNEL
 }
 
 export enum ComponentType {
@@ -40,7 +40,7 @@ export enum ComponentType {
     UserSelect,
     RoleSelect,
     MentionableSelect,
-    ChannelSelect,
+    ChannelSelect
 }
 
 export enum ButtonStyle {
@@ -48,16 +48,16 @@ export enum ButtonStyle {
     Secondary,
     Success,
     Danger,
-    Link,
+    Link
 }
 
 export enum TextInputStyle {
     Short = 1,
-    Paragraph,
+    Paragraph
 }
 
 export enum EntitlementType {
-    APPLICATION_SUBSCRIPTION = 8,
+    APPLICATION_SUBSCRIPTION = 8
 }
 
 export enum InteractionCallbackType {
@@ -68,5 +68,5 @@ export enum InteractionCallbackType {
     UPDATE_MESSAGE,
     APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
     MODAL,
-    PREMIUM_REQUIRED,
+    PREMIUM_REQUIRED
 }

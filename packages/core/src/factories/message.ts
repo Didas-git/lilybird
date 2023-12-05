@@ -1,11 +1,25 @@
-import { MessageFlags, type MessageType } from "../enums";
-import { MentionChannel, channelFactory, type Channel } from "./channel";
+import { MessageFlags } from "../enums";
+import { MentionChannel, channelFactory } from "./channel";
 import { GuildMember } from "./guild";
 import { User } from "./user";
 
+import type { Channel } from "./channel";
+import type { MessageType } from "../enums";
+
 import type { Client } from "../client";
 
-import type { MessageComponentStructure, CreateMessageStructure, GuildMessageStructure, EditMessageStructure, AttachmentStructure, ReactionStructure, StickerStructure, EmbedStructure, RoleStructure, ReplyOptions } from "../typings";
+import type {
+    MessageComponentStructure,
+    CreateMessageStructure,
+    GuildMessageStructure,
+    EditMessageStructure,
+    AttachmentStructure,
+    ReactionStructure,
+    StickerStructure,
+    EmbedStructure,
+    RoleStructure,
+    ReplyOptions
+} from "../typings";
 
 export interface MessageEditOptions extends ReplyOptions {
     suppressEmbeds?: boolean;
@@ -73,13 +87,8 @@ export class Message {
 
         this.guildId = message.guild_id;
 
-        if (message.edited_timestamp != null) {
-            this.editedTimestamp = new Date(message.edited_timestamp);
-        }
-
-        if (typeof message.member !== "undefined") {
-            this.member = new GuildMember(client, <never>message.member);
-        }
+        if (message.edited_timestamp != null) this.editedTimestamp = new Date(message.edited_timestamp);
+        if (typeof message.member !== "undefined") this.member = new GuildMember(client, <never>message.member);
     }
 
     public async reply(content: string, options?: MessageReplyOptions): Promise<Message>;
@@ -92,29 +101,19 @@ export class Message {
             if (typeof options !== "undefined") {
                 const { suppressEmbeds, suppressNotifications, ...obj } = options;
 
-                if (suppressEmbeds) {
-                    flags |= MessageFlags.SUPPRESS_EMBEDS;
-                }
-                if (suppressNotifications) {
-                    flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
-                }
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+                if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
                 data = {
                     ...obj,
-                    content,
+                    content
                 };
-            } else {
-                data = { content };
-            }
+            } else data = { content };
         } else {
             const { suppressEmbeds, suppressNotifications, ...obj } = content;
 
-            if (suppressEmbeds) {
-                flags |= MessageFlags.SUPPRESS_EMBEDS;
-            }
-            if (suppressNotifications) {
-                flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
-            }
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
             data = obj;
         }
@@ -125,9 +124,9 @@ export class Message {
                 ...data,
                 flags,
                 message_reference: {
-                    message_id: this.id,
-                },
-            }),
+                    message_id: this.id
+                }
+            })
         );
     }
 
@@ -141,27 +140,23 @@ export class Message {
             if (typeof options !== "undefined") {
                 const { suppressEmbeds, ...obj } = options;
 
-                if (suppressEmbeds) {
-                    flags = MessageFlags.SUPPRESS_EMBEDS;
-                }
+                if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
                 data = <never>{
                     ...obj,
                     content,
-                    flags,
+                    flags
                 };
-            } else {
+            } else
                 data = { content, flags };
-            }
         } else {
             const { suppressEmbeds, ...obj } = content;
-            if (suppressEmbeds) {
-                flags = MessageFlags.SUPPRESS_EMBEDS;
-            }
+
+            if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
             data = <never>{
                 ...obj,
-                flags,
+                flags
             };
         }
 

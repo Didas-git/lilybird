@@ -1,14 +1,17 @@
-import { GuildMember, type GuildMemberWithGuildId } from "./factories/guild";
-import { type DebugFunction, WebSocketManager } from "./ws/ws";
+import { Message } from ".";
+import { GuildMember } from "./factories/guild";
+import { WebSocketManager } from "./ws/ws";
 import { interactionFactory } from "./factories/interaction";
 import { ThreadChannel, channelFactory } from "./factories/channel";
 import { User } from "./factories/user";
 import { GatewayEvent } from "./enums";
 import { REST } from "./rest/rest";
+import type { DebugFunction } from "./ws/ws";
+import type { GuildMemberWithGuildId } from "./factories/guild";
 
 import type { UnavailableGuildStructure, ApplicationStructure, BaseClientOptions } from "./typings";
-import { Message } from ".";
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {
     readonly user: User;
     readonly guilds: Array<UnavailableGuildStructure>;
@@ -16,20 +19,29 @@ export interface Client {
     readonly application: ApplicationStructure;
 }
 
-// biome-ignore lint/suspicious/noUnsafeDeclarationMerging: This is intentional
+/*
+    I will probably end up making them props
+    but for now we use declaration merging
+    this is safe because as the library is meant to be used
+    the client will always have this properties defined
+    once the user can interact with it
+
+    This however might not be true if the user
+    extends the class or tries to create its own instance
+*/
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class Client {
     public readonly rest: REST = new REST();
 
     readonly #ws: WebSocketManager;
 
     public constructor(res: (client: Client) => void, options: BaseClientOptions, debug?: DebugFunction) {
-        if (Array.isArray(options.intents)) {
+        if (Array.isArray(options.intents))
             options.intents = options.intents.reduce((prev, curr) => prev | curr, 0);
-        }
 
         this.#ws = new WebSocketManager(
             {
-                intents: options.intents,
+                intents: options.intents
             },
             async (data) => {
                 await options.listeners.raw?.(data.d);
@@ -40,7 +52,7 @@ export class Client {
                             user: new User(this, data.d.user),
                             guilds: data.d.guilds,
                             sessionId: data.d.session_id,
-                            application: data.d.application,
+                            application: data.d.application
                         });
 
                         await options.setup?.(this);
@@ -74,7 +86,7 @@ export class Client {
                         break;
                     }
                     case GatewayEvent.GuildMemberAdd: {
-                        await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId>new GuildMember(this, data.d));
+                        await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId> new GuildMember(this, data.d));
                         break;
                     }
                     case GatewayEvent.GuildMemberRemove: {
@@ -82,7 +94,7 @@ export class Client {
                         break;
                     }
                     case GatewayEvent.GuildMemberUpdate: {
-                        await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId>new GuildMember(this, <never>data.d));
+                        await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId> new GuildMember(this, <never>data.d));
                         break;
                     }
                     case GatewayEvent.MessageCreate: {
@@ -112,7 +124,7 @@ export class Client {
                     default:
                 }
             },
-            debug,
+            debug
         );
     }
 
@@ -124,19 +136,19 @@ export class Client {
     }
 
     public close(): void {
-        this.rest.setToken(void 0);
+        this.rest.setToken(undefined);
         this.#ws.close();
     }
 
     /** Both are returned in `ms` */
-    public async ping(): Promise<{ ws: number; rest: number }> {
+    public async ping(): Promise<{ ws: number, rest: number }> {
         const start = performance.now();
         await this.rest.getGateway();
         const final = Math.floor(performance.now() - start);
 
         return {
             ws: await this.#ws.ping(),
-            rest: final,
+            rest: final
         };
     }
 }

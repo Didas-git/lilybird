@@ -1,4 +1,4 @@
-import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "../";
+import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "..";
 
 export interface EditWebhookStructure {
     content?: string | null;

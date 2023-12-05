@@ -21,7 +21,7 @@
     "./dist"
   ],
   "scripts": {
-    "check": "eslint .",
+    "check": "eslint \"src/**/*.ts\"",
     "build": "rm -rf dist && tsc"
   },
   "repository": {

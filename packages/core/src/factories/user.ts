@@ -1,8 +1,8 @@
 import { PremiumType } from "../enums";
+import { GuildMember } from "./guild";
 
 import type { UserStructure } from "../typings";
 import type { Client } from "../client";
-import { GuildMember } from "./guild";
 
 export class User {
     public readonly id: string;
@@ -43,8 +43,6 @@ export class User {
         this.publicFlags = user.public_flags ?? 0;
         this.avatarDecoration = user.avatar_decoration;
 
-        if ("member" in user) {
-            this.member = new GuildMember(client, <never>user.member);
-        }
+        if ("member" in user) this.member = new GuildMember(client, <never>user.member);
     }
 }

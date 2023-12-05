@@ -1,4 +1,4 @@
-import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "../";
+import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "..";
 
 import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "../../enums";
 

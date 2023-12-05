@@ -1,5 +1,5 @@
 import { ApplicationCommand, NumberOption } from "@lilybird/jsx";
-import { Event } from "@lilybird/handlers";
+import type { Event } from "@lilybird/handlers";
 
 export default ({
     event: "ready",

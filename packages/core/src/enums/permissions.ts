@@ -44,7 +44,7 @@ export const PermissionFlags = {
     VIEW_CREATOR_MONETIZATION_ANALYTICS: 2199023255552n,
     USE_SOUNDBOARD: 4398046511104n,
     USE_EXTERNAL_SOUNDS: 35184372088832n,
-    SEND_VOICE_MESSAGES: 70368744177664n,
+    SEND_VOICE_MESSAGES: 70368744177664n
 } as const;
 
 export type PermissionFlag = (typeof PermissionFlags)[keyof typeof PermissionFlags];

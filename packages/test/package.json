@@ -3,7 +3,8 @@
   "name": "@lilybird/test-bot",
   "type": "module",
   "scripts": {
-    "dev": "bun ./src/index.tsx"
+    "dev": "bun ./src/index.tsx",
+    "check": "eslint \"src/**/*.ts\""
   },
   "devDependencies": {
     "eslint": "^8.55.0",

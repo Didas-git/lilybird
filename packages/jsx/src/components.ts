@@ -1,45 +1,51 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ComponentType } from "lilybird";
 
-import type { SelectDefaultValueStructure, MessageComponentStructure, SelectOptionStructure, SelectMenuStructure, ActionRowStructure, TextInputStructure, ButtonStructure, EmojiStructure, ChannelType, ButtonStyle } from "lilybird";
+import type {
+    SelectDefaultValueStructure,
+    MessageComponentStructure,
+    SelectOptionStructure,
+    SelectMenuStructure,
+    ActionRowStructure,
+    TextInputStructure,
+    ButtonStructure,
+    EmojiStructure,
+    ChannelType,
+    ButtonStyle
+} from "lilybird";
 
 export function ActionRow({
-    children,
+    children
 }: {
-    children: Array<Exclude<MessageComponentStructure, ActionRowStructure>> | Exclude<MessageComponentStructure, ActionRowStructure>;
+    children: Array<Exclude<MessageComponentStructure, ActionRowStructure>> | Exclude<MessageComponentStructure, ActionRowStructure>
 }): ActionRowStructure {
-    if (!Array.isArray(children)) {
-        children = [children];
-    }
+    if (!Array.isArray(children))children = [children];
 
     return {
         type: ComponentType.ActionRow,
-        components: children,
+        components: children
     };
 }
 
-export function Button(
-    props:
-        | {
-              id: string;
-              style: Exclude<ButtonStyle, ButtonStyle.Link>;
-              label?: string;
-              emoji?: Pick<EmojiStructure, "name" | "id" | "animated">;
-              disabled?: boolean;
-          }
-        | {
-              url: string;
-              style: ButtonStyle.Link;
-              label?: string;
-              emoji?: Pick<EmojiStructure, "name" | "id" | "animated">;
-              disabled?: boolean;
-          },
-): ButtonStructure {
+export function Button(props: {
+    id: string,
+    style: Exclude<ButtonStyle, ButtonStyle.Link>,
+    label?: string,
+    emoji?: Pick<EmojiStructure, "name" | "id" | "animated">,
+    disabled?: boolean
+} | {
+    url: string,
+    style: ButtonStyle.Link,
+    label?: string,
+    emoji?: Pick<EmojiStructure, "name" | "id" | "animated">,
+    disabled?: boolean
+}): ButtonStructure {
     const base: ButtonStructure = {
         type: ComponentType.Button,
         style: props.style,
         label: props.label,
         emoji: props.emoji,
-        disabled: props.disabled,
+        disabled: props.disabled
     };
 
     if ("url" in props) {
@@ -59,9 +65,9 @@ export function TextInputModal({
     max_length,
     required,
     value,
-    placeholder,
+    placeholder
 }: Omit<TextInputStructure, "custom_id" | "type"> & {
-    id: string;
+    id: string
 }): TextInputStructure {
     return {
         type: ComponentType.TextInput,
@@ -72,7 +78,7 @@ export function TextInputModal({
         max_length,
         required,
         value,
-        placeholder,
+        placeholder
     };
 }
 
@@ -90,13 +96,11 @@ export function StringSelectMenu({
     min_values,
     max_values,
     disabled,
-    children,
+    children
 }: BaseSelectMenuOptions & {
-    children: Array<SelectOptionStructure> | SelectOptionStructure;
+    children: Array<SelectOptionStructure> | SelectOptionStructure
 }): SelectMenuStructure {
-    if (!Array.isArray(children)) {
-        children = [children];
-    }
+    if (!Array.isArray(children)) children = [children];
 
     return {
         type: ComponentType.StringSelect,
@@ -105,7 +109,7 @@ export function StringSelectMenu({
         min_values,
         max_values,
         disabled,
-        options: children,
+        options: children
     };
 }
 
@@ -115,13 +119,11 @@ export function UserSelectMenu({
     min_values,
     max_values,
     disabled,
-    children,
+    children
 }: BaseSelectMenuOptions & {
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure;
+    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    if (children != null && !Array.isArray(children)) {
-        children = [children];
-    }
+    if (children != null && !Array.isArray(children)) children = [children];
 
     return {
         type: ComponentType.UserSelect,
@@ -130,7 +132,7 @@ export function UserSelectMenu({
         min_values,
         max_values,
         disabled,
-        default_values: children,
+        default_values: children
     };
 }
 
@@ -140,13 +142,12 @@ export function RoleSelectMenu({
     min_values,
     max_values,
     disabled,
-    children,
+    children
 }: BaseSelectMenuOptions & {
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure;
+    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    if (children != null && !Array.isArray(children)) {
+    if (children != null && !Array.isArray(children))
         children = [children];
-    }
 
     return {
         type: ComponentType.RoleSelect,
@@ -155,7 +156,7 @@ export function RoleSelectMenu({
         min_values,
         max_values,
         disabled,
-        default_values: children,
+        default_values: children
     };
 }
 
@@ -165,13 +166,11 @@ export function MentionableSelectMenu({
     min_values,
     max_values,
     disabled,
-    children,
+    children
 }: BaseSelectMenuOptions & {
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure;
+    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    if (children != null && !Array.isArray(children)) {
-        children = [children];
-    }
+    if (children != null && !Array.isArray(children)) children = [children];
 
     return {
         type: ComponentType.MentionableSelect,
@@ -180,7 +179,7 @@ export function MentionableSelectMenu({
         min_values,
         max_values,
         disabled,
-        default_values: children,
+        default_values: children
     };
 }
 
@@ -191,14 +190,12 @@ export function ChannelSelectMenu({
     max_values,
     channel_types,
     disabled,
-    children,
+    children
 }: BaseSelectMenuOptions & {
-    channel_types?: Array<ChannelType>;
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure;
+    channel_types?: Array<ChannelType>,
+    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
 }): SelectMenuStructure {
-    if (children != null && !Array.isArray(children)) {
-        children = [children];
-    }
+    if (children != null && !Array.isArray(children)) children = [children];
 
     return {
         type: ComponentType.RoleSelect,
@@ -208,6 +205,6 @@ export function ChannelSelectMenu({
         max_values,
         disabled,
         channel_types,
-        default_values: children,
+        default_values: children
     };
 }

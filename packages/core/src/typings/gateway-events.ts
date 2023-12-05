@@ -22,7 +22,7 @@ import type {
     EmojiStructure,
     UserStructure,
     RoleStructure,
-    GuildMessageStructure,
+    GuildMessageStructure
 } from ".";
 
 export interface GetGatewayResponse {
@@ -33,10 +33,10 @@ export interface GetGatewayResponse {
 export interface GetGatewayBotResponse extends GetGatewayResponse {
     shards: number;
     session_start_limit: {
-        total: number;
-        remaining: number;
-        reset_after: number;
-        max_concurrency: number;
+        total: number,
+        remaining: number,
+        reset_after: number,
+        max_concurrency: number
     };
 }
 
@@ -77,7 +77,7 @@ export interface UpdatePresenceStructure {
 
 export interface PresenceUpdateEventFields {
     user: Partial<UserStructure> & {
-        id: string;
+        id: string
     };
     guild_id: string;
     status: string;
@@ -92,31 +92,31 @@ export type SendEvent = Identify | Resume | Heartbeat | RequestGuildMembers | Up
 export interface Identify extends BasePayload {
     op: GatewayOpCode.Identify;
     d: {
-        token: string;
+        token: string,
         properties: {
-            os: string;
-            browser: "LilyBird";
-            device: "LilyBird";
-        };
+            os: string,
+            browser: "LilyBird",
+            device: "LilyBird"
+        },
         /** @defaultValue false */
-        compress?: boolean;
+        compress?: boolean,
         /**
          * Value between 50 and 250
          * @defaultValue 50
          */
-        large_threshold?: number;
-        shard?: [number, number];
-        presence?: UpdatePresenceStructure;
-        intents: number;
+        large_threshold?: number,
+        shard?: [number, number],
+        presence?: UpdatePresenceStructure,
+        intents: number
     };
 }
 
 export interface Resume extends BasePayload {
     op: GatewayOpCode.Resume;
     d: {
-        token: string;
-        session_id: string;
-        seq: number;
+        token: string,
+        session_id: string,
+        seq: number
     };
 }
 
@@ -128,22 +128,22 @@ export interface Heartbeat extends BasePayload {
 export interface RequestGuildMembers extends BasePayload {
     op: GatewayOpCode.RequestGuildMembers;
     d: {
-        guild_id: string;
-        query?: string;
-        limit: number;
-        presences?: boolean;
-        user_ids?: string | Array<string>;
-        nonce?: string;
+        guild_id: string,
+        query?: string,
+        limit: number,
+        presences?: boolean,
+        user_ids?: string | Array<string>,
+        nonce?: string
     };
 }
 
 export interface UpdateVoiceState extends BasePayload {
     op: GatewayOpCode.VoiceStateUpdate;
     d: {
-        guild_id: string;
-        channel_id: string | null;
-        self_mute: boolean;
-        self_deaf: boolean;
+        guild_id: string,
+        channel_id: string | null,
+        self_mute: boolean,
+        self_deaf: boolean
     };
 }
 
@@ -230,7 +230,7 @@ export type ReceiveEvent = ReceiveOpCodeEvent | ReceiveDispatchEvent;
 export interface Hello extends BasePayload {
     op: GatewayOpCode.Hello;
     d: {
-        heartbeat_interval: number;
+        heartbeat_interval: number
     };
 }
 
@@ -247,13 +247,13 @@ export interface InvalidSession extends BasePayload {
 
 export interface Ready extends DispatchPayload {
     d: {
-        v: number;
-        user: UserStructure;
-        guilds: Array<UnavailableGuildStructure>;
-        session_id: string;
-        resume_gateway_url: string;
-        shard?: [number, number];
-        application: Partial<ApplicationStructure>;
+        v: number,
+        user: UserStructure,
+        guilds: Array<UnavailableGuildStructure>,
+        session_id: string,
+        resume_gateway_url: string,
+        shard?: [number, number],
+        application: Partial<ApplicationStructure>
     };
     t: GatewayEvent.Ready;
 }
@@ -284,17 +284,17 @@ export interface AutoModerationRuleDelete extends DispatchPayload {
 
 export interface AutoModerationActionExecution extends DispatchPayload {
     d: {
-        guild_id: string;
-        action: AutoModerationActionStructure;
-        rule_id: string;
-        rule_trigger_type: AutoModerationTriggerType;
-        user_id: string;
-        channel_id?: string;
-        message_id?: string;
-        alert_system_message_id?: string;
-        content: string;
-        matched_keyword: string | null;
-        matched_content: string | null;
+        guild_id: string,
+        action: AutoModerationActionStructure,
+        rule_id: string,
+        rule_trigger_type: AutoModerationTriggerType,
+        user_id: string,
+        channel_id?: string,
+        message_id?: string,
+        alert_system_message_id?: string,
+        content: string,
+        matched_keyword: string | null,
+        matched_content: string | null
     };
     t: GatewayEvent.AutoModerationActionExecution;
 }
@@ -316,19 +316,19 @@ export interface ChannelDelete extends DispatchPayload {
 
 export interface ChannelPinsUpdate extends DispatchPayload {
     d: {
-        guild_id?: string;
-        channel_id: string;
+        guild_id?: string,
+        channel_id: string,
         /** ISO8601 Timestamp */
-        last_pin_timestamp?: string | null;
+        last_pin_timestamp?: string | null
     };
     t: GatewayEvent.ChannelPinsUpdate;
 }
 
 export interface ThreadCreate extends DispatchPayload {
     d: ChannelStructure & {
-        newly_created: boolean;
+        newly_created: boolean,
         // ThreadChannelStructure
-        member: ThreadMemberStructure | undefined;
+        member: ThreadMemberStructure | undefined
     };
     t: GatewayEvent.ThreadCreate;
 }
@@ -345,49 +345,49 @@ export interface ThreadDelete extends DispatchPayload {
 
 export interface ThreadListSync extends DispatchPayload {
     d: {
-        guild_id: string;
-        channel_ids?: Array<string>;
-        threads: Array<ChannelStructure>;
-        members: Array<ThreadMemberStructure>;
+        guild_id: string,
+        channel_ids?: Array<string>,
+        threads: Array<ChannelStructure>,
+        members: Array<ThreadMemberStructure>
     };
     t: GatewayEvent.ThreadListSync;
 }
 
 export interface ThreadMemberUpdate extends DispatchPayload {
     d: ThreadMemberStructure & {
-        guild_id: string;
+        guild_id: string
     };
     t: GatewayEvent.ThreadMemberUpdate;
 }
 
 export interface ThreadMembersUpdate extends DispatchPayload {
     d: {
-        id: string;
-        guild_id: string;
-        member_count: number;
-        added_members?: Array<ThreadMemberStructure & GuildMemberStructure & (PresenceUpdateEventFields | null)>;
-        removed_member_ids?: Array<string>;
+        id: string,
+        guild_id: string,
+        member_count: number,
+        added_members?: Array<ThreadMemberStructure & GuildMemberStructure & (PresenceUpdateEventFields | null)>,
+        removed_member_ids?: Array<string>
     };
     t: GatewayEvent.ThreadMembersUpdate;
 }
 
 export interface GuildCreate extends DispatchPayload {
     d:
-        | UnavailableGuildStructure
-        | (GuildStructure & {
-              /** ISO8601 Timestamp */
-              joined_at: string;
-              large: boolean;
-              unavailable?: boolean;
-              member_count: number;
-              voice_states: Array<Partial<VoiceStateStructure>>;
-              members: Array<GuildMemberStructure>;
-              channels: Array<ChannelStructure>;
-              threads: Array<ChannelStructure>;
-              presences: Array<Partial<PresenceUpdateEventFields>>;
-              stage_instances: Array<StageInstanceStructure>;
-              guild_scheduled_events: Array<GuildScheduleEventStructure>;
-          });
+    | UnavailableGuildStructure
+    | (GuildStructure & {
+        /** ISO8601 Timestamp */
+        joined_at: string,
+        large: boolean,
+        unavailable?: boolean,
+        member_count: number,
+        voice_states: Array<Partial<VoiceStateStructure>>,
+        members: Array<GuildMemberStructure>,
+        channels: Array<ChannelStructure>,
+        threads: Array<ChannelStructure>,
+        presences: Array<Partial<PresenceUpdateEventFields>>,
+        stage_instances: Array<StageInstanceStructure>,
+        guild_scheduled_events: Array<GuildScheduleEventStructure>
+    });
     t: GatewayEvent.GuildCreate;
 }
 
@@ -408,111 +408,111 @@ export interface GuildAuditLogEntryCreate extends DispatchPayload {
 
 export interface GuildBanAdd extends DispatchPayload {
     d: {
-        guild_id: string;
-        user: UserStructure;
+        guild_id: string,
+        user: UserStructure
     };
     t: GatewayEvent.GuildBanAdd;
 }
 
 export interface GuildBanRemove extends DispatchPayload {
     d: {
-        guild_id: string;
-        user: UserStructure;
+        guild_id: string,
+        user: UserStructure
     };
     t: GatewayEvent.GuildBanRemove;
 }
 
 export interface GuildEmojisUpdate extends DispatchPayload {
     d: {
-        guild_id: string;
-        emojis: Array<EmojiStructure>;
+        guild_id: string,
+        emojis: Array<EmojiStructure>
     };
     t: GatewayEvent.GuildEmojisUpdate;
 }
 
 export interface GuildStickersUpdate extends DispatchPayload {
     d: {
-        guild_id: string;
-        stickers: Array<StickerStructure>;
+        guild_id: string,
+        stickers: Array<StickerStructure>
     };
     t: GatewayEvent.GuildStickersUpdate;
 }
 
 export interface GuildIntegrationsUpdate extends DispatchPayload {
     d: {
-        guild_id: string;
+        guild_id: string
     };
     t: GatewayEvent.GuildIntegrationsUpdate;
 }
 
 export interface GuildMemberAdd extends DispatchPayload {
     d: GuildMemberStructure & {
-        guild_id: string;
+        guild_id: string
     };
     t: GatewayEvent.GuildMemberAdd;
 }
 
 export interface GuildMemberRemove extends DispatchPayload {
     d: {
-        guild_id: string;
-        user: UserStructure;
+        guild_id: string,
+        user: UserStructure
     };
     t: GatewayEvent.GuildMemberRemove;
 }
 
 export interface GuildMemberUpdate extends DispatchPayload {
     d: {
-        guild_id: string;
-        roles: Array<string>;
-        user: UserStructure;
-        nick?: string | null;
-        avatar: string | null;
+        guild_id: string,
+        roles: Array<string>,
+        user: UserStructure,
+        nick?: string | null,
+        avatar: string | null,
         /** ISO8601 Timestamp */
-        joined_at: string | null;
+        joined_at: string | null,
         /** ISO8601 Timestamp */
-        premium_since?: string | null;
-        deaf?: boolean;
-        mute?: boolean;
-        pending?: boolean;
+        premium_since?: string | null,
+        deaf?: boolean,
+        mute?: boolean,
+        pending?: boolean,
         /** ISO8601 Timestamp */
-        communication_disabled_until?: string | null;
+        communication_disabled_until?: string | null
     };
     t: GatewayEvent.GuildMemberUpdate;
 }
 
 export interface GuildMembersChunk extends DispatchPayload {
     d: {
-        guild_id: string;
-        members: Array<GuildMemberStructure>;
-        chunk_index: number;
-        chunk_count: number;
-        not_found?: Array<string>;
-        presences?: Array<PresenceUpdateEventFields>;
-        nonce?: string;
+        guild_id: string,
+        members: Array<GuildMemberStructure>,
+        chunk_index: number,
+        chunk_count: number,
+        not_found?: Array<string>,
+        presences?: Array<PresenceUpdateEventFields>,
+        nonce?: string
     };
     t: GatewayEvent.GuildMembersChunk;
 }
 
 export interface GuildRoleCreate extends DispatchPayload {
     d: {
-        guild_id: string;
-        role: RoleStructure;
+        guild_id: string,
+        role: RoleStructure
     };
     t: GatewayEvent.GuildRoleCreate;
 }
 
 export interface GuildRoleUpdate extends DispatchPayload {
     d: {
-        guild_id: string;
-        role: RoleStructure;
+        guild_id: string,
+        role: RoleStructure
     };
     t: GatewayEvent.GuildRoleUpdate;
 }
 
 export interface GuildRoleDelete extends DispatchPayload {
     d: {
-        guild_id: string;
-        role_id: string;
+        guild_id: string,
+        role_id: string
     };
     t: GatewayEvent.GuildRoleDelete;
 }
@@ -534,41 +534,41 @@ export interface GuildScheduledEventDelete extends DispatchPayload {
 
 export interface GuildScheduledEventUserAdd extends DispatchPayload {
     d: {
-        guild_scheduled_event_id: string;
-        user_id: string;
-        guild_id: string;
+        guild_scheduled_event_id: string,
+        user_id: string,
+        guild_id: string
     };
     t: GatewayEvent.GuildScheduledEventUserAdd;
 }
 
 export interface GuildScheduledEventUserRemove extends DispatchPayload {
     d: {
-        guild_scheduled_event_id: string;
-        user_id: string;
-        guild_id: string;
+        guild_scheduled_event_id: string,
+        user_id: string,
+        guild_id: string
     };
     t: GatewayEvent.GuildScheduledEventUserRemove;
 }
 
 export interface IntegrationCreate extends DispatchPayload {
     d: IntegrationStructure & {
-        guild_id: string;
+        guild_id: string
     };
     t: GatewayEvent.IntegrationCreate;
 }
 
 export interface IntegrationUpdate extends DispatchPayload {
     d: IntegrationStructure & {
-        guild_id: string;
+        guild_id: string
     };
     t: GatewayEvent.IntegrationUpdate;
 }
 
 export interface IntegrationDelete extends DispatchPayload {
     d: {
-        id: string;
-        guild_id: string;
-        application_id?: string;
+        id: string,
+        guild_id: string,
+        application_id?: string
     };
     t: GatewayEvent.IntegrationDelete;
 }
@@ -580,28 +580,28 @@ export interface InteractionCreate extends DispatchPayload {
 
 export interface InviteCreate extends DispatchPayload {
     d: {
-        channel_id: string;
-        code: string;
+        channel_id: string,
+        code: string,
         /** ISO8601 Timestamp */
-        created_at: string;
-        guild_id?: string;
-        inviter?: UserStructure;
-        max_age: number;
-        max_uses: number;
-        target_type?: InviteTargetType;
-        target_user?: UserStructure;
-        target_application?: Partial<ApplicationStructure>;
-        temporary: boolean;
-        uses: number;
+        created_at: string,
+        guild_id?: string,
+        inviter?: UserStructure,
+        max_age: number,
+        max_uses: number,
+        target_type?: InviteTargetType,
+        target_user?: UserStructure,
+        target_application?: Partial<ApplicationStructure>,
+        temporary: boolean,
+        uses: number
     };
     t: GatewayEvent.InviteCreate;
 }
 
 export interface InviteDelete extends DispatchPayload {
     d: {
-        channel_id: string;
-        guild_id?: string;
-        code: string;
+        channel_id: string,
+        guild_id?: string,
+        code: string
     };
     t: GatewayEvent.InviteCreate;
 }
@@ -618,61 +618,61 @@ export interface MessageUpdate extends DispatchPayload {
 
 export interface MessageDelete extends DispatchPayload {
     d: {
-        id: string;
-        channel_id: string;
-        guild_id?: string;
+        id: string,
+        channel_id: string,
+        guild_id?: string
     };
     t: GatewayEvent.MessageDelete;
 }
 
 export interface MessageDeleteBulk extends DispatchPayload {
     d: {
-        ids: Array<string>;
-        channel_id: string;
-        guild_id?: string;
+        ids: Array<string>,
+        channel_id: string,
+        guild_id?: string
     };
     t: GatewayEvent.MessageDeleteBulk;
 }
 
 export interface MessageReactionAdd extends DispatchPayload {
     d: {
-        user_id: string;
-        channel_id: string;
-        message_id: string;
-        guild_id?: string;
-        member?: GuildMemberStructure;
-        emoji: Partial<EmojiStructure>;
-        message_author_id?: string;
+        user_id: string,
+        channel_id: string,
+        message_id: string,
+        guild_id?: string,
+        member?: GuildMemberStructure,
+        emoji: Partial<EmojiStructure>,
+        message_author_id?: string
     };
     t: GatewayEvent.MessageReactionAdd;
 }
 
 export interface MessageReactionRemove extends DispatchPayload {
     d: {
-        user_id: string;
-        channel_id: string;
-        message_id: string;
-        guild_id?: string;
-        emoji: Partial<EmojiStructure>;
+        user_id: string,
+        channel_id: string,
+        message_id: string,
+        guild_id?: string,
+        emoji: Partial<EmojiStructure>
     };
     t: GatewayEvent.MessageReactionRemove;
 }
 
 export interface MessageReactionRemoveAll extends DispatchPayload {
     d: {
-        channel_id: string;
-        message_id: string;
-        guild_id?: string;
+        channel_id: string,
+        message_id: string,
+        guild_id?: string
     };
     t: GatewayEvent.MessageReactionRemoveAll;
 }
 
 export interface MessageReactionRemoveEmoji extends DispatchPayload {
     d: {
-        channel_id: string;
-        guild_id?: string;
-        message_id: string;
-        emoji: Partial<EmojiStructure>;
+        channel_id: string,
+        guild_id?: string,
+        message_id: string,
+        emoji: Partial<EmojiStructure>
     };
     t: GatewayEvent.MessageReactionRemoveEmoji;
 }
@@ -680,15 +680,15 @@ export interface MessageReactionRemoveEmoji extends DispatchPayload {
 export interface PresenceUpdate extends DispatchPayload {
     d: {
         /** Only `id` will always exist */
-        user: Partial<UserStructure> & Pick<UserStructure, "id">;
-        guild_id: string;
-        status: Status;
-        activities: Array<ActivityStructure>;
+        user: Partial<UserStructure> & Pick<UserStructure, "id">,
+        guild_id: string,
+        status: Status,
+        activities: Array<ActivityStructure>,
         client_status: {
-            desktop?: Status;
-            mobile?: Status;
-            web?: Status;
-        };
+            desktop?: Status,
+            mobile?: Status,
+            web?: Status
+        }
     };
     t: GatewayEvent.PresenceUpdate;
 }
@@ -710,11 +710,11 @@ export interface StageInstanceDelete extends DispatchPayload {
 
 export interface TypingStart extends DispatchPayload {
     d: {
-        channel_id: string;
-        guild_id?: string;
-        user_id: string;
-        timestamp: number;
-        member?: GuildMemberStructure;
+        channel_id: string,
+        guild_id?: string,
+        user_id: string,
+        timestamp: number,
+        member?: GuildMemberStructure
     };
     t: GatewayEvent.TypingStart;
 }
@@ -731,17 +731,17 @@ export interface VoiceStateUpdate extends DispatchPayload {
 
 export interface VoiceServerUpdate extends DispatchPayload {
     d: {
-        token: string;
-        guild_id: string;
-        endpoint: string | null;
+        token: string,
+        guild_id: string,
+        endpoint: string | null
     };
     t: GatewayEvent.VoiceServerUpdate;
 }
 
 export interface WebhookUpdate extends DispatchPayload {
     d: {
-        guild_id: string;
-        channel_id: string;
+        guild_id: string,
+        channel_id: string
     };
     t: GatewayEvent.WebhookUpdate;
 }

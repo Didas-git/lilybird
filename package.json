@@ -14,6 +14,6 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "eslint ."
+    "check": "eslint \"packages/*/**/*.ts\""
   }
 }
