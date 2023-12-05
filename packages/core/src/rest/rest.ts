@@ -1,5 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-import { version } from "../../package.json";
 import type { MFALevel, OnboardingMode } from "../enums";
 
 import type {
@@ -54,6 +53,10 @@ import type {
     BanStructure,
     LilybirdAttachment
 } from "../typings";
+
+// There is no other way to do this...
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const { version } = <{ version: string }>require("../../package.json");
 
 export class REST {
     public static baseUrl = "https://discord.com/api/v10/";
