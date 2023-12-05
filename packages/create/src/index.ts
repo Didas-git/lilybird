@@ -6,9 +6,9 @@ import c from "ansi-colors";
 const { Input, Select, MultiSelect, Snippet } = Enquirer;
 
 import { resolve } from "node:path";
-import { stat, mkdir, readdir, writeFile } from "node:fs/promises";
+import { stat, mkdir, readdir, writeFile, cp } from "node:fs/promises";
 import { execSync } from "node:child_process";
-import { generateREADME, generateTSConfig } from "./templates.cjs";
+import { generateGlobalTypes, generateREADME, generateTSConfig } from "./templates.cjs";
 
 //#region Directory 
 const directory = await new Input({
@@ -106,9 +106,10 @@ const packageJSON = (await new Snippet({
   "name": "\${name}",
   "description": "\${description}",
   "version": "\${version}",
+  "type": "module",
   "main": ${pm === "bun" ? `"./src/index.${type}"` : "./dist/index.js"},
   "scripts": {
-    ${type === "ts" ? pm === "bun" ? '"start": "bun ."' : `"dev": "${pm === "bun" ? "bun" : "ts-node"} ./src/index.ts",\n    "build": "rm -rf dist && tsc",\n    "start": "${pm} ."` : `"start": "${pm} ."`}
+    ${type === "ts" ? pm === "bun" ? '"start": "bun ."' : `"dev": "${pm === "bun" ? "bun" : "ts-node"} --env-file=.env ./src/index.ts",\n    "build": "rm -rf dist && tsc",\n    "start": "${pm === "bun" ? "bun" : "node --env-file=.env"} ."` : `"start": "node ."`}
   }
 }`
 }).run()).result;
@@ -117,7 +118,9 @@ process.chdir(root);
 
 await writeFile("package.json", packageJSON);
 await writeFile("README.md", generateREADME(pm, type));
+await writeFile(".env", "TOKEN=")
 
+if (type === "ts") await writeFile("globals.d.ts", generateGlobalTypes())
 if (config !== null) await writeFile("tsconfig.json", generateTSConfig(config, pm));
 
 execSync(`${pm} install ${dependencies.join(" ")}`, {
@@ -125,11 +128,12 @@ execSync(`${pm} install ${dependencies.join(" ")}`, {
 });
 
 if (pm === "bun") devDeps.push("bun-types");
+else devDeps.push("ts-node", "@types/node");
 
 if (devDeps.length > 0) execSync(`${pm} install -D ${devDeps.join(" ")}`)
 
 await mkdir("src");
 process.chdir(resolve("src"));
-await writeFile(`index.${type}`, "");
+await cp(new URL("./index-template.ts", import.meta.url), `${root}/index.${type}`)
 
 console.log(c.green("All done!"));

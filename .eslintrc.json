@@ -1,5 +1,6 @@
 {
     "ignorePatterns": [
+        "*.js",
         "*.d.ts",
         "*.json",
         "dist/",
