@@ -31,12 +31,52 @@ export default defineConfig({
             ],
             sidebar: [
                 {
-                    label: "Guides",
-                    autogenerate: { directory: "guides" }
+                    label: "Philosophy",
+                    link: "philosophy"
                 },
                 {
-                    label: "Reference",
-                    autogenerate: { directory: "reference" }
+                    label: "Guides",
+                    items: [
+                        {
+                            label: "Getting Started",
+                            link: "/guides/getting-started"
+                        },
+                        {
+                            label: "Manual Setup",
+                            link: "/guides/manual-setup"
+                        },
+                        {
+                            label: "Configuring JSX",
+                            link: "/guides/configuring-jsx"
+                        }
+                    ]
+                },
+                {
+                    label: "Documentation",
+                    items: [
+                        {
+                            label: "JSX Components",
+                            collapsed: true,
+                            badge: {
+                                text: "Beta",
+                                variant: "danger"
+                            },
+                            items: [
+                                {
+                                    label: "Embeds",
+                                    link: "docs/jsx/embed"
+                                },
+                                {
+                                    label: "Application Commands",
+                                    link: "docs/jsx/command"
+                                },
+                                {
+                                    label: "Attachments",
+                                    link: "docs/jsx/attachment"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         })

@@ -7,15 +7,81 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 
 ## Installation
 
+The fastest way to get started with lilybird is by using our template generator.
+
+:::note
+The is no support for `deno` currently, the only runtimes supported are `bun` and `node`.
+:::
+
 <Tabs>
     <TabItem label="bun">
-    ```bash frame="none"
-    bun i lilybird
-    ```
+        ```bash frame="none"
+        bun init lilybird
+        ```
     </TabItem>
     <TabItem label="pnpm">
-    ```bash frame="none"
-    pnpm i lilybird
-    ```
+        ```bash frame="none"
+        pnpm init lilybird
+        ```
+    </TabItem>
+    <TabItem label="npm">
+        ```bash frame="none"
+        npm init lilybird
+        ```
+    </TabItem>
+    <TabItem label="yarn">
+        ```bash frame="none"
+        yarn init lilybird
+        ```
     </TabItem>
 </Tabs>
+
+## Running your first bot
+
+After running the command you should see a file structure somewhat like this:
+
+:::note
+The following structure is what is generated when you use Typescript, the javascript template doesnt include the `globals.d.ts` and `tsconfig.json` files.
+:::
+
+```
+your-bot
+├── globals.d.ts
+├── tsconfig.json
+├── package.json
+├── .env
+└── src
+    └── index.ts
+```
+
+### Adding your token
+
+To add your bot token open your `.env` file and add the token after `TOKEN=`.
+
+### Starting your bot
+
+:::tip
+If you are using bun you can run `bun start` no matter what language you are using.
+:::
+
+<Tabs>
+    <TabItem label="Typescript">
+        ```bash frame="none"
+        npm run dev
+        ```
+    </TabItem>
+    <TabItem label="Javascript">
+        ```bash frame="none"
+        npm run start
+        ```
+    </TabItem>
+</Tabs>
+
+### Ready for production with Typescript
+
+If you are using typescript we highly recommend adding `NODE_ENV="production` to your `.env` file and if you are using node do the following.
+
+```bash
+npm run build
+npm run start
+```
