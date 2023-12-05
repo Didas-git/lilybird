@@ -23,7 +23,7 @@ import { createClient, Intents } from "lilybird";
 await createClient({
     token: process.env.TOKEN,
     intents: [Intents.GUILDS],
-    listeners: { /* your listeners */}
+    listeners: {/* your listeners */}
 })
 ```
 

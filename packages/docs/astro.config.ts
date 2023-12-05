@@ -75,6 +75,36 @@ export default defineConfig({
                                     link: "docs/jsx/attachment"
                                 }
                             ]
+                        },
+                        {
+                            label: "Handlers",
+                            collapsed: true,
+                            badge: {
+                                text: "Beta",
+                                variant: "danger"
+                            },
+                            items: [
+                                {
+                                    label: "API",
+                                    link: "docs/handlers/the-api",
+                                    badge: {
+                                        text: "Internals",
+                                        variant: "success"
+                                    }
+                                },
+                                {
+                                    label: "Handling Application Commands",
+                                    link: "docs/handlers/application-commands"
+                                },
+                                {
+                                    label: "Handling Events",
+                                    link: "docs/handlers/events"
+                                },
+                                {
+                                    label: "Handling Message Commands",
+                                    link: "docs/handlers/message-commands"
+                                }
+                            ]
                         }
                     ]
                 }
