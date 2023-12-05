@@ -9,10 +9,6 @@ Currently the `@lilybird/handlers` package provides only one way of handling app
 
 Lets create a simple `ping` command to show how it works.
 
-:::caution[Important]
-While in the example we are using `@lilybird/jsx` to create the command data you cont need to use it, you can use a normal object and if you are using typescript you will have intellisense
-:::
-
 ```diff lang="ts" title="index.ts"
 import { createClient, Intents } from "lilybird";
 +import { createHandler } from "@lilybird/handlers";
