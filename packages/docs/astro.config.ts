@@ -25,7 +25,7 @@ export default defineConfig({
                     tag: "meta",
                     attrs: {
                         name: "theme-color",
-                        content: "#ff00ef"
+                        content: "#f82277"
                     }
                 }
             ],
