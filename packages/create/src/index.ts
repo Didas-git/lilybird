@@ -8,6 +8,7 @@ const { Input, Select, MultiSelect, Snippet } = Enquirer;
 import { resolve } from "node:path";
 import { stat, mkdir, readdir, writeFile, cp } from "node:fs/promises";
 import { execSync } from "node:child_process";
+import { platform } from "node:os"
 import { generateGlobalTypes, generateREADME, generateTSConfig } from "./templates.cjs";
 
 //#region Directory 
@@ -109,7 +110,7 @@ const packageJSON = (await new Snippet({
   "type": "module",
   "main": ${pm === "bun" ? `"./src/index.${type}"` : "./dist/index.js"},
   "scripts": {
-    ${type === "ts" ? pm === "bun" ? '"start": "bun ."' : `"dev": "${pm === "bun" ? "bun" : "ts-node"} --env-file=.env ./src/index.ts",\n    "build": "rm -rf dist && tsc",\n    "start": "${pm === "bun" ? "bun" : "node --env-file=.env"} ."` : `"start": "node ."`}
+    ${pm === "bun" ? '"start": "bun ."' : type === "ts" ? `"dev": "ts-node --env-file=.env ./src/index.ts",\n    "build": "${platform() === "win32" ? "rmdir /s /q dist" : "rm -rf dist"} && tsc",\n    "start": "node --env-file=.env ."` : `"start": "node ."`}
   }
 }`
 }).run()).result;
