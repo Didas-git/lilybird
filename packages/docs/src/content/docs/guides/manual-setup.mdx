@@ -3,6 +3,8 @@ title: Manual Setup
 description: Configure lilybird however you would like.
 ---
 
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
 ## The different packages
 
 Currently lilybird is divided into 3 pieces.
@@ -21,10 +23,59 @@ Creating the bot with lilybird is a trivial task.
 import { createClient, Intents } from "lilybird";
 
 await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
-    listeners: {/* your listeners */}
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+  listeners: {/* your listeners */}
 })
+```
+
+## Adding types to `process.env`
+
+In case you are using typescript we highly encourage adding proper types to your process.env.
+
+This can be done by creating a `globals.d.ts` file on the root of your project.
+
+<Tabs>
+  <TabItem label="bun">
+      ```ts title="globals.d.ts"
+      declare module "bun" {
+        interface Env {
+          TOKEN: string;
+          // Other env variables
+        }
+      }
+      ```
+  </TabItem>
+  <TabItem label="node">
+      ```ts title="globals.d.ts"
+      declare global {
+        namespace NodeJS {
+          interface ProcessEnv {
+            TOKEN: string;
+            // Other env variables
+          }
+        }
+      }
+      ```
+    </TabItem>
+</Tabs>
+
+And then addint the following to your `tsconfig.json`.
+
+:::caution
+Setting `types` on the compiler options will make it so typescript wont search for `@types` packages.
+
+You can read more about it on the [typescript handbook](https://www.typescriptlang.org/tsconfig#types)
+:::
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "types": [
+      "./globals"
+    ]
+  }
+}
 ```
 
 ## Understanding the no-events approach
@@ -41,22 +92,22 @@ Let me answer that for you, usually its rly unlikely that you need to listen to 
 import { createClient, Intents, Interaction } from "lilybird"
 
 function useInteraction1(interaction: Interaction) {
-    console.log(interaction.token);
+  console.log(interaction.token);
 }
 
 function useInteraction2(interaction: Interaction) {
-    console.log(interaction.data);
+  console.log(interaction.data);
 }
 
 await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
-    listeners: {
-        interactionCreate: (interaction) => {
-            useInteraction1(interaction);
-            useInteraction2(interaction);
-        }
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+  listeners: {
+    interactionCreate: (interaction) => {
+      useInteraction1(interaction);
+      useInteraction2(interaction);
     }
+  }
 })
 ```
 

@@ -3,7 +3,7 @@ title: Attachments
 description: How to use lilybird's Attachment component.
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 ## Creating attachments
 
@@ -14,29 +14,29 @@ Passing in `path` instead of `file` will make it so lilybird will try to use `Bu
 :::
 
 <Tabs>
-    <TabItem label="bun">
-        ```tsx
-        import { Attachment } from "@lilybird/jsx";
-        import { join } from "node:path"
+  <TabItem label="bun">
+    ```tsx
+    import { Attachment } from "@lilybird/jsx";
+    import { join } from "node:path"
 
-        const att = <Attachment
-            path={join(import.meta.dir, "./lilybird.png")}
-            name="lilybird"
-        />;
-        ```
-    </TabItem>
-    <TabItem label="node">
-        ```tsx
-        import { Attachment } from "@lilybird/jsx";
-        import { readFile } from "node:fs";
-        import { join } from "node:path"
+    const att = <Attachment
+      path={join(import.meta.dir, "./lilybird.png")}
+      name="lilybird"
+    />;
+    ```
+  </TabItem>
+  <TabItem label="node">
+    ```tsx
+    import { Attachment } from "@lilybird/jsx";
+    import { readFile } from "node:fs";
+    import { join } from "node:path"
 
-        const att = <Attachment 
-            file={new Blob([await readFile(join(import.meta.dir, "./lilybird.png"))])}
-            name="lilybird"
-        />;
-        ```
-    </TabItem>
+    const att = <Attachment 
+      file={new Blob([await readFile(join(import.meta.dir, "./lilybird.png"))])}
+      name="lilybird"
+    />;
+    ```
+  </TabItem>
 </Tabs>
 
 ## Using attachments
@@ -50,13 +50,13 @@ import { Attachment, Embed, EmbedImage } from "@lilybird/jsx";
 import { join } from "node:path"
 
 const att = <Attachment
-    path={join(import.meta.dir, "./lilybird.png")}
-    name="lilybird"
+  path={join(import.meta.dir, "./lilybird.png")}
+  name="lilybird"
 />;
 
 const embed = (
-    <Embed title="Lilybird" description="For bun, with bun">
-        <EmbedImage url={att.uri} />
-    </Embed>
+  <Embed title="Lilybird" description="For bun, with bun">
+    <EmbedImage url={att.uri} />
+  </Embed>
 );
 ```

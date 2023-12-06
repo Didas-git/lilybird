@@ -9,9 +9,9 @@ Embeds can easily be created using the main `Embed` component, for properties of
 
 ```tsx
 <Embed title="Hello from Lilybird TSX" color={0xff00ef} timestamp>
-    {Array.from({ length: 4 }, (_, i) => (
-        <EmbedField name={`Field ${i}`} value="bun" inline />
-    ))}
-    <EmbedFooter text="Hello from bun" />
+  {Array.from({ length: 4 }, (_, i) => (
+    <EmbedField name={`Field ${i}`} value="bun" inline />
+  ))}
+  <EmbedFooter text="Hello from bun" />
 </Embed>
 ```

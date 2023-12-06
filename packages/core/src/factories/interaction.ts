@@ -40,7 +40,7 @@ function interactionDataFactory(interaction: InteractionStructure): InteractionD
             return undefined;
         case InteractionType.APPLICATION_COMMAND:
         case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE: {
-            return new ApplicationCommandData(interaction.data);
+            return new ApplicationCommandData(interaction.data) as never;
         }
         case InteractionType.MESSAGE_COMPONENT: {
             return new MessageComponentData(interaction.data);
@@ -51,11 +51,9 @@ function interactionDataFactory(interaction: InteractionStructure): InteractionD
     }
 }
 
-export type InteractionData = ApplicationCommandData<undefined | string | number> | AutocompleteData | MessageComponentData | ModalSubmitData | undefined;
+export type InteractionData = ApplicationCommandData | AutocompleteData | MessageComponentData | ModalSubmitData | undefined;
 
-export interface AutocompleteData extends Omit<ApplicationCommandDataStructure, "options"> {
-    options: ApplicationCommandOptions<string | number>;
-}
+export interface AutocompleteData extends ApplicationCommandData<FocusedOption> {}
 
 export interface InteractionReplyOptions extends ReplyOptions {
     ephemeral?: boolean;
@@ -238,7 +236,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         return this.type === InteractionType.PING;
     }
 
-    public isApplicationCommandInteraction(): this is Interaction<ApplicationCommandData<undefined>> {
+    public isApplicationCommandInteraction(): this is Interaction<ApplicationCommandData> {
         return this.type === InteractionType.APPLICATION_COMMAND;
     }
 
@@ -265,7 +263,7 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
 
 export interface GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     isPingInteraction: () => this is GuildInteraction<undefined>;
-    isApplicationCommandInteraction: () => this is GuildInteraction<ApplicationCommandData<undefined>>;
+    isApplicationCommandInteraction: () => this is GuildInteraction<ApplicationCommandData>;
     isAutocompleteInteraction: () => this is GuildInteraction<AutocompleteData>;
     isMessageComponentInteraction: () => this is GuildInteraction<MessageComponentData, MessageStructure>;
     isModalSubmitInteraction: () => this is GuildInteraction<ModalSubmitData>;
@@ -298,7 +296,7 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
 
 export interface DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
     isPingInteraction: () => this is DMInteraction<undefined>;
-    isApplicationCommandInteraction: () => this is DMInteraction<ApplicationCommandData<undefined>>;
+    isApplicationCommandInteraction: () => this is DMInteraction<ApplicationCommandData>;
     isAutocompleteInteraction: () => this is DMInteraction<AutocompleteData>;
     isMessageComponentInteraction: () => this is DMInteraction<MessageComponentData, MessageStructure>;
     isModalSubmitInteraction: () => this is DMInteraction<ModalSubmitData>;
@@ -319,15 +317,15 @@ export class DMInteraction<T extends InteractionData, M extends undefined | Mess
     }
 }
 
-interface GuildApplicationCommandData<T> extends ApplicationCommandData<T> {
+interface GuildApplicationCommandData<T extends undefined | FocusedOption> extends ApplicationCommandData<T> {
     readonly guildId: string;
 }
 
-interface UIApplicationCommandData<T> extends ApplicationCommandData<T> {
+interface UIApplicationCommandData<T extends undefined | FocusedOption> extends ApplicationCommandData<T> {
     readonly targetId: string;
 }
 
-export class ApplicationCommandData<T> {
+export class ApplicationCommandData<T extends undefined | FocusedOption = undefined> {
     public readonly id: string;
     public readonly name: string;
     public readonly type: ApplicationCommandType;
@@ -355,7 +353,14 @@ export class ApplicationCommandData<T> {
     }
 }
 
-class ApplicationCommandOptions<T> {
+interface FocusedOption<T extends string | number | boolean = string | number | boolean> {
+    name: string;
+    value: T;
+}
+
+type ParseFocusedReturnType<T extends undefined | FocusedOption, F extends string | number | boolean> = T extends undefined ? undefined : FocusedOption<F>;
+
+class ApplicationCommandOptions<T extends undefined | FocusedOption> {
     readonly #stringOptions = new Map<string, string | undefined>();
     readonly #numberOptions = new Map<string, number | undefined>();
     readonly #integerOptions = new Map<string, number | undefined>();
@@ -365,7 +370,7 @@ class ApplicationCommandOptions<T> {
     readonly #roleOptions = new Map<string, string | undefined>();
     readonly #mentionableOptions = new Map<string, string | undefined>();
 
-    #focused!: T;
+    #focused!: FocusedOption;
     #subCommandGroup: string | undefined;
     #subCommand: string | undefined;
 
@@ -380,7 +385,8 @@ class ApplicationCommandOptions<T> {
             const option = options[i];
 
             if (option.focused) {
-                this.#focused = <T>option.value;
+                if (typeof option.value === "undefined") continue;
+                this.#focused = { name: option.name, value: option.value };
                 continue;
             }
 
@@ -458,8 +464,8 @@ class ApplicationCommandOptions<T> {
         }
     }
 
-    public get focused(): T {
-        return this.#focused;
+    public getFocused<F extends string | number | boolean = string | number | boolean>(): ParseFocusedReturnType<T, F> {
+        return this.#focused as never;
     }
 
     public get subCommand(): string | undefined {

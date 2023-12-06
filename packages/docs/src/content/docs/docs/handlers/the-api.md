@@ -19,36 +19,36 @@ While you can use that on your favor we highly advise against it.
 
 ```ts {2, 3}
 public buildListeners(): ClientEventListeners {
-    let interactionCreateFn = function () { return; };
-    let messageCreateFn = function () { return; };
+  let interactionCreateFn = function () { return; };
+  let messageCreateFn = function () { return; };
 
-    const listeners: ClientEventListeners = {};
+  const listeners: ClientEventListeners = {};
 
-    for (const [name, event] of this.events) {
-        if (name === "interactionCreate") {
-            interactionCreateFn = event.run;
-            continue;
-        }
-
-        if (name === "messageCreate") {
-            messageCreateFn = event.run;
-            continue;
-        }
-
-        listeners[name] = event.run;
+  for (const [name, event] of this.events) {
+    if (name === "interactionCreate") {
+      interactionCreateFn = event.run;
+      continue;
     }
 
-    listeners.interactionCreate = async (interaction) => {
-        await interactionCreateFn(interaction);
-        await this.onInteraction(interaction);
-    };
+    if (name === "messageCreate") {
+      messageCreateFn = event.run;
+      continue;
+    }
 
-    listeners.messageCreate = async (message) => {
-        await messageCreateFn(message);
-        await this.onMessage(message);
-    };
+    listeners[name] = event.run;
+  }
 
-    return listeners;
+  listeners.interactionCreate = async (interaction) => {
+    await interactionCreateFn(interaction);
+    await this.onInteraction(interaction);
+  };
+
+  listeners.messageCreate = async (message) => {
+    await messageCreateFn(message);
+    await this.onMessage(message);
+  };
+
+  return listeners;
 }
 ```
 

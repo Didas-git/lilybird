@@ -138,7 +138,7 @@ export class REST {
         return this.#makeRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
     }
 
-    public async createGlobalApplicationCommands(clientId: string, body: POSTApplicationCommandStructure): Promise<LocalizationGlobalApplicationCommandStructure> {
+    public async createGlobalApplicationCommand(clientId: string, body: POSTApplicationCommandStructure): Promise<LocalizationGlobalApplicationCommandStructure> {
         return this.#makeRequest("POST", `applications/${clientId}/commands`, body);
     }
 

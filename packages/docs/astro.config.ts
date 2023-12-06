@@ -46,8 +46,12 @@ export default defineConfig({
                             link: "/guides/manual-setup"
                         },
                         {
-                            label: "Configuring JSX",
-                            link: "/guides/configuring-jsx"
+                            label: "Registering Commands",
+                            link: "/guides/registering-commands"
+                        },
+                        {
+                            label: "Receiving Commands",
+                            link: "/guides/receiving-commands"
                         }
                     ]
                 },
@@ -62,6 +66,10 @@ export default defineConfig({
                                 variant: "danger"
                             },
                             items: [
+                                {
+                                    label: "Configuring JSX",
+                                    link: "/docs/jsx/configuring-jsx"
+                                },
                                 {
                                     label: "Embeds",
                                     link: "docs/jsx/embed"

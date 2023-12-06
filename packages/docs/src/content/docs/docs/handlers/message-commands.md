@@ -20,10 +20,10 @@ import { createClient, Intents } from "lilybird";
 +})
 
 await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
--    listeners: {/* your listeners */}
-+    ...listeners
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+-  listeners: {/* your listeners */}
++  ...listeners
 })
 ```
 
@@ -31,9 +31,9 @@ await createClient({
 The second argument `args` is the result of running the following code:
 ```ts
 message.content.slice(this.prefix.length)
-    .trim()
-    .split(/\s+/g)
-    .shift()
+  .trim()
+  .split(/\s+/g)
+  .shift()
 ```
 :::
 
@@ -41,14 +41,14 @@ message.content.slice(this.prefix.length)
 import { MessageCommand } from "@lilybird/handlers";
 
 export default {
-    name: "ping",
-    run: async (message, args) => {
-        const { ws, rest } = await message.client.ping();
+  name: "ping",
+  run: async (message, args) => {
+    const { ws, rest } = await message.client.ping();
 
-        await message.edit({
-            content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
-        });
-    },
+    await message.edit({
+      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+    });
+  },
 } satisfies MessageCommand
 ```
 

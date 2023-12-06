@@ -19,9 +19,9 @@ import { ActionRow, Button } from "@lilybird/jsx";
 import { ButtonStyle } from "lilybird";
 
 const buttonRow = (
-    <ActionRow>
-        <Button id="success-btn" label="Click Me" style={ButtonStyle.Primary}/>
-    </ActionRow>
+  <ActionRow>
+    <Button id="success-btn" label="Click Me" style={ButtonStyle.Primary}/>
+  </ActionRow>
 );
 ```
 
@@ -34,10 +34,10 @@ import { ActionRow, Button } from "@lilybird/jsx";
 import { ButtonStyle } from "lilybird";
 
 const buttonRow = (
-    <ActionRow>
--        <Button id="success-btn" label="Click Me" style={ButtonStyle.Primary}/>
-+        <Button url="https://lilybird.didas.dev" label="Click Me" style={ButtonStyle.Link}/>
-    </ActionRow>
+  <ActionRow>
+-    <Button id="success-btn" label="Click Me" style={ButtonStyle.Primary}/>
++    <Button url="https://lilybird.didas.dev" label="Click Me" style={ButtonStyle.Link}/>
+  </ActionRow>
 );
 ```
 
@@ -49,9 +49,9 @@ Select menus with components are just as easy to use and they are named as `<typ
 import { ActionRow, RoleSelectMenu } from "@lilybird/jsx";
 
 const buttonRow = (
-    <ActionRow>
-        <RoleSelectMenu id="role-selector"/>
-    </ActionRow>
+  <ActionRow>
+    <RoleSelectMenu id="role-selector"/>
+  </ActionRow>
 );
 ```
 
@@ -64,8 +64,8 @@ import { ActionRow, TextInputModal } from "@lilybird/jsx";
 import { TextInputStyle } from "lilybird";
 
 const buttonRow = (
-    <ActionRow>
-        <TextInputModal id="my-modal" name="Name" style={TextInputStyle.Short}/>
-    </ActionRow>
+  <ActionRow>
+    <TextInputModal id="my-modal" name="Name" style={TextInputStyle.Short}/>
+  </ActionRow>
 );
 ```

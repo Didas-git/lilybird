@@ -25,7 +25,7 @@ export class Handler {
     }
 
     public async registerGlobalCommands(client: Client): Promise<void> {
-        for await (const command of this.globalSlashCommands.values()) await client.rest.createGlobalApplicationCommands(client.user.id, command.data);
+        for await (const command of this.globalSlashCommands.values()) await client.rest.createGlobalApplicationCommand(client.user.id, command.data);
     }
 
     public async registerGuildCommands(client: Client): Promise<void> {

@@ -20,16 +20,16 @@ import { createClient, Intents } from "lilybird";
 +import { createHandler } from "@lilybird/handlers";
 
 +const listeners = await createHandler({
-+    dirs: {
-+        slashCommands: `${import.meta.dir}/commands`,
-+    }
++  dirs: {
++    slashCommands: `${import.meta.dir}/commands`,
++  }
 +})
 
 await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
--    listeners: {/* your listeners */}
-+    ...listeners
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+-  listeners: {/* your listeners */}
++  ...listeners
 })
 ```
 
@@ -38,15 +38,15 @@ import { ApplicationCommand } from "@lilybird/jsx";
 import { SlashCommand } from "@lilybird/handlers";
 
 export default {
-    post: "GLOBAL",
-    data: <ApplicationCommand name="ping" description="pong" />,
-    run: async (interaction) => {
-        const { ws, rest } = await interaction.client.ping();
+  post: "GLOBAL",
+  data: <ApplicationCommand name="ping" description="pong" />,
+  run: async (interaction) => {
+    const { ws, rest } = await interaction.client.ping();
 
-        await interaction.editReply({
-            content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
-        });
-    },
+    await interaction.editReply({
+      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+    });
+  },
 } satisfies SlashCommand
 ```
 

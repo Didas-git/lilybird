@@ -3,37 +3,37 @@ title: Getting started
 description: Learn how to setup lilybird.
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+:::danger[Important]
+Lilybird does not officially support `deno`, while the core will probably work there is no guarantee that the modules or for that matter some of the example commands will
+:::
 
 ## Installation
 
 The fastest way to get started with lilybird is by using our template generator.
 
-:::note
-The is no support for `deno` currently, the only runtimes supported are `bun` and `node`.
-:::
-
 <Tabs>
-    <TabItem label="npm">
-        ```bash frame="none"
-        npm init @lilybird/create
-        ```
-    </TabItem>
-    <TabItem label="bun">
-        ```bash frame="none"
-        bun init @lilybird/create
-        ```
-    </TabItem>
-    <TabItem label="pnpm">
-        ```bash frame="none"
-        pnpm init @lilybird/create
-        ```
-    </TabItem>
-    <TabItem label="yarn">
-        ```bash frame="none"
-        yarn init @lilybird/create
-        ```
-    </TabItem>
+  <TabItem label="npm">
+    ```bash frame="none"
+    npm create @lilybird
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```bash frame="none"
+    bun create @lilybird
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash frame="none"
+    pnpm create @lilybird
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash frame="none"
+    yarn create @lilybird
+    ```
+  </TabItem>
 </Tabs>
 
 ## Running your first bot
@@ -65,16 +65,16 @@ If you are using bun you can run `bun start` no matter what language you are usi
 :::
 
 <Tabs>
-    <TabItem label="Typescript">
-        ```bash frame="none"
-        npm run dev
-        ```
-    </TabItem>
-    <TabItem label="Javascript">
-        ```bash frame="none"
-        npm run start
-        ```
-    </TabItem>
+  <TabItem label="Typescript">
+    ```bash frame="none"
+    npm run dev
+    ```
+  </TabItem>
+  <TabItem label="Javascript">
+    ```bash frame="none"
+    npm run start
+    ```
+  </TabItem>
 </Tabs>
 
 ### Ready for production with Typescript

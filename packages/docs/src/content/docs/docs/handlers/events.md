@@ -18,10 +18,10 @@ import { createClient, Intents } from "lilybird";
 +})
 
 await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
--    listeners: {/* your listeners */}
-+    ...listeners
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+-  listeners: {/* your listeners */}
++  ...listeners
 })
 ```
 
@@ -29,10 +29,10 @@ await createClient({
 import { Event } from "@lilybird/handlers";
 
 export default {
-    event: "ready",
-    run: (client) => {
-        console.log(`Logged in as ${client.user.username}`);
-    },
+  event: "ready",
+  run: (client) => {
+    console.log(`Logged in as ${client.user.username}`);
+  },
 // This duplication is needed for typescript types to work properly
 // This is also why this api isn't the best
 } satisfies Event<"ready">
