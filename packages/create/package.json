@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/create",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create a new template bot using lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc && cp src/index-template.ts dist",
     "dev": "bun src/index.ts"
   },
   "repository": {
