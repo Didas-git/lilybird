@@ -19,8 +19,8 @@ export default ({
                 );
 
                 setTimeout(async () => {
-                    await interaction.editReply(`<@${interaction.data.options.getNumber("num", true)}>`);
-                    console.log(await interaction.followUp("*hiii~*", { embeds: [embed] }));
+                    console.log(interaction.data.getAttachment("att", true));
+                    await interaction.followUp("*hiii~*", { embeds: [embed] });
 
                     const simpleButtonRow = (
                         <ActionRow>

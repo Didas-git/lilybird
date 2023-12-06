@@ -330,37 +330,9 @@ export class ApplicationCommandData<T extends undefined | FocusedOption = undefi
     public readonly name: string;
     public readonly type: ApplicationCommandType;
     public readonly resolved?: ResolvedDataStructure;
-    public readonly options: ApplicationCommandOptions<T>;
     public readonly guildId?: string;
     public readonly targetId?: string;
 
-    public constructor(data: ApplicationCommandDataStructure) {
-        this.id = data.id;
-        this.name = data.name;
-        this.type = data.type;
-        this.resolved = data.resolved;
-        this.options = new ApplicationCommandOptions(data.options);
-        this.guildId = data.guild_id;
-        this.targetId = data.target_id;
-    }
-
-    public isGuildApplicationCommand(): this is GuildApplicationCommandData<T> {
-        return typeof this.guildId !== "undefined";
-    }
-
-    public isUIApplicationCommand(): this is UIApplicationCommandData<T> {
-        return typeof this.targetId !== "undefined";
-    }
-}
-
-interface FocusedOption<T extends string | number | boolean = string | number | boolean> {
-    name: string;
-    value: T;
-}
-
-type ParseFocusedReturnType<T extends undefined | FocusedOption, F extends string | number | boolean> = T extends undefined ? undefined : FocusedOption<F>;
-
-class ApplicationCommandOptions<T extends undefined | FocusedOption> {
     readonly #stringOptions = new Map<string, string | undefined>();
     readonly #numberOptions = new Map<string, number | undefined>();
     readonly #integerOptions = new Map<string, number | undefined>();
@@ -369,13 +341,21 @@ class ApplicationCommandOptions<T extends undefined | FocusedOption> {
     readonly #channelOptions = new Map<string, string | undefined>();
     readonly #roleOptions = new Map<string, string | undefined>();
     readonly #mentionableOptions = new Map<string, string | undefined>();
+    readonly #attachmentOptions = new Map<string, string | undefined>();
 
     #focused!: FocusedOption;
     #subCommandGroup: string | undefined;
     #subCommand: string | undefined;
 
-    public constructor(options: ApplicationCommandDataStructure["options"]) {
-        this.#parseOptions(options);
+    public constructor(data: ApplicationCommandDataStructure) {
+        this.id = data.id;
+        this.name = data.name;
+        this.type = data.type;
+        this.resolved = data.resolved;
+        this.guildId = data.guild_id;
+        this.targetId = data.target_id;
+
+        this.#parseOptions(data.options);
     }
 
     #parseOptions(options: ApplicationCommandDataStructure["options"]): void {
@@ -403,65 +383,71 @@ class ApplicationCommandOptions<T extends undefined | FocusedOption> {
                 }
 
                 case ApplicationCommandOptionType.STRING: {
-                    if (typeof option.value !== "string")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
 
                     this.#stringOptions.set(option.name, option.value);
                     break;
                 }
 
                 case ApplicationCommandOptionType.INTEGER: {
-                    if (typeof option.value !== "number")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "number") throw new Error("Something unexpected happened");
 
                     this.#integerOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.NUMBER: {
-                    if (typeof option.value !== "number")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "number") throw new Error("Something unexpected happened");
 
                     this.#numberOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.BOOLEAN: {
-                    if (typeof option.value !== "boolean")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "boolean") throw new Error("Something unexpected happened");
 
                     this.#booleanOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.USER: {
-                    if (typeof option.value !== "string")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
 
                     this.#userOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.CHANNEL: {
-                    if (typeof option.value !== "string")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
 
                     this.#channelOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.ROLE: {
-                    if (typeof option.value !== "string")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
 
                     this.#roleOptions.set(option.name, option.value);
                     break;
                 }
                 case ApplicationCommandOptionType.MENTIONABLE: {
-                    if (typeof option.value !== "string")
-                        throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
 
                     this.#mentionableOptions.set(option.name, option.value);
                     break;
                 }
-                case ApplicationCommandOptionType.ATTACHMENT:
+                case ApplicationCommandOptionType.ATTACHMENT: {
+                    if (typeof this.resolved?.attachments === "undefined") throw new Error("Something unexpected happened");
+                    if (typeof option.value !== "string") throw new Error("Something unexpected happened");
+
+                    this.#attachmentOptions.set(option.name, this.resolved.attachments[option.value].url);
+                    break;
+                }
             }
         }
+    }
+
+    public isGuildApplicationCommand(): this is GuildApplicationCommandData<T> {
+        return typeof this.guildId !== "undefined";
+    }
+
+    public isUIApplicationCommand(): this is UIApplicationCommandData<T> {
+        return typeof this.targetId !== "undefined";
     }
 
     public getFocused<F extends string | number | boolean = string | number | boolean>(): ParseFocusedReturnType<T, F> {
@@ -547,7 +533,23 @@ class ApplicationCommandOptions<T extends undefined | FocusedOption> {
 
         return this.#mentionableOptions.get(name);
     }
+
+    public getAttachment(name: string): string | undefined;
+    public getAttachment(name: string, assert: true): string;
+    public getAttachment(name: string, assert = false): string | undefined {
+        if (assert)
+            if (!this.#attachmentOptions.has(name)) throw new NotFoundError("Attachment");
+
+        return this.#attachmentOptions.get(name);
+    }
 }
+
+interface FocusedOption<T extends string | number | boolean = string | number | boolean> {
+    name: string;
+    value: T;
+}
+
+type ParseFocusedReturnType<T extends undefined | FocusedOption, F extends string | number | boolean> = T extends undefined ? undefined : FocusedOption<F>;
 
 class NotFoundError extends Error {
     public constructor(type: string) {

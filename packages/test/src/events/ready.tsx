@@ -1,4 +1,4 @@
-import { ApplicationCommand, NumberOption } from "@lilybird/jsx";
+import { ApplicationCommand, AttachmentOption } from "@lilybird/jsx";
 import type { Event } from "@lilybird/handlers";
 
 export default ({
@@ -8,12 +8,12 @@ export default ({
 
         const command = (
             <ApplicationCommand name="test" description="its just a test">
-                <NumberOption name="num" description="a num" required />
+                <AttachmentOption name="att" description="a att" required />
             </ApplicationCommand>
         );
 
         await client.rest.createGuildApplicationCommand(client.user.id, process.env.TEST_GUILD_ID, command);
 
         console.log(await client.ping());
-    },
+    }
 } as Event<"ready">);

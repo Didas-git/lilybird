@@ -12,6 +12,6 @@ Embeds can easily be created using the main `Embed` component, for properties of
   {Array.from({ length: 4 }, (_, i) => (
     <EmbedField name={`Field ${i}`} value="bun" inline />
   ))}
-  <EmbedFooter text="Hello from bun" />
+  <EmbedFooter text="Lilybird" />
 </Embed>
 ```
