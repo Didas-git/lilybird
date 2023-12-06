@@ -1,0 +1,114 @@
+---
+title: Manual Setup
+description: Configure lilybird however you would like.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+## The different packages
+
+Currently lilybird is divided into 3 pieces.
+
+- `lilybird` - The core and all you need to make your bot.
+- [`@lilybird/jsx`](/guides/configuring-jsx) - JSX components for lilybird using `react-jsx`.
+- `@lilybird/handlers` - Command and Event handlers for lilybird.
+
+There is also `@lilybird/create` which is the boilerplate generator used in [the previous page](/guides/getting-started).
+
+## Creating the bot
+
+Creating the bot with lilybird is a trivial task.
+
+```ts
+import { createClient, Intents } from "lilybird";
+
+await createClient({
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+  listeners: {/* your listeners */}
+})
+```
+
+## Adding types to `process.env`
+
+In case you are using typescript we highly encourage adding proper types to your process.env.
+
+This can be done by creating a `globals.d.ts` file on the root of your project.
+
+<Tabs>
+  <TabItem label="bun">
+      ```ts title="globals.d.ts"
+      declare module "bun" {
+        interface Env {
+          TOKEN: string;
+          // Other env variables
+        }
+      }
+      ```
+  </TabItem>
+  <TabItem label="node">
+      ```ts title="globals.d.ts"
+      declare global {
+        namespace NodeJS {
+          interface ProcessEnv {
+            TOKEN: string;
+            // Other env variables
+          }
+        }
+      }
+      ```
+    </TabItem>
+</Tabs>
+
+And then addint the following to your `tsconfig.json`.
+
+:::caution
+Setting `types` on the compiler options will make it so typescript wont search for `@types` packages.
+
+You can read more about it on the [typescript handbook](https://www.typescriptlang.org/tsconfig#types)
+:::
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "types": [
+      "./globals"
+    ]
+  }
+}
+```
+
+## Understanding the no-events approach
+
+As you might have noticed by now lilybird does not have an events api and you might be questioning this decision so lets discuss the motivation behind this.
+
+The main motivation behind not having events is performance, event emitters are really bad when it comes to high throughput and are really easy for the user to misuse them and cause memory leaks so to avoid this issues we went with the same approach `uws` and for that matter `bun` use for their Websocket Server, callbacks.
+
+You might be wondering, "so how can i listen to events or even collect message components?".
+
+Let me answer that for you, usually its rly unlikely that you need to listen to an event more than once and if you really need to you can always just make multiple functions and call them from the same listeners, like so:
+
+```ts
+import { createClient, Intents, Interaction } from "lilybird"
+
+function useInteraction1(interaction: Interaction) {
+  console.log(interaction.token);
+}
+
+function useInteraction2(interaction: Interaction) {
+  console.log(interaction.data);
+}
+
+await createClient({
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+  listeners: {
+    interactionCreate: (interaction) => {
+      useInteraction1(interaction);
+      useInteraction2(interaction);
+    }
+  }
+})
+```
+
+As for collecting message components, im currently working on an api for collectors that i will try to make as extensible as possible so this should not be an issue once lilybird has its first stable release.

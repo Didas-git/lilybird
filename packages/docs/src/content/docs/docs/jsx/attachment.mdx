@@ -1,0 +1,62 @@
+---
+title: Attachments
+description: How to use lilybird's Attachment component.
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+## Creating attachments
+
+The `Attachment` component is really simple to use, it just gets either a file or a path and returns a `LilybirdAttachment`.
+
+:::caution
+Passing in `path` instead of `file` will make it so lilybird will try to use `Bun` apis, so if you are using `node` pass in a `Blob` or extension of blob instead.
+:::
+
+<Tabs>
+  <TabItem label="bun">
+    ```tsx
+    import { Attachment } from "@lilybird/jsx";
+    import { join } from "node:path"
+
+    const att = <Attachment
+      path={join(import.meta.dir, "./lilybird.png")}
+      name="lilybird"
+    />;
+    ```
+  </TabItem>
+  <TabItem label="node">
+    ```tsx
+    import { Attachment } from "@lilybird/jsx";
+    import { readFile } from "node:fs";
+    import { join } from "node:path"
+
+    const att = <Attachment 
+      file={new Blob([await readFile(join(import.meta.dir, "./lilybird.png"))])}
+      name="lilybird"
+    />;
+    ```
+  </TabItem>
+</Tabs>
+
+## Using attachments
+
+When using the the `Attachment` component you can easily pass in `<Attachment>.uri` to embeds and other places that use the uri form of attachments.
+
+An example would be:
+
+```tsx ins="att.uri"
+import { Attachment, Embed, EmbedImage } from "@lilybird/jsx";
+import { join } from "node:path"
+
+const att = <Attachment
+  path={join(import.meta.dir, "./lilybird.png")}
+  name="lilybird"
+/>;
+
+const embed = (
+  <Embed title="Lilybird" description="For bun, with bun">
+    <EmbedImage url={att.uri} />
+  </Embed>
+);
+```

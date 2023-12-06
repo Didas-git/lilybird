@@ -17,3 +17,7 @@ bun run build
 echo Building create-bot package
 cd ../create
 bun run build
+
+echo Running ESLint on all packages
+cd ../..
+bun check
