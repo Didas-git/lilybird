@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -47,7 +47,7 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "workspace:*"
+    "lilybird": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^8.55.0",
