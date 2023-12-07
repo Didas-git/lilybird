@@ -119,10 +119,15 @@ process.chdir(root);
 
 await writeFile("package.json", packageJSON);
 await writeFile("README.md", generateREADME(pm, type));
-await writeFile(".env", "TOKEN=")
+await writeFile(".env", "TOKEN=");
 
-if (type === "ts") await writeFile("globals.d.ts", generateGlobalTypes())
+
+if (type === "ts") await writeFile("globals.d.ts", generateGlobalTypes(pm))
 if (config !== null) await writeFile("tsconfig.json", generateTSConfig(config, pm));
+
+await mkdir("src");
+process.chdir(resolve("src"));
+await cp(new URL("./index-template.ts", import.meta.url), `./index.${type}`);
 
 execSync(`${pm} install ${dependencies.join(" ")}`, {
     stdio: "inherit"
@@ -131,10 +136,9 @@ execSync(`${pm} install ${dependencies.join(" ")}`, {
 if (pm === "bun") devDeps.push("bun-types");
 else devDeps.push("ts-node", "@types/node");
 
-if (devDeps.length > 0) execSync(`${pm} install -D ${devDeps.join(" ")}`)
+execSync(`${pm} install -D ${devDeps.join(" ")}`, {
+    stdio: "inherit"
+})
 
-await mkdir("src");
-process.chdir(resolve("src"));
-await cp(new URL("./index-template.ts", import.meta.url), `${root}/index.${type}`)
 
 console.log(c.green("All done!"));

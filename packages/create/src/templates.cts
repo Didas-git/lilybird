@@ -28,6 +28,9 @@ export function generateTSConfig(type: string, pm: string): string {
     const temp: {
         extends: string | undefined,
         compilerOptions: {
+            target: string,
+            module: string,
+            moduleResolution: string,
             outDir: string,
             baseUrl: string,
             strict: true,
@@ -37,6 +40,9 @@ export function generateTSConfig(type: string, pm: string): string {
     } = {
         extends: undefined,
         compilerOptions: {
+            target: "ESNext",
+            module: "Node16",
+            moduleResolution: "Node16",
             outDir: "dist",
             baseUrl: ".",
             strict: true,
@@ -52,12 +58,15 @@ export function generateTSConfig(type: string, pm: string): string {
     return JSON.stringify(temp, null, 4);
 }
 
-export function generateGlobalTypes(): string {
-    return `declare global {
-    namespace NodeJS {
-        interface ProcessEnv {
-        TOKEN: string;
-        }
+export function generateGlobalTypes(pm: string): string {
+    return pm === "bun" ? `declare module "bun" {
+    interface Env {
+        TOKEN: string
+    }
+}`
+        : `declare namespace NodeJS {
+    interface ProcessEnv {
+        TOKEN: string
     }
 }`;
 }
