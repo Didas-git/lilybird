@@ -62,7 +62,7 @@ const type = await new Select({
     }
 }).run();
 
-let config: null | "strict" | "lilybird" = null;
+let config: null | "strict" | "normal" = null;
 const devDeps: Array<string> = [];
 
 if (type === "ts") {
@@ -70,9 +70,9 @@ if (type === "ts") {
     config = await new Select({
         message: "What typescript config style would you like to use?",
         choices: [
+            { name: "Non-strict", value: "normal" },
             { name: "Strict", value: "strict" },
-            { name: "Super Strict", value: "lilybird" },
-            { name: "My own", value: null }
+            { name: "None", value: null }
         ],
         result(name: string) {
             return this.find(name).value;

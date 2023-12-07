@@ -26,26 +26,24 @@ ${pm} run build
 
 export function generateTSConfig(type: string, pm: string): string {
     const temp: {
-        extends: string | undefined,
         compilerOptions: {
             target: string,
             module: string,
             moduleResolution: string,
             outDir: string,
             baseUrl: string,
-            strict: true,
+            strict: boolean,
             types: Array<string>
         },
         include: Array<string>
     } = {
-        extends: undefined,
         compilerOptions: {
             target: "ESNext",
             module: "Node16",
             moduleResolution: "Node16",
             outDir: "dist",
             baseUrl: ".",
-            strict: true,
+            strict: type === "strict",
             types: ["./globals.d.ts"]
         },
         include: ["src/**/*"]
@@ -53,7 +51,6 @@ export function generateTSConfig(type: string, pm: string): string {
 
     if (pm === "bun") temp.compilerOptions.types.push("bun-types");
     else temp.compilerOptions.types.push("@types/node");
-    if (type === "lilybird") temp.extends = "lilybird/tsconfig.json";
 
     return JSON.stringify(temp, null, 4);
 }
