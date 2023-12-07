@@ -13,7 +13,7 @@ import { generateGlobalTypes, generateREADME, generateTSConfig } from "./templat
 
 //#region Directory 
 const directory = await new Input({
-    message: "What's the name of your package?"
+    message: "What will the name of the directory be?"
 }).run();
 
 const root = resolve(directory);
@@ -108,7 +108,7 @@ const packageJSON = (await new Snippet({
   "description": "\${description}",
   "version": "\${version}",
   "type": "module",
-  "main": ${pm === "bun" ? `"./src/index.${type}"` : "./dist/index.js"},
+  "main": ${pm === "bun" ? `"./src/index.${type}"` : '"./dist/index.js"'},
   "scripts": {
     ${pm === "bun" ? '"start": "bun ."' : type === "ts" ? `"dev": "ts-node --env-file=.env ./src/index.ts",\n    "build": "${platform() === "win32" ? "rmdir /s /q dist" : "rm -rf dist"} && tsc",\n    "start": "node --env-file=.env ."` : `"start": "node ."`}
   }
