@@ -31,7 +31,7 @@ await createClient({
 
 ## Adding types to `process.env`
 
-In case you are using typescript we highly encourage adding proper types to your process.env.
+In case you are using TypeScript we highly encourage adding proper types to your process.env.
 
 This can be done by creating a `globals.d.ts` file on the root of your project.
 
@@ -63,9 +63,9 @@ This can be done by creating a `globals.d.ts` file on the root of your project.
 And then addint the following to your `tsconfig.json`.
 
 :::caution
-Setting `types` on the compiler options will make it so typescript wont search for `@types` packages.
+Setting `types` on the compiler options will make it so TypeScript wont search for `@types` packages.
 
-You can read more about it on the [typescript handbook](https://www.typescriptlang.org/tsconfig#types)
+You can read more about it on the [TypeScript handbook](https://www.typescriptlang.org/tsconfig#types)
 :::
 
 ```json title="tsconfig.json"

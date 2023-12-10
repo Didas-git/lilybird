@@ -3,7 +3,7 @@ title: Registering Application Commands
 description: Use lilybird to configure application commands.
 ---
 
-In lilybird its really easy to create application commands, you can simply use the rest client that is attached to the client to do so.
+To create application commands, you can simply use the rest client that is attached to the client to do so.
 
 We highly encourage using the `setup` api to do this since to facilitates the access to the client and runs before the ready event.
 

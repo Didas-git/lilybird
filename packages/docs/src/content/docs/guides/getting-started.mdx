@@ -6,7 +6,7 @@ description: Learn how to setup lilybird.
 import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 :::danger[Important]
-Lilybird does not officially support `deno`, while the core will probably work there is no guarantee that the modules or for that matter some of the example commands will
+Lilybird does not officially support `deno`, while the core will probably work there is no guarantee that the modules or for that matter some of the example commands will.
 :::
 
 ## Installation
@@ -14,14 +14,14 @@ Lilybird does not officially support `deno`, while the core will probably work t
 The fastest way to get started with lilybird is by using our template generator.
 
 <Tabs>
-  <TabItem label="npm">
-    ```bash frame="none"
-    npm create @lilybird
-    ```
-  </TabItem>
   <TabItem label="bun">
     ```bash frame="none"
     bun create @lilybird
+    ```
+  </TabItem>
+  <TabItem label="npm">
+    ```bash frame="none"
+    npm create @lilybird
     ```
   </TabItem>
   <TabItem label="pnpm">
@@ -41,7 +41,7 @@ The fastest way to get started with lilybird is by using our template generator.
 After running the command you should see a file structure somewhat like this:
 
 :::note
-The following structure is what is generated when you use Typescript, the javascript template doesnt include the `globals.d.ts` and `tsconfig.json` files.
+The following structure is what is generated when you use TypeScript, the JavaScript template doesn't include the `globals.d.ts` and `tsconfig.json` files.
 :::
 
 ```
@@ -65,21 +65,21 @@ If you are using bun you can run `bun start` no matter what language you are usi
 :::
 
 <Tabs>
-  <TabItem label="Typescript">
+  <TabItem label="TypeScript">
     ```bash frame="none"
     npm run dev
     ```
   </TabItem>
-  <TabItem label="Javascript">
+  <TabItem label="JavaScript">
     ```bash frame="none"
     npm run start
     ```
   </TabItem>
 </Tabs>
 
-### Ready for production with Typescript
+### Ready for production with TypeScript
 
-If you are using typescript we highly recommend adding `NODE_ENV="production` to your `.env` file and if you are using node do the following.
+If you are using TypeScript we highly recommend adding `NODE_ENV="production` to your `.env` file and if you are using node do the following.
 
 ```bash
 npm run build

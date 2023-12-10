@@ -3,7 +3,7 @@ title: Receiving Application Commands
 description: How to receive commands using lilybird.
 ---
 
-Lilybird interactions work similarly to other frameworks out there so they should be fairly easy to grasp.
+Interactions work similarly to other frameworks out there so they should be fairly easy to grasp.
 
 ## Receiving and replying to commands
 
@@ -28,7 +28,7 @@ await createClient({
 
 ## Deferring a reply
 
-Deferring interactions is pretty simple, all you have to do is call the `deferReply()` method which optionally accepts a boolean to make it ephemeral.
+Deferring interactions can be done by simply calling `deferReply()`, which optionally accepts a boolean to make it ephemeral.
 
 ```ts
 await interaction.deferReply();
