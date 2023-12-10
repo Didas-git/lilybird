@@ -58,6 +58,18 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
 const { version } = <{ version: string }>require("../../package.json");
 
+export class RestError extends Error {
+    public readonly code: number;
+    public readonly errors: ErrorMessage["errors"];
+
+    public constructor(error: ErrorMessage) {
+        super(error.message);
+
+        this.code = error.code;
+        this.errors = error.errors;
+    }
+}
+
 export class REST {
     public static baseUrl = "https://discord.com/api/v10/";
     public static cdnUrl = "https://cdn.discordapp.com/";
@@ -116,7 +128,7 @@ export class REST {
 
         if (!response.ok) {
             const errorMessage: ErrorMessage = await response.json();
-            throw new Error(errorMessage.message);
+            throw new RestError(errorMessage);
         }
 
         /*

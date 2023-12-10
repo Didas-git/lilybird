@@ -21,6 +21,9 @@ import type {
     ReplyOptions
 } from "../typings";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" ? K : never]: Message[K] };
+
 export interface MessageEditOptions extends ReplyOptions {
     suppressEmbeds?: boolean;
 }
@@ -33,14 +36,14 @@ export interface MessageReplyOptions extends ReplyOptions {
 
 export class Message {
     public readonly id: string;
-    public readonly author: User;
+    public readonly author!: User;
     public readonly channelId: string;
     public readonly content: string | undefined;
-    public readonly timestamp: Date;
+    public readonly timestamp!: Date;
     public readonly editedTimestamp: Date | null = null;
     public readonly tts: boolean;
     public readonly mentionsEveryone: boolean;
-    public readonly mentions: Array<User>;
+    public readonly mentions!: Array<User>;
     public readonly mentionedRoles: Array<RoleStructure>;
     public readonly mentionedChannel: Array<MentionChannel>;
     public readonly attachments: Array<AttachmentStructure> | undefined;
@@ -60,17 +63,18 @@ export class Message {
 
     public readonly client: Client;
 
+    // Technically a `Partial` message
     public constructor(client: Client, message: GuildMessageStructure) {
         this.client = client;
 
         this.id = message.id;
-        this.author = new User(client, message.author);
         this.channelId = message.channel_id;
+        if (typeof message.author !== "undefined") this.author = new User(client, message.author);
         this.content = message.content;
-        this.timestamp = new Date(message.timestamp);
+        if (typeof message.timestamp !== "undefined") this.timestamp = new Date(message.timestamp);
         this.tts = message.tts;
         this.mentionsEveryone = message.mention_everyone;
-        this.mentions = message.mentions.map((mention) => new User(client, mention));
+        if (typeof message.mentions !== "undefined") this.mentions = message.mentions.map((mention) => new User(client, mention));
         this.mentionedRoles = message.mention_roles;
         this.mentionedChannel = message.mention_channels?.map((channel) => new MentionChannel(client, channel)) ?? [];
         this.attachments = message.attachments;

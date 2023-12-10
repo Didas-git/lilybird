@@ -106,7 +106,7 @@ export class Client {
                         break;
                     }
                     case GatewayEvent.MessageDelete: {
-                        await options.listeners.messageDelete?.(data.d);
+                        await options.listeners.messageDelete?.(new Message(this, <never>data.d));
                         break;
                     }
                     case GatewayEvent.MessageDeleteBulk: {

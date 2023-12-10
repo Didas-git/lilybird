@@ -1,13 +1,13 @@
 import type { Interaction, InteractionData } from "../factories/interaction";
 import type { Channel, ThreadChannel } from "../factories/channel";
 import type { GuildMemberWithGuildId } from "../factories/guild";
-import type { Message } from "../factories/message";
+import type { Message, PartialMessage } from "../factories/message";
 import type { User } from "../factories/user";
 import type { Awaitable } from "./utils";
 import type { Intents } from "../enums";
 import type { Client } from "../client";
 
-import type { MessageDeleteBulk, MessageDelete, Ready } from "./gateway-events";
+import type { MessageDeleteBulk, Ready } from "./gateway-events";
 
 export interface ClientEventListeners {
     raw?: (data: unknown) => Awaitable<unknown>;
@@ -22,8 +22,8 @@ export interface ClientEventListeners {
     guildMemberRemove?: (id: string, user: User) => Awaitable<unknown>;
     guildMemberUpdate?: (member: GuildMemberWithGuildId) => Awaitable<unknown>;
     messageCreate?: (message: Message) => Awaitable<unknown>;
-    messageUpdate?: (message: Message) => Awaitable<unknown>;
-    messageDelete?: (message: MessageDelete["d"]) => Awaitable<unknown>;
+    messageUpdate?: (message: PartialMessage) => Awaitable<unknown>;
+    messageDelete?: (message: PartialMessage) => Awaitable<unknown>;
     messageDeleteBulk?: (message: MessageDeleteBulk["d"]) => Awaitable<unknown>;
     userUpdate?: (user: User) => Awaitable<unknown>;
     interactionCreate?: (interaction: Interaction<InteractionData>) => Awaitable<unknown>;

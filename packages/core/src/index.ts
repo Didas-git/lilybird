@@ -19,7 +19,6 @@ export async function createClient(options: ClientOptions): Promise<Client> {
             { intents: options.intents, listeners: options.listeners, setup: options.setup },
             options.attachDebugListener
                 ? options.debugListener ?? ((identifier, payload) => {
-                    if (identifier === "Received:") return;
                     console.log(identifier, payload ?? "");
                 })
                 : undefined

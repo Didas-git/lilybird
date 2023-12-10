@@ -10,8 +10,10 @@ interface ManagerOptions {
     presence?: UpdatePresenceStructure;
 }
 
+export type Identifier = "WS_MESSAGE" | "HEARTBEAT" | "ACK" | "NEED_HEARTBEAT" | "IDENTIFY";
+
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
-export type DebugFunction = (data: string, payload?: unknown) => any;
+export type DebugFunction = (identifier: Identifier, payload?: unknown) => any;
 
 export class WebSocketManager {
     readonly #dispatch: DispatchFunction;
@@ -75,7 +77,7 @@ export class WebSocketManager {
             throw new Error(`${code}: ${reason.toString()}`);
         });
         this.#ws.addEventListener("message", async (event) => {
-            this.#debug?.("Received:", event.data);
+            this.#debug?.("WS_MESSAGE", event.data);
             const payload = <Payload>JSON.parse(event.data.toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
 
@@ -95,7 +97,7 @@ export class WebSocketManager {
                     const interval = Math.round(payload.d.heartbeat_interval * Math.random());
 
                     setInterval(() => {
-                        this.#debug?.("Sending Heartbeat");
+                        this.#debug?.("HEARTBEAT");
                         this.#sendHeartbeatPayload();
                     }, interval);
 
@@ -104,7 +106,7 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.Heartbeat: {
-                    this.#debug?.("Discord asked for a Heartbeat");
+                    this.#debug?.("NEED_HEARTBEAT");
                     this.#sendHeartbeatPayload();
                     break;
                 }
@@ -118,7 +120,7 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {
-                    this.#debug?.("ACK:", payload);
+                    this.#debug?.("ACK", payload);
                     break;
                 }
                 default:
@@ -153,7 +155,7 @@ export class WebSocketManager {
         };
 
         this.#ws.send(JSON.stringify(payload));
-        this.#debug?.("Identify Called");
+        this.#debug?.("IDENTIFY");
     }
 
     async #attemptResume(): Promise<void> {
