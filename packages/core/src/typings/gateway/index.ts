@@ -1,2 +1,2 @@
-export type * from "./interaction";
-export type * from "./gateway-bot";
+export type * from "./interaction.js";
+export type * from "./gateway-bot.js";

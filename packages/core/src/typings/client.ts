@@ -1,13 +1,13 @@
-import type { Interaction, InteractionData } from "../factories/interaction";
-import type { Channel, ThreadChannel } from "../factories/channel";
-import type { GuildMemberWithGuildId } from "../factories/guild";
-import type { Message, PartialMessage } from "../factories/message";
-import type { User } from "../factories/user";
-import type { Awaitable } from "./utils";
-import type { Intents } from "../enums";
-import type { Client } from "../client";
+import type { Interaction, InteractionData } from "../factories/interaction.js";
+import type { Channel, ThreadChannel } from "../factories/channel.js";
+import type { GuildMemberWithGuildId } from "../factories/guild.js";
+import type { Message, PartialMessage } from "../factories/message.js";
+import type { User } from "../factories/user.js";
+import type { Intents } from "../enums/index.js";
+import type { Awaitable } from "./utils.js";
+import type { Client } from "../client.js";
 
-import type { MessageDeleteBulk, Ready } from "./gateway-events";
+import type { MessageDeleteBulk, Ready } from "./gateway-events.js";
 
 export interface ClientEventListeners {
     raw?: (data: unknown) => Awaitable<unknown>;

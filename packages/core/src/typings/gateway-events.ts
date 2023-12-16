@@ -1,4 +1,4 @@
-import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "../enums";
+import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "../enums/index.js";
 
 import type {
     ApplicationCommandPermissionsStructure,
@@ -10,6 +10,7 @@ import type {
     AuditLogEntryStructure,
     ThreadChannelStructure,
     ThreadMemberStructure,
+    GuildMessageStructure,
     IntegrationStructure,
     GuildMemberStructure,
     ApplicationStructure,
@@ -21,9 +22,8 @@ import type {
     GuildStructure,
     EmojiStructure,
     UserStructure,
-    RoleStructure,
-    GuildMessageStructure
-} from ".";
+    RoleStructure
+} from "./index.js";
 
 export interface GetGatewayResponse {
     /** Gateway Websocket URL */

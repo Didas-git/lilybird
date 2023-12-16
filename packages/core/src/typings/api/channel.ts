@@ -1,7 +1,16 @@
-import type { AllowedMentionsStructure, AttachmentStructure, EmbedStructure, OverwriteStructure } from "../shared";
-import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "../../enums";
+import type { AllowedMentionsStructure, AttachmentStructure, EmbedStructure, OverwriteStructure } from "../shared/index.js";
+import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "../../enums/index.js";
 
-import type { MessageComponentStructure, MessageReferenceStructure, DefaultReactionStructure, ThreadMemberStructure, AutoArchiveDuration, ForumTagStructure, ChannelStructure, LilybirdAttachment } from "..";
+import type {
+    MessageComponentStructure,
+    MessageReferenceStructure,
+    DefaultReactionStructure,
+    ThreadMemberStructure,
+    AutoArchiveDuration,
+    LilybirdAttachment,
+    ForumTagStructure,
+    ChannelStructure
+} from "../index.js";
 
 export interface ModifyDMChannelStructure {
     name?: string;

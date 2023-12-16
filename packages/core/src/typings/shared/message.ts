@@ -1,4 +1,4 @@
-import type { AttachmentFlags, EmbedType } from "../../enums";
+import type { AttachmentFlags, EmbedType } from "../../enums/index.js";
 
 export interface AttachmentStructure {
     id: number | string;

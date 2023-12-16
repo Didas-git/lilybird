@@ -1,4 +1,4 @@
-import type { UserStructure } from ".";
+import type { UserStructure } from "./user.js";
 
 export interface EmojiStructure {
     id: string | null;

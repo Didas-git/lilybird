@@ -1,15 +1,15 @@
-import { Message } from ".";
-import { GuildMember } from "./factories/guild";
-import { WebSocketManager } from "./ws/ws";
-import { interactionFactory } from "./factories/interaction";
-import { ThreadChannel, channelFactory } from "./factories/channel";
-import { User } from "./factories/user";
-import { GatewayEvent } from "./enums";
-import { REST } from "./rest/rest";
-import type { DebugFunction } from "./ws/ws";
-import type { GuildMemberWithGuildId } from "./factories/guild";
+import { ThreadChannel, channelFactory } from "./factories/channel.js";
+import { interactionFactory } from "./factories/interaction.js";
+import { GuildMember } from "./factories/guild.js";
+import { Message } from "./factories/message.js";
+import { GatewayEvent } from "./enums/index.js";
+import { WebSocketManager } from "./ws/ws.js";
+import { User } from "./factories/user.js";
+import { REST } from "./rest/rest.js";
 
-import type { UnavailableGuildStructure, ApplicationStructure, BaseClientOptions } from "./typings";
+import type { UnavailableGuildStructure, ApplicationStructure, BaseClientOptions } from "./typings/index.js";
+import type { GuildMemberWithGuildId } from "./factories/guild.js";
+import type { DebugFunction } from "./ws/ws.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {

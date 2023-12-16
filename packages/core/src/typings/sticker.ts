@@ -1,5 +1,5 @@
-import type { StickerFormatType, StickerType } from "../enums";
-import type { UserStructure } from ".";
+import type { StickerFormatType, StickerType } from "../enums/index.js";
+import type { UserStructure } from "./user.js";
 
 export interface StickerStructure {
     id: string;

@@ -1,8 +1,8 @@
-import { User } from "./user";
+import { User } from "./user.js";
 
-import type { GuildMemberStructure } from "../typings";
-import type { GuildMemberFlags } from "../enums";
-import type { Client } from "../client";
+import type { GuildMemberStructure } from "../typings/index.js";
+import type { GuildMemberFlags } from "../enums/index.js";
+import type { Client } from "../client.js";
 
 export interface GuildMemberWithGuildId extends GuildMember {
     readonly guildId: string;

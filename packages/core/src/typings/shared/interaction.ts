@@ -1,4 +1,4 @@
-import type { ApplicationCommandPermissionType } from "../../enums";
+import type { ApplicationCommandPermissionType } from "../../enums/index.js";
 
 export interface GuildApplicationCommandPermissionsStructure {
     id: string;

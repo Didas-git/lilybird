@@ -1,12 +1,12 @@
-import { MessageFlags } from "../enums";
-import { MentionChannel, channelFactory } from "./channel";
-import { GuildMember } from "./guild";
-import { User } from "./user";
+import { MessageFlags } from "../enums/index.js";
 
-import type { Channel } from "./channel";
-import type { MessageType } from "../enums";
+import { MentionChannel, channelFactory } from "./channel.js";
+import { GuildMember } from "./guild.js";
+import { User } from "./user.js";
 
-import type { Client } from "../client";
+import type { MessageType } from "../enums/index.js";
+import type { Channel } from "./channel.js";
+import type { Client } from "../client.js";
 
 import type {
     MessageComponentStructure,
@@ -19,7 +19,7 @@ import type {
     EmbedStructure,
     RoleStructure,
     ReplyOptions
-} from "../typings";
+} from "../typings/index.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" ? K : never]: Message[K] };

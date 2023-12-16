@@ -1,6 +1,25 @@
-import type { ThreadChannelStructure, GuildMemberStructure, AttachmentStructure, MessageStructure, ChannelStructure, EmojiStructure, RoleStructure, UserStructure } from "..";
+import type {
+    ThreadChannelStructure,
+    GuildMemberStructure,
+    AttachmentStructure,
+    MessageStructure,
+    ChannelStructure,
+    EmojiStructure,
+    RoleStructure,
+    UserStructure
+} from "../index.js";
 
-import type { ApplicationCommandOptionType, ApplicationCommandType, InteractionType, EntitlementType, TextInputStyle, ComponentType, ChannelType, ButtonStyle, Locale } from "../../enums";
+import type {
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    InteractionType,
+    EntitlementType,
+    TextInputStyle,
+    ComponentType,
+    ChannelType,
+    ButtonStyle,
+    Locale
+} from "../../enums/index.js";
 
 interface BaseInteractionStructure {
     id: string;

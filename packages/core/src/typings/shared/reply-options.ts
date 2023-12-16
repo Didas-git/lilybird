@@ -1,4 +1,5 @@
-import type { LilybirdAttachment, AttachmentStructure, EmbedStructure, MessageComponentStructure } from "..";
+import type { LilybirdAttachment, MessageComponentStructure } from "../index.js";
+import type { AttachmentStructure, EmbedStructure } from "./message.js";
 
 export interface ReplyOptions {
     content?: string;

@@ -1,5 +1,5 @@
-import type { MembershipState } from "../enums";
-import type { UserStructure } from ".";
+import type { MembershipState } from "../enums/index.js";
+import type { UserStructure } from "./user.js";
 
 export interface Team {
     icon: string | null;

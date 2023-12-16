@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums";
-import { channelFactory } from "./channel";
-import { GuildMember } from "./guild";
-import { Message } from "./message";
-import { User } from "./user";
-import type { PartialChannel } from "./channel";
-import type { Client } from "../client";
-import type { ApplicationCommandType, ComponentType, Locale } from "../enums";
+import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums/index.js";
+import { channelFactory } from "./channel.js";
+import { GuildMember } from "./guild.js";
+import { Message } from "./message.js";
+import { User } from "./user.js";
+
+import type { PartialChannel } from "./channel.js";
+import type { Client } from "../client.js";
+import type { ApplicationCommandType, ComponentType, Locale } from "../enums/index.js";
 import type {
     AutocompleteCallbackDataStructure,
     ApplicationCommandDataStructure,
@@ -23,7 +24,7 @@ import type {
     MessageStructure,
     EmojiStructure,
     ReplyOptions
-} from "../typings";
+} from "../typings/index.js";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
     const data = interactionDataFactory(interaction);

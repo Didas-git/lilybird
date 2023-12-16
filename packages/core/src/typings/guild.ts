@@ -1,4 +1,11 @@
-import type { WelcomeScreenStructure, StickerStructure, EmojiStructure, UserStructure, RoleStructure, OAuthScopes } from ".";
+import type {
+    WelcomeScreenStructure,
+    StickerStructure,
+    EmojiStructure,
+    UserStructure,
+    RoleStructure,
+    OAuthScopes
+} from "./index.js";
 
 import type {
     DefaultMessageNotificationLevel,
@@ -11,7 +18,7 @@ import type {
     PremiumTier,
     MFALevel,
     Locale
-} from "../enums";
+} from "../enums/index.js";
 
 export interface UnavailableGuildStructure {
     id: string;

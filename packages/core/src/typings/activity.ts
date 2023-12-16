@@ -1,4 +1,4 @@
-import type { ActivityFlags, ActivityType } from "../enums";
+import type { ActivityFlags, ActivityType } from "../enums/index.js";
 
 export interface ActivityStructure {
     name: string;

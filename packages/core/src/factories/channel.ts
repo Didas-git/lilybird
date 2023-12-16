@@ -1,10 +1,10 @@
-import { ChannelType, VideoQualityMode, MessageFlags } from "../enums";
-import { GuildMember } from "./guild";
-import { Message } from "./message";
-import { User } from "./user";
+import { ChannelType, VideoQualityMode, MessageFlags } from "../enums/index.js";
+import { GuildMember } from "./guild.js";
+import { Message } from "./message.js";
+import { User } from "./user.js";
 
-import type { ForumLayoutType, SortOrderType } from "../enums";
-import type { Client } from "../client";
+import type { ForumLayoutType, SortOrderType } from "../enums/index.js";
+import type { Client } from "../client.js";
 import type {
     GuildVoiceChannelStructure,
     ThreadLikeChannelStructure,
@@ -24,7 +24,7 @@ import type {
     ForumTagStructure,
     ChannelStructure,
     ReplyOptions
-} from "../typings";
+} from "../typings/index.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialChannel<T extends Channel = Channel> = Partial<T> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };

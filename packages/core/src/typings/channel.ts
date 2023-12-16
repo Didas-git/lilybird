@@ -1,6 +1,6 @@
-import type { GuildMemberStructure, OverwriteStructure, UserStructure } from ".";
+import type { GuildMemberStructure, OverwriteStructure, UserStructure } from "./index.js";
 
-import type { VideoQualityMode, ForumLayoutType, SortOrderType, ChannelFlags, ChannelType } from "../enums";
+import type { VideoQualityMode, ForumLayoutType, SortOrderType, ChannelFlags, ChannelType } from "../enums/index.js";
 
 export interface BaseChannelStructure {
     id: string;

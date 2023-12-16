@@ -1,8 +1,8 @@
-import { PremiumType } from "../enums";
-import { GuildMember } from "./guild";
+import { PremiumType } from "../enums/index.js";
+import { GuildMember } from "./guild.js";
 
-import type { UserStructure } from "../typings";
-import type { Client } from "../client";
+import type { UserStructure } from "../typings/index.js";
+import type { Client } from "../client.js";
 
 export class User {
     public readonly id: string;

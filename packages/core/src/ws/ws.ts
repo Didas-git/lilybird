@@ -1,8 +1,8 @@
-import { GatewayEvent, GatewayOpCode } from "../enums";
-import { closeCodeAllowsReconnection } from "./utils";
-import type { GetGatewayBot } from "..";
+import { GatewayEvent, GatewayOpCode } from "../enums/index.js";
+import { closeCodeAllowsReconnection } from "./utils.js";
+import type { GetGatewayBot } from "../index.js";
 
-import type { UpdatePresenceStructure, GetGatewayBotResponse, ReceiveDispatchEvent, Identify, Payload, Resume } from "../typings/gateway-events";
+import type { UpdatePresenceStructure, GetGatewayBotResponse, ReceiveDispatchEvent, Identify, Payload, Resume } from "../typings/gateway-events.js";
 
 interface ManagerOptions {
     token?: string;

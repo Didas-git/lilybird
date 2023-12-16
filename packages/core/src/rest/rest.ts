@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-import type { MFALevel, OnboardingMode } from "../enums";
+import type { MFALevel, OnboardingMode } from "../enums/index.js";
 
 import type {
     LocalizationGlobalApplicationCommandStructure,
@@ -52,7 +52,7 @@ import type {
     RoleStructure,
     ErrorMessage,
     BanStructure
-} from "../typings";
+} from "../typings/index.js";
 
 // There is no other way to do this...
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires

@@ -1,4 +1,9 @@
-import type { AutoModerationKeywordPresetTypes, AutoModerationTriggerType, AutoModerationActionType, AutoModerationEventType } from "../enums";
+import type {
+    AutoModerationKeywordPresetTypes,
+    AutoModerationTriggerType,
+    AutoModerationActionType,
+    AutoModerationEventType
+} from "../enums/index.js";
 
 export interface AutoModerationRuleStructure {
     id: string;

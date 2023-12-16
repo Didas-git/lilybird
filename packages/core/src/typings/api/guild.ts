@@ -1,4 +1,16 @@
-import type { ChannelStructure, DefaultReactionStructure, EmojiStructure, ForumTagStructure, GuildFeatures, GuildMemberStructure, OverwriteStructure, RoleStructure, StickerStructure, UserStructure } from "..";
+import type {
+    DefaultReactionStructure,
+    GuildMemberStructure,
+    OverwriteStructure,
+    ForumTagStructure,
+    ChannelStructure,
+    StickerStructure,
+    EmojiStructure,
+    GuildFeatures,
+    RoleStructure,
+    UserStructure
+} from "../index.js";
+
 import type {
     DefaultMessageNotificationLevel,
     ExplicitContentFilterLevel,
@@ -11,7 +23,7 @@ import type {
     ChannelType,
     PromptType,
     Locale
-} from "../../enums";
+} from "../../enums/index.js";
 
 export interface CreateGuildStructure {
     name: string;

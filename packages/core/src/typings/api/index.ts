@@ -1,4 +1,4 @@
-export type * from "./interaction";
-export type * from "./webhook";
-export type * from "./channel";
-export type * from "./guild";
+export type * from "./interaction.js";
+export type * from "./webhook.js";
+export type * from "./channel.js";
+export type * from "./guild.js";

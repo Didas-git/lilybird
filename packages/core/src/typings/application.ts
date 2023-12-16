@@ -1,6 +1,6 @@
-import type { ApplicationFlags } from "../enums";
+import type { ApplicationFlags } from "../enums/index.js";
 
-import type { GuildStructure, UserStructure, OAuthScopes, Team } from ".";
+import type { GuildStructure, UserStructure, OAuthScopes, Team } from "./index.js";
 
 export interface ApplicationStructure {
     id: string;

@@ -1,4 +1,4 @@
-import type { GuildMemberStructure } from ".";
+import type { GuildMemberStructure } from "./guild.js";
 
 export interface VoiceStateStructure {
     guild_id?: string;

@@ -1,14 +1,14 @@
-import { Client } from "./client";
+import { Client } from "./client.js";
 
-import type { ClientOptions } from "./typings";
+import type { ClientOptions } from "./typings/client.js";
 
-export type * from "./typings";
+export type * from "./typings/index.js";
 
-export * from "./factories";
-export * from "./enums";
-export * from "./utils";
+export * from "./factories/index.js";
+export * from "./enums/index.js";
 
-export * from "./client";
+export * from "./client.js";
+export * from "./utils.js";
 
 export async function createClient(options: ClientOptions): Promise<Client> {
     return new Promise((res) => {
