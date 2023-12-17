@@ -48,7 +48,7 @@ Select menus with components are just as easy to use and they are named as `<typ
 ```tsx
 import { ActionRow, RoleSelectMenu } from "@lilybird/jsx";
 
-const buttonRow = (
+const selectRow = (
   <ActionRow>
     <RoleSelectMenu id="role-selector"/>
   </ActionRow>
@@ -60,12 +60,8 @@ const buttonRow = (
 Modals might be more daunting at first sight but they are really simple specially when using JSX components for them.
 
 ```tsx
-import { ActionRow, TextInputModal } from "@lilybird/jsx";
+import { TextInputModal } from "@lilybird/jsx";
 import { TextInputStyle } from "lilybird";
 
-const buttonRow = (
-  <ActionRow>
-    <TextInputModal id="my-modal" name="Name" style={TextInputStyle.Short}/>
-  </ActionRow>
-);
+const modal = <TextInputModal id="my-modal" label="Name" style={TextInputStyle.Short}/>;
 ```
