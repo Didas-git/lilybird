@@ -11,4 +11,9 @@ export function jsx(component: Component, props: { children: Array<any>, [x: str
     return component(props);
 }
 
+export function jsxDEV(component: Component, props: { children: Array<any>, [x: string]: any }): any {
+    console.log("Parsing JSX props:", props);
+    return component(props);
+}
+
 type Component = (props: unknown) => any;

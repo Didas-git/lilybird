@@ -62,9 +62,9 @@ export function CommandOptions(props: ApplicationCommandOptionChoiceStructure): 
     return props;
 }
 
-export function SubCommandOption(props: Omit<Omit<SubCommandApplicationCommandOptionStructure, "options"> & { children: Array<ApplicationCommandOptionStructure> }, "type">): ApplicationCommandOptionStructure {
+export function SubCommandOption(props: Omit<Omit<SubCommandApplicationCommandOptionStructure, "options"> & { children?: Array<ApplicationCommandOptionStructure> }, "type">): ApplicationCommandOptionStructure {
     let { children: options, ...obj } = props;
-    if (!Array.isArray(options)) options = [options];
+    if (options != null && !Array.isArray(options)) options = [options];
 
     return commandComponent(ApplicationCommandOptionType.SUB_COMMAND, { ...obj, options });
 }
