@@ -53,7 +53,7 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.3.0"
+    "lilybird": "^0.4.0"
   },
   "devDependencies": {
     "eslint": "^8.55.0",
