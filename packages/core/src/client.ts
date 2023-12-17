@@ -140,7 +140,7 @@ export class Client {
         this.#ws.close();
     }
 
-    /** Both are returned in `ms` */
+    /** Both numbers are represented in `ms` */
     public async ping(): Promise<{ ws: number, rest: number }> {
         const start = performance.now();
         await this.rest.getGateway();

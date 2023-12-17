@@ -59,6 +59,10 @@ export default defineConfig({
                     label: "Documentation",
                     items: [
                         {
+                            label: "Client",
+                            link: "docs/client"
+                        },
+                        {
                             label: "JSX Components",
                             collapsed: true,
                             badge: {
@@ -68,7 +72,7 @@ export default defineConfig({
                             items: [
                                 {
                                     label: "Configuring JSX",
-                                    link: "/docs/jsx/configuring-jsx"
+                                    link: "docs/jsx/configuring-jsx"
                                 },
                                 {
                                     label: "Embeds",
