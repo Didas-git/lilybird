@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums/index.js";
+import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags, ComponentType } from "../enums/index.js";
 import { channelFactory } from "./channel.js";
 import { GuildMember } from "./guild.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
+import type { ApplicationCommandType, Locale } from "../enums/index.js";
 import type { PartialChannel } from "./channel.js";
 import type { Client } from "../client.js";
-import type { ApplicationCommandType, ComponentType, Locale } from "../enums/index.js";
 import type {
     AutocompleteCallbackDataStructure,
     ApplicationCommandDataStructure,
@@ -17,13 +17,12 @@ import type {
     ModalSubmitDataStructure,
     InteractionCallbackData,
     DMInteractionStructure,
-    SelectOptionStructure,
     ResolvedDataStructure,
     EntitlementStructure,
     InteractionStructure,
     MessageStructure,
-    EmojiStructure,
-    ReplyOptions
+    ReplyOptions,
+    TextInputStructure
 } from "../typings/index.js";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
@@ -41,7 +40,7 @@ function interactionDataFactory(interaction: InteractionStructure): InteractionD
             return undefined;
         case InteractionType.APPLICATION_COMMAND:
         case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE: {
-            return new ApplicationCommandData(interaction.data) as never;
+            return new ApplicationCommandData(interaction.data);
         }
         case InteractionType.MESSAGE_COMPONENT: {
             return new MessageComponentData(interaction.data);
@@ -138,6 +137,66 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         });
     }
 
+    public async deferReply(ephemeral = false): Promise<void> {
+        await this.client.rest.createInteractionResponse(this.id, this.token, {
+            type: InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+                flags: ephemeral ? MessageFlags.EPHEMERAL : 0
+            }
+        });
+    }
+
+    public async deferComponentReply(ephemeral = false): Promise<void> {
+        await this.client.rest.createInteractionResponse(this.id, this.token, {
+            type: InteractionCallbackType.DEFERRED_UPDATE_MESSAGE,
+            data: {
+                flags: ephemeral ? MessageFlags.EPHEMERAL : 0
+            }
+        });
+    }
+
+    public async updateComponents(content: string, options?: InteractionReplyOptions): Promise<void>;
+    public async updateComponents(options: InteractionReplyOptions): Promise<void>;
+    public async updateComponents(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
+        let flags = 0;
+        let data: InteractionCallbackData;
+
+        if (typeof content === "string") {
+            if (typeof options !== "undefined") {
+                const { ephemeral, suppressEmbeds, ...obj } = options;
+
+                if (ephemeral) flags |= MessageFlags.EPHEMERAL;
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+
+                data = {
+                    ...obj,
+                    content,
+                    flags
+                };
+            } else {
+                data = {
+                    content,
+                    flags
+                };
+            }
+        } else {
+            const { ephemeral, suppressEmbeds, ...obj } = content;
+
+            if (ephemeral) flags |= MessageFlags.EPHEMERAL;
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+
+            data = {
+                ...obj,
+                flags
+            };
+        }
+
+        await this.client.rest.createInteractionResponse(this.id, this.token, {
+            type: InteractionCallbackType.UPDATE_MESSAGE,
+            data
+        });
+    }
+
     public async respond(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
@@ -145,11 +204,18 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         });
     }
 
-    public async deferReply(ephemeral = false): Promise<void> {
+    public async showModal(title: string, modal: TextInputStructure): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
-            type: InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+            type: InteractionCallbackType.MODAL,
             data: {
-                flags: ephemeral ? MessageFlags.EPHEMERAL : 0
+                title,
+                custom_id: modal.custom_id,
+                components: [
+                    {
+                        type: ComponentType.ActionRow,
+                        components: [modal]
+                    }
+                ]
             }
         });
     }
@@ -562,30 +628,14 @@ class NotFoundError extends Error {
 class MessageComponentData {
     public readonly id: string;
     public readonly type: ComponentType;
-    public readonly values: Array<MessageComponentValue>;
+    public readonly values: Array<string>;
     public readonly resolved?: ResolvedDataStructure;
 
     public constructor(data: MessageComponentDataStructure) {
         this.id = data.custom_id;
         this.type = data.component_type;
         this.resolved = data.resolved;
-        this.values = data.values?.map((val) => new MessageComponentValue(val)) ?? [];
-    }
-}
-
-class MessageComponentValue {
-    public readonly label: string;
-    public readonly value: string;
-    public readonly description: string | undefined;
-    public readonly emoji: Pick<EmojiStructure, "id" | "name" | "animated"> | undefined;
-    public readonly default: boolean;
-
-    public constructor(value: SelectOptionStructure) {
-        this.label = value.label;
-        this.value = value.value;
-        this.description = value.description;
-        this.emoji = value.emoji;
-        this.default = !!value.default;
+        this.values = data.values ?? [];
     }
 }
 

@@ -127,7 +127,7 @@ export interface ApplicationCommandInteractionDataOptionStructure {
 export interface MessageComponentDataStructure {
     custom_id: string;
     component_type: ComponentType;
-    values?: Array<SelectOptionStructure>;
+    values?: Array<string>;
     resolved?: ResolvedDataStructure;
 }
 
