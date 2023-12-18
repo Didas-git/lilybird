@@ -3,5 +3,7 @@ declare module "bun" {
         TOKEN: string;
         TEST_CHANNEL_ID: string;
         TEST_GUILD_ID: string;
+        SEARCH_KEY: string;
+        CX: string;
     }
 }
