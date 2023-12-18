@@ -39,19 +39,19 @@ export default defineConfig({
                     items: [
                         {
                             label: "Getting Started",
-                            link: "/guides/getting-started"
+                            link: "guides/getting-started"
                         },
                         {
                             label: "Manual Setup",
-                            link: "/guides/manual-setup"
+                            link: "guides/manual-setup"
                         },
                         {
-                            label: "Registering Commands",
-                            link: "/guides/registering-commands"
+                            label: "No Events",
+                            link: "guides/no-events"
                         },
                         {
-                            label: "Receiving Commands",
-                            link: "/guides/receiving-commands"
+                            label: "Creating a simple handler",
+                            link: "guides/creating-handler"
                         }
                     ]
                 },
@@ -59,8 +59,12 @@ export default defineConfig({
                     label: "Documentation",
                     items: [
                         {
-                            label: "Client",
-                            link: "docs/client"
+                            label: "Core",
+                            badge: {
+                                text: "New",
+                                variant: "note"
+                            },
+                            autogenerate: { directory: "docs/core" }
                         },
                         {
                             label: "JSX Components",

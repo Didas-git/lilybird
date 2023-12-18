@@ -1,6 +1,8 @@
 ---
 title: Receiving Application Commands
 description: How to receive commands using lilybird.
+sidebar:
+  order: 3
 ---
 
 Interactions work similarly to other frameworks out there so they should be fairly easy to grasp.
