@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags, ComponentType } from "../enums/index.js";
+import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums/index.js";
 import { channelFactory } from "./channel.js";
 import { GuildMember } from "./guild.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import type { ApplicationCommandType, Locale } from "../enums/index.js";
+import type { ApplicationCommandType, Locale, ComponentType } from "../enums/index.js";
 import type { PartialChannel } from "./channel.js";
 import type { Client } from "../client.js";
 import type {
@@ -22,7 +22,7 @@ import type {
     InteractionStructure,
     MessageStructure,
     ReplyOptions,
-    TextInputStructure
+    ActionRowStructure
 } from "../typings/index.js";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
@@ -59,6 +59,12 @@ export interface InteractionReplyOptions extends ReplyOptions {
     ephemeral?: boolean;
     tts?: boolean;
     suppressEmbeds?: boolean;
+}
+
+export interface InteractionShowModalOptions {
+    title: string;
+    id: string;
+    components: Array<ActionRowStructure>;
 }
 
 // biome-ignore lint/suspicious/noEmptyInterface: This is for future proofing
@@ -204,19 +210,29 @@ export class Interaction<T extends InteractionData, M extends undefined | Messag
         });
     }
 
-    public async showModal(title: string, modal: TextInputStructure): Promise<void> {
+    public async showModal(title: string, id: string, components: Array<ActionRowStructure>): Promise<void>;
+    public async showModal(options: InteractionShowModalOptions): Promise<void>;
+    public async showModal(titleOrOptions: string | InteractionShowModalOptions, id?: string, components?: Array<ActionRowStructure>): Promise<void> {
+        let data: InteractionCallbackData;
+
+        if (typeof titleOrOptions === "string") {
+            data = {
+                title: titleOrOptions,
+                custom_id: id,
+                components
+            };
+        } else {
+            const { id: custom_id, ...obj } = titleOrOptions;
+
+            data = {
+                ...obj,
+                custom_id
+            };
+        }
+
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.MODAL,
-            data: {
-                title,
-                custom_id: modal.custom_id,
-                components: [
-                    {
-                        type: ComponentType.ActionRow,
-                        components: [modal]
-                    }
-                ]
-            }
+            data
         });
     }
 
