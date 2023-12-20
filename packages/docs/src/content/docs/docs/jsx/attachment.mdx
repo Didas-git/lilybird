@@ -28,11 +28,10 @@ Passing in `path` instead of `file` will make it so lilybird will try to use `Bu
   <TabItem label="node">
     ```tsx
     import { Attachment } from "@lilybird/jsx";
-    import { readFile } from "node:fs";
-    import { join } from "node:path"
+    import { readFile } from "node:fs/promises";
 
     const att = <Attachment 
-      file={new Blob([await readFile(join(import.meta.dir, "./lilybird.png"))])}
+      file={new Blob([await readFile(new URL("./lilybird.png", import.meta.url))])}
       name="lilybird"
     />;
     ```
