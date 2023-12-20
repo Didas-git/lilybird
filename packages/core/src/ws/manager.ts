@@ -1,5 +1,4 @@
 import { GatewayEvent, GatewayOpCode } from "../enums/index.js";
-import { closeCodeAllowsReconnection } from "./utils.js";
 import type { GetGatewayBot } from "../index.js";
 
 import type { UpdatePresenceStructure, GetGatewayBotResponse, ReceiveDispatchEvent, Identify, Payload, Resume } from "../typings/gateway-events.js";
@@ -200,4 +199,8 @@ export class WebSocketManager {
     public get options(): ManagerOptions {
         return this.#options;
     }
+}
+
+function closeCodeAllowsReconnection(code: number): boolean {
+    return code >= 4000 && code !== 4004 && code < 4010;
 }

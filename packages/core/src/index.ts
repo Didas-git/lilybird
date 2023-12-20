@@ -4,7 +4,6 @@ import type { ClientOptions } from "./typings/client.js";
 
 export type * from "./typings/index.js";
 
-export * from "./factories/index.js";
 export * from "./enums/index.js";
 
 export * from "./client.js";
