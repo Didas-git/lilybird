@@ -5,7 +5,7 @@ import { GuildMember } from "./guild.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import type { ApplicationCommandType, Locale, ComponentType } from "../enums/index.js";
+import type { ApplicationCommandType, ComponentType, Locale } from "../enums/index.js";
 import type { PartialChannel } from "./channel.js";
 import type { Client } from "../client.js";
 import type {
@@ -20,9 +20,9 @@ import type {
     ResolvedDataStructure,
     EntitlementStructure,
     InteractionStructure,
+    ActionRowStructure,
     MessageStructure,
-    ReplyOptions,
-    ActionRowStructure
+    ReplyOptions
 } from "../typings/index.js";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
