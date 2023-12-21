@@ -55,7 +55,7 @@ export class Client {
                             application: data.d.application
                         });
 
-                        Object.assign(this.#ws, {
+                        Object.assign(this.#ws.resumeInfo, {
                             url: data.d.resume_gateway_url,
                             id: data.d.session_id
                         });

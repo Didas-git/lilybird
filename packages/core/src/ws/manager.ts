@@ -31,7 +31,8 @@ export class WebSocketManager {
     #gatewayInfo!: GetGatewayBotResponse;
     #options: Required<ManagerOptions>;
 
-    private readonly resumeInfo: {
+    // Should i use symbols...?
+    public readonly resumeInfo: {
         url: string,
         id: string
     } = <never>{};
