@@ -25,7 +25,7 @@ import type {
     ReplyOptions
 } from "../typings/index.js";
 
-export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction<InteractionData> {
+export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction {
     const data = interactionDataFactory(interaction);
     // No clue why eslint is flagging this as an error with classes set to false...
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -69,7 +69,7 @@ export interface InteractionShowModalOptions {
 
 export interface InteractionEditOptions extends ReplyOptions {}
 
-export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {
+export class Interaction<T extends InteractionData = InteractionData, M extends undefined | MessageStructure = undefined> {
     public readonly client: Client;
     public readonly id: string;
     public readonly applicationId: string;
@@ -399,11 +399,11 @@ export class DMInteraction<T extends InteractionData, M extends undefined | Mess
     }
 }
 
-interface GuildApplicationCommandData<T extends undefined | FocusedOption> extends ApplicationCommandData<T> {
+export interface GuildApplicationCommandData<T extends undefined | FocusedOption> extends ApplicationCommandData<T> {
     readonly guildId: string;
 }
 
-interface UIApplicationCommandData<T extends undefined | FocusedOption> extends ApplicationCommandData<T> {
+export interface UIApplicationCommandData<T extends undefined | FocusedOption> extends ApplicationCommandData<T> {
     readonly targetId: string;
 }
 
@@ -626,7 +626,7 @@ export class ApplicationCommandData<T extends undefined | FocusedOption = undefi
     }
 }
 
-interface FocusedOption<T extends string | number | boolean = string | number | boolean> {
+export interface FocusedOption<T extends string | number | boolean = string | number | boolean> {
     name: string;
     value: T;
 }

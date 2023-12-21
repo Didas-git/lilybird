@@ -7,9 +7,15 @@ import { GatewayEvent } from "./enums/index.js";
 import { User } from "./factories/user.js";
 import { REST } from "./rest/rest.js";
 
-import type { UnavailableGuildStructure, ApplicationStructure, BaseClientOptions } from "./typings/index.js";
 import type { GuildMemberWithGuildId } from "./factories/guild.js";
 import type { DebugFunction } from "./ws/manager.js";
+
+import type {
+    UnavailableGuildStructure,
+    ApplicationStructure,
+    BaseClientOptions,
+    ClientOptions
+} from "./typings/index.js";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {
@@ -156,4 +162,20 @@ export class Client {
             rest: final
         };
     }
+}
+
+export async function createClient(options: ClientOptions): Promise<Client> {
+    return new Promise((res) => {
+        // This is a promise executer, it doesn't need to be async
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        new Client(
+            res,
+            { intents: options.intents, listeners: options.listeners, setup: options.setup },
+            options.attachDebugListener
+                ? options.debugListener ?? ((identifier, payload) => {
+                    console.log(identifier, payload ?? "");
+                })
+                : undefined
+        ).login(options.token);
+    });
 }

@@ -1,8 +1,16 @@
 import { ChannelType } from "lilybird";
-import type { ClientEventListeners, Client, Interaction, InteractionData, Message, BaseClientOptions } from "lilybird";
+
 import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command.js";
 import type { MessageCommand } from "./message-commands.js";
 import type { Event } from "./events.js";
+
+import type {
+    ClientEventListeners,
+    BaseClientOptions,
+    Interaction,
+    Message,
+    Client
+} from "lilybird";
 
 interface HandlerDirectories {
     slashCommands?: string;
@@ -105,7 +113,7 @@ export class Handler {
         }
     }
 
-    private async onInteraction(interaction: Interaction<InteractionData>): Promise<void> {
+    private async onInteraction(interaction: Interaction): Promise<void> {
         if (interaction.isApplicationCommandInteraction()) {
             await this.globalSlashCommands.get(interaction.data.name)?.run(interaction);
             if (interaction.inGuild()) await this.guildSlashCommands.get(interaction.data.name)?.run(interaction);

@@ -1,26 +1,57 @@
-import { Client } from "./client.js";
-
-import type { ClientOptions } from "./typings/client.js";
-
 export type * from "./typings/index.js";
 
-export * from "./enums/index.js";
+export type {
+    GuildApplicationCommandData,
+    InteractionShowModalOptions,
+    UIApplicationCommandData,
+    InteractionReplyOptions,
+    ApplicationCommandData,
+    InteractionEditOptions,
+    AutocompleteData,
+    InteractionData,
+    FocusedOption
+} from "./factories/interaction.js";
 
+export type {
+    MessageSendOptions,
+    PartialChannel
+} from "./factories/channel.js";
+
+export type {
+    MessageReplyOptions,
+    MessageEditOptions,
+    PartialMessage
+} from "./factories/message.js";
+
+export type {
+    ModifyMemberOptions,
+    PartialGuildMember
+} from "./factories/guild.js";
+
+export * from "./enums/index.js";
 export * from "./client.js";
 export * from "./utils.js";
 
-export async function createClient(options: ClientOptions): Promise<Client> {
-    return new Promise((res) => {
-        // This is a promise executer, it doesn't need to be async
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        new Client(
-            res,
-            { intents: options.intents, listeners: options.listeners, setup: options.setup },
-            options.attachDebugListener
-                ? options.debugListener ?? ((identifier, payload) => {
-                    console.log(identifier, payload ?? "");
-                })
-                : undefined
-        ).login(options.token);
-    });
-}
+export { GuildMember } from "./factories/guild.js";
+export { Message } from "./factories/message.js";
+
+export {
+    GuildInteraction,
+    DMInteraction,
+    Interaction
+} from "./factories/interaction.js";
+
+export {
+    GuildAnnouncementChannel,
+    GuildChannelCategory,
+    GuildVoiceChannel,
+    ThreadLikeChannel,
+    GuildTextChannel,
+    MentionChannel,
+    GroupDMChannel,
+    ThreadChannel,
+    ThreadMember,
+    GuildChannel,
+    DMChannel,
+    Channel
+} from "./factories/channel.js";
