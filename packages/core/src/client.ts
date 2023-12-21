@@ -55,6 +55,11 @@ export class Client {
                             application: data.d.application
                         });
 
+                        Object.assign(this.#ws, {
+                            url: data.d.resume_gateway_url,
+                            id: data.d.session_id
+                        });
+
                         await options.setup?.(this);
                         res(this);
 

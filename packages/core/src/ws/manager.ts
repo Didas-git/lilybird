@@ -1,7 +1,14 @@
-import { GatewayEvent, GatewayOpCode } from "../enums/index.js";
-import type { GetGatewayBot } from "../index.js";
+import { GatewayOpCode } from "../enums/index.js";
 
-import type { UpdatePresenceStructure, GetGatewayBotResponse, ReceiveDispatchEvent, Identify, Payload, Resume } from "../typings/gateway-events.js";
+import type {
+    UpdatePresenceStructure,
+    GetGatewayBotResponse,
+    ReceiveDispatchEvent,
+    GetGatewayBot,
+    Identify,
+    Payload,
+    Resume
+} from "../typings/index.js";
 
 interface ManagerOptions {
     token?: string;
@@ -23,11 +30,11 @@ export class WebSocketManager {
     #ws!: WebSocket;
     #gatewayInfo!: GetGatewayBotResponse;
     #options: Required<ManagerOptions>;
-    //@ts-expect-error Ignore for now
-    #resumeInfo: {
+
+    private readonly resumeInfo: {
         url: string,
         id: string
-    };
+    } = <never>{};
 
     public constructor(options: ManagerOptions, dispatch: DispatchFunction, debug?: DebugFunction) {
         if (!options.intents) throw new Error("No intents were passed");
@@ -82,13 +89,6 @@ export class WebSocketManager {
 
             switch (payload.op) {
                 case GatewayOpCode.Dispatch: {
-                    if (payload.t === GatewayEvent.Ready) {
-                        this.#resumeInfo = {
-                            url: payload.d.resume_gateway_url,
-                            id: payload.d.session_id
-                        };
-                    }
-
                     this.#dispatch(payload);
                     break;
                 }
@@ -163,14 +163,14 @@ export class WebSocketManager {
             op: GatewayOpCode.Resume,
             d: {
                 token: this.#options.token,
-                session_id: this.#resumeInfo.id,
+                session_id: this.resumeInfo.id,
                 seq: this.#sequenceNumber ?? 0
             },
             s: null,
             t: null
         };
 
-        await this.connect(this.#resumeInfo.url);
+        await this.connect(this.resumeInfo.url);
         this.#ws.send(JSON.stringify(payload));
     }
 
