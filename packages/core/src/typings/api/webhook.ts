@@ -3,7 +3,6 @@ import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStr
 export interface EditWebhookStructure {
     content?: string | null;
     embeds?: Array<EmbedStructure> | null;
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     allowed_mentions?: AllowedMentionsStructure | null;
     components?: Array<MessageComponentStructure> | null;
     files?: Array<LilybirdAttachment>;

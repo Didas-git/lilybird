@@ -67,7 +67,6 @@ export interface InteractionShowModalOptions {
     components: Array<ActionRowStructure>;
 }
 
-// biome-ignore lint/suspicious/noEmptyInterface: This is for future proofing
 export interface InteractionEditOptions extends ReplyOptions {}
 
 export class Interaction<T extends InteractionData, M extends undefined | MessageStructure = undefined> {

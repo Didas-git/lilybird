@@ -286,34 +286,22 @@ export class REST {
     }
 
     public async createReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) {
-            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
-            emoji = encodeURIComponent(emoji);
-        }
+        if (!isCustom) emoji = encodeURIComponent(emoji);
         return this.#makeRequest("PUT", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
     }
 
     public async deleteOwnReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) {
-            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
-            emoji = encodeURIComponent(emoji);
-        }
+        if (!isCustom) emoji = encodeURIComponent(emoji);
         return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
     }
 
     public async deleteUserReaction(channelId: string, messageId: string, userId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) {
-            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
-            emoji = encodeURIComponent(emoji);
-        }
+        if (!isCustom) emoji = encodeURIComponent(emoji);
         return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/${userId}`);
     }
 
     public async getReactions(channelId: string, messageId: string, emoji: string, isCustom = false, params: { after?: number, limit?: string } = {}): Promise<Array<UserStructure>> {
-        if (!isCustom) {
-            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
-            emoji = encodeURIComponent(emoji);
-        }
+        if (!isCustom) emoji = encodeURIComponent(emoji);
 
         let url = `channels/${channelId}/messages/${messageId}/reactions/${emoji}?`;
         if (typeof params.after !== "undefined")
@@ -330,10 +318,7 @@ export class REST {
     }
 
     public async deleteAllReactionsForEmoji(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) {
-            // biome-ignore lint/style/noParameterAssign: There is no reason to create an entire new variable in this case
-            emoji = encodeURIComponent(emoji);
-        }
+        if (!isCustom) emoji = encodeURIComponent(emoji);
         return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
     }
 
@@ -395,12 +380,10 @@ export class REST {
         return this.#makeRequest("DELETE", `channels/${channelId}/pins/${messageId}`, { reason });
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public async groupDMAddRecipient(channelId: string, userId: string, body: { access_token: string, nick: string }): Promise<null> {
         return this.#makeRequest("PUT", `channels/${channelId}/recipients/${userId}`, body);
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public async groupDMRemoveRecipient(channelId: string, userId: string): Promise<null> {
         return this.#makeRequest("DELETE", `channels/${channelId}/recipients/${userId}`);
     }
@@ -523,12 +506,10 @@ export class REST {
         return this.#makeRequest("DELETE", `users/@me/guilds/${guildId}`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public async createDM(userId: string): Promise<DMChannelStructure> {
         return this.#makeRequest("POST", "users/@me/channels", { recipient_id: userId });
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public async createGroupDM(tokens: Array<string>, nicks: Record<string, string>): Promise<DMChannelStructure> {
         return this.#makeRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
     }
@@ -708,7 +689,6 @@ export class REST {
         return this.#makeRequest("PATCH", `guilds/${guildId}/roles/${roleId}`, body);
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public async modifyGuildMFALevel(guildId: string, level: MFALevel): Promise<MFALevel> {
         return this.#makeRequest("POST", `guilds/${guildId}/mfa`, { level });
     }

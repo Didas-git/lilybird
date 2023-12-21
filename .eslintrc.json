@@ -297,7 +297,7 @@
             {
                 "selector": "classMethod",
                 "format": [
-                    "strictCamelCase"
+                    "camelCase"
                 ]
             },
             {

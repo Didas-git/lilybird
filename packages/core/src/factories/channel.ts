@@ -138,7 +138,6 @@ export class Channel {
         return this.type === ChannelType.GUILD_TEXT;
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public isDM(): this is DMChannel {
         return this.type === ChannelType.DM;
     }
@@ -147,7 +146,6 @@ export class Channel {
         return this.type === ChannelType.GUILD_VOICE;
     }
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     public isGroupDM(): this is GroupDMChannel {
         return this.type === ChannelType.GROUP_DM;
     }
