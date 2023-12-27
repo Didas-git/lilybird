@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",

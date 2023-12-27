@@ -46,9 +46,8 @@ export class Handler {
         }
     }
 
-    public async readSlashCommandDir(dir: string | undefined = this.dirs.slashCommands): Promise<void> {
-        if (typeof dir === "undefined")
-            throw new Error("Attempt to load slash commands failed");
+    public async readSlashCommandDir(dir: string | undefined = this.dirs.slashCommands): Promise<boolean> {
+        if (typeof dir === "undefined") return false;
 
         const router = new Bun.FileSystemRouter({
             fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -67,11 +66,12 @@ export class Handler {
             if (key.startsWith("/guild") || file.post !== "GLOBAL") this.guildSlashCommands.set(file.data.name, <GuildSlashCommand>file);
             else this.globalSlashCommands.set(file.data.name, file);
         }
+
+        return true;
     }
 
-    public async readEventDir(dir: string | undefined = this.dirs.listeners): Promise<void> {
-        if (typeof dir === "undefined")
-            throw new Error("Attempt to load events failed");
+    public async readEventDir(dir: string | undefined = this.dirs.listeners): Promise<boolean> {
+        if (typeof dir === "undefined") return false;
 
         const router = new Bun.FileSystemRouter({
             fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -89,11 +89,12 @@ export class Handler {
 
             this.events.set(file.event, file);
         }
+
+        return true;
     }
 
-    public async readMessageCommandDir(dir: string | undefined = this.dirs.messageCommands): Promise<void> {
-        if (typeof dir === "undefined")
-            throw new Error("Attempt to load message commands failed");
+    public async readMessageCommandDir(dir: string | undefined = this.dirs.messageCommands): Promise<boolean> {
+        if (typeof dir === "undefined") return false;
 
         const router = new Bun.FileSystemRouter({
             fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -111,6 +112,8 @@ export class Handler {
 
             this.messageCommands.set([file.name, ...file.alias ?? []], file);
         }
+
+        return true;
     }
 
     private async onInteraction(interaction: Interaction): Promise<void> {
@@ -124,7 +127,7 @@ export class Handler {
     }
 
     private async onMessage(message: Message): Promise<void> {
-        if (message.author.bot || (await message.client.rest.getChannel(message.id)).type === ChannelType.DM) return;
+        if (message.author.bot || (await message.client.rest.getChannel(message.channelId)).type === ChannelType.DM) return;
 
         if (message.content?.startsWith(this.prefix)) {
             const args = message.content.slice(this.prefix.length).trim().split(/\s+/g);
@@ -141,38 +144,59 @@ export class Handler {
         }
     }
 
-    public buildListeners(): ClientEventListeners {
+    public async buildListeners(): Promise<ClientEventListeners> {
+        const slashCommandsExist = await this.readSlashCommandDir();
+        const messageCommandsExist = await this.readMessageCommandDir();
+        const eventsExist = await this.readEventDir();
         // eslint-disable-next-line func-style
-        let interactionCreateFn: Exclude<ClientEventListeners["interactionCreate"], undefined> = function () { return; };
+        let interactionCreateFn: Exclude<ClientEventListeners["interactionCreate"], undefined> | undefined = undefined;
 
         // eslint-disable-next-line func-style
-        let messageCreateFn: Exclude<ClientEventListeners["messageCreate"], undefined> = function () { return; };
+        let messageCreateFn: Exclude<ClientEventListeners["messageCreate"], undefined> | undefined = undefined;
 
         const listeners: ClientEventListeners = {};
 
-        for (const [name, event] of this.events) {
-            if (name === "interactionCreate") {
-                interactionCreateFn = event.run;
-                continue;
-            }
+        if (eventsExist) {
+            for (const [name, event] of this.events) {
+                if (name === "interactionCreate") {
+                    interactionCreateFn = event.run;
+                    continue;
+                }
 
-            if (name === "messageCreate") {
-                messageCreateFn = event.run;
-                continue;
-            }
+                if (name === "messageCreate") {
+                    messageCreateFn = event.run;
+                    continue;
+                }
 
-            listeners[name] = event.run;
+                listeners[name] = event.run;
+            }
         }
 
-        listeners.interactionCreate = async (interaction) => {
-            await interactionCreateFn(interaction);
-            await this.onInteraction(interaction);
-        };
+        if (!slashCommandsExist) listeners.interactionCreate = interactionCreateFn;
+        else if (typeof interactionCreateFn !== "undefined") {
+            listeners.interactionCreate = async (interaction) => {
+                //@ts-expect-error It is being checked above...
+                await interactionCreateFn(interaction);
+                await this.onInteraction(interaction);
+            };
+        } else {
+            listeners.interactionCreate = async (interaction) => {
+                await this.onInteraction(interaction);
+            };
+        }
 
-        listeners.messageCreate = async (message) => {
-            await messageCreateFn(message);
-            await this.onMessage(message);
-        };
+        if (!messageCommandsExist) listeners.messageCreate = messageCreateFn;
+        else if (typeof messageCreateFn !== "undefined") {
+            listeners.messageCreate = async (message) => {
+                //@ts-expect-error It is being checked above...
+                await messageCreateFn(message);
+                await this.onMessage(message);
+            };
+        } else {
+            listeners.messageCreate = async (message) => {
+                await this.onMessage(message);
+            };
+        }
 
         return listeners;
     }
@@ -190,12 +214,8 @@ export async function createHandler({
 }): Promise<Expand<Pick<Required<BaseClientOptions>, "listeners" | "setup">>> {
     const handler = new Handler(dirs, prefix);
 
-    dirs.slashCommands && await handler.readSlashCommandDir();
-    dirs.listeners && await handler.readEventDir();
-    dirs.messageCommands && await handler.readMessageCommandDir();
-
     return {
-        listeners: handler.buildListeners(),
+        listeners: await handler.buildListeners(),
         setup: async (client) => {
             await handler.registerGlobalCommands(client);
             await handler.registerGuildCommands(client);
