@@ -16,7 +16,7 @@ await createClient({
   ...,
   listeners: {
     async messageCreate(message) {
-      await message.reply("Hii~")
+      await message.reply("Hii~");
     }
   }
 });
