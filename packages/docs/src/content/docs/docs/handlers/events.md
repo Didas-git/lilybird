@@ -3,7 +3,7 @@ title: Handling Events
 description: How to use lilybird's handlers for events.
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling events however i can assure you there are more to come.
+Currently the `@lilybird/handlers` package provides only one way of handling events; however, I can assure you there are more to come.
 
 ## Creating a listener
 
@@ -33,7 +33,7 @@ export default {
   run: (client) => {
     console.log(`Logged in as ${client.user.username}`);
   },
-// This duplication is needed for typescript types to work properly
-// This is also why this api isn't the best
+// This duplication is needed for TypeScript types to work properly
+// This is also why this API isn't the best
 } satisfies Event<"ready">
 ```

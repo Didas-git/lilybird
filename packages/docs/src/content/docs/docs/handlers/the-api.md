@@ -3,19 +3,18 @@ title: The Handler API
 description: How lilybird's handler api works.
 ---
 
-The current handler api is fairly simple, you have a class that you can extend that contains the methods that load the files, the ones that load the commands and the function that is responsible for creating the listeners.
+The current handler API is quite simple. You have a class that you can extend, containing methods for loading files, loading commands, and the function responsible for creating the listeners.
 
-Lets break down the function and helpers used to create the listeners and explain how we are circumventing the limitations ov not having event listeners.
+Now, let's break down the function and helpers used to create the listeners and explain how we are circumventing the limitations of not having event listeners.
 
-## Building the listeners
+## Building the Listeners
 
-As we can see highlighted in **gray** in the code bellow we create 2 placeholder functions, this is so you can have your own listener without conflicting with the handler.
+As highlighted in **gray** in the code below, we create two placeholder functions. This allows you to have your own listener without conflicting with the handler.
 
 :::caution
-You should be careful and avoid at all costs modifying the `interaction` object, since objects are passed by reference if you mutate in your listeners the changes will pass to the command handler.
-
-While you can use that on your favor we highly advise against it.
+Be careful and avoid modifying the `interaction` object at all costs. Since objects are passed by reference, if you mutate them in your listeners, the changes will pass to the command handler. While you can use this to your advantage, we highly advise against it.
 :::
+
 
 ```ts {2, 3}
 public buildListeners(): ClientEventListeners {
@@ -52,10 +51,10 @@ public buildListeners(): ClientEventListeners {
 }
 ```
 
-## Registering the commands
+## Registering the Commands
 
-Lilybird has a neat api that makes this job trivial.
+Lilybird has a neat API that makes this job trivial.
 
-The `setup` api is a simple callback that the client runs the moment it connects to discord. In the future this will be change so it gets called even before the connection is called.
+The `setup` API is a simple callback that the client runs the moment it connects to Discord. In the future, this will be changed so it gets called even before the connection is established.
 
-This is why when you call `createHandler` you spread the result into the client options instead of passing the variable.
+This is why when you call `createHandler`, you spread the result into the client options instead of passing the variable.

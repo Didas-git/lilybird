@@ -9,7 +9,7 @@ sidebar:
 
 ### Direct reply
 
-When using `<Message>.reply` the message will include a `message_reference` which just means it works like you replying to a message in discord.
+When using `<Message>.reply` the message will include a `message_reference` which just means it works like you replying to a message in Discord.
 
 ```ts
 await createClient({
@@ -39,5 +39,5 @@ await createClient({
 ```
 
 :::note
-Other methods like `react` do also exist within the message object.
+Other methods like `react` also exist within the message object.
 :::

@@ -1,18 +1,18 @@
 ---
 title: Message Components
-description: How to use lilybird's message components.
+description: How to use Lilybird's message components.
 ---
 
 The building block of all message components is the `ActionRow` component.
 It wraps all the other components and exists exactly just for that reason.
 
-All of the components have all the properties that discord allows and they are really simple to use.
+All of the components have all the properties that Discord allows, and they are really simple to use.
 
 Discord reference: [Message Components](https://discord.com/developers/docs/interactions/message-components)
 
 ## Buttons
 
-Buttons are the simplest and most used component type, lilybird makes their usage even more trivial.
+Buttons are the simplest and most used component type, and Lilybird makes their usage even more trivial.
 
 ```tsx
 import { ActionRow, Button } from "@lilybird/jsx";
@@ -27,7 +27,7 @@ const buttonRow = (
 
 ### Link Buttons
 
-Like the discord docs say, a link button cannot have a `custom_id` so instead we use the `url` property.
+Like the Discord docs say, a link button cannot have a `custom_id` so instead we use the `url` property.
 
 ```diff lang="tsx"
 import { ActionRow, Button } from "@lilybird/jsx";
@@ -57,7 +57,7 @@ const selectRow = (
 
 ## Modals
 
-Modals might be more daunting at first sight but they are really simple specially when using JSX components for them.
+Modals might seem more daunting at first sight, but they are really simple, especially when using JSX components for them.
 
 ```tsx
 import { TextInputModal } from "@lilybird/jsx";
