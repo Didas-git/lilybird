@@ -16,7 +16,7 @@ interface ManagerOptions {
     presence?: UpdatePresenceStructure;
 }
 
-export type Identifier = "WS_MESSAGE" | "HEARTBEAT" | "ACK" | "NEED_HEARTBEAT" | "IDENTIFY";
+export type Identifier = "WS_MESSAGE" | "HEARTBEAT" | "ACK" | "NEED_HEARTBEAT" | "IDENTIFY" | "RESUME" | "INVALID_SESSION" | "RECONNECT" | "ERROR";
 
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
 export type DebugFunction = (identifier: Identifier, payload?: unknown) => any;
@@ -67,23 +67,22 @@ export class WebSocketManager {
 
         this.#ws = new WebSocket(url ?? this.#gatewayInfo.url);
         this.#ws.addEventListener("error", (err) => {
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
-            throw err;
+            this.#debug?.("ERROR", err);
         });
         this.#ws.addEventListener("close", async ({ code, reason }) => {
             if (typeof code === "undefined")
                 await this.#attemptResume();
-            else if (code === 1000)
-                process.exit();
-            else if (code === 3000) {
+            else if (code === 1000) {
                 this.#isResuming = false;
                 await this.connect();
-            } else if (closeCodeAllowsReconnection(code))
+            } else if (code === 1001)
+                await this.#attemptResume();
+            else if (closeCodeAllowsReconnection(code))
                 await this.#attemptResume();
 
             throw new Error(`${code}: ${reason.toString()}`);
         });
-        this.#ws.addEventListener("message", async (event) => {
+        this.#ws.addEventListener("message", (event) => {
             this.#debug?.("WS_MESSAGE", event.data);
             const payload = <Payload>JSON.parse(event.data.toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
@@ -102,6 +101,7 @@ export class WebSocketManager {
                     }, interval);
 
                     if (!this.#isResuming) this.#identify();
+                    else this.#resume();
 
                     break;
                 }
@@ -111,12 +111,14 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.Reconnect: {
-                    await this.#attemptResume();
+                    this.#debug?.("RECONNECT");
+                    this.#ws.close(1001);
                     break;
                 }
                 case GatewayOpCode.InvalidSession: {
-                    if (payload.d) await this.#attemptResume();
-                    else this.#ws.close(3000);
+                    this.#debug?.("INVALID_SESSION");
+                    if (payload.d) this.#ws.close(1001);
+                    else this.#ws.close(1000);
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {
@@ -154,12 +156,11 @@ export class WebSocketManager {
             t: null
         };
 
-        this.#ws.send(JSON.stringify(payload));
         this.#debug?.("IDENTIFY");
+        this.#ws.send(JSON.stringify(payload));
     }
 
-    async #attemptResume(): Promise<void> {
-        this.#isResuming = true;
+    #resume(): void {
         const payload: Resume = {
             op: GatewayOpCode.Resume,
             d: {
@@ -171,8 +172,13 @@ export class WebSocketManager {
             t: null
         };
 
-        await this.connect(this.resumeInfo.url);
+        this.#debug?.("RESUME");
         this.#ws.send(JSON.stringify(payload));
+    }
+
+    async #attemptResume(): Promise<void> {
+        this.#isResuming = true;
+        await this.connect(`${this.resumeInfo.url}/?v=10&encoding=json`);
     }
 
     /** Returns time taken in ms */
