@@ -1,4 +1,11 @@
-import type { ApplicationCommandData, AutocompleteData, GuildInteraction, Interaction, Awaitable, POSTApplicationCommandStructure } from "lilybird";
+import type {
+    POSTApplicationCommandStructure,
+    ApplicationCommandData,
+    AutocompleteData,
+    GuildInteraction,
+    Interaction,
+    Awaitable
+} from "lilybird";
 
 export interface GlobalSlashCommand {
     data: POSTApplicationCommandStructure;
