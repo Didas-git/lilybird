@@ -18,7 +18,19 @@ interface ManagerOptions {
     presence?: UpdatePresenceStructure;
 }
 
-export type Identifier = "WS_MESSAGE" | "HEARTBEAT" | "ACK" | "NEED_HEARTBEAT" | "IDENTIFY" | "RESUME" | "INVALID_SESSION" | "RECONNECT" | "ERROR" | "MISSING_ACK" | "ZOMBIE";
+export type Identifier = "WS_MESSAGE"
+    | "HEARTBEAT"
+    | "ACK"
+    | "NEED_HEARTBEAT"
+    | "IDENTIFY"
+    | "RESUME"
+    | "INVALID_SESSION"
+    | "RECONNECT"
+    | "ERROR"
+    | "MISSING_ACK"
+    | "ZOMBIE"
+    | "ATTEMPTING_RESUME"
+    | "UNKNOWN_CODE";
 
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
 export type DebugFunction = (identifier: Identifier, payload?: unknown) => any;
@@ -74,14 +86,10 @@ export class WebSocketManager {
         this.#ws.addEventListener("error", (err) => {
             this.#debug?.("ERROR", err);
         });
-        this.#ws.addEventListener("close", async ({ code, reason }) => {
+        this.#ws.addEventListener("close", async ({ code }) => {
             this.#clearTimer();
             if (typeof code === "undefined") {
                 await this.#attemptResume();
-                return;
-            } else if (code === 1000) {
-                this.#isResuming = false;
-                await this.connect();
                 return;
             } else if (code === 1001) {
                 await this.#attemptResume();
@@ -91,7 +99,9 @@ export class WebSocketManager {
                 return;
             }
 
-            throw new Error(`${code}: ${reason.toString()}`);
+            this.#debug?.("UNKNOWN_CODE", code);
+            this.#isResuming = false;
+            await this.connect();
         });
         this.#ws.addEventListener("message", (event) => {
             this.#debug?.("WS_MESSAGE", event.data);
@@ -110,7 +120,6 @@ export class WebSocketManager {
                         if (!this.#gotACK) {
                             this.#debug?.("MISSING_ACK");
                             await setTimeout(1000);
-                            // We check again
                             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                             if (!this.#gotACK) {
                                 this.#debug?.("ZOMBIE");
@@ -146,7 +155,7 @@ export class WebSocketManager {
                 }
                 case GatewayOpCode.HeartbeatACK: {
                     this.#gotACK = true;
-                    this.#debug?.("ACK", payload);
+                    this.#debug?.("ACK");
                     break;
                 }
                 default:
@@ -207,6 +216,7 @@ export class WebSocketManager {
     }
 
     async #attemptResume(): Promise<void> {
+        this.#debug?.("ATTEMPTING_RESUME");
         this.#isResuming = true;
         await this.connect(`${this.resumeInfo.url}/?v=10&encoding=json`);
     }
@@ -217,7 +227,6 @@ export class WebSocketManager {
             this.#ws.addEventListener(
                 "pong",
                 () => {
-                    // It is defined, this is a massive hack
                     // eslint-disable-next-line @typescript-eslint/no-use-before-define
                     res(Math.round(performance.now() - start));
                 },
