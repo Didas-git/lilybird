@@ -21,7 +21,6 @@ import type {
     EntitlementStructure,
     InteractionStructure,
     ActionRowStructure,
-    MessageStructure,
     ReplyOptions
 } from "../typings/index.js";
 
@@ -69,7 +68,7 @@ export interface InteractionShowModalOptions {
 
 export interface InteractionEditOptions extends ReplyOptions {}
 
-export class Interaction<T extends InteractionData = InteractionData, M extends undefined | MessageStructure = undefined> {
+export class Interaction<T extends InteractionData = InteractionData, M extends undefined | Message = undefined | Message> {
     public readonly client: Client;
     public readonly id: string;
     public readonly applicationId: string;
@@ -97,7 +96,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         this.data = <never>data;
 
-        if ("message" in interaction) this.message = <never>interaction.message;
+        if ("message" in interaction) this.message = new Message(client, <never>interaction.message) as never;
     }
 
     public async reply(content: string, options?: InteractionReplyOptions): Promise<void>;
@@ -318,37 +317,37 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         return this.type === InteractionType.PING;
     }
 
-    public isApplicationCommandInteraction(): this is Interaction<ApplicationCommandData> {
+    public isApplicationCommandInteraction(): this is Interaction<ApplicationCommandData, undefined> {
         return this.type === InteractionType.APPLICATION_COMMAND;
     }
 
-    public isAutocompleteInteraction(): this is Interaction<AutocompleteData> {
+    public isAutocompleteInteraction(): this is Interaction<AutocompleteData, undefined> {
         return this.type === InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE;
     }
 
-    public isMessageComponentInteraction(): this is Interaction<MessageComponentData, MessageStructure> {
+    public isMessageComponentInteraction(): this is Interaction<MessageComponentData, Message> {
         return this.type === InteractionType.MESSAGE_COMPONENT;
     }
 
-    public isModalSubmitInteraction(): this is Interaction<ModalSubmitData> {
+    public isModalSubmitInteraction(): this is Interaction<ModalSubmitData, undefined> {
         return this.type === InteractionType.MODAL_SUBMIT;
     }
 
-    public inGuild(): this is GuildInteraction<T> {
+    public inGuild(): this is GuildInteraction<T, M> {
         return this.#inGuild;
     }
 
-    public inDM(): this is DMInteraction<T> {
+    public inDM(): this is DMInteraction<T, M> {
         return !this.#inGuild;
     }
 }
 
-export interface GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
-    isPingInteraction: () => this is GuildInteraction<undefined>;
-    isApplicationCommandInteraction: () => this is GuildInteraction<ApplicationCommandData>;
-    isAutocompleteInteraction: () => this is GuildInteraction<AutocompleteData>;
-    isMessageComponentInteraction: () => this is GuildInteraction<MessageComponentData, MessageStructure>;
-    isModalSubmitInteraction: () => this is GuildInteraction<ModalSubmitData>;
+export interface GuildInteraction<T extends InteractionData, M extends undefined | Message = undefined | Message> extends Interaction<T, M> {
+    isPingInteraction: () => this is GuildInteraction<undefined, undefined>;
+    isApplicationCommandInteraction: () => this is GuildInteraction<ApplicationCommandData, undefined>;
+    isAutocompleteInteraction: () => this is GuildInteraction<AutocompleteData, undefined>;
+    isMessageComponentInteraction: () => this is GuildInteraction<MessageComponentData, Message>;
+    isModalSubmitInteraction: () => this is GuildInteraction<ModalSubmitData, undefined>;
 }
 
 /*
@@ -356,7 +355,7 @@ export interface GuildInteraction<T extends InteractionData, M extends undefined
     without getting any runtime penalty for doing it on the class
 */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class GuildInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
+export class GuildInteraction<T extends InteractionData, M extends undefined | Message = undefined | Message> extends Interaction<T, M> {
     public readonly guildId: string;
     public readonly channel: PartialChannel;
     public readonly channelId: string;
@@ -376,12 +375,12 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
     }
 }
 
-export interface DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
-    isPingInteraction: () => this is DMInteraction<undefined>;
-    isApplicationCommandInteraction: () => this is DMInteraction<ApplicationCommandData>;
-    isAutocompleteInteraction: () => this is DMInteraction<AutocompleteData>;
-    isMessageComponentInteraction: () => this is DMInteraction<MessageComponentData, MessageStructure>;
-    isModalSubmitInteraction: () => this is DMInteraction<ModalSubmitData>;
+export interface DMInteraction<T extends InteractionData, M extends undefined | Message = undefined | Message> extends Interaction<T, M> {
+    isPingInteraction: () => this is DMInteraction<undefined, undefined>;
+    isApplicationCommandInteraction: () => this is DMInteraction<ApplicationCommandData, undefined>;
+    isAutocompleteInteraction: () => this is DMInteraction<AutocompleteData, undefined>;
+    isMessageComponentInteraction: () => this is DMInteraction<MessageComponentData, Message>;
+    isModalSubmitInteraction: () => this is DMInteraction<ModalSubmitData, undefined>;
 }
 
 /*
@@ -389,7 +388,7 @@ export interface DMInteraction<T extends InteractionData, M extends undefined | 
     without getting any runtime penalty for doing it on the class
 */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class DMInteraction<T extends InteractionData, M extends undefined | MessageStructure = undefined> extends Interaction<T, M> {
+export class DMInteraction<T extends InteractionData, M extends undefined | Message = undefined | Message> extends Interaction<T, M> {
     public readonly user: User;
 
     public constructor(client: Client, interaction: DMInteractionStructure, isDM: boolean, data?: T) {
