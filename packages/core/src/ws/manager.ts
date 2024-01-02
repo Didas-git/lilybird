@@ -1,4 +1,6 @@
 import { GatewayOpCode } from "../enums/index.js";
+//@ts-expect-error This exists...
+import { setTimeout } from "node:timers/promises";
 
 import type {
     UpdatePresenceStructure,
@@ -16,7 +18,7 @@ interface ManagerOptions {
     presence?: UpdatePresenceStructure;
 }
 
-export type Identifier = "WS_MESSAGE" | "HEARTBEAT" | "ACK" | "NEED_HEARTBEAT" | "IDENTIFY" | "RESUME" | "INVALID_SESSION" | "RECONNECT" | "ERROR";
+export type Identifier = "WS_MESSAGE" | "HEARTBEAT" | "ACK" | "NEED_HEARTBEAT" | "IDENTIFY" | "RESUME" | "INVALID_SESSION" | "RECONNECT" | "ERROR" | "MISSING_ACK" | "ZOMBIE";
 
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
 export type DebugFunction = (identifier: Identifier, payload?: unknown) => any;
@@ -30,6 +32,9 @@ export class WebSocketManager {
     #ws!: WebSocket;
     #gatewayInfo!: GetGatewayBotResponse;
     #options: Required<ManagerOptions>;
+    #timer?: Timer;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    #gotACK: boolean = true;
 
     // Should i use symbols...?
     public readonly resumeInfo: {
@@ -70,21 +75,27 @@ export class WebSocketManager {
             this.#debug?.("ERROR", err);
         });
         this.#ws.addEventListener("close", async ({ code, reason }) => {
-            if (typeof code === "undefined")
+            this.#clearTimer();
+            if (typeof code === "undefined") {
                 await this.#attemptResume();
-            else if (code === 1000) {
+                return;
+            } else if (code === 1000) {
                 this.#isResuming = false;
                 await this.connect();
-            } else if (code === 1001)
+                return;
+            } else if (code === 1001) {
                 await this.#attemptResume();
-            else if (closeCodeAllowsReconnection(code))
+                return;
+            } else if (closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
+                return;
+            }
 
             throw new Error(`${code}: ${reason.toString()}`);
         });
         this.#ws.addEventListener("message", (event) => {
             this.#debug?.("WS_MESSAGE", event.data);
-            const payload = <Payload>JSON.parse(event.data.toString());
+            const payload = <Payload>JSON.parse((event.data as Buffer).toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
 
             switch (payload.op) {
@@ -95,7 +106,19 @@ export class WebSocketManager {
                 case GatewayOpCode.Hello: {
                     const interval = Math.round(payload.d.heartbeat_interval * Math.random());
 
-                    setInterval(() => {
+                    this.#timer = setInterval(async () => {
+                        if (!this.#gotACK) {
+                            this.#debug?.("MISSING_ACK");
+                            await setTimeout(1000);
+                            // We check again
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                            if (!this.#gotACK) {
+                                this.#debug?.("ZOMBIE");
+                                this.#ws.close(1001);
+                                return;
+                            }
+                        }
+
                         this.#debug?.("HEARTBEAT");
                         this.#sendHeartbeatPayload();
                     }, interval);
@@ -122,6 +145,7 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {
+                    this.#gotACK = true;
                     this.#debug?.("ACK", payload);
                     break;
                 }
@@ -134,6 +158,7 @@ export class WebSocketManager {
     }
 
     #sendHeartbeatPayload(): void {
+        this.#gotACK = false;
         this.#ws.send(`{ "op": ${GatewayOpCode.Heartbeat}, "d": ${this.#sequenceNumber}, "s": null, "t": null }`);
     }
 
@@ -174,6 +199,11 @@ export class WebSocketManager {
 
         this.#debug?.("RESUME");
         this.#ws.send(JSON.stringify(payload));
+    }
+
+    #clearTimer(): void {
+        if (typeof this.#timer === "undefined") return;
+        clearInterval(this.#timer);
     }
 
     async #attemptResume(): Promise<void> {
