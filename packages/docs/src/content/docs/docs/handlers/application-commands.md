@@ -12,7 +12,7 @@ To be completely honest, the current API is not the greatest but was the fastest
 Lets create a simple `ping` command to demonstrate how it works.
 
 :::caution[Important]
-While in the example, we are using `@lilybird/jsx` to create the command data, you don't need to use it. You can use a normal object, and if you are using TypeScript, you will have intellisense.
+While in the example, we're using `@lilybird/jsx` to create the command data, you don't need to use it. You can simply use a normal object. If you're using TypeScript, you'll still have intellisense
 :::
 
 ```diff lang="ts" title="index.ts"
