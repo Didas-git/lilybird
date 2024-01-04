@@ -1,5 +1,5 @@
 ---
-title: Creating A Simple Handler
+title: Creating a Simple Handler
 description: Learn how to create a simple handler with Lilybird.
 ---
 

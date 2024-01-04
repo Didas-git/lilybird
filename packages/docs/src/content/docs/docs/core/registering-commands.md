@@ -44,7 +44,7 @@ await createClient({
 
 ## Bulk creating/updating commands
 
-Discord does not provide any `POST` methods for creating more than 1 command at once. 
+Discord does not provide any `POST` methods for creating more than 1 command at once.
 However, they provide bulk `PUT` methods that you can use if you choose to.
 
 The commands are:
