@@ -15,7 +15,6 @@ As highlighted in **gray** in the code below, we create two placeholder function
 Be careful and avoid modifying the `interaction` object at all costs. Since objects are passed by reference, if you mutate them in your listeners, the changes will pass to the command handler. While you can use this to your advantage, we highly advise against it.
 :::
 
-
 ```ts {2, 3}
 public buildListeners(): ClientEventListeners {
   let interactionCreateFn = function () { return; };
