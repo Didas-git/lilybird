@@ -19,5 +19,5 @@ const command = (
 ```
 
 :::note
-The above code was taken from the [bun discord bot](https://github.com/xHyroM/bun-discord-bot) as they have been a huge help in this project.
+The above code was taken from the [Bun Discord bot](https://github.com/xHyroM/bun-discord-bot) as they have been a huge help in this project.
 :::
