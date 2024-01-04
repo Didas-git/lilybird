@@ -3,7 +3,7 @@ title: Creating A Simple Handler
 description: Learn how to create a simple handler with Lilybird.
 ---
 
-Creating a command handler might look daunting at first because of Lilybird's interface, but, i can assure you its simple.
+Creating a command handler might look daunting at first because of Lilybird's interface, but, I can assure you that it's simple.
 
 For our examples, we will be using [`Bun.FileSystemRouter`](https://bun.sh/docs/api/file-system-router) because, well, it's Bun. However, you can also explore other options like `fs.readdir`.
 
@@ -94,8 +94,8 @@ Now you can simply pass the return type into the client's `listeners` property a
 A slash command handler is fairly similar to an event handler. The only difference is that you need to push the data to Discord using the REST API.
 
 :::danger
-For the sake of this example we will be hardcoding a token and client id.
-There are better ways of doing this, but they will be covered in another section.
+For the sake of this example, we will be hardcoding a token and client ID.
+There are better ways of doing this, but, they will be covered in another section.
 :::
 
 We will be using the following structure for our slash commands:
