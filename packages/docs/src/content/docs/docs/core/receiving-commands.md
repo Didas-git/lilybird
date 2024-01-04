@@ -1,6 +1,6 @@
 ---
 title: Receiving Application Commands
-description: How to receive commands using lilybird.
+description: How to receive commands using Lilybird.
 sidebar:
   order: 3
 ---
@@ -9,7 +9,7 @@ Interactions work similarly to other frameworks out there so they should be fair
 
 ## Receiving and replying to commands
 
-The interaction structure is identical to the one documented by [discord](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object).
+The interaction structure is identical to the one documented by [Discord](https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object).
 The difference is that we provide helper methods like `inGuild` and `isApplicationCommandInteraction` so you can narrow down interaction types and always know the shape of your data.
 
 ```ts
@@ -58,7 +58,7 @@ await createClient({
 
 ## Autocomplete Interactions
 
-Auto complete interactions can be worked with in a similar way, the difference is that instead of replying to the interaction you respond with choices.
+Auto complete interactions can be worked with in a similar way. The difference is that, instead of replying to the interaction, you respond with choices.
 
 ```ts
 await createClient({

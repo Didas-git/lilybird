@@ -1,18 +1,18 @@
 ---
 title: Handling Application Commands
-description: How to use lilybird's handlers for application commands.
+description: How to use Lilybird's handlers for application commands.
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling application commands however i can assure you there are more to come.
+Currently the `@lilybird/handlers` package provides only one way of handling application commands, however, I can assure you there are more to come.
 
-To be completely honest, the current api is not the greatest but was the fastest one for a demo.
+To be completely honest, the current API is not the greatest but was the fastest one for a demo.
 
 ## Creating a simple command
 
-Lets create a simple `ping` command to show how it works.
+Lets create a simple `ping` command to demonstrate how it works.
 
 :::caution[Important]
-While in the example we are using `@lilybird/jsx` to create the command data you cont need to use it, you can use a normal object and if you are using TypeScript you will have intellisense
+While in the example, we're using `@lilybird/jsx` to create the command data, you don't need to use it. You can simply use a normal object. If you're using TypeScript, you'll still have intellisense
 :::
 
 ```diff lang="ts" title="index.ts"
@@ -43,7 +43,7 @@ export default {
   run: async (interaction) => {
     const { ws, rest } = await interaction.client.ping();
 
-    await interaction.editReply({
+    await interaction.reply({
       content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
     });
   },
@@ -51,5 +51,5 @@ export default {
 ```
 
 :::note
-The above code was taken from the [bun discord bot](https://github.com/xHyroM/bun-discord-bot), join the bun discord to see it working.
+The above code was taken from the [Bun Discord bot](https://github.com/xHyroM/bun-discord-bot), join the Bun Discord server to see it in action.
 :::

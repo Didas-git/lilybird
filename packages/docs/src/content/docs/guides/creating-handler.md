@@ -1,15 +1,15 @@
 ---
-title: Creating a simple handler
-description: Learn how to create a simple handler with lilybird.
+title: Creating a Simple Handler
+description: Learn how to create a simple handler with Lilybird.
 ---
 
-Creating a command handler might look daunting at first because of lilybird's interface, but, i can assure you its simple.
+Creating a command handler might look daunting at first because of Lilybird's interface, but, I can assure you that it's simple.
 
-For our examples we will be using [`Bun.FileSystemRouter`](https://bun.sh/docs/api/file-system-router) because well its bun, but, you can use other options like `fs.readdir`.
+For our examples, we will be using [`Bun.FileSystemRouter`](https://bun.sh/docs/api/file-system-router) because, well, it's Bun. However, you can also explore other options like `fs.readdir`.
 
 ## Creating an event handler
 
-Handling events its trivial, all we need to do is read a file and pass the function as a listener.
+Handling events is trivial. All we need to do is read a file and pass the function as a listener.
 
 We will be using the following event structure for this example:
 
@@ -27,7 +27,7 @@ export interface Event<
 
 ```
 
-Lets start by creating our main function and read all the files in a directory.
+Let's start by creating our main function and read all the files in a directory.
 
 ```ts title="event-handler.ts"
 import type { ClientEventListeners } from "lilybird";
@@ -87,15 +87,15 @@ function createEventListeners(directory: string): ClientEventListeners {
 }
 ```
 
-Now you can simply pass the return type into the client `listeners` property and it will just work.
+Now you can simply pass the return type into the client's `listeners` property and it will just work.
 
 ## Creating a slash command handler
 
-A slash command handler its fairly similar to an event handler the only difference is that you need to push the data to discord using the rest api.
+A slash command handler is fairly similar to an event handler. The only difference is that you need to push the data to Discord using the REST API.
 
 :::danger
-For the same of this example we will be hardcoding a token and client id.
-There are better ways of doing this but they will be covered in another section.
+For the sake of this example, we will be hardcoding a token and client ID.
+There are better ways of doing this, but, they will be covered in another section.
 :::
 
 We will be using the following structure for our slash commands:
@@ -116,7 +116,7 @@ export interface SlashCommand {
 }
 ```
 
-Before creating the handler lets take a look at building the `onInteraction` helper.
+Before creating the handler let's take a look at building the `onInteraction` helper.
 
 ```ts title="command-handler.ts"
 const slashCommands = new Map<string, SlashCommand>();
@@ -130,7 +130,7 @@ async function onInteraction(interaction: Interaction): Promise<void> {
 }
 ```
 
-Now that we have the helper lets use our event handler as a base and modify it.
+Now that we have the helper let's use our event handler as a base and modify it.
 
 ```diff lang="ts" title="command-handler.ts" del=" Event " ins=" SlashCommand "
 import type { ClientEventListeners, REST } from "lilybird";

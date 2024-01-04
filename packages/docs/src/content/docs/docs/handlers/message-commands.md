@@ -3,11 +3,11 @@ title: Handling Message Commands
 description: How to use lilybird's handlers for application commands.
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling application commands however i can assure you there are more to come.
+Currently the `@lilybird/handlers` package provides only one way of handling application commands, however, I can assure you there are more to come.
 
 ## Creating a simple command
 
-Lets create a simple `ping` command to show how it works.
+Let's create a simple `ping` command to demonstrate how it works.
 
 ```diff lang="ts" title="index.ts"
 import { createClient, Intents } from "lilybird";
@@ -28,7 +28,7 @@ await createClient({
 ```
 
 :::note
-The second argument `args` is the result of running the following code:
+The second argument, `args`, is the result of running the following code:
 ```ts
 message.content.slice(this.prefix.length)
   .trim()
@@ -45,7 +45,7 @@ export default {
   run: async (message, args) => {
     const { ws, rest } = await message.client.ping();
 
-    await message.edit({
+    await message.reply({
       content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
     });
   },
@@ -53,5 +53,5 @@ export default {
 ```
 
 :::note
-The above code was taken from the [bun discord bot](https://github.com/xHyroM/bun-discord-bot), join the bun discord to see it working.
+The above code was taken from the [Bun Discord bot](https://github.com/xHyroM/bun-discord-bot), join the Bun Discord server to see it in action.
 :::

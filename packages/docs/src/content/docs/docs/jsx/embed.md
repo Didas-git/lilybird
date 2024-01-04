@@ -1,6 +1,6 @@
 ---
 title: Embeds
-description: How to use lilybird's Embed components.
+description: How to use Lilybird's Embed components.
 ---
 
 ## Creating embeds

@@ -1,6 +1,6 @@
 ---
 title: Manual Setup
-description: Configure lilybird however you would like.
+description: Configure Lilybird however you would like.
 ---
 
 import { Tabs, TabItem } from "@astrojs/starlight/components";
@@ -17,7 +17,7 @@ There is also `@lilybird/create` which is the boilerplate generator used in [the
 
 ## Creating the bot
 
-Creating the bot with lilybird is a trivial task.
+Creating the bot with Lilybird is a trivial task.
 
 ```ts title="index.ts"
 import { createClient, Intents } from "lilybird";
@@ -60,10 +60,10 @@ This can be done by creating a `globals.d.ts` file on the root of your project.
     </TabItem>
 </Tabs>
 
-And then addint the following to your `tsconfig.json`.
+And then adding the following to your `tsconfig.json`.
 
 :::caution
-Setting `types` on the compiler options will make it so TypeScript wont search for `@types` packages.
+Setting `types` on the compiler options will make it so TypeScript won't search for `@types` packages.
 
 You can read more about it on the [TypeScript handbook](https://www.typescriptlang.org/tsconfig#types)
 :::

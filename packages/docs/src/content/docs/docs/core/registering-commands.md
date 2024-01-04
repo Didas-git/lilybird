@@ -1,13 +1,13 @@
 ---
 title: Registering Application Commands
-description: Use lilybird to configure application commands.
+description: Use Lilybird to configure application commands.
 sidebar:
   order: 2
 ---
 
-To create application commands, you can simply use the rest client that is attached to the client to do so.
+To create application commands, you can simply use the REST client that is attached to the client.
 
-We highly encourage using the `setup` api to do this since to facilitates the access to the client and runs before the ready event.
+We highly encourage using the `setup` API to do this since it facilitates access to the client and runs before the ready event.
 
 ## Creating Global Commands
 
@@ -45,10 +45,10 @@ await createClient({
 ## Bulk creating/updating commands
 
 Discord does not provide any `POST` methods for creating more than 1 command at once.
-However they provide bulk `PUT` methods that you can use if you so choose to.
+However, they provide bulk `PUT` methods that you can use if you choose to.
 
 The commands are:
 - `bulkOverwriteGlobalApplicationCommand` - For bulk create/update global commands
 - `bulkOverwriteGuildApplicationCommand` - For bulk create/update guild commands
 
-Both of them get an array of commands instead of an object, but, other than that its pretty much the same.
+Both of them take an array of commands instead of an object, but, other than that, it's pretty much the same.
