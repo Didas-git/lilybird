@@ -3,7 +3,7 @@ title: The Handler API
 description: How lilybird's handler api works.
 ---
 
-The current handler API is quite simple. You have a class that you can extend, containing methods for loading files, loading commands, and the function responsible for creating the listeners.
+The current handler API is fairly simple. You have a class that you can extend, containing methods for loading files, loading commands, and the function responsible for creating the listeners.
 
 Now, let's break down the function and helpers used to create the listeners and explain how we are circumventing the limitations of not having event listeners.
 
