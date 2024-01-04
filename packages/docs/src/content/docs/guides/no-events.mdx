@@ -5,7 +5,7 @@ description: Learn and understand the approach taken by lilybird.
 
 As you might have noticed by now Lilybird does not have an events API and you might be questioning this decision so let's discuss the motivation behind this.
 
-The main motivation behind not having events is performance. Event emitters are really bad when it comes to high throughput and are really easy for the user to misuse them and cause memory leaks. To avoid these issues we went with the same approach that `uws`, and, for that matter, `bun` use for their WebSocket servers: callbacks.
+The main motivation behind not having events is performance. Event emitters are really bad when it comes to high throughput and are really easy for the user to misuse them and cause memory leaks. To avoid these issues we went with the same approach that `uws` and, for that matter, `bun` use for their WebSocket servers: callbacks.
 
 You might be wondering, "so how can I listen to events or even collect message components?".
 
