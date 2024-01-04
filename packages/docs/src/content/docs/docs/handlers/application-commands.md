@@ -3,7 +3,7 @@ title: Handling Application Commands
 description: How to use Lilybird's handlers for application commands.
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling application commands; however, I can assure you there are more to come.
+Currently the `@lilybird/handlers` package provides only one way of handling application commands, however, I can assure you there are more to come.
 
 To be completely honest, the current API is not the greatest but was the fastest one for a demo.
 

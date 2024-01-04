@@ -3,7 +3,7 @@ title: Handling Events
 description: How to use lilybird's handlers for events.
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling events; however, I can assure you there are more to come.
+Currently the `@lilybird/handlers` package provides only one way of handling events, however, I can assure you there are more to come.
 
 ## Creating a listener
 
