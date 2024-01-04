@@ -88,13 +88,7 @@ export class WebSocketManager {
         });
         this.#ws.addEventListener("close", async ({ code }) => {
             this.#clearTimer();
-            if (typeof code === "undefined") {
-                await this.#attemptResume();
-                return;
-            } else if (code === 1001) {
-                await this.#attemptResume();
-                return;
-            } else if (closeCodeAllowsReconnection(code)) {
+            if (typeof code === "undefined" || code === 1001 || closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
                 return;
             }
@@ -115,22 +109,7 @@ export class WebSocketManager {
                 }
                 case GatewayOpCode.Hello: {
                     const interval = Math.round(payload.d.heartbeat_interval * Math.random());
-
-                    this.#timer = setInterval(async () => {
-                        if (!this.#gotACK) {
-                            this.#debug?.("MISSING_ACK");
-                            await setTimeout(1000);
-                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-                            if (!this.#gotACK) {
-                                this.#debug?.("ZOMBIE");
-                                this.#ws.close(1001);
-                                return;
-                            }
-                        }
-
-                        this.#debug?.("HEARTBEAT");
-                        this.#sendHeartbeatPayload();
-                    }, interval);
+                    this.#startTimer(interval);
 
                     if (!this.#isResuming) this.#identify();
                     else this.#resume();
@@ -208,6 +187,25 @@ export class WebSocketManager {
 
         this.#debug?.("RESUME");
         this.#ws.send(JSON.stringify(payload));
+    }
+
+    #startTimer(interval: number): void {
+        this.#gotACK = true;
+        this.#timer = setInterval(async () => {
+            if (!this.#gotACK) {
+                this.#debug?.("MISSING_ACK");
+                await setTimeout(500);
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                if (!this.#gotACK) {
+                    this.#debug?.("ZOMBIE");
+                    this.#ws.close(1001);
+                    return;
+                }
+            }
+
+            this.#debug?.("HEARTBEAT");
+            this.#sendHeartbeatPayload();
+        }, interval);
     }
 
     #clearTimer(): void {

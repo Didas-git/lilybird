@@ -1,6 +1,6 @@
 {
   "name": "lilybird",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "A bun-first discord client written in TS",
   "main": "./dist/index.js",
   "author": "DidaS",
