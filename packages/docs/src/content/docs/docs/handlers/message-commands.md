@@ -45,7 +45,7 @@ export default {
   run: async (message, args) => {
     const { ws, rest } = await message.client.ping();
 
-    await message.edit({
+    await message.reply({
       content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
     });
   },

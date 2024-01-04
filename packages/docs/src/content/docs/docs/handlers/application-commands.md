@@ -43,7 +43,7 @@ export default {
   run: async (interaction) => {
     const { ws, rest } = await interaction.client.ping();
 
-    await interaction.editReply({
+    await interaction.reply({
       content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
     });
   },
