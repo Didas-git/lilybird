@@ -1,4 +1,4 @@
-import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "../enums/index.js";
+import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "../../enums/index.js";
 
 import type {
     ApplicationCommandPermissionsStructure,
@@ -23,7 +23,7 @@ import type {
     EmojiStructure,
     UserStructure,
     RoleStructure
-} from "./index.js";
+} from "../index.js";
 
 export interface GetGatewayResponse {
     /** Gateway Websocket URL */

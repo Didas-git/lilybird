@@ -1,4 +1,4 @@
-import type { PrivacyLevel } from "../enums/index.js";
+import type { PrivacyLevel } from "../../enums/index.js";
 
 export interface StageInstanceStructure {
     id: string;

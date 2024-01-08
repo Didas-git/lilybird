@@ -5,7 +5,7 @@ import type {
     UserStructure,
     RoleStructure,
     OAuthScopes
-} from "./index.js";
+} from "../index.js";
 
 import type {
     DefaultMessageNotificationLevel,
@@ -18,7 +18,7 @@ import type {
     PremiumTier,
     MFALevel,
     Locale
-} from "../enums/index.js";
+} from "../../enums/index.js";
 
 export interface UnavailableGuildStructure {
     id: string;

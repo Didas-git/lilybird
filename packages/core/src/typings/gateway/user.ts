@@ -1,4 +1,4 @@
-import type { Locale, PremiumType, UserFlags } from "../enums/index.js";
+import type { Locale, PremiumType, UserFlags } from "../../enums/index.js";
 
 export interface UserStructure {
     id: string;
