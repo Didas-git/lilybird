@@ -1,5 +1,3 @@
-export type * from "./typings/index.js";
-
 export type {
     GuildApplicationCommandData,
     InteractionShowModalOptions,
@@ -28,10 +26,6 @@ export type {
     PartialGuildMember
 } from "./factories/guild.js";
 
-export * from "./enums/index.js";
-export * from "./client.js";
-export * from "./utils.js";
-
 export { GuildMember } from "./factories/guild.js";
 export { Message } from "./factories/message.js";
 
@@ -55,3 +49,11 @@ export {
     DMChannel,
     Channel
 } from "./factories/channel.js";
+
+export type * from "./typings/index.js";
+
+export * as CDN from "./http/cdn.js";
+
+export * from "./enums/index.js";
+export * from "./client.js";
+export * from "./utils.js";

@@ -10,4 +10,5 @@ export * from "./gateway.js";
 export * from "./message.js";
 export * from "./others.js";
 export * from "./guild.js";
+export * from "./image.js";
 export * from "./user.js";

@@ -639,7 +639,7 @@ class NotFoundError extends Error {
     }
 }
 
-class MessageComponentData {
+export class MessageComponentData {
     public readonly id: string;
     public readonly type: ComponentType;
     public readonly values: Array<string>;
@@ -653,7 +653,7 @@ class MessageComponentData {
     }
 }
 
-class ModalSubmitData {
+export class ModalSubmitData {
     public readonly id: string;
     public readonly components: Array<MessageComponentStructure>;
 

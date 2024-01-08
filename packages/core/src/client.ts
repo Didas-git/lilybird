@@ -5,7 +5,7 @@ import { GuildMember } from "./factories/guild.js";
 import { Message } from "./factories/message.js";
 import { GatewayEvent } from "./enums/index.js";
 import { User } from "./factories/user.js";
-import { REST } from "./rest/rest.js";
+import { REST } from "./http/rest.js";
 
 import type { GuildMemberWithGuildId } from "./factories/guild.js";
 import type { DebugFunction } from "./ws/manager.js";
