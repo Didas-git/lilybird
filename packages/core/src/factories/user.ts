@@ -1,8 +1,10 @@
 import { PremiumType } from "../enums/index.js";
+import { defaultUserAvatarURL, userAvatarURL } from "../http/cdn.js";
 import { GuildMember } from "./guild.js";
 
 import type { UserStructure } from "../typings/index.js";
 import type { Client } from "../client.js";
+import type { CDNOptions } from "../typings/image.js";
 
 export class User {
     public readonly id: string;
@@ -44,5 +46,16 @@ export class User {
         this.avatarDecoration = user.avatar_decoration;
 
         if ("member" in user) this.member = new GuildMember(client, <never>user.member);
+    }
+
+    public avatarURL(options?: CDNOptions): string {
+        if (this.avatar === null) return defaultUserAvatarURL(this.#calculateIndex(), options);
+
+        return userAvatarURL(this.id, this.avatar, options);
+    }
+
+    #calculateIndex(): string {
+        if (this.discriminator === "0") return ((BigInt(this.id) >> 22n) % 6n).toString();
+        return (+this.discriminator % 5).toString();
     }
 }

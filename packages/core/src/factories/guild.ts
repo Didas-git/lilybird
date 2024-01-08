@@ -1,4 +1,6 @@
+import { guildMemberAvatarURL } from "../http/cdn.js";
 import { User } from "./user.js";
+import type { CDNOptions } from "../typings/image.js";
 
 import type { GuildMemberStructure } from "../typings/index.js";
 import type { GuildMemberFlags } from "../enums/index.js";
@@ -72,5 +74,11 @@ export class GuildMember {
         if (typeof options.flags !== "undefined") options.flags.reduce((prev, curr) => prev | curr, 0);
 
         await this.client.rest.modifyGuildMember(this.guildId, this.user.id, <never>options);
+    }
+
+    public avatarURL(options: CDNOptions): string {
+        if (this.avatar == null) return this.user.avatarURL(options);
+        if (typeof this.guildId === "undefined") throw new Error("Something went wrong and the guild id does not exist");
+        return guildMemberAvatarURL(this.guildId, this.user.id, this.avatar, options);
     }
 }
