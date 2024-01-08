@@ -6,6 +6,7 @@ import type {
     UpdatePresenceStructure,
     GetGatewayBotResponse,
     ReceiveDispatchEvent,
+    UpdatePresence,
     GetGatewayBot,
     Identify,
     Payload,
@@ -147,7 +148,7 @@ export class WebSocketManager {
 
     #sendHeartbeatPayload(): void {
         this.#gotACK = false;
-        this.#ws.send(`{ "op": ${GatewayOpCode.Heartbeat}, "d": ${this.#sequenceNumber}, "s": null, "t": null }`);
+        this.#ws.send(`{ "op": 1, "d": ${this.#sequenceNumber}, "s": null, "t": null }`);
     }
 
     #identify(): void {
@@ -234,6 +235,17 @@ export class WebSocketManager {
             const start = performance.now();
             this.#ws.ping();
         });
+    }
+
+    public updatePresence(presence: UpdatePresenceStructure): void {
+        const options: UpdatePresence = {
+            op: GatewayOpCode.PresenceUpdate,
+            d: presence,
+            s: null,
+            t: null
+        };
+
+        this.#ws.send(JSON.stringify(options));
     }
 
     public set options(options: Partial<ManagerOptions>) {

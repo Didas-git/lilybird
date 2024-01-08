@@ -15,6 +15,7 @@ import type {
     GuildMemberStructure,
     ApplicationStructure,
     InteractionStructure,
+    BotActivityStructure,
     VoiceStateStructure,
     ActivityStructure,
     ChannelStructure,
@@ -69,8 +70,7 @@ export interface ClientStatus {
 
 export interface UpdatePresenceStructure {
     since: number | null;
-    /** I will type this properly later */
-    activities: Array<ActivityStructure>;
+    activities: Array<BotActivityStructure>;
     status: Status;
     afk: boolean;
 }

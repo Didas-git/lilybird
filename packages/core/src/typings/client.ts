@@ -1,7 +1,7 @@
 import type { Message, PartialMessage } from "../factories/message.js";
 import type { Channel, ThreadChannel } from "../factories/channel.js";
 import type { GuildMemberWithGuildId } from "../factories/guild.js";
-import type { MessageDeleteBulk, Ready } from "./gateway/gateway-events.js";
+import type { MessageDeleteBulk, Ready, UpdatePresenceStructure } from "./gateway/gateway-events.js";
 import type { Interaction } from "../factories/interaction.js";
 import type { User } from "../factories/user.js";
 import type { Intents } from "../enums/index.js";
@@ -31,6 +31,7 @@ export interface ClientEventListeners {
 export interface BaseClientOptions {
     intents: Array<Intents> | number;
     listeners: ClientEventListeners;
+    presence?: UpdatePresenceStructure;
     setup?: (client: Client) => Awaitable<any>;
 }
 

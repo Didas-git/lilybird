@@ -12,6 +12,7 @@ import type { DebugFunction } from "./ws/manager.js";
 
 import type {
     UnavailableGuildStructure,
+    UpdatePresenceStructure,
     ApplicationStructure,
     BaseClientOptions,
     ClientOptions
@@ -42,12 +43,12 @@ export class Client {
     readonly #ws: WebSocketManager;
 
     public constructor(res: (client: Client) => void, options: BaseClientOptions, debug?: DebugFunction) {
-        if (Array.isArray(options.intents))
-            options.intents = options.intents.reduce((prev, curr) => prev | curr, 0);
+        if (Array.isArray(options.intents)) options.intents = options.intents.reduce((prev, curr) => prev | curr, 0);
 
         this.#ws = new WebSocketManager(
             {
-                intents: options.intents
+                intents: options.intents,
+                presence: options.presence
             },
             async (data) => {
                 await options.listeners.raw?.(data.d);
@@ -149,6 +150,10 @@ export class Client {
     public close(): void {
         this.rest.setToken(undefined);
         this.#ws.close();
+    }
+
+    public setPresence(presence: UpdatePresenceStructure): void {
+        this.#ws.updatePresence(presence);
     }
 
     /** Both numbers are represented in `ms` */
