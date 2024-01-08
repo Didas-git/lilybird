@@ -16,7 +16,5 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: Install Dependencies
-        run: bun i --frozen-lockfile
       - name: Run build script
         run: sh ./build.sh
