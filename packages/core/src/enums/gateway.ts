@@ -1,4 +1,4 @@
-export enum GatewayEvent {
+export const enum GatewayEvent {
     Ready = "READY",
     Resumed = "RESUMED",
     ApplicationCommandPermissionsUpdate = "APPLICATION_COMMAND_PERMISSIONS_UPDATE",
@@ -62,7 +62,7 @@ export enum GatewayEvent {
     WebhookUpdate = "WEBHOOK_UPDATE"
 }
 
-export enum GatewayOpCode {
+export const enum GatewayOpCode {
     Dispatch,
     Heartbeat,
     Identify,
@@ -76,7 +76,7 @@ export enum GatewayOpCode {
     HeartbeatACK
 }
 
-export enum Intents {
+export const enum Intents {
     GUILDS = 1,
     GUILD_MEMBERS = 2,
     GUILD_MODERATION = 4,
@@ -98,7 +98,7 @@ export enum Intents {
     AUTO_MODERATION_EXECUTION = 2097152
 }
 
-export enum GatewayCloseEventCode {
+export const enum GatewayCloseEventCode {
     UnknownError = 4000,
     UnknownOpCode,
     DecodeError,

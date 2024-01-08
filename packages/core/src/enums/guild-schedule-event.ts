@@ -1,15 +1,15 @@
-export enum GuildScheduledEventPrivacyLevel {
+export const enum GuildScheduledEventPrivacyLevel {
     GUILD_ONLY = 2
 }
 
-export enum GuildScheduledEventStatus {
+export const enum GuildScheduledEventStatus {
     SCHEDULED = 1,
     ACTIVE,
     COMPLETED,
     CANCELED
 }
 
-export enum GuildScheduledEventEntityTypes {
+export const enum GuildScheduledEventEntityTypes {
     STAGE_INSTANCE = 1,
     VOICE,
     EXTERNAL
