@@ -1,84 +1,163 @@
-import { guildMemberAvatarURL } from "../http/cdn.js";
-import { User } from "./user.js";
-import type { CDNOptions } from "../typings/image.js";
-
-import type { GuildMemberStructure } from "../typings/index.js";
-import type { GuildMemberFlags } from "../enums/index.js";
+import { GuildMember } from "./guild-member.js";
+import { channelFactory } from "./channel.js";
+import type { Channel } from "./channel.js";
 import type { Client } from "../client.js";
 
-export interface GuildMemberWithGuildId extends GuildMember {
-    readonly guildId: string;
+import type {
+    DefaultMessageNotificationLevel,
+    ExplicitContentFilterLevel,
+    VerificationLevel,
+    GuildNSFWLevel,
+    PremiumTier,
+    MFALevel,
+    Locale
+} from "../enums/index.js";
+import type {
+    GuildScheduleEventStructure,
+    UnavailableGuildStructure,
+    PresenceUpdateEventFields,
+    WelcomeScreenStructure,
+    StageInstanceStructure,
+    VoiceStateStructure,
+    NewGuildStructure,
+    StickerStructure,
+    EmojiStructure,
+    GuildStructure,
+    RoleStructure,
+    GuildFeatures
+} from "../typings/index.js";
+
+// No comments...
+export function guildFactory(client: Client, guild: NewGuildStructure): NewGuild;
+export function guildFactory(client: Client, guild: UnavailableGuildStructure): UnavailableGuildStructure;
+export function guildFactory(client: Client, guild: GuildStructure): Guild;
+export function guildFactory(client: Client, guild: UnavailableGuildStructure | NewGuildStructure): UnavailableGuildStructure | NewGuild;
+export function guildFactory(client: Client, guild: UnavailableGuildStructure | GuildStructure | NewGuildStructure): UnavailableGuildStructure | Guild | NewGuild {
+    if ("joined_at" in guild) return new NewGuild(client, guild);
+    if ("unavailable" in guild) return guild;
+    return new Guild(client, <GuildStructure>guild);
 }
 
-export interface PartialGuildMember extends Omit<GuildMember, "user"> {
-    readonly user: undefined;
-}
-
-export interface ModifyMemberOptions {
-    reason?: string;
-    nick?: string;
-    roles?: Array<string>;
-    mute?: boolean;
-    deaf?: boolean;
-    channel_id?: string;
-    communication_disabled_until?: Date | string;
-    flags?: Array<GuildMemberFlags>;
-}
-
-export class GuildMember {
-    public readonly user!: User;
-    public readonly nick: string | undefined | null;
-    public readonly avatar: string | undefined | null;
-    public readonly roles: Array<string>;
-    public readonly joinedAt: Date;
-    public readonly premiumSince: Date | undefined;
-    public readonly deaf: boolean;
-    public readonly mute: boolean;
-    public readonly flags: number;
-    public readonly pending: boolean;
+export class Guild {
+    public readonly id: string;
+    public readonly name: string;
+    public readonly icon: string | null;
+    public readonly iconHash: string | undefined | null;
+    public readonly splash: string | null;
+    public readonly discoverySplash: string | null;
+    public readonly owner: boolean | undefined;
+    public readonly ownerId: string;
     public readonly permissions: string | undefined;
-    public readonly communicationDisabledUntil: Date | undefined;
-
-    /** @internal */
-    public readonly guildId: string | undefined;
+    public readonly afkChannelId: string | null;
+    public readonly afkTimeout: number;
+    public readonly widgetEnabled: boolean | undefined;
+    public readonly widgetChannelId: string | undefined | null;
+    public readonly verificationLevel: VerificationLevel;
+    public readonly defaultMessageNotifications: DefaultMessageNotificationLevel;
+    public readonly explicitContentFilter: ExplicitContentFilterLevel;
+    public readonly roles: Array<RoleStructure>;
+    public readonly emojis: Array<EmojiStructure>;
+    public readonly features: Array<GuildFeatures>;
+    public readonly mfaLevel: MFALevel;
+    public readonly applicationId: string | null;
+    public readonly systemChannelId: string | null;
+    public readonly systemChannelFlags: number;
+    public readonly rulesChannelId: string | null;
+    public readonly maxPresences: number | undefined | null;
+    public readonly maxMembers: number | undefined;
+    public readonly vanityUrlCode: string | null;
+    public readonly description: string | null;
+    public readonly banner: string | null;
+    public readonly premiumTier: PremiumTier;
+    public readonly premiumSubscriptionCount: number;
+    public readonly preferredLocale: Locale;
+    public readonly publicUpdatesChannelId: string | null;
+    public readonly maxVideoChannelUsers: number | undefined;
+    public readonly maxStageVideoChannelUsers: number | undefined;
+    public readonly approximateMemberCount: number | undefined;
+    public readonly approximatePresenceCount: number | undefined;
+    public readonly welcomeScreen: WelcomeScreenStructure | undefined;
+    public readonly nsfwLevel: GuildNSFWLevel;
+    public readonly stickers: Array<StickerStructure>;
+    public readonly premiumProgressBarEnabled: boolean;
+    public readonly safetyAlertsChannelId: string | null;
 
     public readonly client: Client;
 
-    public constructor(client: Client, member: GuildMemberStructure) {
+    public constructor(client: Client, guild: GuildStructure) {
         this.client = client;
 
-        this.nick = member.nick;
-        this.avatar = member.avatar;
-        this.roles = member.roles;
-        this.deaf = member.deaf;
-        this.mute = member.mute;
-        this.joinedAt = new Date(member.joined_at);
-        // GuildMemberUpdate does not have `flags`
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        this.flags = member.flags ?? 0;
-        this.pending = member.pending ?? false;
-        this.permissions = member.permissions;
-
-        if (typeof member.user !== "undefined") this.user = new User(client, member.user);
-        if (member.premium_since != null) this.premiumSince = new Date(member.premium_since);
-        if (member.communication_disabled_until != null) this.communicationDisabledUntil = new Date(member.communication_disabled_until);
-        if ("guild_id" in member) this.guildId = <string>member.guild_id;
+        this.id = guild.id;
+        this.name = guild.name;
+        this.icon = guild.icon;
+        this.iconHash = guild.icon_hash;
+        this.splash = guild.splash;
+        this.discoverySplash = guild.discovery_splash;
+        this.owner = guild.owner;
+        this.ownerId = guild.owner_id;
+        this.permissions = guild.permissions;
+        this.afkChannelId = guild.afk_channel_id;
+        this.afkTimeout = guild.afk_timeout;
+        this.widgetEnabled = guild.widget_enabled;
+        this.widgetChannelId = guild.widget_channel_id;
+        this.verificationLevel = guild.verification_level;
+        this.defaultMessageNotifications = guild.default_message_notifications;
+        this.explicitContentFilter = guild.explicit_content_filter;
+        this.roles = guild.roles;
+        this.emojis = guild.emojis;
+        this.features = guild.features;
+        this.mfaLevel = guild.mfa_level;
+        this.applicationId = guild.application_id;
+        this.systemChannelId = guild.system_channel_id;
+        this.systemChannelFlags = guild.system_channel_flags;
+        this.rulesChannelId = guild.rules_channel_id;
+        this.maxPresences = guild.max_presences;
+        this.maxMembers = guild.max_members;
+        this.vanityUrlCode = guild.vanity_url_code;
+        this.description = guild.description;
+        this.banner = guild.banner;
+        this.premiumTier = guild.premium_tier;
+        this.premiumSubscriptionCount = guild.premium_subscription_count ?? 0;
+        this.preferredLocale = guild.preferred_locale;
+        this.publicUpdatesChannelId = guild.public_updates_channel_id;
+        this.maxVideoChannelUsers = guild.max_video_channel_users;
+        this.maxStageVideoChannelUsers = guild.max_stage_video_channel_users;
+        this.approximateMemberCount = guild.approximate_member_count;
+        this.approximatePresenceCount = guild.approximate_presence_count;
+        this.welcomeScreen = guild.welcome_screen;
+        this.nsfwLevel = guild.nsfw_level;
+        this.stickers = guild.stickers ?? [];
+        this.premiumProgressBarEnabled = guild.premium_progress_bar_enabled;
+        this.safetyAlertsChannelId = guild.safety_alerts_channel_id;
     }
+}
 
-    public async modify(options: ModifyMemberOptions): Promise<void> {
-        if (!this.guildId) throw new Error("Something went wrong trying to modify the member");
+export class NewGuild extends Guild {
+    public readonly joinedAt: string;
+    public readonly large: boolean;
+    public readonly unavailable: boolean;
+    public readonly memberCount: number;
+    public readonly voiceStates: Array<Partial<VoiceStateStructure>>;
+    public readonly members: Array<GuildMember>;
+    public readonly channels: Array<Channel>;
+    public readonly threads: Array<Channel>;
+    public readonly presences: Array<Partial<PresenceUpdateEventFields>>;
+    public readonly stageInstances: Array<StageInstanceStructure>;
+    public readonly guildScheduledEvents: Array<GuildScheduleEventStructure>;
 
-        if (typeof options.communication_disabled_until !== "undefined" && options.communication_disabled_until instanceof Date)
-            options.communication_disabled_until = options.communication_disabled_until.toISOString();
+    public constructor(client: Client, guild: NewGuildStructure) {
+        super(client, guild);
 
-        if (typeof options.flags !== "undefined") options.flags.reduce((prev, curr) => prev | curr, 0);
-
-        await this.client.rest.modifyGuildMember(this.guildId, this.user.id, <never>options);
-    }
-
-    public avatarURL(options: CDNOptions): string {
-        if (this.avatar == null) return this.user.avatarURL(options);
-        if (typeof this.guildId === "undefined") throw new Error("Something went wrong and the guild id does not exist");
-        return guildMemberAvatarURL(this.guildId, this.user.id, this.avatar, options);
+        this.joinedAt = guild.joined_at;
+        this.large = guild.large;
+        this.unavailable = guild.unavailable ?? false;
+        this.memberCount = guild.member_count;
+        this.voiceStates = guild.voice_states;
+        this.members = guild.members.map((member) => new GuildMember(client, member));
+        this.channels = guild.channels.map((channel) => channelFactory(client, channel));
+        this.threads = guild.threads.map((channel) => channelFactory(client, channel));
+        this.presences = guild.presences;
+        this.stageInstances = guild.stage_instances;
+        this.guildScheduledEvents = guild.guild_scheduled_events;
     }
 }

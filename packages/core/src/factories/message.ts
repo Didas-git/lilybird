@@ -1,7 +1,7 @@
 import { MessageFlags } from "../enums/index.js";
 
 import { MentionChannel, channelFactory } from "./channel.js";
-import { GuildMember } from "./guild.js";
+import { GuildMember } from "./guild-member.js";
 import { User } from "./user.js";
 
 import type { MessageType } from "../enums/index.js";

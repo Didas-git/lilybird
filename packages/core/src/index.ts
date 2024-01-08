@@ -5,8 +5,10 @@ export type {
     InteractionReplyOptions,
     ApplicationCommandData,
     InteractionEditOptions,
+    MessageComponentData,
     AutocompleteData,
     InteractionData,
+    ModalSubmitData,
     FocusedOption
 } from "./factories/interaction.js";
 
@@ -24,9 +26,10 @@ export type {
 export type {
     ModifyMemberOptions,
     PartialGuildMember
-} from "./factories/guild.js";
+} from "./factories/guild-member.js";
 
-export { GuildMember } from "./factories/guild.js";
+export { GuildMember } from "./factories/guild-member.js";
+export { Guild, NewGuild } from "./factories/guild.js";
 export { Message } from "./factories/message.js";
 
 export {

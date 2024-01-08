@@ -1,6 +1,6 @@
 import { PremiumType } from "../enums/index.js";
 import { defaultUserAvatarURL, userAvatarURL } from "../http/cdn.js";
-import { GuildMember } from "./guild.js";
+import { GuildMember } from "./guild-member.js";
 
 import type { UserStructure } from "../typings/index.js";
 import type { Client } from "../client.js";

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums/index.js";
+import { GuildMember } from "./guild-member.js";
 import { channelFactory } from "./channel.js";
-import { GuildMember } from "./guild.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 

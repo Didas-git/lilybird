@@ -1,5 +1,5 @@
 import { ChannelType, VideoQualityMode, MessageFlags } from "../enums/index.js";
-import { GuildMember } from "./guild.js";
+import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
@@ -323,6 +323,10 @@ export class GuildChannelCategory extends Channel {
     }
 }
 
+export interface ExtendedThreadChannel extends ThreadChannel {
+    readonly newlyCreated: boolean;
+}
+
 export class ThreadChannel extends Channel {
     public readonly guildId: string;
     public readonly parentId: string | null;
@@ -351,6 +355,8 @@ export class ThreadChannel extends Channel {
         this.defaultThreadRateLimitPerUser = channel.default_thread_rate_limit_per_user ?? 0;
 
         if (typeof channel.member !== "undefined") this.member = new ThreadMember(client, channel.member);
+        //@ts-expect-error I know its readonly but this is the constructor
+        if ("newly_created" in channel) (<ExtendedThreadChannel><unknown> this).newlyCreated = <boolean>channel.newly_created;
     }
 
     public hasMember(): this is ThreadChannel & { member: ThreadMember } {

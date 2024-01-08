@@ -23,7 +23,8 @@ import type {
     GuildStructure,
     EmojiStructure,
     UserStructure,
-    RoleStructure
+    RoleStructure,
+    NewGuildStructure
 } from "../index.js";
 
 export interface GetGatewayResponse {
@@ -161,35 +162,35 @@ export interface HeartbeatACK extends BasePayload {
 //#region ReceiveEvent
 
 export type ReceiveDispatchEvent =
-    | Ready
-    | Resumed
+    | Ready // X
+    | Resumed // X
     | ApplicationCommandPermissionsUpdate
     | AutoModerationRuleCreate
     | AutoModerationRuleUpdate
     | AutoModerationRuleDelete
     | AutoModerationActionExecution
-    | ChannelCreate
-    | ChannelUpdate
-    | ChannelDelete
-    | ChannelPinsUpdate
-    | ThreadCreate
-    | ThreadUpdate
-    | ThreadDelete
+    | ChannelCreate // X
+    | ChannelUpdate // X
+    | ChannelDelete // X
+    | ChannelPinsUpdate // X
+    | ThreadCreate // X
+    | ThreadUpdate // X
+    | ThreadDelete // X
     | ThreadListSync
     | ThreadMemberUpdate
     | ThreadMembersUpdate
-    | GuildCreate
-    | GuildUpdate
-    | GuildDelete
+    | GuildCreate // X
+    | GuildUpdate // X
+    | GuildDelete // X
     | GuildAuditLogEntryCreate
     | GuildBanAdd
     | GuildBanRemove
     | GuildEmojisUpdate
     | GuildStickersUpdate
     | GuildIntegrationsUpdate
-    | GuildMemberAdd
-    | GuildMemberRemove
-    | GuildMemberUpdate
+    | GuildMemberAdd // X
+    | GuildMemberRemove // X
+    | GuildMemberUpdate // X
     | GuildMembersChunk
     | GuildRoleCreate
     | GuildRoleUpdate
@@ -202,23 +203,23 @@ export type ReceiveDispatchEvent =
     | IntegrationCreate
     | IntegrationUpdate
     | IntegrationDelete
-    | InteractionCreate
-    | InviteCreate
-    | InviteDelete
-    | MessageCreate
-    | MessageUpdate
-    | MessageDelete
-    | MessageDeleteBulk
+    | InteractionCreate // X
+    | InviteCreate // X
+    | InviteDelete // X
+    | MessageCreate // X
+    | MessageUpdate // X
+    | MessageDelete // X
+    | MessageDeleteBulk // X
     | MessageReactionAdd
     | MessageReactionRemove
     | MessageReactionRemoveAll
     | MessageReactionRemoveEmoji
-    | PresenceUpdate
+    | PresenceUpdate // X
     | StageInstanceCreate
     | StageInstanceUpdate
     | StageInstanceDelete
     | TypingStart
-    | UserUpdate
+    | UserUpdate // X
     | VoiceStateUpdate
     | VoiceServerUpdate
     | WebhookUpdate;
@@ -372,22 +373,8 @@ export interface ThreadMembersUpdate extends DispatchPayload {
 }
 
 export interface GuildCreate extends DispatchPayload {
-    d:
-    | UnavailableGuildStructure
-    | (GuildStructure & {
-        /** ISO8601 Timestamp */
-        joined_at: string,
-        large: boolean,
-        unavailable?: boolean,
-        member_count: number,
-        voice_states: Array<Partial<VoiceStateStructure>>,
-        members: Array<GuildMemberStructure>,
-        channels: Array<ChannelStructure>,
-        threads: Array<ChannelStructure>,
-        presences: Array<Partial<PresenceUpdateEventFields>>,
-        stage_instances: Array<StageInstanceStructure>,
-        guild_scheduled_events: Array<GuildScheduleEventStructure>
-    });
+    d: UnavailableGuildStructure
+    | NewGuildStructure;
     t: GatewayEvent.GuildCreate;
 }
 
@@ -603,7 +590,7 @@ export interface InviteDelete extends DispatchPayload {
         guild_id?: string,
         code: string
     };
-    t: GatewayEvent.InviteCreate;
+    t: GatewayEvent.InviteDelete;
 }
 
 export interface MessageCreate extends DispatchPayload {
