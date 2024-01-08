@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums/index.js";
+import { GuildMember } from "./guild-member.js";
 import { channelFactory } from "./channel.js";
-import { GuildMember } from "./guild.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
@@ -639,7 +639,7 @@ class NotFoundError extends Error {
     }
 }
 
-class MessageComponentData {
+export class MessageComponentData {
     public readonly id: string;
     public readonly type: ComponentType;
     public readonly values: Array<string>;
@@ -653,7 +653,7 @@ class MessageComponentData {
     }
 }
 
-class ModalSubmitData {
+export class ModalSubmitData {
     public readonly id: string;
     public readonly components: Array<MessageComponentStructure>;
 

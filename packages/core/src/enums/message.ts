@@ -1,4 +1,4 @@
-export enum MessageType {
+export const enum MessageType {
     DEFAULT,
     RECIPIENT_ADD,
     RECIPIENT_REMOVE,
@@ -32,7 +32,7 @@ export enum MessageType {
     GUILD_APPLICATION_PREMIUM_SUBSCRIPTION
 }
 
-export enum MessageFlags {
+export const enum MessageFlags {
     CROSSPOSTED = 1,
     IS_CROSSPOST = 2,
     SUPPRESS_EMBEDS = 4,
@@ -46,11 +46,11 @@ export enum MessageFlags {
     IS_VOICE_MESSAGE = 8192
 }
 
-export enum AttachmentFlags {
+export const enum AttachmentFlags {
     IS_REMIX = 4
 }
 
-export enum EmbedType {
+export const enum EmbedType {
     Rich = "rich",
     Image = "image",
     Video = "video",
@@ -59,19 +59,19 @@ export enum EmbedType {
     Link = "link"
 }
 
-export enum MessageActivityType {
+export const enum MessageActivityType {
     JOIN = 1,
     SPECTATE,
     LISTEN,
     JOIN_REQUEST = 5
 }
 
-export enum StickerType {
+export const enum StickerType {
     STANDARD = 1,
     GUILD
 }
 
-export enum StickerFormatType {
+export const enum StickerFormatType {
     PNG = 1,
     APNG,
     LOTTIE,

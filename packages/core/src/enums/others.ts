@@ -1,4 +1,4 @@
-export enum Locale {
+export const enum Locale {
     Indonesian = "id",
     Danish = "da",
     German = "de",
@@ -32,7 +32,7 @@ export enum Locale {
     Korean = "ko"
 }
 
-export enum MembershipState {
+export const enum MembershipState {
     INVITED = 1,
     ACCEPTED
 }

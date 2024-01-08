@@ -1,4 +1,4 @@
-export enum VerificationLevel {
+export const enum VerificationLevel {
     NONE,
     LOW,
     MEDIUM,
@@ -6,23 +6,23 @@ export enum VerificationLevel {
     VERY_HIGH
 }
 
-export enum DefaultMessageNotificationLevel {
+export const enum DefaultMessageNotificationLevel {
     ALL_MESSAGES,
     ONLY_MENTIONS
 }
 
-export enum ExplicitContentFilterLevel {
+export const enum ExplicitContentFilterLevel {
     DISABLED,
     MEMBERS_WITHOUT_ROLES,
     ALL_MEMBERS
 }
 
-export enum MFALevel {
+export const enum MFALevel {
     NONE,
     ELEVATED
 }
 
-export enum SystemChannelFlags {
+export const enum SystemChannelFlags {
     SUPPRESS_JOIN_NOTIFICATIONS = 1,
     SUPPRESS_PREMIUM_SUBSCRIPTIONS = 2,
     SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 4,
@@ -31,52 +31,52 @@ export enum SystemChannelFlags {
     SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 32
 }
 
-export enum PremiumTier {
+export const enum PremiumTier {
     NONE,
     TIER_1,
     TIER_2,
     TIER_3
 }
 
-export enum GuildNSFWLevel {
+export const enum GuildNSFWLevel {
     DEFAULT,
     EXPLICIT,
     SAFE,
     AGE_RESTRICTED
 }
 
-export enum GuildMemberFlags {
+export const enum GuildMemberFlags {
     DID_REJOIN = 1,
     COMPLETED_ONBOARDING,
     BYPASSES_VERIFICATION = 4,
     STARTED_ONBOARDING = 8
 }
 
-export enum IntegrationExpireBehavior {
+export const enum IntegrationExpireBehavior {
     RemoveRole,
     Role
 }
 
-export enum InviteTargetType {
+export const enum InviteTargetType {
     STREAM = 1,
     EMBEDDED_APPLICATION
 }
 
-export enum RoleFlags {
+export const enum RoleFlags {
     IN_PROMPT = 1
 }
 
-export enum PrivacyLevel {
+export const enum PrivacyLevel {
     PUBLIC = 1,
     GUILD_ONLY
 }
 
-export enum OnboardingMode {
+export const enum OnboardingMode {
     ONBOARDING_DEFAULT,
     ONBOARDING_ADVANCED
 }
 
-export enum PromptType {
+export const enum PromptType {
     MULTIPLE_CHOICE,
     DROPDOWN
 }

@@ -1,4 +1,4 @@
-import type { MessageActivityType, MessageFlags, MessageType } from "../enums/index.js";
+import type { MessageActivityType, MessageFlags, MessageType } from "../../enums/index.js";
 
 import type {
     RoleSubscriptionDataStructure,
@@ -16,7 +16,7 @@ import type {
     EmojiStructure,
     UserStructure,
     RoleStructure
-} from "./index.js";
+} from "../index.js";
 
 export interface LilybirdAttachment {
     file: Blob;

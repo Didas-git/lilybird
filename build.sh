@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
-bun i
+bun i --frozen-lockfile
 
 echo Building lilybird core
 cd packages/core

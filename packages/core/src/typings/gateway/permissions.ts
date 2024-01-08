@@ -1,4 +1,4 @@
-import type { RoleFlags } from "../enums/index.js";
+import type { RoleFlags } from "../../enums/index.js";
 
 export interface RoleStructure {
     id: string;

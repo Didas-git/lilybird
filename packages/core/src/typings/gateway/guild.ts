@@ -1,11 +1,16 @@
 import type {
+    GuildScheduleEventStructure,
+    PresenceUpdateEventFields,
+    StageInstanceStructure,
     WelcomeScreenStructure,
+    VoiceStateStructure,
     StickerStructure,
+    ChannelStructure,
     EmojiStructure,
     UserStructure,
     RoleStructure,
     OAuthScopes
-} from "./index.js";
+} from "../index.js";
 
 import type {
     DefaultMessageNotificationLevel,
@@ -18,11 +23,26 @@ import type {
     PremiumTier,
     MFALevel,
     Locale
-} from "../enums/index.js";
+} from "../../enums/index.js";
 
 export interface UnavailableGuildStructure {
     id: string;
     unavailable?: true;
+}
+
+export interface NewGuildStructure extends GuildStructure {
+    /** ISO8601 Timestamp */
+    joined_at: string;
+    large: boolean;
+    unavailable?: boolean;
+    member_count: number;
+    voice_states: Array<Partial<VoiceStateStructure>>;
+    members: Array<GuildMemberStructure>;
+    channels: Array<ChannelStructure>;
+    threads: Array<ChannelStructure>;
+    presences: Array<Partial<PresenceUpdateEventFields>>;
+    stage_instances: Array<StageInstanceStructure>;
+    guild_scheduled_events: Array<GuildScheduleEventStructure>;
 }
 
 export interface GuildStructure {
