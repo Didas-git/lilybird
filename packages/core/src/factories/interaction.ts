@@ -208,7 +208,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         });
     }
 
-    public async respond(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
+    public async showChoices(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
             data: { choices }
