@@ -3,10 +3,11 @@ import type { CDNOptions, ImageSize } from "../typings/image.js";
 
 const CDNURL = "https://cdn.discordapp.com/";
 
-function getFormat(hash: string, format: ImageFormat = ImageFormat.JPEG, allowsGIF: boolean = true): ImageFormat {
+function getFormat(hash: string, format?: ImageFormat, allowsGIF: boolean = true): ImageFormat {
+    if (!allowsGIF && format === ImageFormat.GIF) throw new Error("Invalid image format");
+    if (typeof format !== "undefined") return format;
     if (hash.startsWith("a_")) return ImageFormat.GIF;
-    if (!allowsGIF && format === ImageFormat.GIF) throw new Error("Invalid format");
-    return format;
+    return ImageFormat.JPEG;
 }
 
 function getSize(size?: ImageSize): string {
