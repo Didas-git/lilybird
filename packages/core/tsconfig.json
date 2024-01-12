@@ -8,10 +8,10 @@
         ],
         "paths": {
             "#enums": [
-                "./src/enums/index.js"
+                "./src/enums/index.ts"
             ],
             "#ws": [
-                "./src/ws/manager.js"
+                "./src/ws/manager.ts"
             ]
         }
     },
