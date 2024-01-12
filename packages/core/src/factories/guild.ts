@@ -11,7 +11,7 @@ import type {
     PremiumTier,
     MFALevel,
     Locale
-} from "../enums/index.js";
+} from "#enums";
 import type {
     GuildScheduleEventStructure,
     UnavailableGuildStructure,

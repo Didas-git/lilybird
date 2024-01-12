@@ -1,4 +1,4 @@
-import type { AuditLogEvent, MFALevel, OnboardingMode } from "../enums/index.js";
+import type { AuditLogEvent, MFALevel, OnboardingMode } from "#enums";
 
 import type {
     LocalizationGlobalApplicationCommandStructure,

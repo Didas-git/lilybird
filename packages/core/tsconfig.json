@@ -5,7 +5,15 @@
         "baseUrl": ".",
         "types": [
             "bun-types"
-        ]
+        ],
+        "paths": {
+            "#enums": [
+                "./src/enums/index.js"
+            ],
+            "#ws": [
+                "./src/ws/manager.js"
+            ]
+        }
     },
     "include": [
         "src/**/*"

@@ -2,14 +2,15 @@ import { ThreadChannel, channelFactory } from "./factories/channel.js";
 import { interactionFactory } from "./factories/interaction.js";
 import { GuildMember } from "./factories/guild-member.js";
 import { guildFactory } from "./factories/guild.js";
-import { WebSocketManager } from "./ws/manager.js";
 import { Message } from "./factories/message.js";
-import { GatewayEvent } from "./enums/index.js";
 import { User } from "./factories/user.js";
 import { REST } from "./http/rest.js";
 
+import { WebSocketManager } from "#ws";
+import { GatewayEvent } from "#enums";
+
 import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
-import type { DebugFunction } from "./ws/manager.js";
+import type { DebugFunction } from "#ws";
 
 import type {
     UnavailableGuildStructure,

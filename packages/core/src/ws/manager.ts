@@ -1,4 +1,4 @@
-import { GatewayOpCode } from "../enums/index.js";
+import { GatewayOpCode } from "#enums";
 //@ts-expect-error This exists...
 import { setTimeout } from "node:timers/promises";
 
@@ -194,6 +194,7 @@ export class WebSocketManager {
         this.#timer = setInterval(async () => {
             if (!this.#gotACK) {
                 this.#debug?.("MISSING_ACK");
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 await setTimeout(500);
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (!this.#gotACK) {

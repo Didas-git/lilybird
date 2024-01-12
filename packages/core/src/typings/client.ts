@@ -5,7 +5,7 @@ import type { GuildMemberWithGuildId } from "../factories/guild-member.js";
 import type { InviteCreate, InviteDelete, MessageDeleteBulk, PresenceUpdate, Ready, UpdatePresenceStructure } from "./gateway/gateway-events.js";
 import type { Interaction } from "../factories/interaction.js";
 import type { User } from "../factories/user.js";
-import type { Intents } from "../enums/index.js";
+import type { Intents } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
 import type { Guild, NewGuild } from "../factories/guild.js";

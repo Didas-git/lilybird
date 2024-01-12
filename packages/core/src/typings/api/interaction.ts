@@ -1,6 +1,6 @@
 import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "../index.js";
 
-import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "../../enums/index.js";
+import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "#enums";
 
 export interface POSTApplicationCommandStructure extends LocalizationsShared {
     name: string;

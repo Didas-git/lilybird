@@ -1,4 +1,4 @@
-import type { MembershipState } from "../../enums/index.js";
+import type { MembershipState } from "#enums";
 import type { UserStructure } from "../shared/user.js";
 
 export interface Team {

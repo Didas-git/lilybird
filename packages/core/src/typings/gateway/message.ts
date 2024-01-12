@@ -1,4 +1,4 @@
-import type { MessageActivityType, MessageFlags, MessageType } from "../../enums/index.js";
+import type { MessageActivityType, MessageFlags, MessageType } from "#enums";
 
 import type {
     RoleSubscriptionDataStructure,

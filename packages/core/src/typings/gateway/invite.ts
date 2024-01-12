@@ -1,4 +1,4 @@
-import type { InviteTargetType } from "../../enums/index.js";
+import type { InviteTargetType } from "#enums";
 
 import type {
     GuildScheduleEventStructure,

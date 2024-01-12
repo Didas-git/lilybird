@@ -1,4 +1,5 @@
-import { ImageFormat } from "../index.js";
+import { ImageFormat } from "#enums";
+
 import type { CDNOptions, ImageSize } from "../typings/image.js";
 
 const CDNURL = "https://cdn.discordapp.com/";

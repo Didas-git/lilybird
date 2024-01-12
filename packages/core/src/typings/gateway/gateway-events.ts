@@ -1,4 +1,4 @@
-import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "../../enums/index.js";
+import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "#enums";
 
 import type {
     ApplicationCommandPermissionsStructure,

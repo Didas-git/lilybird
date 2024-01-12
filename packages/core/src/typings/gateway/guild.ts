@@ -21,7 +21,7 @@ import type {
     PremiumTier,
     MFALevel,
     Locale
-} from "../../enums/index.js";
+} from "#enums";
 
 export interface UnavailableGuildStructure {
     id: string;

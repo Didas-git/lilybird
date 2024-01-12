@@ -3,7 +3,7 @@ import type {
     AutoModerationTriggerType,
     AutoModerationActionType,
     AutoModerationEventType
-} from "../../enums/index.js";
+} from "#enums";
 
 export interface AutoModerationRuleStructure {
     id: string;

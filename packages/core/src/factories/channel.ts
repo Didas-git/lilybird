@@ -1,9 +1,10 @@
-import { ChannelType, VideoQualityMode, MessageFlags } from "../enums/index.js";
 import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import type { ForumLayoutType, SortOrderType } from "../enums/index.js";
+import { ChannelType, VideoQualityMode, MessageFlags } from "#enums";
+
+import type { ForumLayoutType, SortOrderType } from "#enums";
 import type { Client } from "../client.js";
 import type {
     GuildVoiceChannelStructure,

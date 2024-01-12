@@ -1,5 +1,5 @@
 import type { InstallParamsStructure } from "../shared/index.js";
-import type { ApplicationFlags } from "../../enums/index.js";
+import type { ApplicationFlags } from "#enums";
 import type { GuildStructure } from "./guild.js";
 import type { UserStructure } from "../shared/user.js";
 import type { Team } from "./team.js";

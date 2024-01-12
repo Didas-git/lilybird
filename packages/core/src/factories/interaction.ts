@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { GuildMember } from "./guild-member.js";
+import { channelFactory } from "./channel.js";
+import { Message } from "./message.js";
+import { User } from "./user.js";
+
 import {
     ApplicationCommandOptionType,
     InteractionCallbackType,
     InteractionType,
     ComponentType,
     MessageFlags
-} from "../enums/index.js";
+} from "#enums";
 
-import { GuildMember } from "./guild-member.js";
-import { channelFactory } from "./channel.js";
-import { Message } from "./message.js";
-import { User } from "./user.js";
-
-import type { ApplicationCommandType, Locale } from "../enums/index.js";
+import type { ApplicationCommandType, Locale } from "#enums";
 import type { PartialChannel } from "./channel.js";
 import type { Client } from "../client.js";
 import type {

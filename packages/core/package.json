@@ -9,10 +9,24 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
+      "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./rest": {
+      "types": "./dist/http/rest.d.ts",
+      "import": "./dist/http/rest.js",
+      "default": "./dist/http/rest.js"
+    },
+    "./cdn": {
+      "types": "./dist/http/cdn.d.ts",
+      "import": "./dist/http/cdn.js",
+      "default": "./dist/http/cdn.js"
+    },
     "./package.json": "./package.json"
+  },
+  "imports": {
+    "#enums": "./dist/enums/index.js",
+    "#ws": "./dist/ws/manager.js"
   },
   "engines": {
     "bun": ">=1.0.15",

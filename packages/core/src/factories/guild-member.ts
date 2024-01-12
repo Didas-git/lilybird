@@ -2,9 +2,10 @@ import { guildMemberAvatarURL } from "../http/cdn.js";
 import { User } from "./user.js";
 
 import type { GuildMemberStructure } from "../typings/index.js";
-import type { GuildMemberFlags } from "../enums/index.js";
 import type { CDNOptions } from "../typings/image.js";
 import type { Client } from "../client.js";
+
+import type { GuildMemberFlags } from "#enums";
 
 export interface GuildMemberWithGuildId extends GuildMember {
     readonly guildId: string;

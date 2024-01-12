@@ -1,4 +1,4 @@
-import type { WebhookType } from "../../enums/index.js";
+import type { WebhookType } from "#enums";
 import type {
     MessageComponentStructure,
     AllowedMentionsStructure,

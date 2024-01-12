@@ -687,6 +687,7 @@
         "import/default": "error",
         "import/export": "error",
         "import/first": "warn",
+        "import/no-cycle": "error",
         "import/namespace": "error",
         "import/newline-after-import": "warn",
         "import/no-absolute-path": "warn",

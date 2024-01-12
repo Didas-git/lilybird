@@ -1,4 +1,4 @@
-import type { IntegrationExpireBehavior } from "../../enums/index.js";
+import type { IntegrationExpireBehavior } from "#enums";
 import type { OAuthScopes } from "../gateway/oauth2.js";
 import type { UserStructure } from "./user.js";
 
