@@ -5,3 +5,9 @@ export const enum ImageFormat {
     GIF = ".gif",
     Lottie = ".json"
 }
+
+export const enum ImageDataType {
+    JPEG = "image/jpeg",
+    PNG = "image/png",
+    GIF = "image/gif"
+}

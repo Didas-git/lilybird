@@ -8,14 +8,12 @@ import type {
     ChannelStructure,
     EmojiStructure,
     UserStructure,
-    RoleStructure,
-    OAuthScopes
+    RoleStructure
 } from "../index.js";
 
 import type {
     DefaultMessageNotificationLevel,
     ExplicitContentFilterLevel,
-    IntegrationExpireBehavior,
     SystemChannelFlags,
     VerificationLevel,
     GuildMemberFlags,
@@ -139,35 +137,3 @@ export interface GuildMemberStructure {
     communication_disabled_until?: string | null;
 }
 
-export interface IntegrationStructure {
-    id: string;
-    name: string;
-    type: string;
-    enabled: boolean;
-    syncing?: boolean;
-    role_id?: string;
-    enable_emoticons?: boolean;
-    expire_behavior?: IntegrationExpireBehavior;
-    expire_grace_period?: number;
-    user?: UserStructure;
-    account: IntegrationAccountStructure;
-    /** ISO8601 Timestamp */
-    synced_at?: string;
-    subscriber_count?: number;
-    revoked?: boolean;
-    application?: IntegrationApplicationStructure;
-    scopes?: Array<OAuthScopes>;
-}
-
-export interface IntegrationAccountStructure {
-    id: string;
-    name: string;
-}
-
-export interface IntegrationApplicationStructure {
-    id: string;
-    name: string;
-    icon: string | null;
-    description: string;
-    bot?: UserStructure;
-}

@@ -1,4 +1,4 @@
-import type { MFALevel, OnboardingMode } from "../enums/index.js";
+import type { AuditLogEvent, MFALevel, OnboardingMode } from "../enums/index.js";
 
 import type {
     LocalizationGlobalApplicationCommandStructure,
@@ -24,6 +24,7 @@ import type {
     FollowedChannelStructure,
     ModifyDMChannelStructure,
     GuildOnboardingStructure,
+    PATCHCurrentApplication,
     ExecuteWebhookStructure,
     CreateMessageStructure,
     ThreadChannelStructure,
@@ -31,6 +32,7 @@ import type {
     CreateThreadStructure,
     ThreadMemberStructure,
     GuildPreviewStructure,
+    GetGatewayBotResponse,
     EditWebhookStructure,
     EditMessageStructure,
     GuildMemberStructure,
@@ -39,9 +41,11 @@ import type {
     VoiceRegionStructure,
     IntegrationStructure,
     GuildWidgetStructure,
+    ApplicationStructure,
     AttachmentStructure,
     DMChannelStructure,
     LilybirdAttachment,
+    AuditLogStructure,
     MessageStructure,
     ChannelStructure,
     APIRoleStructure,
@@ -150,10 +154,17 @@ export class REST {
         this.#buildHeaders();
     }
 
+    //#region Gateway
     public async getGateway(): Promise<{ url: string }> {
         return this.#makeAPIRequest("GET", "gateway");
     }
 
+    public async getGatewayBot(): Promise<GetGatewayBotResponse> {
+        return this.#makeAPIRequest("GET", "gateway/bot");
+    }
+
+    //#endregion Gateway
+    //#region Application Commands
     public async getGlobalApplicationCommands(clientId: string): Promise<Array<LocalizedGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations: true): Promise<Array<LocalizationGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations = false): Promise<Array<LocalizationGlobalApplicationCommandStructure | LocalizedGlobalApplicationCommandStructure>> {
@@ -223,6 +234,8 @@ export class REST {
         return this.#makeAPIRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`, body);
     }
 
+    //#endregion Application Commands
+    //#region Interactions
     public async createInteractionResponse(interactionId: string, interactionToken: string, body: InteractionResponseStructure): Promise<null> {
         return this.#makeAPIRequest("POST", `interactions/${interactionId}/${interactionToken}/callback`, body);
     }
@@ -255,6 +268,46 @@ export class REST {
         return this.#makeAPIRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
     }
 
+    //#endregion Interactions
+    //#region Application
+    public async getCurrentApplication(): Promise<ApplicationStructure> {
+        return this.#makeAPIRequest("GET", "applications/@me");
+    }
+
+    public async editCurrentApplication(app: PATCHCurrentApplication): Promise<ApplicationStructure> {
+        return this.#makeAPIRequest("PATCH", "applications/@me", app);
+    }
+
+    //#endregion Application
+    //#region Audit Log
+    public async getGuildAuditLog(guildId: string, params: {
+        user_id?: string,
+        action_type?: AuditLogEvent,
+        before?: string,
+        after?: string,
+        limit?: number
+    }): Promise<AuditLogStructure> {
+        let url = `guilds/${guildId}/audit-logs?`;
+        if (typeof params.user_id !== "undefined")
+            url += `user_id=${params.user_id}&`;
+
+        if (typeof params.action_type !== "undefined")
+            url += `action_type=${params.action_type}&`;
+
+        if (typeof params.before !== "undefined")
+            url += `before=${params.before}&`;
+
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.#makeAPIRequest("GET", url);
+    }
+
+    //#endregion Audit Log
+    //#region Channel
     public async getChannel(channelId: string): Promise<ChannelStructure> {
         return this.#makeAPIRequest("GET", `channels/${channelId}`);
     }
@@ -475,6 +528,8 @@ export class REST {
         return this.#makeAPIRequest("GET", url);
     }
 
+    //#endregion Channel
+    //#region User
     public async getCurrentUser(): Promise<UserStructure> {
         return this.#makeAPIRequest("GET", "users/@me");
     }
@@ -525,6 +580,8 @@ export class REST {
         return this.#makeAPIRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
     }
 
+    //#endregion User
+    //#region Guild
     public async createGuild(body: CreateGuildStructure): Promise<GuildStructure> {
         return this.#makeAPIRequest("POST", "guilds", body);
     }
@@ -822,4 +879,5 @@ export class REST {
     ): Promise<null> {
         return this.#makeAPIRequest("PATCH", `guilds/${guildId}/voice-states/${userId}`, body);
     }
+    //#endregion Guild
 }

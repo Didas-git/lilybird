@@ -7,7 +7,6 @@ import type {
     GetGatewayBotResponse,
     ReceiveDispatchEvent,
     UpdatePresence,
-    GetGatewayBot,
     Identify,
     Payload,
     Resume
@@ -77,7 +76,7 @@ export class WebSocketManager {
 
             if (!response.ok) throw new Error("An invalid Token was provided");
 
-            const data: GetGatewayBot = await response.json();
+            const data: GetGatewayBotResponse = await response.json();
 
             data.url = `${data.url}/?v=10&encoding=json`;
             this.#gatewayInfo = data;

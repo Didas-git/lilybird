@@ -8,6 +8,7 @@ export * from "./activity.js";
 export * from "./channel.js";
 export * from "./gateway.js";
 export * from "./message.js";
+export * from "./webhook.js";
 export * from "./others.js";
 export * from "./guild.js";
 export * from "./image.js";

@@ -1,6 +1,8 @@
+import type { InstallParamsStructure } from "../shared/index.js";
 import type { ApplicationFlags } from "../../enums/index.js";
-
-import type { GuildStructure, UserStructure, OAuthScopes, Team } from "../index.js";
+import type { GuildStructure } from "./guild.js";
+import type { UserStructure } from "../shared/user.js";
+import type { Team } from "./team.js";
 
 export interface ApplicationStructure {
     id: string;
@@ -26,9 +28,4 @@ export interface ApplicationStructure {
     tags?: Array<string>;
     install_params?: InstallParamsStructure;
     custom_install_url?: string;
-}
-
-export interface InstallParamsStructure {
-    scopes: Array<OAuthScopes>;
-    permissions: string;
 }

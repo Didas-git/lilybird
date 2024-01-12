@@ -167,3 +167,5 @@ export interface ModalCallbackDataStructure {
     title: string;
     components: Array<MessageComponentStructure>;
 }
+
+export type ApplicationCommandStructure = LocalizationGlobalApplicationCommandStructure | LocalizationGuildApplicationCommandStructure;

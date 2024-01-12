@@ -42,6 +42,13 @@ export interface GetGatewayBotResponse extends GetGatewayResponse {
     };
 }
 
+export interface SessionStartLimit {
+    total: number;
+    remaining: number;
+    reset_after: number;
+    max_concurrency: number;
+}
+
 export type Payload = ReceiveEvent | SendEvent;
 
 export interface BasePayload {
