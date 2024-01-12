@@ -1,4 +1,4 @@
-import { ChannelType } from "lilybird";
+import { join } from "path";
 
 import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command.js";
 import type { MessageCommand } from "./message-commands.js";
@@ -21,11 +21,14 @@ interface HandlerDirectories {
 export class Handler {
     protected readonly guildSlashCommands = new Map<string, GuildSlashCommand>();
     protected readonly globalSlashCommands = new Map<string, GlobalSlashCommand>();
-    protected readonly messageCommands = new Map<Array<string>, MessageCommand>();
+    protected readonly messageCommands = new Map<string, MessageCommand>();
     protected readonly events = new Map<Event["event"], Event>();
+    protected readonly messageCommandAliases = new Map<string, string>();
 
     protected readonly dirs: HandlerDirectories;
     protected readonly prefix: string;
+
+    readonly #globMatcher = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
 
     public constructor(dirs: HandlerDirectories, prefix?: string) {
         this.dirs = dirs;
@@ -33,7 +36,7 @@ export class Handler {
     }
 
     public async registerGlobalCommands(client: Client): Promise<void> {
-        for await (const command of this.globalSlashCommands.values()) await client.rest.createGlobalApplicationCommand(client.user.id, command.data);
+        await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, [...this.globalSlashCommands.values()].map((e) => e.data));
     }
 
     public async registerGuildCommands(client: Client): Promise<void> {
@@ -49,22 +52,18 @@ export class Handler {
     public async readSlashCommandDir(dir: string | undefined = this.dirs.slashCommands): Promise<boolean> {
         if (typeof dir === "undefined") return false;
 
-        const router = new Bun.FileSystemRouter({
-            fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-            style: "nextjs",
-            dir
-        });
+        const files = this.#globMatcher.scan(dir);
+        const path = join(import.meta.dir, dir);
 
-        for (let i = 0, entries = Object.entries(router.routes), { length } = entries; i < length; i++) {
-            const [key, val] = entries[i];
+        for await (const fileName of files) {
+            if (fileName.endsWith(".d.ts")) continue;
 
-            // Lazy solution, could probably be better
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
-            const file: SlashCommand = (await import(val)).default;
-            if (typeof file === "undefined") continue;
+            const command: SlashCommand = (await import(join(path, fileName))).default;
+            if (typeof command === "undefined") continue;
 
-            if (key.startsWith("/guild") || file.post !== "GLOBAL") this.guildSlashCommands.set(file.data.name, <GuildSlashCommand>file);
-            else this.globalSlashCommands.set(file.data.name, file);
+            if (fileName.startsWith("/guild") || command.post !== "GLOBAL") this.guildSlashCommands.set(command.data.name, <GuildSlashCommand>command);
+            else this.globalSlashCommands.set(command.data.name, command);
         }
 
         return true;
@@ -73,21 +72,17 @@ export class Handler {
     public async readEventDir(dir: string | undefined = this.dirs.listeners): Promise<boolean> {
         if (typeof dir === "undefined") return false;
 
-        const router = new Bun.FileSystemRouter({
-            fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-            style: "nextjs",
-            dir
-        });
+        const files = this.#globMatcher.scan(dir);
+        const path = join(import.meta.dir, dir);
 
-        for (let i = 0, values = Object.values(router.routes), { length } = values; i < length; i++) {
-            const val = values[i];
+        for await (const fileName of files) {
+            if (fileName.endsWith(".d.ts")) continue;
 
-            // Lazy solution, could probably be better
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
-            const file: Event = (await import(val)).default;
-            if (typeof file === "undefined") continue;
+            const event: Event = (await import(join(path, fileName))).default;
+            if (typeof event === "undefined") continue;
 
-            this.events.set(file.event, file);
+            this.events.set(event.event, event);
         }
 
         return true;
@@ -96,21 +91,22 @@ export class Handler {
     public async readMessageCommandDir(dir: string | undefined = this.dirs.messageCommands): Promise<boolean> {
         if (typeof dir === "undefined") return false;
 
-        const router = new Bun.FileSystemRouter({
-            fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-            style: "nextjs",
-            dir
-        });
+        const files = this.#globMatcher.scan(dir);
+        const path = join(import.meta.dir, dir);
 
-        for (let i = 0, values = Object.values(router.routes), { length } = values; i < length; i++) {
-            const val = values[i];
+        for await (const fileName of files) {
+            if (fileName.endsWith(".d.ts")) continue;
 
-            // Lazy solution, could probably be better
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
-            const file: MessageCommand = (await import(val)).default;
-            if (typeof file === "undefined") continue;
+            const command: MessageCommand = (await import(join(path, fileName))).default;
+            if (typeof command === "undefined") continue;
 
-            this.messageCommands.set([file.name, ...file.alias ?? []], file);
+            if (typeof command.alias !== "undefined" && command.alias.length > 0) {
+                if (command.alias.length === 1) this.messageCommandAliases.set(command.alias[0], command.name);
+                else for (let i = 0, { length } = command.alias; i < length; i++) this.messageCommandAliases.set(command.alias[i], command.name);
+            }
+
+            this.messageCommands.set(command.name, command);
         }
 
         return true;
@@ -127,20 +123,25 @@ export class Handler {
     }
 
     private async onMessage(message: Message): Promise<void> {
-        if (message.author.bot || (await message.client.rest.getChannel(message.channelId)).type === ChannelType.DM) return;
+        if (message.author.bot || (await message.fetchChannel()).isDM()) return;
 
         if (message.content?.startsWith(this.prefix)) {
             const args = message.content.slice(this.prefix.length).trim().split(/\s+/g);
             if (args.length === 0) return;
 
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            const cmd = args.shift()!.toLowerCase();
-            const key = [...this.messageCommands.keys()].find((keys) => keys.includes(cmd));
-            if (typeof key === "undefined") return;
+            const alias = args.shift()!.toLowerCase();
+            let command = this.messageCommands.get(alias);
+            let name: string | undefined = alias;
 
-            const command = this.messageCommands.get(key);
-            if (typeof command === "undefined") return;
-            if (command.enabled ?? true) await command.run(message, args);
+            if (typeof command === "undefined") {
+                name = this.messageCommandAliases.get(alias);
+                if (typeof name !== "string") return;
+                command = this.messageCommands.get(name);
+                if (typeof command === "undefined") return;
+            }
+
+            if (command.enabled ?? true) await command.run(message, args, { name, alias });
         }
     }
 
