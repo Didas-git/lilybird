@@ -29,7 +29,7 @@
     "#ws": "./dist/ws/manager.js"
   },
   "engines": {
-    "bun": ">=1.0.15",
+    "bun": ">=1.0.22",
     "node": ">=21.0.0"
   },
   "files": [
