@@ -1,4 +1,4 @@
-import type { AllowedMentionType, OverwriteType } from "../../enums/index.js";
+import type { AllowedMentionType, OverwriteType } from "#enums";
 
 export interface AllowedMentionsStructure {
     parse: Array<AllowedMentionType>;

@@ -12,14 +12,14 @@ We highly encourage using the `setup` API to do this since it facilitates access
 ## Creating Global Commands
 
 ```ts
-import { createClient, ApplicationCommandType } from "lilybird";
+import { createClient } from "lilybird";
 
 await createClient({
   ...,
   setup: async (client) => {
     await client.rest.createGlobalApplicationCommand(client.user.id, {
       name: "ping",
-      type: ApplicationCommandType.CHAT_INPUT
+      description: "pong"
     });
   }
 });
@@ -28,7 +28,7 @@ await createClient({
 ## Creating Guild Commands
 
 ```diff lang="ts"
-import { createClient, ApplicationCommandType } from "lilybird";
+import { createClient } from "lilybird";
 
 await createClient({
   ...,
@@ -36,7 +36,6 @@ await createClient({
 -    await client.rest.createGlobalApplicationCommand(client.user.id, {
 +    await client.rest.createGuildApplicationCommand(client.user.id, guildId, {
       name: "ping",
-      type: ApplicationCommandType.CHAT_INPUT
     });
   }
 });

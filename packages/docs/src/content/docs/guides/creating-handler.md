@@ -5,7 +5,7 @@ description: Learn how to create a simple handler with Lilybird.
 
 Creating a command handler might look daunting at first because of Lilybird's interface, but, I can assure you that it's simple.
 
-For our examples, we will be using [`Bun.FileSystemRouter`](https://bun.sh/docs/api/file-system-router) because, well, it's Bun. However, you can also explore other options like `fs.readdir`.
+For our examples, we will be using [`Bun.Glob`](https://bun.sh/docs/api/glob) because, well, it's Bun. However, you can also explore other options like `fs.readdir`.
 
 ## Creating an event handler
 
@@ -30,14 +30,13 @@ export interface Event<
 Let's start by creating our main function and read all the files in a directory.
 
 ```ts title="event-handler.ts"
+import { join } from "path";
 import type { ClientEventListeners } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
-  const router = new Bun.FileSystemRouter({
-    fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-    style: "nextjs",
-    dir: directory
-  });
+  const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
+  const files = glob.scan(dir);
+  const path = join(import.meta.dir, dir);
 }
 ```
 
@@ -47,16 +46,13 @@ After getting all the files in the directory we can start iterating over them an
 import type { ClientEventListeners } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
-  const router = new Bun.FileSystemRouter({
-    fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-    style: "nextjs",
-    dir: directory
-  });
+  const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
+  const files = glob.scan(dir);
+  const path = join(import.meta.dir, dir);
 
-+  for (let i = 0, values = Object.values(router.routes), { length } = values; i < length; i++) {
-+    const route = values[i];
-+    const file: Event = (await import(val)).default;
-+    if (typeof file === "undefined") continue;
++  for await (const fileName of files) {
++    const event: Event = (await import(join(path, fileName))).default;
++    if (typeof event === "undefined") continue;
 +  }
 }
 ```
@@ -67,20 +63,18 @@ Now that we have the file we can start building an object with all the listeners
 import type { ClientEventListeners } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
-  const router = new Bun.FileSystemRouter({
-    fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-    style: "nextjs",
-    dir: directory
-  });
+  const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
+  const files = glob.scan(dir);
+  const path = join(import.meta.dir, dir);
 
 +  const listeners: ClientEventListeners = {};
 
-  for (let i = 0, values = Object.values(router.routes), { length } = values; i < length; i++) {
-    const route = values[i];
-    const file: Event = (await import(val)).default;
-    if (typeof file === "undefined") continue;
+  for await (const fileName of files) {
+    const event: Event = (await import(join(path, fileName))).default;
+    if (typeof event === "undefined") continue;
+  }
 
-+    listeners[file.event] = file.run;
++    listeners[event.event] = event.run;
   }
 
 +  return listeners;
@@ -138,22 +132,19 @@ import type { ClientEventListeners, REST } from "lilybird";
 +const rest = new REST(YOUR_TOKEN);
 
 function createEventListeners(directory: string): ClientEventListeners {
-  const router = new Bun.FileSystemRouter({
-    fileExtensions: [".ts", ".tsx", ".js", ".jsx"],
-    style: "nextjs",
-    dir: directory
-  });
+  const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
+  const files = glob.scan(dir);
+  const path = join(import.meta.dir, dir);
 
 -  const listeners: ClientEventListeners = {};
 
-  for (let i = 0, values = Object.values(router.routes), { length } = values; i < length; i++) {
-    const route = values[i];
--    const file: Event = (await import(val)).default;
-+    const file: SlashCommand = (await import(val)).default;
-    if (typeof file === "undefined") continue;
+  for await (const fileName of files) {
+-    const event: Event = (await import(join(path, fileName))).default;
++    const command: SlashCommand = (await import(join(path, fileName))).default;
+    if (typeof command === "undefined") continue;
 
--    listeners[file.event] = file.run;
-+    slashCommands.set(file.data.name, file)
+-    listeners[event.event] = event.run;
++    slashCommands.set(command.data.name, command)
 +    await rest.createGlobalApplicationCommand(YOUR_CLIENT_ID, command.data)
   }
 

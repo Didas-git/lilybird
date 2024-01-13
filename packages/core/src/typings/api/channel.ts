@@ -1,5 +1,5 @@
 import type { AllowedMentionsStructure, AttachmentStructure, EmbedStructure, OverwriteStructure } from "../shared/index.js";
-import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "../../enums/index.js";
+import type { ChannelType, ForumLayoutType, InviteTargetType, SortOrderType, VideoQualityMode } from "#enums";
 
 import type {
     MessageComponentStructure,

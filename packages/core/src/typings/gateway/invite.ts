@@ -1,4 +1,4 @@
-import type { InviteTargetType } from "../enums/index.js";
+import type { InviteTargetType } from "#enums";
 
 import type {
     GuildScheduleEventStructure,
@@ -7,7 +7,7 @@ import type {
     ChannelStructure,
     GuildStructure,
     UserStructure
-} from "./index.js";
+} from "../index.js";
 
 export interface InviteStructure {
     code: string;

@@ -1,4 +1,4 @@
-import type { AuditLogEvent } from "../enums/index.js";
+import type { AuditLogEvent } from "#enums";
 
 export interface AuditLogEntryStructure {
     target_id: string | null;

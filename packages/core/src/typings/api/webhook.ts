@@ -1,4 +1,14 @@
-import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "../index.js";
+import type { WebhookType } from "#enums";
+import type {
+    MessageComponentStructure,
+    AllowedMentionsStructure,
+    AttachmentStructure,
+    LilybirdAttachment,
+    ChannelStructure,
+    GuildStructure,
+    EmbedStructure,
+    UserStructure
+} from "../index.js";
 
 export interface EditWebhookStructure {
     content?: string | null;
@@ -24,4 +34,19 @@ export interface ExecuteWebhookStructure {
     /** MessageFlags.EPHEMERAL | MessageFlags.SUPPRESS_EMBEDS */
     flags?: number;
     thread_name?: string;
+}
+
+export interface WebhookStructure {
+    id: string;
+    type: WebhookType;
+    guild_id?: string | null;
+    channel_id: string | null;
+    user?: UserStructure;
+    name: string | null;
+    avatar: string | null;
+    token?: string;
+    application_id: string | null;
+    source_guild?: Partial<GuildStructure>;
+    source_channel?: Partial<ChannelStructure>;
+    url?: string;
 }

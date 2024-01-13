@@ -23,7 +23,7 @@ import type {
     ChannelType,
     PromptType,
     Locale
-} from "../../enums/index.js";
+} from "#enums";
 
 export interface CreateGuildStructure {
     name: string;

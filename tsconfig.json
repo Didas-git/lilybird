@@ -26,6 +26,8 @@
         "allowSyntheticDefaultImports": true,
         "incremental": false,
         "stripInternal": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "removeComments": true,
+        "preserveConstEnums": true
     }
 }

@@ -1,4 +1,4 @@
-import type { MFALevel, OnboardingMode } from "../enums/index.js";
+import type { AuditLogEvent, MFALevel, OnboardingMode } from "#enums";
 
 import type {
     LocalizationGlobalApplicationCommandStructure,
@@ -24,6 +24,7 @@ import type {
     FollowedChannelStructure,
     ModifyDMChannelStructure,
     GuildOnboardingStructure,
+    PATCHCurrentApplication,
     ExecuteWebhookStructure,
     CreateMessageStructure,
     ThreadChannelStructure,
@@ -31,6 +32,7 @@ import type {
     CreateThreadStructure,
     ThreadMemberStructure,
     GuildPreviewStructure,
+    GetGatewayBotResponse,
     EditWebhookStructure,
     EditMessageStructure,
     GuildMemberStructure,
@@ -39,9 +41,11 @@ import type {
     VoiceRegionStructure,
     IntegrationStructure,
     GuildWidgetStructure,
+    ApplicationStructure,
     AttachmentStructure,
     DMChannelStructure,
     LilybirdAttachment,
+    AuditLogStructure,
     MessageStructure,
     ChannelStructure,
     APIRoleStructure,
@@ -70,26 +74,24 @@ export class RestError extends Error {
 }
 
 export class REST {
-    public static baseUrl = "https://discord.com/api/v10/";
-    public static cdnUrl = "https://cdn.discordapp.com/";
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public static readonly BaseURL = "https://discord.com/api/v10/";
 
     #token?: string | undefined;
+    #headers!: HeadersInit;
 
     public constructor(token?: string) {
         if (typeof token === "undefined")
             return;
 
         this.#token = token;
+        this.#buildHeaders();
     }
 
-    async #makeRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>, cdn = false): Promise<T> {
+    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>): Promise<T> {
         const opts: RequestInit = {
             method,
-            headers: {
-                Authorization: `Bot ${this.#token}`,
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                "User-Agent": `DiscordBot/LilyBird/${version}`
-            }
+            headers: this.#headers
         };
 
         if (typeof data !== "undefined") {
@@ -123,7 +125,7 @@ export class REST {
             }
         }
 
-        const response = await fetch(`${cdn ? REST.cdnUrl : REST.baseUrl}${path}`, opts);
+        const response = await fetch(`${REST.BaseURL}${path}`, opts);
 
         if (!response.ok) {
             const errorMessage: ErrorMessage = await response.json();
@@ -139,68 +141,88 @@ export class REST {
         return <T> await response.json();
     }
 
-    public async getGateway(): Promise<{ url: string }> {
-        return this.#makeRequest("GET", "gateway");
+    #buildHeaders(): void {
+        this.#headers = {
+            Authorization: `Bot ${this.#token}`,
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            "User-Agent": `DiscordBot/LilyBird/${version}`
+        };
     }
 
+    public setToken(token: string | undefined): void {
+        this.#token = token;
+        this.#buildHeaders();
+    }
+
+    //#region Gateway
+    public async getGateway(): Promise<{ url: string }> {
+        return this.#makeAPIRequest("GET", "gateway");
+    }
+
+    public async getGatewayBot(): Promise<GetGatewayBotResponse> {
+        return this.#makeAPIRequest("GET", "gateway/bot");
+    }
+
+    //#endregion Gateway
+    //#region Application Commands
     public async getGlobalApplicationCommands(clientId: string): Promise<Array<LocalizedGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations: true): Promise<Array<LocalizationGlobalApplicationCommandStructure>>;
     public async getGlobalApplicationCommands(clientId: string, withLocalizations = false): Promise<Array<LocalizationGlobalApplicationCommandStructure | LocalizedGlobalApplicationCommandStructure>> {
-        return this.#makeRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
+        return this.#makeAPIRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
     }
 
     public async createGlobalApplicationCommand(clientId: string, body: POSTApplicationCommandStructure): Promise<LocalizationGlobalApplicationCommandStructure> {
-        return this.#makeRequest("POST", `applications/${clientId}/commands`, body);
+        return this.#makeAPIRequest("POST", `applications/${clientId}/commands`, body);
     }
 
     public async getGlobalApplicationCommand(clientId: string, commandId: string): Promise<LocalizationGlobalApplicationCommandStructure> {
-        return this.#makeRequest("GET", `applications/${clientId}/commands/${commandId}`);
+        return this.#makeAPIRequest("GET", `applications/${clientId}/commands/${commandId}`);
     }
 
     public async editGlobalApplicationCommand(clientId: string, commandId: string, body: Partial<POSTApplicationCommandStructure>): Promise<LocalizationGlobalApplicationCommandStructure> {
-        return this.#makeRequest("PATCH", `applications/${clientId}/commands/${commandId}`, body);
+        return this.#makeAPIRequest("PATCH", `applications/${clientId}/commands/${commandId}`, body);
     }
 
     public async deleteGlobalApplicationCommand(clientId: string, commandId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `applications/${clientId}/commands/${commandId}`);
+        return this.#makeAPIRequest("DELETE", `applications/${clientId}/commands/${commandId}`);
     }
 
     public async bulkOverwriteGlobalApplicationCommand(clientId: string, body: Array<POSTApplicationCommandStructure>): Promise<Array<LocalizationGlobalApplicationCommandStructure>> {
-        return this.#makeRequest("PUT", `applications/${clientId}/commands`, body);
+        return this.#makeAPIRequest("PUT", `applications/${clientId}/commands`, body);
     }
 
     public async getGuildApplicationCommands(clientId: string): Promise<Array<LocalizedGuildApplicationCommandStructure>>;
     public async getGuildApplicationCommands(clientId: string, withLocalizations: true): Promise<Array<LocalizationGuildApplicationCommandStructure>>;
     public async getGuildApplicationCommands(clientId: string, withLocalizations = false): Promise<Array<LocalizationGuildApplicationCommandStructure | LocalizedGuildApplicationCommandStructure>> {
-        return this.#makeRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
+        return this.#makeAPIRequest("GET", `applications/${clientId}/commands?with_localizations=${withLocalizations}`);
     }
 
     public async createGuildApplicationCommand(clientId: string, guildId: string, body: POSTApplicationCommandStructure): Promise<LocalizationGuildApplicationCommandStructure> {
-        return this.#makeRequest("POST", `applications/${clientId}/guilds/${guildId}/commands`, body);
+        return this.#makeAPIRequest("POST", `applications/${clientId}/guilds/${guildId}/commands`, body);
     }
 
     public async getGuildApplicationCommand(clientId: string, guildId: string, commandId: string): Promise<LocalizationGuildApplicationCommandStructure> {
-        return this.#makeRequest("POST", `applications/${clientId}/guilds/${guildId}/commands/${commandId}`);
+        return this.#makeAPIRequest("POST", `applications/${clientId}/guilds/${guildId}/commands/${commandId}`);
     }
 
     public async editGuildApplicationCommand(clientId: string, guildId: string, commandId: string, body: Partial<POSTApplicationCommandStructure>): Promise<LocalizationGuildApplicationCommandStructure> {
-        return this.#makeRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands/${commandId}`, body);
+        return this.#makeAPIRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands/${commandId}`, body);
     }
 
     public async deleteGuildApplicationCommand(clientId: string, guildId: string, commandId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `applications/${clientId}/guilds/${guildId}/commands/${commandId}`);
+        return this.#makeAPIRequest("DELETE", `applications/${clientId}/guilds/${guildId}/commands/${commandId}`);
     }
 
     public async bulkOverwriteGuildApplicationCommand(clientId: string, guildId: string, body: Array<POSTApplicationCommandStructure>): Promise<Array<LocalizationGuildApplicationCommandStructure>> {
-        return this.#makeRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands`, body);
+        return this.#makeAPIRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands`, body);
     }
 
     public async getGuildApplicationCommandPermissions(clientId: string, guildId: string): Promise<Array<GuildApplicationCommandPermissionsStructure>> {
-        return this.#makeRequest("GET", `applications/${clientId}/guilds/${guildId}/commands/permissions`);
+        return this.#makeAPIRequest("GET", `applications/${clientId}/guilds/${guildId}/commands/permissions`);
     }
 
     public async getApplicationCommandPermissions(clientId: string, guildId: string, commandId: string): Promise<GuildApplicationCommandPermissionsStructure> {
-        return this.#makeRequest("GET", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`);
+        return this.#makeAPIRequest("GET", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`);
     }
 
     public async editApplicationCommandPermissions(
@@ -209,51 +231,93 @@ export class REST {
         commandId: string,
         body: { permissions: Array<ApplicationCommandPermissionsStructure> }
     ): Promise<GuildApplicationCommandPermissionsStructure> {
-        return this.#makeRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`, body);
+        return this.#makeAPIRequest("PATCH", `applications/${clientId}/guilds/${guildId}/commands/${commandId}/permissions`, body);
     }
 
+    //#endregion Application Commands
+    //#region Interactions
     public async createInteractionResponse(interactionId: string, interactionToken: string, body: InteractionResponseStructure): Promise<null> {
-        return this.#makeRequest("POST", `interactions/${interactionId}/${interactionToken}/callback`, body);
+        return this.#makeAPIRequest("POST", `interactions/${interactionId}/${interactionToken}/callback`, body);
     }
 
     public async getOriginalInteractionResponse(clientId: string, interactionToken: string): Promise<InteractionResponseStructure> {
-        return this.#makeRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/@original`);
+        return this.#makeAPIRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/@original`);
     }
 
     public async editOriginalInteractionResponse(clientId: string, interactionToken: string, body: EditWebhookStructure): Promise<InteractionResponseStructure> {
-        return this.#makeRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/@original`, body);
+        return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/@original`, body);
     }
 
     public async deleteOriginalInteractionResponse(clientId: string, interactionToken: string): Promise<null> {
-        return this.#makeRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/@original`);
+        return this.#makeAPIRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/@original`);
     }
 
     public async createFollowupMessage(clientId: string, interactionToken: string, body: ExecuteWebhookStructure): Promise<MessageStructure> {
-        return this.#makeRequest("POST", `webhooks/${clientId}/${interactionToken}`, body);
+        return this.#makeAPIRequest("POST", `webhooks/${clientId}/${interactionToken}`, body);
     }
 
     public async getFollowupMessage(clientId: string, interactionToken: string, messageId: string): Promise<InteractionResponseStructure> {
-        return this.#makeRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
+        return this.#makeAPIRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
     }
 
     public async editFollowupMessage(clientId: string, interactionToken: string, messageId: string, body: EditWebhookStructure): Promise<InteractionResponseStructure> {
-        return this.#makeRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`, body);
+        return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`, body);
     }
 
     public async deleteFollowupMessage(clientId: string, interactionToken: string, messageId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
+        return this.#makeAPIRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
     }
 
+    //#endregion Interactions
+    //#region Application
+    public async getCurrentApplication(): Promise<ApplicationStructure> {
+        return this.#makeAPIRequest("GET", "applications/@me");
+    }
+
+    public async editCurrentApplication(app: PATCHCurrentApplication): Promise<ApplicationStructure> {
+        return this.#makeAPIRequest("PATCH", "applications/@me", app);
+    }
+
+    //#endregion Application
+    //#region Audit Log
+    public async getGuildAuditLog(guildId: string, params: {
+        user_id?: string,
+        action_type?: AuditLogEvent,
+        before?: string,
+        after?: string,
+        limit?: number
+    }): Promise<AuditLogStructure> {
+        let url = `guilds/${guildId}/audit-logs?`;
+        if (typeof params.user_id !== "undefined")
+            url += `user_id=${params.user_id}&`;
+
+        if (typeof params.action_type !== "undefined")
+            url += `action_type=${params.action_type}&`;
+
+        if (typeof params.before !== "undefined")
+            url += `before=${params.before}&`;
+
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.#makeAPIRequest("GET", url);
+    }
+
+    //#endregion Audit Log
+    //#region Channel
     public async getChannel(channelId: string): Promise<ChannelStructure> {
-        return this.#makeRequest("GET", `channels/${channelId}`);
+        return this.#makeAPIRequest("GET", `channels/${channelId}`);
     }
 
     public async modifyChannel(channelId: string, body: ModifyGuildChannelStructure | ModifyDMChannelStructure | ModifyThreadChannelStructure): Promise<ChannelStructure> {
-        return this.#makeRequest("PATCH", `channels/${channelId}`, body);
+        return this.#makeAPIRequest("PATCH", `channels/${channelId}`, body);
     }
 
     public async deleteChannel(channelId: string, reason?: string): Promise<ChannelStructure> {
-        return this.#makeRequest("DELETE", `channels/${channelId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}`, { reason });
     }
 
     public async getChannelMessages(channelId: string, params: GetChannelMessagesStructure): Promise<Array<MessageStructure>> {
@@ -270,34 +334,34 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async getChannelMessage(channelId: string, messageId: string): Promise<MessageStructure> {
-        return this.#makeRequest("GET", `channels/${channelId}/messages/${messageId}`);
+        return this.#makeAPIRequest("GET", `channels/${channelId}/messages/${messageId}`);
     }
 
     public async createMessage(channelId: string, body: CreateMessageStructure): Promise<MessageStructure> {
-        return this.#makeRequest("POST", `channels/${channelId}/messages`, body);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/messages`, body);
     }
 
     public async crosspostMessage(channelId: string, messageId: string): Promise<MessageStructure> {
-        return this.#makeRequest("POST", `channels/${channelId}/messages/${messageId}/crosspost`);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/messages/${messageId}/crosspost`);
     }
 
     public async createReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
         if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.#makeRequest("PUT", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
+        return this.#makeAPIRequest("PUT", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
     }
 
     public async deleteOwnReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
         if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
     }
 
     public async deleteUserReaction(channelId: string, messageId: string, userId: string, emoji: string, isCustom = false): Promise<null> {
         if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/${userId}`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/${userId}`);
     }
 
     public async getReactions(channelId: string, messageId: string, emoji: string, isCustom = false, params: { after?: number, limit?: string } = {}): Promise<Array<UserStructure>> {
@@ -310,28 +374,28 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async deleteAllReactions(channelId: string, messageId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions`);
     }
 
     public async deleteAllReactionsForEmoji(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
         if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
     }
 
     public async editMessage(channelId: string, messageId: string, params: EditMessageStructure): Promise<MessageStructure> {
-        return this.#makeRequest("PATCH", `channels/${channelId}/messages/${messageId}`, params);
+        return this.#makeAPIRequest("PATCH", `channels/${channelId}/messages/${messageId}`, params);
     }
 
     public async deleteMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/messages/${messageId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}`, { reason });
     }
 
     public async bulkDeleteMessages(channelId: string, messageIds: Array<string>, reason?: string): Promise<null> {
-        return this.#makeRequest("POST", `channels/${channelId}/messages/bulk-delete`, { messages: messageIds, reason });
+        return this.#makeAPIRequest("POST", `channels/${channelId}/messages/bulk-delete`, { messages: messageIds, reason });
     }
 
     public async editChannelPermissions(
@@ -345,79 +409,79 @@ export class REST {
             type: 0 | 1
         }
     ): Promise<null> {
-        return this.#makeRequest("PUT", `channels/${channelId}/permissions/${overwriteId}`, params);
+        return this.#makeAPIRequest("PUT", `channels/${channelId}/permissions/${overwriteId}`, params);
     }
 
     public async getChannelInvites(channelId: string): Promise<Array<InviteStructure>> {
-        return this.#makeRequest("GET", `channels/${channelId}/invites`);
+        return this.#makeAPIRequest("GET", `channels/${channelId}/invites`);
     }
 
     public async createChannelInvite(channelId: string, body: CreateChannelInviteStructure): Promise<InviteStructure> {
-        return this.#makeRequest("POST", `channels/${channelId}/invites`, body);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/invites`, body);
     }
 
     public async deleteChannelPermission(channelId: string, overwriteId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/permissions/${overwriteId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/permissions/${overwriteId}`, { reason });
     }
 
     public async followAnnouncementChannel(channelId: string, body: { webhook_channel_id?: string }): Promise<FollowedChannelStructure> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/followers`, body);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/followers`, body);
     }
 
     public async triggerTypingIndicator(channelId: string): Promise<null> {
-        return this.#makeRequest("POST", `channels/${channelId}/typing`);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/typing`);
     }
 
     public async getPinnedMessages(channelId: string): Promise<null> {
-        return this.#makeRequest("GET", `channels/${channelId}/pins`);
+        return this.#makeAPIRequest("GET", `channels/${channelId}/pins`);
     }
 
     public async pinMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("PUT", `channels/${channelId}/pins/${messageId}`, { reason });
+        return this.#makeAPIRequest("PUT", `channels/${channelId}/pins/${messageId}`, { reason });
     }
 
     public async unpinMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/pins/${messageId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/pins/${messageId}`, { reason });
     }
 
     public async groupDMAddRecipient(channelId: string, userId: string, body: { access_token: string, nick: string }): Promise<null> {
-        return this.#makeRequest("PUT", `channels/${channelId}/recipients/${userId}`, body);
+        return this.#makeAPIRequest("PUT", `channels/${channelId}/recipients/${userId}`, body);
     }
 
     public async groupDMRemoveRecipient(channelId: string, userId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/recipients/${userId}`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/recipients/${userId}`);
     }
 
     public async startThreadFromMessage(channelId: string, messageId: string, body: CreateThreadFromMessageStructure): Promise<ChannelStructure> {
-        return this.#makeRequest("POST", `channels/${channelId}/messages/${messageId}/threads`, body);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/messages/${messageId}/threads`, body);
     }
 
     public async startThreadWithoutMessage(channelId: string, body: CreateThreadStructure): Promise<ChannelStructure> {
-        return this.#makeRequest("POST", `channels/${channelId}/threads`, body);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/threads`, body);
     }
 
     public async startThreadInForumOrMediaChannel(channelId: string, body: CreateForumMediaThreadStructure): Promise<ChannelStructure> {
-        return this.#makeRequest("POST", `channels/${channelId}/threads`, body);
+        return this.#makeAPIRequest("POST", `channels/${channelId}/threads`, body);
     }
 
     public async joinThread(channelId: string): Promise<null> {
-        return this.#makeRequest("PUT", `channels/${channelId}/thread-members/@me`);
+        return this.#makeAPIRequest("PUT", `channels/${channelId}/thread-members/@me`);
     }
 
     public async addThreadMember(channelId: string, userId: string): Promise<null> {
-        return this.#makeRequest("PUT", `channels/${channelId}/thread-members/${userId}`);
+        return this.#makeAPIRequest("PUT", `channels/${channelId}/thread-members/${userId}`);
     }
 
     public async leaveThread(channelId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/thread-members/@me`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/thread-members/@me`);
     }
 
     public async removeThreadMember(channelId: string, userId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `channels/${channelId}/thread-members/${userId}`);
+        return this.#makeAPIRequest("DELETE", `channels/${channelId}/thread-members/${userId}`);
     }
 
     public async getThreadMember(channelId: string, userId: string, withMember = false): Promise<ThreadMemberStructure> {
-        return this.#makeRequest("GET", `channels/${channelId}/thread-members/${userId}?with_member=${withMember}`);
+        return this.#makeAPIRequest("GET", `channels/${channelId}/thread-members/${userId}?with_member=${withMember}`);
     }
 
     public async listThreadMembers(channelId: string, params: { after?: number, limit?: string } = {}): Promise<Array<ThreadMemberStructure>> {
@@ -428,7 +492,7 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async listPublicArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string, limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
@@ -439,7 +503,7 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async listPrivateArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string, limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
@@ -450,7 +514,7 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async listJoinedPrivateArchivedThreads(channelId: string, params: { before?: /* ISO8601 Timestamp */ string, limit?: string } = {}): Promise<ListArchivedThreadsReturnStructure> {
@@ -461,19 +525,21 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
+    //#endregion Channel
+    //#region User
     public async getCurrentUser(): Promise<UserStructure> {
-        return this.#makeRequest("GET", "users/@me");
+        return this.#makeAPIRequest("GET", "users/@me");
     }
 
     public async getUser(userId: string): Promise<UserStructure> {
-        return this.#makeRequest("GET", `users/${userId}`);
+        return this.#makeAPIRequest("GET", `users/${userId}`);
     }
 
     public async modifyCurrentUser(body?: { username?: string, avatar?: /** Image Data */ string }): Promise<UserStructure> {
-        return this.#makeRequest("PATCH", "users/@me", body);
+        return this.#makeAPIRequest("PATCH", "users/@me", body);
     }
 
     public async getCurrentUserGuilds(params: {
@@ -495,66 +561,68 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async getCurrentUserGuildMember(guildId: string): Promise<GuildMemberStructure> {
-        return this.#makeRequest("GET", `users/@me/guilds/${guildId}/member`);
+        return this.#makeAPIRequest("GET", `users/@me/guilds/${guildId}/member`);
     }
 
     public async leaveGuild(guildId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `users/@me/guilds/${guildId}`);
+        return this.#makeAPIRequest("DELETE", `users/@me/guilds/${guildId}`);
     }
 
     public async createDM(userId: string): Promise<DMChannelStructure> {
-        return this.#makeRequest("POST", "users/@me/channels", { recipient_id: userId });
+        return this.#makeAPIRequest("POST", "users/@me/channels", { recipient_id: userId });
     }
 
     public async createGroupDM(tokens: Array<string>, nicks: Record<string, string>): Promise<DMChannelStructure> {
-        return this.#makeRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
+        return this.#makeAPIRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
     }
 
+    //#endregion User
+    //#region Guild
     public async createGuild(body: CreateGuildStructure): Promise<GuildStructure> {
-        return this.#makeRequest("POST", "guilds", body);
+        return this.#makeAPIRequest("POST", "guilds", body);
     }
 
     public async getGuild(guildId: string, withCounts = false): Promise<GuildStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}?with_counts=${withCounts}`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}?with_counts=${withCounts}`);
     }
 
     public async getGuildPreview(guildId: string): Promise<GuildPreviewStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/preview`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/preview`);
     }
 
     public async modifyGuild(guildId: string, body: ModifyGuildStructure): Promise<GuildStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}`, body);
     }
 
     public async deleteGuild(guildId: string): Promise<null> {
-        return this.#makeRequest("DELETE", `guilds/${guildId}`);
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}`);
     }
 
     public async getGuildChannels(guildId: string): Promise<Array<ChannelStructure>> {
-        return this.#makeRequest("GET", `guilds/${guildId}/channels`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/channels`);
     }
 
     public async createGuildChannel(guildId: string, body: CreateGuildChannelStructure): Promise<ChannelStructure> {
-        return this.#makeRequest("POST", `guilds/${guildId}/channels`, body);
+        return this.#makeAPIRequest("POST", `guilds/${guildId}/channels`, body);
     }
 
     public async modifyGuildChannelPositions(guildId: string, body: Array<ModifyChannelPositionStructure>): Promise<ChannelStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/channels`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/channels`, body);
     }
 
     public async listActiveGuildThreads(guildId: string): Promise<{
         threads: Array<ThreadChannelStructure>,
         members: Array<ThreadMemberStructure>
     }> {
-        return this.#makeRequest("GET", `guilds/${guildId}/threads/active`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/threads/active`);
     }
 
     public async getGuildMember(guildId: string, userId: string): Promise<GuildMemberStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/members/${userId}`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/members/${userId}`);
     }
 
     public async listGuildMembers(guildId: string, params: { limit: number, after: string }): Promise<Array<GuildMemberStructure>> {
@@ -565,7 +633,7 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async searchGuildMembers(guildId: string, params: { query: string, limit: number }): Promise<Array<GuildMemberStructure>> {
@@ -576,7 +644,7 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async addGuildMember(
@@ -590,7 +658,7 @@ export class REST {
             deaf?: boolean
         }
     ): Promise<GuildMemberStructure> {
-        return this.#makeRequest("PUT", `guilds/${guildId}/members/${userId}`, body);
+        return this.#makeAPIRequest("PUT", `guilds/${guildId}/members/${userId}`, body);
     }
 
     public async modifyGuildMember(
@@ -608,7 +676,7 @@ export class REST {
             flags?: number | null
         }
     ): Promise<GuildMemberStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/members/${userId}`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/members/${userId}`, body);
     }
 
     public async modifyCurrentMember(
@@ -618,19 +686,19 @@ export class REST {
             nick?: string | null
         }
     ): Promise<GuildMemberStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/members/@me`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/members/@me`, body);
     }
 
     public async addGuildMemberRole(guildId: string, userId: string, roleId: string, reason: string): Promise<null> {
-        return this.#makeRequest("PUT", `guilds/${guildId}/members/${userId}/roles/${roleId}`, { reason });
+        return this.#makeAPIRequest("PUT", `guilds/${guildId}/members/${userId}/roles/${roleId}`, { reason });
     }
 
     public async removeGuildMemberRole(guildId: string, userId: string, roleId: string, reason: string): Promise<null> {
-        return this.#makeRequest("DELETE", `guilds/${guildId}/members/${userId}/roles/${roleId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}/members/${userId}/roles/${roleId}`, { reason });
     }
 
     public async removeGuildMember(guildId: string, userId: string, reason: string): Promise<null> {
-        return this.#makeRequest("DELETE", `guilds/${guildId}/members/${userId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}/members/${userId}`, { reason });
     }
 
     public async getGuildBans(
@@ -651,11 +719,11 @@ export class REST {
         if (typeof params.limit !== "undefined")
             url += `limit=${params.limit}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async getGuildBan(guildId: string, userId: string): Promise<BanStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/bans/${userId}`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/bans/${userId}`);
     }
 
     public async createGuildBan(
@@ -666,35 +734,35 @@ export class REST {
             delete_message_seconds?: number
         }
     ): Promise<null> {
-        return this.#makeRequest("PUT", `guilds/${guildId}/bans/${userId}`, body);
+        return this.#makeAPIRequest("PUT", `guilds/${guildId}/bans/${userId}`, body);
     }
 
     public async removeGuildBan(guildId: string, userId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("PUT", `guilds/${guildId}/bans/${userId}`, { reason });
+        return this.#makeAPIRequest("PUT", `guilds/${guildId}/bans/${userId}`, { reason });
     }
 
     public async getGuildRoles(guildId: string): Promise<Array<RoleStructure>> {
-        return this.#makeRequest("GET", `guilds/${guildId}/roles`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/roles`);
     }
 
     public async createGuildRole(guildId: string, body: APIRoleStructure): Promise<RoleStructure> {
-        return this.#makeRequest("POST", `guilds/${guildId}/roles`, body);
+        return this.#makeAPIRequest("POST", `guilds/${guildId}/roles`, body);
     }
 
     public async modifyGuildRolePosition(guildId: string, body: { reason?: string, id: string, position?: number | null }): Promise<Array<RoleStructure>> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/roles`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/roles`, body);
     }
 
     public async modifyGuildRole(guildId: string, roleId: string, body: Partial<APIRoleStructure>): Promise<RoleStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/roles/${roleId}`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/roles/${roleId}`, body);
     }
 
     public async modifyGuildMFALevel(guildId: string, level: MFALevel): Promise<MFALevel> {
-        return this.#makeRequest("POST", `guilds/${guildId}/mfa`, { level });
+        return this.#makeAPIRequest("POST", `guilds/${guildId}/mfa`, { level });
     }
 
     public async deleteGuildRole(guildId: string, roleId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("DELETE", `guilds/${guildId}/roles/${roleId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}/roles/${roleId}`, { reason });
     }
 
     public async getGuildPruneCount(guildId: string, params: { days: number, include_roles?: string }): Promise<{ pruned: number }> {
@@ -705,7 +773,7 @@ export class REST {
         if (typeof params.include_roles !== "undefined")
             url += `include_roles=${params.include_roles}`;
 
-        return this.#makeRequest("GET", url);
+        return this.#makeAPIRequest("GET", url);
     }
 
     public async beginGuildPrune(
@@ -717,48 +785,48 @@ export class REST {
             reason?: string
         }
     ): Promise<{ pruned: number | null }> {
-        return this.#makeRequest("POST", `guilds/${guildId}/prune`, body);
+        return this.#makeAPIRequest("POST", `guilds/${guildId}/prune`, body);
     }
 
     public async getGuildVoiceRegions(guildId: string): Promise<Array<VoiceRegionStructure>> {
-        return this.#makeRequest("GET", `guilds/${guildId}/regions`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/regions`);
     }
 
     public async getGuildInvites(guildId: string): Promise<Array<InviteStructure>> {
-        return this.#makeRequest("GET", `guilds/${guildId}/invites`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/invites`);
     }
 
     public async getGuildIntegrations(guildId: string): Promise<Array<IntegrationStructure>> {
-        return this.#makeRequest("GET", `guilds/${guildId}/integrations`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/integrations`);
     }
 
     public async deleteGuildIntegration(guildId: string, integrationId: string, reason?: string): Promise<null> {
-        return this.#makeRequest("DELETE", `guilds/${guildId}/integrations/${integrationId}`, { reason });
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}/integrations/${integrationId}`, { reason });
     }
 
     public async getGuildWidgetSettings(guildId: string): Promise<GuildWidgetSettingsStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/widget`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/widget`);
     }
 
     public async modifyGuildWidget(guildId: string, body: GuildWidgetSettingsStructure & { reason?: string }): Promise<GuildWidgetSettingsStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/widget`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/widget`, body);
     }
 
     public async getGuildWidget(guildId: string): Promise<GuildWidgetStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/widget.json`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/widget.json`);
     }
 
     public async getGuildVanityUrl(guildId: string): Promise<Partial<InviteStructure>> {
-        return this.#makeRequest("GET", `guilds/${guildId}/vanity-url`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/vanity-url`);
     }
 
     /** Yeah... this probably doesn't work */
     public async getGuildWidgetImage(guildId: string, style = "shield"): Promise<string> {
-        return this.#makeRequest("GET", `guilds/${guildId}/widget.png?style=${style}`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/widget.png?style=${style}`);
     }
 
     public async getGuildWelcomeScreen(guildId: string): Promise<WelcomeScreenStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/welcome-screen`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/welcome-screen`);
     }
 
     public async modifyGuildWelcomeScreen(
@@ -770,11 +838,11 @@ export class REST {
             description?: string | null
         }
     ): Promise<WelcomeScreenStructure> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/welcome-screen`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/welcome-screen`, body);
     }
 
     public async getGuildOnboarding(guildId: string): Promise<GuildOnboardingStructure> {
-        return this.#makeRequest("GET", `guilds/${guildId}/onboarding`);
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/onboarding`);
     }
 
     public async modifyGuildOnboarding(
@@ -787,7 +855,7 @@ export class REST {
             mode: OnboardingMode
         }
     ): Promise<GuildOnboardingStructure> {
-        return this.#makeRequest("PUT", `guilds/${guildId}/onboarding`, body);
+        return this.#makeAPIRequest("PUT", `guilds/${guildId}/onboarding`, body);
     }
 
     public async modifyCurrentUserVoiceState(
@@ -798,7 +866,7 @@ export class REST {
             request_to_speak_timestamp?: string | null
         }
     ): Promise<null> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/voice-states/@me`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/voice-states/@me`, body);
     }
 
     public async modifyUserVoiceState(
@@ -809,10 +877,7 @@ export class REST {
             suppress?: boolean
         }
     ): Promise<null> {
-        return this.#makeRequest("PATCH", `guilds/${guildId}/voice-states/${userId}`, body);
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/voice-states/${userId}`, body);
     }
-
-    public setToken(token: string | undefined): void {
-        this.#token = token;
-    }
+    //#endregion Guild
 }

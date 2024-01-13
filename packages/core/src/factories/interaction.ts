@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommandOptionType, InteractionCallbackType, InteractionType, MessageFlags } from "../enums/index.js";
+import { GuildMember } from "./guild-member.js";
 import { channelFactory } from "./channel.js";
-import { GuildMember } from "./guild.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import type { ApplicationCommandType, ComponentType, Locale } from "../enums/index.js";
+import {
+    ApplicationCommandOptionType,
+    InteractionCallbackType,
+    InteractionType,
+    ComponentType,
+    MessageFlags
+} from "#enums";
+
+import type { ApplicationCommandType, Locale } from "#enums";
 import type { PartialChannel } from "./channel.js";
 import type { Client } from "../client.js";
 import type {
@@ -201,7 +208,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         });
     }
 
-    public async respond(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
+    public async showChoices(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
             data: { choices }
@@ -639,21 +646,29 @@ class NotFoundError extends Error {
     }
 }
 
-class MessageComponentData {
+export class MessageComponentData<T extends Array<string> | undefined = undefined> {
     public readonly id: string;
     public readonly type: ComponentType;
-    public readonly values: Array<string>;
+    public readonly values: T;
     public readonly resolved?: ResolvedDataStructure;
 
     public constructor(data: MessageComponentDataStructure) {
         this.id = data.custom_id;
         this.type = data.component_type;
         this.resolved = data.resolved;
-        this.values = data.values ?? [];
+        this.values = <T>data.values;
+    }
+
+    public isButton(): this is MessageComponentData {
+        return this.type === ComponentType.Button;
+    }
+
+    public isSelectMenu(): this is MessageComponentData<Array<string>> {
+        return this.type === ComponentType.StringSelect || this.type >= ComponentType.UserSelect;
     }
 }
 
-class ModalSubmitData {
+export class ModalSubmitData {
     public readonly id: string;
     public readonly components: Array<MessageComponentStructure>;
 

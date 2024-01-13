@@ -1,5 +1,3 @@
-export type * from "./typings/index.js";
-
 export type {
     GuildApplicationCommandData,
     InteractionShowModalOptions,
@@ -7,8 +5,10 @@ export type {
     InteractionReplyOptions,
     ApplicationCommandData,
     InteractionEditOptions,
+    MessageComponentData,
     AutocompleteData,
     InteractionData,
+    ModalSubmitData,
     FocusedOption
 } from "./factories/interaction.js";
 
@@ -26,13 +26,10 @@ export type {
 export type {
     ModifyMemberOptions,
     PartialGuildMember
-} from "./factories/guild.js";
+} from "./factories/guild-member.js";
 
-export * from "./enums/index.js";
-export * from "./client.js";
-export * from "./utils.js";
-
-export { GuildMember } from "./factories/guild.js";
+export { GuildMember } from "./factories/guild-member.js";
+export { Guild, NewGuild } from "./factories/guild.js";
 export { Message } from "./factories/message.js";
 
 export {
@@ -55,3 +52,9 @@ export {
     DMChannel,
     Channel
 } from "./factories/channel.js";
+
+export type * from "./typings/index.js";
+
+export * from "./enums/index.js";
+export * from "./client.js";
+export * from "./utils.js";

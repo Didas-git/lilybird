@@ -1,4 +1,4 @@
-import type { MessageType } from "../enums/message.js";
+import type { MessageType } from "#enums";
 
 export function messageTypeDeletable(msgType: MessageType): boolean {
     // https://discord.com/developers/docs/resources/channel#message-object-message-types

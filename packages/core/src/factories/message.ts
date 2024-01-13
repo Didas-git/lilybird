@@ -1,24 +1,32 @@
-import { MessageFlags } from "../enums/index.js";
-
 import { MentionChannel, channelFactory } from "./channel.js";
-import { GuildMember } from "./guild.js";
+import { GuildMember } from "./guild-member.js";
 import { User } from "./user.js";
 
-import type { MessageType } from "../enums/index.js";
+import { MessageFlags } from "#enums";
+
+import type { MessageType } from "#enums";
 import type { Channel } from "./channel.js";
 import type { Client } from "../client.js";
 
 import type {
+    RoleSubscriptionDataStructure,
+    MessageInteractionStructure,
     MessageComponentStructure,
+    MessageReferenceStructure,
+    MessageActivityStructure,
     CreateMessageStructure,
+    ResolvedDataStructure,
     GuildMessageStructure,
+    ApplicationStructure,
+    StickerItemStructure,
     EditMessageStructure,
     AttachmentStructure,
     ReactionStructure,
     StickerStructure,
     EmbedStructure,
     RoleStructure,
-    ReplyOptions
+    ReplyOptions,
+    CreateThreadFromMessageStructure
 } from "../typings/index.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -40,12 +48,12 @@ export class Message {
     public readonly channelId: string;
     public readonly content: string | undefined;
     public readonly timestamp!: Date;
-    public readonly editedTimestamp: Date | null = null;
+    public readonly editedTimestamp: Date | undefined = undefined;
     public readonly tts: boolean;
     public readonly mentionsEveryone: boolean;
     public readonly mentions!: Array<User>;
     public readonly mentionedRoles: Array<RoleStructure>;
-    public readonly mentionedChannel: Array<MentionChannel>;
+    public readonly mentionedChannels: Array<MentionChannel>;
     public readonly attachments: Array<AttachmentStructure> | undefined;
     public readonly embeds: Array<EmbedStructure> | undefined;
     public readonly reactions: Array<ReactionStructure>;
@@ -53,11 +61,20 @@ export class Message {
     public readonly pinned: boolean;
     public readonly webhookId: string | undefined;
     public readonly type: MessageType;
-
+    public readonly activity: MessageActivityStructure | undefined;
+    public readonly application: Partial<ApplicationStructure> | undefined;
+    public readonly applicationId: string | undefined;
+    public readonly messageReference: MessageReferenceStructure | undefined;
+    public readonly flags: number;
+    public readonly referencedMessage: Message | undefined;
+    public readonly interaction: MessageInteractionStructure | undefined;
+    public readonly thread: Channel | undefined;
     public readonly components: Array<MessageComponentStructure> | undefined;
-
+    public readonly stickerItems: Array<StickerItemStructure> | undefined;
     public readonly stickers: Array<StickerStructure> | undefined;
-
+    public readonly position: number | undefined;
+    public readonly roleSubscriptionData: RoleSubscriptionDataStructure | undefined;
+    public readonly resolved: ResolvedDataStructure | undefined;
     public readonly guildId: string | undefined;
     public readonly member: GuildMember | undefined;
 
@@ -69,14 +86,11 @@ export class Message {
 
         this.id = message.id;
         this.channelId = message.channel_id;
-        if (typeof message.author !== "undefined") this.author = new User(client, message.author);
         this.content = message.content;
-        if (typeof message.timestamp !== "undefined") this.timestamp = new Date(message.timestamp);
         this.tts = message.tts;
         this.mentionsEveryone = message.mention_everyone;
-        if (typeof message.mentions !== "undefined") this.mentions = message.mentions.map((mention) => new User(client, mention));
         this.mentionedRoles = message.mention_roles;
-        this.mentionedChannel = message.mention_channels?.map((channel) => new MentionChannel(client, channel)) ?? [];
+        this.mentionedChannels = message.mention_channels?.map((channel) => new MentionChannel(client, channel)) ?? [];
         this.attachments = message.attachments;
         this.embeds = message.embeds;
         this.reactions = message.reactions;
@@ -84,15 +98,28 @@ export class Message {
         this.pinned = message.pinned;
         this.webhookId = message.webhook_id;
         this.type = message.type;
-
+        this.activity = message.activity;
+        this.application = message.application;
+        this.applicationId = message.application_id;
+        this.messageReference = message.message_reference;
+        this.flags = message.flags ?? 0;
+        this.interaction = message.interaction;
         this.components = message.components;
-
+        this.stickerItems = message.sticker_items;
         this.stickers = message.stickers;
-
+        this.position = message.position;
+        this.roleSubscriptionData = message.role_subscription_data;
+        this.resolved = message.resolved;
         this.guildId = message.guild_id;
 
-        if (message.edited_timestamp != null) this.editedTimestamp = new Date(message.edited_timestamp);
+        if (typeof message.author !== "undefined") this.author = new User(client, message.author);
+        if (typeof message.timestamp !== "undefined") this.timestamp = new Date(message.timestamp);
+        if (typeof message.mentions !== "undefined") this.mentions = message.mentions.map((mention) => new User(client, mention));
         if (typeof message.member !== "undefined") this.member = new GuildMember(client, <never>message.member);
+        if (typeof message.referenced_message !== "undefined") this.referencedMessage = new Message(client, <never>message.referenced_message);
+        if (typeof message.thread !== "undefined") this.thread = channelFactory(client, message.thread);
+
+        if (message.edited_timestamp != null) this.editedTimestamp = new Date(message.edited_timestamp);
     }
 
     public async reply(content: string, options?: MessageReplyOptions): Promise<Message>;
@@ -173,6 +200,24 @@ export class Message {
 
     public async delete(reason?: string): Promise<void> {
         await this.client.rest.deleteMessage(this.channelId, this.id, reason);
+    }
+
+    public async crosspost(): Promise<void> {
+        await this.client.rest.crosspostMessage(this.channelId, this.id);
+    }
+
+    public async pin(): Promise<void> {
+        await this.client.rest.pinMessage(this.channelId, this.id);
+    }
+
+    public async unpin(): Promise<void> {
+        await this.client.rest.unpinMessage(this.channelId, this.id);
+    }
+
+    public async startThread(name: string): Promise<Channel>;
+    public async startThread(options: string | CreateThreadFromMessageStructure): Promise<Channel> {
+        if (typeof options === "string") options = { name: options };
+        return channelFactory(this.client, await this.client.rest.startThreadFromMessage(this.channelId, this.id, options));
     }
 
     public async fetchChannel(): Promise<Channel> {

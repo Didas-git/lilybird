@@ -1,16 +1,19 @@
 import type {
+    GuildScheduleEventStructure,
+    PresenceUpdateEventFields,
+    StageInstanceStructure,
     WelcomeScreenStructure,
+    VoiceStateStructure,
     StickerStructure,
+    ChannelStructure,
     EmojiStructure,
     UserStructure,
-    RoleStructure,
-    OAuthScopes
-} from "./index.js";
+    RoleStructure
+} from "../index.js";
 
 import type {
     DefaultMessageNotificationLevel,
     ExplicitContentFilterLevel,
-    IntegrationExpireBehavior,
     SystemChannelFlags,
     VerificationLevel,
     GuildMemberFlags,
@@ -18,11 +21,26 @@ import type {
     PremiumTier,
     MFALevel,
     Locale
-} from "../enums/index.js";
+} from "#enums";
 
 export interface UnavailableGuildStructure {
     id: string;
     unavailable?: true;
+}
+
+export interface NewGuildStructure extends GuildStructure {
+    /** ISO8601 Timestamp */
+    joined_at: string;
+    large: boolean;
+    unavailable?: boolean;
+    member_count: number;
+    voice_states: Array<Partial<VoiceStateStructure>>;
+    members: Array<GuildMemberStructure>;
+    channels: Array<ChannelStructure>;
+    threads: Array<ChannelStructure>;
+    presences: Array<Partial<PresenceUpdateEventFields>>;
+    stage_instances: Array<StageInstanceStructure>;
+    guild_scheduled_events: Array<GuildScheduleEventStructure>;
 }
 
 export interface GuildStructure {
@@ -119,35 +137,3 @@ export interface GuildMemberStructure {
     communication_disabled_until?: string | null;
 }
 
-export interface IntegrationStructure {
-    id: string;
-    name: string;
-    type: string;
-    enabled: boolean;
-    syncing?: boolean;
-    role_id?: string;
-    enable_emoticons?: boolean;
-    expire_behavior?: IntegrationExpireBehavior;
-    expire_grace_period?: number;
-    user?: UserStructure;
-    account: IntegrationAccountStructure;
-    /** ISO8601 Timestamp */
-    synced_at?: string;
-    subscriber_count?: number;
-    revoked?: boolean;
-    application?: IntegrationApplicationStructure;
-    scopes?: Array<OAuthScopes>;
-}
-
-export interface IntegrationAccountStructure {
-    id: string;
-    name: string;
-}
-
-export interface IntegrationApplicationStructure {
-    id: string;
-    name: string;
-    icon: string | null;
-    description: string;
-    bot?: UserStructure;
-}

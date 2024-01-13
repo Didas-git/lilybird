@@ -19,7 +19,7 @@ import type {
     ChannelType,
     ButtonStyle,
     Locale
-} from "../../enums/index.js";
+} from "#enums";
 
 interface BaseInteractionStructure {
     id: string;

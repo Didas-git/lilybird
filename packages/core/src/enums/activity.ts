@@ -1,4 +1,4 @@
-export enum ActivityType {
+export const enum ActivityType {
     Game,
     Streaming,
     Listening,
@@ -7,7 +7,7 @@ export enum ActivityType {
     Competing
 }
 
-export enum ActivityFlags {
+export const enum ActivityFlags {
     INSTANCE = 1,
     JOIN = 2,
     SPECTATE = 4,

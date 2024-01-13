@@ -1,4 +1,4 @@
-export enum UserFlags {
+export const enum UserFlags {
     STAFF = 1,
     PARTNER = 2,
     HYPESQUAD = 4,
@@ -17,7 +17,7 @@ export enum UserFlags {
 }
 
 /** Nitro Level */
-export enum PremiumType {
+export const enum PremiumType {
     None,
     NitroClassic,
     Nitro,

@@ -1,2 +1,16 @@
+export type * from "./stage-instance.js";
+export type * from "./gateway-events.js";
 export type * from "./interaction.js";
-export type * from "./gateway-bot.js";
+export type * from "./permissions.js";
+export type * from "./application.js";
+export type * from "./activity.js";
+export type * from "./channel.js";
+export type * from "./message.js";
+export type * from "./sticker.js";
+export type * from "./errors.js";
+export type * from "./invite.js";
+export type * from "./oauth2.js";
+export type * from "./emoji.js";
+export type * from "./guild.js";
+export type * from "./voice.js";
+export type * from "./team.js";

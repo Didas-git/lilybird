@@ -1,4 +1,4 @@
-export enum ApplicationFlags {
+export const enum ApplicationFlags {
     APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE = 64,
     GATEWAY_PRESENCE = 4096,
     GATEWAY_PRESENCE_LIMITED = 8192,

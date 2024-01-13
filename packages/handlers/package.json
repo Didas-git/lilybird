@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -15,8 +15,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.0.15",
-    "node": ">=21.0.0"
+    "bun": ">=1.0.22"
   },
   "files": [
     "./dist"
@@ -48,7 +47,7 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.4.2"
+    "lilybird": "^0.5.0"
   },
   "devDependencies": {
     "eslint": "^8.55.0",

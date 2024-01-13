@@ -1,6 +1,6 @@
 import type { AllowedMentionsStructure, AttachmentStructure, MessageComponentStructure, EmbedStructure, LilybirdAttachment } from "../index.js";
 
-import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "../../enums/index.js";
+import type { ApplicationCommandOptionType, InteractionCallbackType, ApplicationCommandType, ChannelType, Locale } from "#enums";
 
 export interface POSTApplicationCommandStructure extends LocalizationsShared {
     name: string;
@@ -167,3 +167,5 @@ export interface ModalCallbackDataStructure {
     title: string;
     components: Array<MessageComponentStructure>;
 }
+
+export type ApplicationCommandStructure = LocalizationGlobalApplicationCommandStructure | LocalizationGuildApplicationCommandStructure;

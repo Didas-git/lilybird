@@ -5,5 +5,5 @@ export interface MessageCommand {
     alias?: Array<string>;
     description?: string;
     enabled?: boolean;
-    run: (message: Message, args: Array<string>) => Awaitable<unknown>;
+    run: (message: Message, args: Array<string>, meta: { name: string, alias: string }) => Awaitable<unknown>;
 }

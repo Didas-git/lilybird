@@ -1,4 +1,4 @@
-import { GatewayOpCode } from "../enums/index.js";
+import { GatewayOpCode } from "#enums";
 //@ts-expect-error This exists...
 import { setTimeout } from "node:timers/promises";
 
@@ -6,7 +6,7 @@ import type {
     UpdatePresenceStructure,
     GetGatewayBotResponse,
     ReceiveDispatchEvent,
-    GetGatewayBot,
+    UpdatePresence,
     Identify,
     Payload,
     Resume
@@ -76,7 +76,7 @@ export class WebSocketManager {
 
             if (!response.ok) throw new Error("An invalid Token was provided");
 
-            const data: GetGatewayBot = await response.json();
+            const data: GetGatewayBotResponse = await response.json();
 
             data.url = `${data.url}/?v=10&encoding=json`;
             this.#gatewayInfo = data;
@@ -147,7 +147,7 @@ export class WebSocketManager {
 
     #sendHeartbeatPayload(): void {
         this.#gotACK = false;
-        this.#ws.send(`{ "op": ${GatewayOpCode.Heartbeat}, "d": ${this.#sequenceNumber}, "s": null, "t": null }`);
+        this.#ws.send(`{ "op": 1, "d": ${this.#sequenceNumber}, "s": null, "t": null }`);
     }
 
     #identify(): void {
@@ -194,6 +194,7 @@ export class WebSocketManager {
         this.#timer = setInterval(async () => {
             if (!this.#gotACK) {
                 this.#debug?.("MISSING_ACK");
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 await setTimeout(500);
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (!this.#gotACK) {
@@ -234,6 +235,17 @@ export class WebSocketManager {
             const start = performance.now();
             this.#ws.ping();
         });
+    }
+
+    public updatePresence(presence: UpdatePresenceStructure): void {
+        const options: UpdatePresence = {
+            op: GatewayOpCode.PresenceUpdate,
+            d: presence,
+            s: null,
+            t: null
+        };
+
+        this.#ws.send(JSON.stringify(options));
     }
 
     public set options(options: Partial<ManagerOptions>) {

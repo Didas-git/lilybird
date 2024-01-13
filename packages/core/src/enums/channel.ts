@@ -1,4 +1,4 @@
-export enum ChannelType {
+export const enum ChannelType {
     GUILD_TEXT,
     DM,
     GUILD_VOICE,
@@ -14,34 +14,34 @@ export enum ChannelType {
     GUILD_MEDIA
 }
 
-export enum OverwriteType {
+export const enum OverwriteType {
     ROLE,
     MEMBER
 }
 
-export enum VideoQualityMode {
+export const enum VideoQualityMode {
     AUTO = 1,
     FULL
 }
 
-export enum ChannelFlags {
+export const enum ChannelFlags {
     PINNED = 2,
     REQUIRE_TAG = 16,
     HIDE_MEDIA_DOWNLOAD_OPTIONS = 32768
 }
 
-export enum SortOrderType {
+export const enum SortOrderType {
     LATEST_ACTIVITY,
     CREATION_DATE
 }
 
-export enum ForumLayoutType {
+export const enum ForumLayoutType {
     NOT_SET,
     LIST_VIEW,
     GALLERY_VIEW
 }
 
-export enum AllowedMentionType {
+export const enum AllowedMentionType {
     RoleMentions = "roles",
     UserMentions = "users",
     EveryoneMentions = "everyone"

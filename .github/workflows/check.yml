@@ -16,25 +16,5 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-      - name: Install Dependencies
-        run: bun i
-      # If only bun had `-ws` or equivalent...
-      - name: Build core
-        run: |
-          cd packages/core
-          bun run build
-          cd ../..
-      # Pain
-      - name: Build jsx
-        run: |
-          cd packages/jsx
-          bun run build
-          cd ../..
-      # Can we even automate this?
-      - name: Build handlers
-        run: |
-          cd packages/handlers
-          bun run build
-          cd ../..
-      - name: Run Eslint
-        run: bun run check
+      - name: Run build script
+        run: sh ./build.sh

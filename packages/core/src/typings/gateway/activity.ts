@@ -1,4 +1,6 @@
-import type { ActivityFlags, ActivityType } from "../enums/index.js";
+import type { ActivityFlags, ActivityType } from "#enums";
+
+export type BotActivityStructure = Pick<ActivityStructure, "name" | "type" | "state" | "url">;
 
 export interface ActivityStructure {
     name: string;
