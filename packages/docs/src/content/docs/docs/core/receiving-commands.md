@@ -67,7 +67,7 @@ await createClient({
     async interactionCreate(interaction) {
       if (interaction.isAutocompleteInteraction()) {
         if (interaction.data.getFocused().name === "some-command") {
-          await interaction.respond([
+          await interaction.showChoices([
             { name: "first", value: 1 },
             { name: "second", value: 2 }
           ]);

@@ -34,12 +34,14 @@ await createClient({
 ```
 
 ```tsx title="commands/ping.tsx"
-import { ApplicationCommand } from "@lilybird/jsx";
 import { SlashCommand } from "@lilybird/handlers";
 
 export default {
   post: "GLOBAL",
-  data: <ApplicationCommand name="ping" description="pong" />,
+  data: {
+    name: "ping",
+    description: "pong"
+  },
   run: async (interaction) => {
     const { ws, rest } = await interaction.client.ping();
 

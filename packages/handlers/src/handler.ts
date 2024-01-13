@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join } from "node:path";
 
 import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command.js";
 import type { MessageCommand } from "./message-commands.js";
