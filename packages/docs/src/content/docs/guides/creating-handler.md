@@ -35,8 +35,7 @@ import type { ClientEventListeners } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
   const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
-  const files = glob.scan(dir);
-  const path = join(import.meta.dir, dir);
+  const files = glob.scan(directory);
 }
 ```
 
@@ -47,11 +46,10 @@ import type { ClientEventListeners } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
   const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
-  const files = glob.scan(dir);
-  const path = join(import.meta.dir, dir);
+  const files = glob.scan(directory);
 
 +  for await (const fileName of files) {
-+    const event: Event = (await import(join(path, fileName))).default;
++    const event: Event = (await import(join(directory, fileName))).default;
 +    if (typeof event === "undefined") continue;
 +  }
 }
@@ -64,13 +62,12 @@ import type { ClientEventListeners } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
   const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
-  const files = glob.scan(dir);
-  const path = join(import.meta.dir, dir);
+  const files = glob.scan(directory);
 
 +  const listeners: ClientEventListeners = {};
 
   for await (const fileName of files) {
-    const event: Event = (await import(join(path, fileName))).default;
+    const event: Event = (await import(join(directory, fileName))).default;
     if (typeof event === "undefined") continue;
   }
 
@@ -133,14 +130,13 @@ import type { ClientEventListeners, REST } from "lilybird";
 
 function createEventListeners(directory: string): ClientEventListeners {
   const glob = new Bun.Glob("**/*.{ts,tsx,js,jsx}");
-  const files = glob.scan(dir);
-  const path = join(import.meta.dir, dir);
+  const files = glob.scan(directory);
 
 -  const listeners: ClientEventListeners = {};
 
   for await (const fileName of files) {
--    const event: Event = (await import(join(path, fileName))).default;
-+    const command: SlashCommand = (await import(join(path, fileName))).default;
+-    const event: Event = (await import(join(directory, fileName))).default;
++    const command: SlashCommand = (await import(join(directory, fileName))).default;
     if (typeof command === "undefined") continue;
 
 -    listeners[event.event] = event.run;
