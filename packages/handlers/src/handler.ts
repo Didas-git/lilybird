@@ -53,13 +53,12 @@ export class Handler {
         if (typeof dir === "undefined") return false;
 
         const files = this.#globMatcher.scan(dir);
-        const path = join(import.meta.dir, dir);
 
         for await (const fileName of files) {
             if (fileName.endsWith(".d.ts")) continue;
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
-            const command: SlashCommand = (await import(join(path, fileName))).default;
+            const command: SlashCommand = (await import(join(dir, fileName))).default;
             if (typeof command === "undefined") continue;
 
             if (fileName.startsWith("/guild") || command.post !== "GLOBAL") this.guildSlashCommands.set(command.data.name, <GuildSlashCommand>command);
@@ -73,13 +72,12 @@ export class Handler {
         if (typeof dir === "undefined") return false;
 
         const files = this.#globMatcher.scan(dir);
-        const path = join(import.meta.dir, dir);
 
         for await (const fileName of files) {
             if (fileName.endsWith(".d.ts")) continue;
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
-            const event: Event = (await import(join(path, fileName))).default;
+            const event: Event = (await import(join(dir, fileName))).default;
             if (typeof event === "undefined") continue;
 
             this.events.set(event.event, event);
@@ -92,13 +90,12 @@ export class Handler {
         if (typeof dir === "undefined") return false;
 
         const files = this.#globMatcher.scan(dir);
-        const path = join(import.meta.dir, dir);
 
         for await (const fileName of files) {
             if (fileName.endsWith(".d.ts")) continue;
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
-            const command: MessageCommand = (await import(join(path, fileName))).default;
+            const command: MessageCommand = (await import(join(dir, fileName))).default;
             if (typeof command === "undefined") continue;
 
             if (typeof command.alias !== "undefined" && command.alias.length > 0) {
