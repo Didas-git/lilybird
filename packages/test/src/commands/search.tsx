@@ -88,7 +88,7 @@ export default {
 
         populateCache(body.items);
 
-        await interaction.respond(body.items.map((val) => ({ name: val.title, value: val.cacheId })));
+        await interaction.showChoices(body.items.map((val) => ({ name: val.title, value: val.cacheId })));
     }
 } satisfies SlashCommand;
 
