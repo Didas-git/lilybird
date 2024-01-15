@@ -45,6 +45,7 @@ import type {
     IntegrationStructure,
     GuildWidgetStructure,
     ApplicationStructure,
+    StickerPackStructure,
     AttachmentStructure,
     DMChannelStructure,
     LilybirdAttachment,
@@ -52,12 +53,15 @@ import type {
     MessageStructure,
     ChannelStructure,
     APIRoleStructure,
+    StickerStructure,
     InviteStructure,
     GuildStructure,
+    EmojiStructure,
     UserStructure,
     RoleStructure,
     ErrorMessage,
-    BanStructure
+    BanStructure,
+    ImageData
 } from "../typings/index.js";
 
 export class RestError extends Error {
@@ -87,13 +91,21 @@ export class REST {
         this.#buildHeaders();
     }
 
-    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>): Promise<T> {
+    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data: FormData, reason?: string): Promise<T>;
+    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>): Promise<T>;
+    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any> | FormData, re?: string): Promise<T> {
         const opts: RequestInit = {
             method,
             headers: this.#headers
         };
 
-        if (typeof data !== "undefined") {
+        if (data instanceof FormData) {
+            opts.body = data;
+            if (typeof re !== "undefined") {
+                // @ts-expect-error No comments
+                opts.headers["X-Audit-Log-Reason"] = re;
+            }
+        } else if (typeof data !== "undefined") {
             const { files, reason, ...obj } = <{ reason: string, files: Array<LilybirdAttachment>, attachments: Array<unknown> | undefined }>data;
 
             if (typeof files !== "undefined" && files.length > 0) {
@@ -528,58 +540,28 @@ export class REST {
     }
 
     //#endregion Channel
-    //#region User
-    public async getCurrentUser(): Promise<UserStructure> {
-        return this.#makeAPIRequest("GET", "users/@me");
+    //#region Emoji
+    public async listGuildEmojis(guildId: string): Promise<Array<EmojiStructure>> {
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/emojis`);
     }
 
-    public async getUser(userId: string): Promise<UserStructure> {
-        return this.#makeAPIRequest("GET", `users/${userId}`);
+    public async getGuildEmoji(guildId: string, emojiId: string): Promise<EmojiStructure> {
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/emojis/${emojiId}`);
     }
 
-    public async modifyCurrentUser(body?: { username?: string, avatar?: /** Image Data */ string }): Promise<UserStructure> {
-        return this.#makeAPIRequest("PATCH", "users/@me", body);
+    public async createGuildEmoji(guildId: string, params: { name: string, image: ImageData, roles: Array<string>, reason?: string }): Promise<EmojiStructure> {
+        return this.#makeAPIRequest("POST", `guilds/${guildId}/emojis`, params);
     }
 
-    public async getCurrentUserGuilds(params: {
-        before: string,
-        after: string,
-        limit: string,
-        withCounts: boolean
-    }): Promise<Array<Partial<GuildStructure>>> {
-        let url = "users/@me/guilds?";
-        if (typeof params.withCounts !== "undefined")
-            url += `with_counts=${params.withCounts}&`;
-
-        if (typeof params.before !== "undefined")
-            url += `before=${params.before}&`;
-
-        if (typeof params.after !== "undefined")
-            url += `after=${params.after}&`;
-
-        if (typeof params.limit !== "undefined")
-            url += `limit=${params.limit}`;
-
-        return this.#makeAPIRequest("GET", url);
+    public async modifyGuildEmoji(guildId: string, emojiId: string, params: { name?: string, roles?: Array<string> | null, reason: string }): Promise<EmojiStructure> {
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/emojis/${emojiId}`, params);
     }
 
-    public async getCurrentUserGuildMember(guildId: string): Promise<GuildMemberStructure> {
-        return this.#makeAPIRequest("GET", `users/@me/guilds/${guildId}/member`);
+    public async deleteGuildEmoji(guildId: string, emojiId: string, reason?: string): Promise<null> {
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}/emojis/${emojiId}`, { reason });
     }
 
-    public async leaveGuild(guildId: string): Promise<null> {
-        return this.#makeAPIRequest("DELETE", `users/@me/guilds/${guildId}`);
-    }
-
-    public async createDM(userId: string): Promise<DMChannelStructure> {
-        return this.#makeAPIRequest("POST", "users/@me/channels", { recipient_id: userId });
-    }
-
-    public async createGroupDM(tokens: Array<string>, nicks: Record<string, string>): Promise<DMChannelStructure> {
-        return this.#makeAPIRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
-    }
-
-    //#endregion User
+    //#endregion Emoji
     //#region Guild
     public async createGuild(body: CreateGuildStructure): Promise<GuildStructure> {
         return this.#makeAPIRequest("POST", "guilds", body);
@@ -878,5 +860,102 @@ export class REST {
     ): Promise<null> {
         return this.#makeAPIRequest("PATCH", `guilds/${guildId}/voice-states/${userId}`, body);
     }
+
     //#endregion Guild
+    //#region Invite
+    public async getInvite(inviteCode: string): Promise<InviteStructure> {
+        return this.#makeAPIRequest("GET", `invites/${inviteCode}`);
+    }
+
+    public async deleteInvite(inviteCode: string, reason?: string): Promise<InviteStructure> {
+        return this.#makeAPIRequest("DELETE", `invites/${inviteCode}`, { reason });
+    }
+
+    //#endregion Invite
+    //#region Sticker
+    public async getSticker(stickerId: string): Promise<StickerStructure> {
+        return this.#makeAPIRequest("GET", `stickers/${stickerId}`);
+    }
+
+    public async listStickerPacks(): Promise<{ sticker_packs: Array<StickerPackStructure> }> {
+        return this.#makeAPIRequest("GET", "sticker-packs");
+    }
+
+    public async listGuildStickers(guildId: string): Promise<Array<StickerStructure>> {
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/stickers`);
+    }
+
+    public async getGuildSticker(guildId: string, stickerId: string): Promise<StickerStructure> {
+        return this.#makeAPIRequest("GET", `guilds/${guildId}/stickers/${stickerId}`);
+    }
+
+    public async createGuildSticker(guildId: string, stickerId: string, params: { name: string, description: string, tags: string, file: Blob, reason?: string }): Promise<StickerStructure> {
+        const form = new FormData();
+        const { reason, ...obj }: { reason?: string } & Record<string, string | Blob> = params;
+        for (const key in obj) form.append(key, obj[key]);
+
+        return this.#makeAPIRequest("POST", `guilds/${guildId}/stickers/${stickerId}`, form, reason);
+    }
+
+    public async modifyGuildSticker(guildId: string, stickerId: string, params: { name?: string, description?: string, tags?: string, reason?: string }): Promise<StickerStructure> {
+        return this.#makeAPIRequest("PATCH", `guilds/${guildId}/stickers/${stickerId}`, params);
+    }
+
+    public async deleteGuildSticker(guildId: string, stickerId: string, reason?: string): Promise<null> {
+        return this.#makeAPIRequest("DELETE", `guilds/${guildId}/stickers/${stickerId}`, { reason });
+    }
+
+    //#endregion Sticker
+    //#region User
+    public async getCurrentUser(): Promise<UserStructure> {
+        return this.#makeAPIRequest("GET", "users/@me");
+    }
+
+    public async getUser(userId: string): Promise<UserStructure> {
+        return this.#makeAPIRequest("GET", `users/${userId}`);
+    }
+
+    public async modifyCurrentUser(body?: { username?: string, avatar?: /** Image Data */ string }): Promise<UserStructure> {
+        return this.#makeAPIRequest("PATCH", "users/@me", body);
+    }
+
+    public async getCurrentUserGuilds(params: {
+        before: string,
+        after: string,
+        limit: string,
+        withCounts: boolean
+    }): Promise<Array<Partial<GuildStructure>>> {
+        let url = "users/@me/guilds?";
+        if (typeof params.withCounts !== "undefined")
+            url += `with_counts=${params.withCounts}&`;
+
+        if (typeof params.before !== "undefined")
+            url += `before=${params.before}&`;
+
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.#makeAPIRequest("GET", url);
+    }
+
+    public async getCurrentUserGuildMember(guildId: string): Promise<GuildMemberStructure> {
+        return this.#makeAPIRequest("GET", `users/@me/guilds/${guildId}/member`);
+    }
+
+    public async leaveGuild(guildId: string): Promise<null> {
+        return this.#makeAPIRequest("DELETE", `users/@me/guilds/${guildId}`);
+    }
+
+    public async createDM(userId: string): Promise<DMChannelStructure> {
+        return this.#makeAPIRequest("POST", "users/@me/channels", { recipient_id: userId });
+    }
+
+    public async createGroupDM(tokens: Array<string>, nicks: Record<string, string>): Promise<DMChannelStructure> {
+        return this.#makeAPIRequest("POST", "users/@me/channels", { access_tokens: tokens, nicks });
+    }
+
+    //#endregion User
 }
