@@ -1,3 +1,6 @@
+//@ts-expect-error We don't want the package.json being added to dist
+import { version } from "../../package.json" with { type: "json" };
+
 import type { AuditLogEvent, MFALevel, OnboardingMode } from "#enums";
 
 import type {
@@ -56,10 +59,6 @@ import type {
     ErrorMessage,
     BanStructure
 } from "../typings/index.js";
-
-// There is no other way to do this...
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-const { version } = <{ version: string }>require("../../package.json");
 
 export class RestError extends Error {
     public readonly code: number;

@@ -17,7 +17,6 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
         "useUnknownInCatchVariables": true,
-        "resolveJsonModule": true,
         "declaration": true,
         "declarationMap": true,
         "noEmitOnError": true,
