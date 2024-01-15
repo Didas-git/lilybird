@@ -9,6 +9,7 @@ import type { Channel } from "./channel.js";
 import type { Client } from "../client.js";
 
 import type {
+    CreateThreadFromMessageStructure,
     RoleSubscriptionDataStructure,
     MessageInteractionStructure,
     MessageComponentStructure,
@@ -25,8 +26,7 @@ import type {
     StickerStructure,
     EmbedStructure,
     RoleStructure,
-    ReplyOptions,
-    CreateThreadFromMessageStructure
+    ReplyOptions
 } from "../typings/index.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -116,9 +116,9 @@ export class Message {
         if (typeof message.timestamp !== "undefined") this.timestamp = new Date(message.timestamp);
         if (typeof message.mentions !== "undefined") this.mentions = message.mentions.map((mention) => new User(client, mention));
         if (typeof message.member !== "undefined") this.member = new GuildMember(client, <never>message.member);
-        if (typeof message.referenced_message !== "undefined") this.referencedMessage = new Message(client, <never>message.referenced_message);
         if (typeof message.thread !== "undefined") this.thread = channelFactory(client, message.thread);
 
+        if (message.referenced_message != null) this.referencedMessage = new Message(client, message.referenced_message);
         if (message.edited_timestamp != null) this.editedTimestamp = new Date(message.edited_timestamp);
     }
 
