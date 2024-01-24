@@ -76,6 +76,9 @@ export class RestError extends Error {
     }
 }
 
+// I ran out of ideas for naming this thing
+type ExtractedData = ({ data: { attachments: Array<unknown> | undefined } } | { attachments: Array<unknown> | undefined }) & { reason?: string };
+
 export class REST {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly BaseURL = "https://discord.com/api/v10/";
@@ -92,35 +95,42 @@ export class REST {
     }
 
     async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data: FormData, reason?: string): Promise<T>;
-    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>): Promise<T>;
-    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any> | FormData, re?: string): Promise<T> {
+    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>, files?: Array<LilybirdAttachment>): Promise<T>;
+    async #makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any> | FormData, filesOrReason?: string | Array<LilybirdAttachment>): Promise<T> {
         const opts: RequestInit = {
             method,
-            headers: this.#headers
+            headers: { ...this.#headers }
         };
 
         if (data instanceof FormData) {
             opts.body = data;
-            if (typeof re !== "undefined") {
+            if (typeof filesOrReason !== "undefined") {
                 // @ts-expect-error No comments
-                opts.headers["X-Audit-Log-Reason"] = re;
+                opts.headers["X-Audit-Log-Reason"] = filesOrReason;
             }
         } else if (typeof data !== "undefined") {
-            const { files, reason, ...obj } = <{ reason: string, files: Array<LilybirdAttachment>, attachments: Array<unknown> | undefined }>data;
+            let reason: string | undefined;
+            let obj: ExtractedData;
+            if ("reason" in data) {
+                const { reason: rReason, ...oObj } = data as ExtractedData;
+                reason = rReason;
+                obj = oObj;
+            } else obj = data as never;
 
-            if (typeof files !== "undefined" && files.length > 0) {
+            if (typeof filesOrReason !== "undefined" && typeof filesOrReason !== "string" && filesOrReason.length > 0) {
                 const temp: Array<Partial<AttachmentStructure>> = [];
                 const form = new FormData();
 
-                for (let i = 0, { length } = files; i < length; i++) {
-                    form.append(`files[${i}]`, files[i].file, files[i].name);
+                for (let i = 0, { length } = filesOrReason; i < length; i++) {
+                    form.append(`files[${i}]`, filesOrReason[i].file, filesOrReason[i].name);
                     temp.push({
                         id: i,
-                        filename: files[i].name
+                        filename: filesOrReason[i].name
                     });
                 }
 
-                obj.attachments = [...temp, ...obj.attachments ?? []];
+                if ("data" in obj) obj.data.attachments = [...temp, ...obj.data.attachments ?? []];
+                else obj.attachments = [...temp, ...obj.attachments ?? []];
                 form.append("payload_json", JSON.stringify(obj));
 
                 opts.body = form;
@@ -247,32 +257,32 @@ export class REST {
 
     //#endregion Application Commands
     //#region Interactions
-    public async createInteractionResponse(interactionId: string, interactionToken: string, body: InteractionResponseStructure): Promise<null> {
-        return this.#makeAPIRequest("POST", `interactions/${interactionId}/${interactionToken}/callback`, body);
+    public async createInteractionResponse(interactionId: string, interactionToken: string, body: InteractionResponseStructure, files?: Array<LilybirdAttachment>): Promise<null> {
+        return this.#makeAPIRequest("POST", `interactions/${interactionId}/${interactionToken}/callback`, body, files);
     }
 
     public async getOriginalInteractionResponse(clientId: string, interactionToken: string): Promise<InteractionResponseStructure> {
         return this.#makeAPIRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/@original`);
     }
 
-    public async editOriginalInteractionResponse(clientId: string, interactionToken: string, body: EditWebhookStructure): Promise<InteractionResponseStructure> {
-        return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/@original`, body);
+    public async editOriginalInteractionResponse(clientId: string, interactionToken: string, body: EditWebhookStructure, files?: Array<LilybirdAttachment>): Promise<InteractionResponseStructure> {
+        return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/@original`, body, files);
     }
 
     public async deleteOriginalInteractionResponse(clientId: string, interactionToken: string): Promise<null> {
         return this.#makeAPIRequest("DELETE", `webhooks/${clientId}/${interactionToken}/messages/@original`);
     }
 
-    public async createFollowupMessage(clientId: string, interactionToken: string, body: ExecuteWebhookStructure): Promise<MessageStructure> {
-        return this.#makeAPIRequest("POST", `webhooks/${clientId}/${interactionToken}`, body);
+    public async createFollowupMessage(clientId: string, interactionToken: string, body: ExecuteWebhookStructure, files?: Array<LilybirdAttachment>): Promise<MessageStructure> {
+        return this.#makeAPIRequest("POST", `webhooks/${clientId}/${interactionToken}`, body, files);
     }
 
     public async getFollowupMessage(clientId: string, interactionToken: string, messageId: string): Promise<InteractionResponseStructure> {
         return this.#makeAPIRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
     }
 
-    public async editFollowupMessage(clientId: string, interactionToken: string, messageId: string, body: EditWebhookStructure): Promise<InteractionResponseStructure> {
-        return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`, body);
+    public async editFollowupMessage(clientId: string, interactionToken: string, messageId: string, body: EditWebhookStructure, files?: Array<LilybirdAttachment>): Promise<InteractionResponseStructure> {
+        return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`, body, files);
     }
 
     public async deleteFollowupMessage(clientId: string, interactionToken: string, messageId: string): Promise<null> {
@@ -352,8 +362,8 @@ export class REST {
         return this.#makeAPIRequest("GET", `channels/${channelId}/messages/${messageId}`);
     }
 
-    public async createMessage(channelId: string, body: CreateMessageStructure): Promise<MessageStructure> {
-        return this.#makeAPIRequest("POST", `channels/${channelId}/messages`, body);
+    public async createMessage(channelId: string, body: CreateMessageStructure, files?: Array<LilybirdAttachment>): Promise<MessageStructure> {
+        return this.#makeAPIRequest("POST", `channels/${channelId}/messages`, body, files);
     }
 
     public async crosspostMessage(channelId: string, messageId: string): Promise<MessageStructure> {
@@ -397,8 +407,8 @@ export class REST {
         return this.#makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
     }
 
-    public async editMessage(channelId: string, messageId: string, params: EditMessageStructure): Promise<MessageStructure> {
-        return this.#makeAPIRequest("PATCH", `channels/${channelId}/messages/${messageId}`, params);
+    public async editMessage(channelId: string, messageId: string, body: EditMessageStructure, files?: Array<LilybirdAttachment>): Promise<MessageStructure> {
+        return this.#makeAPIRequest("PATCH", `channels/${channelId}/messages/${messageId}`, body, files);
     }
 
     public async deleteMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
@@ -471,8 +481,8 @@ export class REST {
         return this.#makeAPIRequest("POST", `channels/${channelId}/threads`, body);
     }
 
-    public async startThreadInForumOrMediaChannel(channelId: string, body: CreateForumMediaThreadStructure): Promise<ChannelStructure> {
-        return this.#makeAPIRequest("POST", `channels/${channelId}/threads`, body);
+    public async startThreadInForumOrMediaChannel(channelId: string, body: CreateForumMediaThreadStructure, files?: Array<LilybirdAttachment>): Promise<ChannelStructure> {
+        return this.#makeAPIRequest("POST", `channels/${channelId}/threads`, body, files);
     }
 
     public async joinThread(channelId: string): Promise<null> {

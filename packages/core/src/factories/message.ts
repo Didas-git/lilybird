@@ -22,6 +22,7 @@ import type {
     StickerItemStructure,
     EditMessageStructure,
     AttachmentStructure,
+    LilybirdAttachment,
     ReactionStructure,
     StickerStructure,
     EmbedStructure,
@@ -127,25 +128,28 @@ export class Message {
     public async reply(content: string | MessageReplyOptions, options?: MessageReplyOptions): Promise<Message> {
         let flags = 0;
         let data: CreateMessageStructure;
+        let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, files: f, ...obj } = options;
 
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
+                files = f;
                 data = {
                     ...obj,
                     content
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, files: f, ...obj } = content;
 
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
+            files = f;
             data = obj;
         }
 
@@ -157,7 +161,7 @@ export class Message {
                 message_reference: {
                     message_id: this.id
                 }
-            })
+            }, files)
         );
     }
 
@@ -166,13 +170,15 @@ export class Message {
     public async edit(content: string | MessageEditOptions, options?: MessageEditOptions): Promise<Message> {
         let flags = 0;
         let data: EditMessageStructure;
+        let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, ...obj } = options;
+                const { suppressEmbeds, files: f, ...obj } = options;
 
                 if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
+                files = f;
                 data = <never>{
                     ...obj,
                     content,
@@ -181,17 +187,18 @@ export class Message {
             } else
                 data = { content, flags };
         } else {
-            const { suppressEmbeds, ...obj } = content;
+            const { suppressEmbeds, files: f, ...obj } = content;
 
             if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
+            files = f;
             data = <never>{
                 ...obj,
                 flags
             };
         }
 
-        return new Message(this.client, await this.client.rest.editMessage(this.channelId, this.id, data));
+        return new Message(this.client, await this.client.rest.editMessage(this.channelId, this.id, data, files));
     }
 
     public async react(emoji: string, isCustomEmoji = false): Promise<void> {
