@@ -28,6 +28,7 @@ import type {
     EntitlementStructure,
     InteractionStructure,
     ActionRowStructure,
+    LilybirdAttachment,
     ReplyOptions
 } from "../typings/index.js";
 
@@ -111,14 +112,16 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public async reply(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
         let data: InteractionCallbackData;
+        let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, ...obj } = options;
+                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
+                files = f;
                 data = {
                     ...obj,
                     content,
@@ -131,11 +134,12 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, ...obj } = content;
+            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
+            files = f;
             data = {
                 ...obj,
                 flags
@@ -145,7 +149,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
             data
-        });
+        }, files);
     }
 
     public async deferReply(ephemeral = false): Promise<void> {
@@ -171,14 +175,16 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public async updateComponents(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
         let data: InteractionCallbackData;
+        let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, ...obj } = options;
+                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
+                files = f;
                 data = {
                     ...obj,
                     content,
@@ -191,11 +197,12 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, ...obj } = content;
+            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
+            files = f;
             data = {
                 ...obj,
                 flags
@@ -205,7 +212,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.UPDATE_MESSAGE,
             data
-        });
+        }, files);
     }
 
     public async showChoices(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
@@ -245,16 +252,17 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public async followUp(options: InteractionReplyOptions): Promise<Message>;
     public async followUp(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<Message> {
         let flags = 0;
-
         let data: InteractionCallbackData;
+        let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, ...obj } = options;
+                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
+                files = f;
                 data = {
                     ...obj,
                     content,
@@ -267,49 +275,78 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, ...obj } = content;
+            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
+            files = f;
             data = {
                 ...obj,
                 flags
             };
         }
 
-        return new Message(this.client, await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data));
+        return new Message(this.client, await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data, files));
     }
 
     public async editReply(content: string, options?: InteractionEditOptions): Promise<void>;
     public async editReply(options: InteractionEditOptions): Promise<void>;
     public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
-        await this.client.rest.editOriginalInteractionResponse(
-            this.client.user.id,
-            this.token,
-            typeof content === "string"
-                ? {
-                    content,
-                    ...options
-                }
-                : content
-        );
+        let data: InteractionEditOptions;
+        let files: Array<LilybirdAttachment> | undefined;
+
+        if (typeof content === "string") {
+            if (typeof options !== "undefined") {
+                const { files: f, ...obj } = options;
+
+                files = f;
+                data = {
+                    ...obj,
+                    content
+                };
+            } else {
+                data = {
+                    content
+                };
+            }
+        } else {
+            const { files: f, ...obj } = content;
+
+            files = f;
+            data = obj;
+        }
+        await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
     }
 
     public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<void>;
     public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<void>;
     public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
-        await this.client.rest.editFollowupMessage(
-            this.client.user.id,
-            this.token,
-            messageId,
-            typeof content === "string"
-                ? {
-                    content,
-                    ...options
-                }
-                : content
-        );
+        let data: InteractionEditOptions;
+        let files: Array<LilybirdAttachment> | undefined;
+
+        if (typeof content === "string") {
+            if (typeof options !== "undefined") {
+                const { files: f, ...obj } = options;
+
+                files = f;
+                data = {
+                    ...obj,
+                    content
+                };
+            } else {
+                data = {
+                    content
+                };
+            }
+        } else {
+            const { files: f, ...obj } = content;
+
+            files = f;
+            data = obj;
+        }
+
+        await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
     }
 
     public async deleteReply(): Promise<void> {

@@ -22,6 +22,7 @@ import type {
     AutoArchiveDuration,
     DMChannelStructure,
     OverwriteStructure,
+    LilybirdAttachment,
     ForumTagStructure,
     ChannelStructure,
     ReplyOptions
@@ -104,25 +105,28 @@ export class Channel {
     public async send(content: string | MessageSendOptions, options?: MessageSendOptions): Promise<Message> {
         let flags = 0;
         let data: CreateMessageStructure;
+        let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, files: f, ...obj } = options;
 
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
+                files = f;
                 data = {
                     ...obj,
                     content
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, files: f, ...obj } = content;
 
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
+            files = f;
             data = obj;
         }
 
@@ -131,7 +135,7 @@ export class Channel {
             await this.client.rest.createMessage(this.id, {
                 ...data,
                 flags
-            })
+            }, files)
         );
     }
 
