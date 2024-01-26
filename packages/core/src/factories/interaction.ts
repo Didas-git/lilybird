@@ -310,12 +310,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                     content
                 };
             }
-        } else {
-            const { files: f, ...obj } = content;
-
-            files = f;
-            data = obj;
-        }
+        } else ({ files, ...data } = content);
         await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
     }
 
@@ -339,12 +334,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                     content
                 };
             }
-        } else {
-            const { files: f, ...obj } = content;
-
-            files = f;
-            data = obj;
-        }
+        } else ({ files, ...data } = content);
 
         await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
     }

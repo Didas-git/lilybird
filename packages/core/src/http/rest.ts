@@ -111,11 +111,8 @@ export class REST {
         } else if (typeof data !== "undefined") {
             let reason: string | undefined;
             let obj: ExtractedData;
-            if ("reason" in data) {
-                const { reason: rReason, ...oObj } = data as ExtractedData;
-                reason = rReason;
-                obj = oObj;
-            } else obj = data as never;
+            if ("reason" in data) ({ reason, ...obj } = data as ExtractedData);
+            else obj = data as never;
 
             if (typeof filesOrReason !== "undefined" && typeof filesOrReason !== "string" && filesOrReason.length > 0) {
                 const temp: Array<Partial<AttachmentStructure>> = [];
