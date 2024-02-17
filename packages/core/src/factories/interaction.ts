@@ -29,8 +29,7 @@ import type {
     InteractionStructure,
     ActionRowStructure,
     LilybirdAttachment,
-    ReplyOptions,
-    MessageStructure
+    ReplyOptions
 } from "../typings/index.js";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction {
