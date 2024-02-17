@@ -29,7 +29,8 @@ import type {
     InteractionStructure,
     ActionRowStructure,
     LilybirdAttachment,
-    ReplyOptions
+    ReplyOptions,
+    InteractionResponseStructure
 } from "../typings/index.js";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction {
@@ -290,9 +291,9 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         return new Message(this.client, await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data, files));
     }
 
-    public async editReply(content: string, options?: InteractionEditOptions): Promise<void>;
-    public async editReply(options: InteractionEditOptions): Promise<void>;
-    public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
+    public async editReply(content: string, options?: InteractionEditOptions): Promise<InteractionResponseStructure>;
+    public async editReply(options: InteractionEditOptions): Promise<InteractionResponseStructure>;
+    public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<InteractionResponseStructure> {
         let data: InteractionEditOptions;
         let files: Array<LilybirdAttachment> | undefined;
 
@@ -311,12 +312,12 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else ({ files, ...data } = content);
-        await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
+        return await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
     }
 
-    public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<void>;
-    public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<void>;
-    public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
+    public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<InteractionResponseStructure>;
+    public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<InteractionResponseStructure>;
+    public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<InteractionResponseStructure> {
         let data: InteractionEditOptions;
         let files: Array<LilybirdAttachment> | undefined;
 
@@ -336,7 +337,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
             }
         } else ({ files, ...data } = content);
 
-        await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
+        return await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
     }
 
     public async deleteReply(): Promise<void> {
