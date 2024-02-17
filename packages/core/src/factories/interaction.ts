@@ -312,7 +312,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else ({ files, ...data } = content);
-        return await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
+        return this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
     }
 
     public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<InteractionResponseStructure>;
@@ -337,7 +337,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
             }
         } else ({ files, ...data } = content);
 
-        return await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
+        return this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
     }
 
     public async deleteReply(): Promise<void> {
