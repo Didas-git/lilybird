@@ -10,7 +10,7 @@ import { WebSocketManager } from "#ws";
 import { GatewayEvent } from "#enums";
 
 import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
-import type { DebugFunction } from "#ws";
+import type { DebugFunction, DispatchFunction } from "#ws";
 
 import type {
     UnavailableGuildStructure,
@@ -44,136 +44,13 @@ export class Client {
 
     readonly #ws: WebSocketManager;
 
-    public constructor(res: (client: Client) => void, options: BaseClientOptions, debug?: DebugFunction) {
-        if (Array.isArray(options.intents)) options.intents = options.intents.reduce((prev, curr) => prev | curr, 0);
-
+    public constructor(options: BaseClientOptions, debug?: DebugFunction) {
         this.#ws = new WebSocketManager(
             {
                 intents: options.intents,
                 presence: options.presence
             },
-            async (data) => {
-                await options.listeners.raw?.(data.d);
-
-                switch (data.t) {
-                    case GatewayEvent.Ready: {
-                        Object.assign(this, {
-                            user: new User(this, data.d.user),
-                            guilds: data.d.guilds,
-                            sessionId: data.d.session_id,
-                            application: data.d.application
-                        });
-
-                        Object.assign(this.#ws.resumeInfo, {
-                            url: data.d.resume_gateway_url,
-                            id: data.d.session_id
-                        });
-
-                        await options.setup?.(this);
-                        res(this);
-
-                        await options.listeners.ready?.(this, data.d);
-                        break;
-                    }
-                    case GatewayEvent.Resumed: {
-                        await options.listeners.resumed?.(this);
-                        break;
-                    }
-                    case GatewayEvent.ChannelCreate: {
-                        await options.listeners.channelCreate?.(channelFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.ChannelUpdate: {
-                        await options.listeners.channelUpdate?.(channelFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.ChannelDelete: {
-                        await options.listeners.channelDelete?.(channelFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.ChannelPinsUpdate: {
-                        await options.listeners.channelPinsUpdate?.(
-                            data.d.guild_id,
-                            data.d.channel_id,
-                            typeof data.d.last_pin_timestamp === "string" ? new Date(data.d.last_pin_timestamp) : null
-                        );
-                        break;
-                    }
-                    case GatewayEvent.ThreadCreate: {
-                        await options.listeners.threadCreate?.(<never>channelFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.ThreadUpdate: {
-                        await options.listeners.threadUpdate?.(channelFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.ThreadDelete: {
-                        await options.listeners.threadDelete?.(new ThreadChannel(this, <never>data.d, false));
-                        break;
-                    }
-                    case GatewayEvent.GuildCreate: {
-                        await options.listeners.guildCreate?.(guildFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.GuildUpdate: {
-                        await options.listeners.guildUpdate?.(guildFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.GuildDelete: {
-                        await options.listeners.guildDelete?.(data.d);
-                        break;
-                    }
-                    case GatewayEvent.GuildMemberAdd: {
-                        await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId> new GuildMember(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.GuildMemberRemove: {
-                        await options.listeners.guildMemberRemove?.(data.d.guild_id, new User(this, data.d.user));
-                        break;
-                    }
-                    case GatewayEvent.GuildMemberUpdate: {
-                        await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId> new GuildMember(this, <never>data.d));
-                        break;
-                    }
-                    case GatewayEvent.InteractionCreate: {
-                        await options.listeners.interactionCreate?.(interactionFactory(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.InviteCreate: {
-                        await options.listeners.inviteCreate?.(data.d);
-                        break;
-                    }
-                    case GatewayEvent.InviteDelete: {
-                        await options.listeners.inviteDelete?.(data.d);
-                        break;
-                    }
-                    case GatewayEvent.MessageCreate: {
-                        await options.listeners.messageCreate?.(new Message(this, data.d));
-                        break;
-                    }
-                    case GatewayEvent.MessageUpdate: {
-                        await options.listeners.messageUpdate?.(new Message(this, <never>data.d));
-                        break;
-                    }
-                    case GatewayEvent.MessageDelete: {
-                        await options.listeners.messageDelete?.(new Message(this, <never>data.d));
-                        break;
-                    }
-                    case GatewayEvent.MessageDeleteBulk: {
-                        await options.listeners.messageDeleteBulk?.(data.d);
-                        break;
-                    }
-                    case GatewayEvent.PresenceUpdate: {
-                        await options.listeners.presenceUpdate?.(data.d);
-                        break;
-                    }
-                    case GatewayEvent.UserUpdate: {
-                        await options.listeners.userUpdate?.(new User(this, data.d));
-                        break;
-                    }
-                    default:
-                }
-            },
+            this.#generateListeners(options),
             debug
         );
     }
@@ -205,6 +82,133 @@ export class Client {
             rest: final
         };
     }
+
+    // public createCollector() {}
+
+    //! Pending: Compiled listeners based on the options instead of accessing arbitrary keys
+    #generateListeners(options: BaseClientOptions): DispatchFunction {
+        return async (data) => {
+            await options.listeners.raw?.(data.d);
+
+            switch (data.t) {
+                case GatewayEvent.Ready: {
+                    Object.assign(this, {
+                        user: new User(this, data.d.user),
+                        guilds: data.d.guilds,
+                        sessionId: data.d.session_id,
+                        application: data.d.application
+                    });
+
+                    Object.assign(this.#ws.resumeInfo, {
+                        url: data.d.resume_gateway_url,
+                        id: data.d.session_id
+                    });
+
+                    await options.setup?.(this);
+
+                    await options.listeners.ready?.(this, data.d);
+                    break;
+                }
+                case GatewayEvent.Resumed: {
+                    await options.listeners.resumed?.(this);
+                    break;
+                }
+                case GatewayEvent.ChannelCreate: {
+                    await options.listeners.channelCreate?.(channelFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.ChannelUpdate: {
+                    await options.listeners.channelUpdate?.(channelFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.ChannelDelete: {
+                    await options.listeners.channelDelete?.(channelFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.ChannelPinsUpdate: {
+                    await options.listeners.channelPinsUpdate?.(
+                        data.d.guild_id,
+                        data.d.channel_id,
+                        typeof data.d.last_pin_timestamp === "string" ? new Date(data.d.last_pin_timestamp) : null
+                    );
+                    break;
+                }
+                case GatewayEvent.ThreadCreate: {
+                    await options.listeners.threadCreate?.(<never>channelFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.ThreadUpdate: {
+                    await options.listeners.threadUpdate?.(channelFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.ThreadDelete: {
+                    await options.listeners.threadDelete?.(new ThreadChannel(this, <never>data.d, false));
+                    break;
+                }
+                case GatewayEvent.GuildCreate: {
+                    await options.listeners.guildCreate?.(guildFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.GuildUpdate: {
+                    await options.listeners.guildUpdate?.(guildFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.GuildDelete: {
+                    await options.listeners.guildDelete?.(data.d);
+                    break;
+                }
+                case GatewayEvent.GuildMemberAdd: {
+                    await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId> new GuildMember(this, data.d));
+                    break;
+                }
+                case GatewayEvent.GuildMemberRemove: {
+                    await options.listeners.guildMemberRemove?.(data.d.guild_id, new User(this, data.d.user));
+                    break;
+                }
+                case GatewayEvent.GuildMemberUpdate: {
+                    await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId> new GuildMember(this, <never>data.d));
+                    break;
+                }
+                case GatewayEvent.InteractionCreate: {
+                    await options.listeners.interactionCreate?.(interactionFactory(this, data.d));
+                    break;
+                }
+                case GatewayEvent.InviteCreate: {
+                    await options.listeners.inviteCreate?.(data.d);
+                    break;
+                }
+                case GatewayEvent.InviteDelete: {
+                    await options.listeners.inviteDelete?.(data.d);
+                    break;
+                }
+                case GatewayEvent.MessageCreate: {
+                    await options.listeners.messageCreate?.(new Message(this, data.d));
+                    break;
+                }
+                case GatewayEvent.MessageUpdate: {
+                    await options.listeners.messageUpdate?.(new Message(this, <never>data.d));
+                    break;
+                }
+                case GatewayEvent.MessageDelete: {
+                    await options.listeners.messageDelete?.(new Message(this, <never>data.d));
+                    break;
+                }
+                case GatewayEvent.MessageDeleteBulk: {
+                    await options.listeners.messageDeleteBulk?.(data.d);
+                    break;
+                }
+                case GatewayEvent.PresenceUpdate: {
+                    await options.listeners.presenceUpdate?.(data.d);
+                    break;
+                }
+                case GatewayEvent.UserUpdate: {
+                    await options.listeners.userUpdate?.(new User(this, data.d));
+                    break;
+                }
+                default:
+            }
+        };
+    }
 }
 
 export async function createClient(options: ClientOptions): Promise<Client> {
@@ -212,8 +216,12 @@ export async function createClient(options: ClientOptions): Promise<Client> {
         // This is a promise executer, it doesn't need to be async
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         new Client(
-            res,
-            { intents: options.intents, listeners: options.listeners, setup: options.setup },
+            {
+                intents: options.intents.reduce((prev, curr) => prev | curr, 0),
+                listeners: options.listeners,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res
+            },
             options.attachDebugListener
                 ? options.debugListener ?? ((identifier, payload) => {
                     console.log(identifier, payload ?? "");

@@ -4,9 +4,12 @@
         "astrojs",
         "CDNURL",
         "crosspost",
+        "CROSSPOSTED",
         "HYPESQUAD",
         "invitable",
-        "lilybird"
+        "lilybird",
+        "REQUALIFIED",
+        "UPSELL"
     ],
     "typescript.tsdk": "node_modules/typescript/lib",
     "eslint.format.enable": true,

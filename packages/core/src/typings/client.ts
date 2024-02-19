@@ -39,13 +39,14 @@ export interface ClientEventListeners {
 }
 
 export interface BaseClientOptions {
-    intents: Array<Intents> | number;
+    intents: number;
     listeners: ClientEventListeners;
     presence?: UpdatePresenceStructure;
     setup?: (client: Client) => Awaitable<any>;
 }
 
-export interface ClientOptions extends BaseClientOptions {
+export interface ClientOptions extends Omit<BaseClientOptions, "intents"> {
+    intents: Array<Intents>;
     token: string;
     attachDebugListener?: boolean;
     debugListener?: (identifier: string, payload: unknown) => void;
