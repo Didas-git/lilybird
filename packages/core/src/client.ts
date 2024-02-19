@@ -7,7 +7,8 @@ import { User } from "./factories/user.js";
 import { REST } from "./http/rest.js";
 
 import { WebSocketManager } from "#ws";
-import { GatewayEvent } from "#enums";
+import { GatewayEvent, CollectorType } from "#enums";
+import type { GuildInteraction, MessageComponentData } from "./factories/interaction.js";
 
 import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
 import type { DebugFunction, DispatchFunction } from "#ws";
@@ -19,6 +20,9 @@ import type {
     BaseClientOptions,
     ClientOptions
 } from "./typings/index.js";
+
+type Matcher = (interaction: GuildInteraction<MessageComponentData, Message>) => boolean;
+type MatchedCallback = (interaction: GuildInteraction<MessageComponentData, Message>) => any;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {
@@ -43,6 +47,9 @@ export class Client {
     public readonly rest: REST = new REST();
 
     readonly #ws: WebSocketManager;
+    readonly #collectors = new Map<Matcher, { cb: MatchedCallback, timer: Timer }>();
+
+    #cachedCollectors: Array<[Matcher, { cb: MatchedCallback, timer: Timer }]> = [];
 
     public constructor(options: BaseClientOptions, debug?: DebugFunction) {
         this.#ws = new WebSocketManager(
@@ -83,7 +90,56 @@ export class Client {
         };
     }
 
-    // public createCollector() {}
+    public getCollector(interaction: GuildInteraction<MessageComponentData, Message>): boolean {
+        for (let i = 0, { length } = this.#cachedCollectors; i < length; i++) {
+            const [matcher, { cb, timer } ] = this.#cachedCollectors[i];
+            if (!matcher(interaction)) continue;
+
+            cb(interaction);
+            clearTimeout(timer);
+            this.#collectors.delete(matcher);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public addCollector(
+        matcher: Matcher,
+        callback: MatchedCallback,
+        time: number = 30000
+    ): void {
+        this.#collectors.set(matcher, { cb: callback, timer: setTimeout(() => { this.#collectors.delete(matcher); }, time) });
+        this.#cachedCollectors = [...this.#collectors.entries()];
+    }
+
+    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MatchedCallback): void;
+    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MatchedCallback): void;
+    public createComponentCollector(
+        type: CollectorType,
+        idOrFilter: string,
+        idOrCallback: string | MatchedCallback,
+        bothCallback?: MatchedCallback
+    ): void {
+        switch (type) {
+            case CollectorType.USER: {
+                if (typeof idOrCallback === "string") return;
+                this.addCollector((int) => int.member.user.id === idOrFilter, idOrCallback);
+                break;
+            }
+            case CollectorType.BUTTON_ID: {
+                if (typeof idOrCallback === "string") return;
+                this.addCollector((int) => int.data.id === idOrFilter, idOrCallback);
+                break;
+            }
+            case CollectorType.BOTH: {
+                if (typeof bothCallback === "undefined") return;
+                this.addCollector((int) => int.data.id === idOrCallback && int.member.user.id === idOrFilter, bothCallback);
+                break;
+            }
+        }
+    }
 
     //! Pending: Compiled listeners based on the options instead of accessing arbitrary keys
     #generateListeners(options: BaseClientOptions): DispatchFunction {
@@ -170,7 +226,11 @@ export class Client {
                     break;
                 }
                 case GatewayEvent.InteractionCreate: {
-                    await options.listeners.interactionCreate?.(interactionFactory(this, data.d));
+                    const interaction = interactionFactory(this, data.d);
+                    if (interaction.isMessageComponentInteraction() && interaction.inGuild())
+                        if (this.getCollector(interaction)) break;
+
+                    await options.listeners.interactionCreate?.(interaction);
                     break;
                 }
                 case GatewayEvent.InviteCreate: {

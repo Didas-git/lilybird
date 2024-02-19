@@ -3,6 +3,7 @@ export * from "./auto-moderation.js";
 export * from "./application.js";
 export * from "./permissions.js";
 export * from "./interaction.js";
+export * from "./collectors.js";
 export * from "./audit-log.js";
 export * from "./activity.js";
 export * from "./channel.js";
