@@ -59,7 +59,7 @@ export default {
     data: (<ApplicationCommand name="search" description="search mdn">
         <StringOption name="query" description="the query" required autocomplete />
         <UserOption name="user" description="the user to ping" />
-    </ApplicationCommand>) as never, // fuck off jsx
+    </ApplicationCommand>) as never,
     post: "GLOBAL",
     run: async (interaction) => {
         const cacheId = interaction.data.getString("query", true);
