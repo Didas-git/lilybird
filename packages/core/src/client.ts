@@ -18,11 +18,12 @@ import type {
     UpdatePresenceStructure,
     ApplicationStructure,
     BaseClientOptions,
-    ClientOptions
+    ClientOptions,
+    Awaitable
 } from "./typings/index.js";
 
 type Matcher = (interaction: GuildInteraction<MessageComponentData, Message>) => boolean;
-type MatchedCallback = (interaction: GuildInteraction<MessageComponentData, Message>) => any;
+type MatchedCallback = (interaction: GuildInteraction<MessageComponentData, Message>) => Awaitable<any>;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {
@@ -49,6 +50,7 @@ export class Client {
     readonly #ws: WebSocketManager;
     readonly #collectors = new Map<Matcher, { cb: MatchedCallback, timer: Timer }>();
 
+    #ready: boolean = false;
     #cachedCollectors: Array<[Matcher, { cb: MatchedCallback, timer: Timer }]> = [];
 
     public constructor(options: BaseClientOptions, debug?: DebugFunction) {
@@ -90,13 +92,14 @@ export class Client {
         };
     }
 
-    public getCollector(interaction: GuildInteraction<MessageComponentData, Message>): boolean {
+    public async getCollector(interaction: GuildInteraction<MessageComponentData, Message>): Promise<boolean> {
         for (let i = 0, { length } = this.#cachedCollectors; i < length; i++) {
             const [matcher, { cb, timer } ] = this.#cachedCollectors[i];
             if (!matcher(interaction)) continue;
 
-            cb(interaction);
             clearTimeout(timer);
+            // eslint-disable-next-line no-await-in-loop
+            await cb(interaction);
             this.#collectors.delete(matcher);
 
             return true;
@@ -114,28 +117,32 @@ export class Client {
         this.#cachedCollectors = [...this.#collectors.entries()];
     }
 
-    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MatchedCallback): void;
-    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MatchedCallback): void;
+    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MatchedCallback, time?: number): void;
+    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MatchedCallback, time?: number): void;
     public createComponentCollector(
         type: CollectorType,
         idOrFilter: string,
         idOrCallback: string | MatchedCallback,
-        bothCallback?: MatchedCallback
+        timeOrBothCallback?: number | MatchedCallback,
+        time?: number
     ): void {
         switch (type) {
             case CollectorType.USER: {
                 if (typeof idOrCallback === "string") return;
-                this.addCollector((int) => int.member.user.id === idOrFilter, idOrCallback);
+                if (typeof timeOrBothCallback === "function") return;
+                this.addCollector((int) => int.member.user.id === idOrFilter, idOrCallback, timeOrBothCallback);
                 break;
             }
             case CollectorType.BUTTON_ID: {
                 if (typeof idOrCallback === "string") return;
-                this.addCollector((int) => int.data.id === idOrFilter, idOrCallback);
+                if (typeof timeOrBothCallback === "function") return;
+                this.addCollector((int) => int.data.id === idOrFilter, idOrCallback, timeOrBothCallback);
                 break;
             }
             case CollectorType.BOTH: {
-                if (typeof bothCallback === "undefined") return;
-                this.addCollector((int) => int.data.id === idOrCallback && int.member.user.id === idOrFilter, bothCallback);
+                if (typeof timeOrBothCallback === "undefined") return;
+                if (typeof timeOrBothCallback === "number") return;
+                this.addCollector((int) => int.data.id === idOrCallback && int.member.user.id === idOrFilter, timeOrBothCallback, time);
                 break;
             }
         }
@@ -160,9 +167,12 @@ export class Client {
                         id: data.d.session_id
                     });
 
-                    await options.setup?.(this);
+                    if (this.#ready) break;
 
+                    await options.setup?.(this);
                     await options.listeners.ready?.(this, data.d);
+                    this.#ready = true;
+
                     break;
                 }
                 case GatewayEvent.Resumed: {
@@ -228,7 +238,7 @@ export class Client {
                 case GatewayEvent.InteractionCreate: {
                     const interaction = interactionFactory(this, data.d);
                     if (interaction.isMessageComponentInteraction() && interaction.inGuild())
-                        if (this.getCollector(interaction)) break;
+                        if (await this.getCollector(interaction)) break;
 
                     await options.listeners.interactionCreate?.(interaction);
                     break;
