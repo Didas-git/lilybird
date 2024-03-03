@@ -287,7 +287,7 @@ export async function createClient(options: ClientOptions): Promise<Client> {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         new Client(
             {
-                intents: options.intents.reduce((prev, curr) => prev | curr, 0),
+                intents: Array.isArray(options.intents) ? options.intents.reduce((prev, curr) => prev | curr, 0) : options.intents,
                 listeners: options.listeners,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res

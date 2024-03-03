@@ -46,7 +46,7 @@ export interface BaseClientOptions {
 }
 
 export interface ClientOptions extends Omit<BaseClientOptions, "intents"> {
-    intents: Array<Intents>;
+    intents: Array<Intents> | number;
     token: string;
     attachDebugListener?: boolean;
     debugListener?: (identifier: string, payload: unknown) => void;
