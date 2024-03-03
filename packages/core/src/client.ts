@@ -92,6 +92,7 @@ export class Client {
         };
     }
 
+    //? Perhaps this should be turned into its own manager...
     public async getCollector(interaction: GuildInteraction<MessageComponentData, Message>): Promise<boolean> {
         for (let i = 0, { length } = this.#cachedCollectors; i < length; i++) {
             const [matcher, { cb, timer } ] = this.#cachedCollectors[i];
@@ -101,6 +102,7 @@ export class Client {
             // eslint-disable-next-line no-await-in-loop
             await cb(interaction);
             this.#collectors.delete(matcher);
+            this.#cachedCollectors = [...this.#collectors.entries()];
 
             return true;
         }
@@ -108,6 +110,7 @@ export class Client {
         return false;
     }
 
+    //! This should be made more generic
     public addCollector(
         matcher: Matcher,
         callback: MatchedCallback,
@@ -117,6 +120,7 @@ export class Client {
         this.#cachedCollectors = [...this.#collectors.entries()];
     }
 
+    //! This should be moved to the interaction class
     public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MatchedCallback, time?: number): void;
     public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MatchedCallback, time?: number): void;
     public createComponentCollector(
@@ -148,7 +152,7 @@ export class Client {
         }
     }
 
-    //! Pending: Compiled listeners based on the options instead of accessing arbitrary keys
+    //! Pending: Compiled listeners based on the options instead of accessing arbitrary keys (0.7)
     #generateListeners(options: BaseClientOptions): DispatchFunction {
         return async (data) => {
             await options.listeners.raw?.(data.d);
