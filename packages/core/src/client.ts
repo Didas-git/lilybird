@@ -1,5 +1,5 @@
 import { REST } from "./http/rest.js";
-import { TransformerReturnType } from "#enums";
+import { GatewayEvent, InteractionCollectorType, TransformerReturnType } from "#enums";
 import { WebSocketManager } from "#ws";
 import type { DebugFunction, DispatchFunction } from "#ws";
 import type {
@@ -103,7 +103,6 @@ export class Client<T extends Transformers = Transformers> {
         return false;
     }
 
-    //! This should be made more generic
     public addCollector(
         matcher: Matcher,
         callback: MatchedCallback,
@@ -126,8 +125,11 @@ export class Client<T extends Transformers = Transformers> {
             builder.push("await raw(data)");
         }
 
-        // eslint-disable-next-line @stylistic/max-len
-        builder.push("if(data.t === \"READY\"){Object.assign(client, {user:data.d.user,guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});if (client.ready) return;client.ready = true;");
+        builder.push(
+            "if(data.t === \"READY\"){",
+            "Object.assign(client,{user:data.d.user,guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
+            "if(client.ready)return;client.ready=true;"
+        );
 
         if (typeof listeners.ready !== "undefined") {
             functions[0].push("ready");
@@ -142,15 +144,39 @@ export class Client<T extends Transformers = Transformers> {
             if (name === "raw" || name === "ready") continue;
             if (typeof handler === "undefined") continue;
 
-            const event = name.replace(/[A-Z]/, "_$&").toUpperCase();
+            const event = name.replace(/[A-Z]/, "_$&").toUpperCase() as GatewayEvent;
             const func = `f${f}`;
             f++;
 
             functions[0].push(func);
             functions[1].push(handler);
-            builder.push(`else if(data.t === "${event}")`);
+            builder.push(`else if(data.t === "${event}"){`);
 
             const transformer = transformers[name];
+
+            if (typeof options.collectors?.interactions !== "undefined" && event === GatewayEvent.IntegrationCreate) {
+                switch (options.collectors.interactions) {
+                    case InteractionCollectorType.GENERIC: {
+                        builder.push("if(await client.getCollector(data.d)) return;");
+                        break;
+                    }
+                    case InteractionCollectorType.TRANSFORMED: {
+                        if (typeof transformer === "undefined") throw new Error("There is no transformer defined for interactions that can be used with collectors");
+                        const transf = `f${f}`;
+                        f++;
+                        functions[0].push(transf);
+                        functions[1].push(transformer.handler);
+
+                        if (transformer.return === TransformerReturnType.MULTIPLE) throw new Error("Transformers being used for collectors can only return a single value");
+                        builder.push(
+                            `const cd = ${transf}(client, data.d);`,
+                            "if(await client.getCollector(cd)) return;",
+                            `${func}(cd)`
+                        );
+                        continue;
+                    }
+                }
+            }
 
             if (typeof transformer !== "undefined") {
                 const transf = `f${f}`;
@@ -170,6 +196,8 @@ export class Client<T extends Transformers = Transformers> {
                 }
             } else
                 builder.push(`${func}(client, data.d)`);
+
+            builder.push("}");
         }
 
         const [names, handlers] = functions;

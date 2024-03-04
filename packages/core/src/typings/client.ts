@@ -1,4 +1,4 @@
-import type { Intents, TransformerReturnType } from "#enums";
+import type { Intents, InteractionCollectorType, TransformerReturnType } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
 
@@ -154,6 +154,9 @@ export interface BaseClientOptions<T extends Transformers> {
     listeners: ClientListeners<T>;
     transformers?: T;
     presence?: UpdatePresenceStructure;
+    collectors?: {
+        interactions?: InteractionCollectorType
+    };
     setup?: (client: Client) => Awaitable<any>;
 }
 
