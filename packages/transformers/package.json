@@ -1,29 +1,34 @@
 {
-  "name": "@lilybird/create",
-  "version": "0.1.8",
-  "description": "Create a new template bot using lilybird",
+  "name": "@lilybird/transformers",
+  "version": "0.1.0",
+  "description": "Event transformers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
-  "type": "module",
   "license": "Apache-2.0",
-  "bin": "./dist/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "engines": {
-    "bun": ">=1.0.30",
-    "node": ">=21.0.0"
+    "bun": ">=1.0.22"
   },
   "files": [
     "./dist"
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc && cp src/index-template.ts dist",
-    "dev": "bun src/index.ts"
+    "build": "rm -rf dist && tsc"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Didas-git/lilybird"
   },
-  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/create",
+  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/transformers",
   "bugs": {
     "url": "https://github.com/Didas-git/lilybird/issues"
   },
@@ -33,17 +38,18 @@
     "lilybird-jsx",
     "tsx",
     "discord",
-    "create",
-    "bot",
-    "boilerplate",
     "wrapper",
     "client",
     "discord-client",
     "discord-wrapper",
     "bun",
     "bunjs",
-    "bun-first"
+    "bun-first",
+    "transformers"
   ],
+  "peerDependencies": {
+    "lilybird": "^0.6.0"
+  },
   "devDependencies": {
     "eslint": "^8.57.0",
     "@typescript-eslint/parser": "^7.1.1",
@@ -53,9 +59,5 @@
     "eslint-import-resolver-typescript": "^3.6.1",
     "bun-types": "1.0.30",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "ansi-colors": "^4.1.3",
-    "enquirer": "^2.4.1"
   }
 }

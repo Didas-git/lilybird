@@ -2,10 +2,8 @@ import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import { ChannelType, VideoQualityMode, MessageFlags } from "#enums";
+import { ChannelType, VideoQualityMode, MessageFlags } from "lilybird";
 
-import type { ForumLayoutType, SortOrderType } from "#enums";
-import type { Client } from "../client.js";
 import type {
     GuildVoiceChannelStructure,
     ThreadLikeChannelStructure,
@@ -25,8 +23,11 @@ import type {
     LilybirdAttachment,
     ForumTagStructure,
     ChannelStructure,
-    ReplyOptions
-} from "../typings/index.js";
+    ForumLayoutType,
+    SortOrderType,
+    ReplyOptions,
+    Client
+} from "lilybird";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialChannel<T extends Channel = Channel> = Partial<T> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };

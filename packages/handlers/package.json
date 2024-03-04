@@ -47,16 +47,17 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.5.0"
+    "lilybird": "^0.6.0",
+    "@lilybird/transformers": "^0.1.0"
   },
   "devDependencies": {
-    "eslint": "^8.55.0",
-    "@typescript-eslint/parser": "^6.13.2",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@stylistic/eslint-plugin": "^1.4.1",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/parser": "^7.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@stylistic/eslint-plugin": "^1.6.3",
     "eslint-plugin-import": "^2.29.0",
     "eslint-import-resolver-typescript": "^3.6.1",
-    "bun-types": "1.0.18",
-    "typescript": "^5.3.2"
+    "bun-types": "1.0.30",
+    "typescript": "^5.3.3"
   }
 }

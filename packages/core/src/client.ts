@@ -1,12 +1,7 @@
 import { REST } from "./http/rest.js";
-import { User } from "./factories/user.js";
-import { CollectorType, TransformerReturnType } from "#enums";
+import { TransformerReturnType } from "#enums";
 import { WebSocketManager } from "#ws";
-
-import type { GuildInteraction, MessageComponentData } from "./factories/interaction.js";
 import type { DebugFunction, DispatchFunction } from "#ws";
-import type { Message } from "./factories/message.js";
-
 import type {
     UnavailableGuildStructure,
     UpdatePresenceStructure,
@@ -15,15 +10,17 @@ import type {
     ClientOptions,
     Transformers,
     Transformer,
-    Awaitable
+    Awaitable,
+    UserStructure,
+    InteractionStructure
 } from "./typings/index.js";
 
-type Matcher = (interaction: GuildInteraction<MessageComponentData, Message>) => boolean;
-type MatchedCallback = (interaction: GuildInteraction<MessageComponentData, Message>) => Awaitable<any>;
+type Matcher = (interaction: InteractionStructure) => boolean;
+type MatchedCallback = (interaction: InteractionStructure) => Awaitable<any>;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {
-    readonly user: User;
+    readonly user: UserStructure;
     readonly guilds: Array<UnavailableGuildStructure>;
     readonly sessionId: string;
     readonly application: ApplicationStructure;
@@ -89,7 +86,7 @@ export class Client<T extends Transformers = Transformers> {
     }
 
     //? Perhaps this should be turned into its own manager...
-    public async getCollector(interaction: GuildInteraction<MessageComponentData, Message>): Promise<boolean> {
+    public async getCollector(interaction: InteractionStructure): Promise<boolean> {
         for (let i = 0, { length } = this.#cachedCollectors; i < length; i++) {
             const [matcher, { cb, timer } ] = this.#cachedCollectors[i];
             if (!matcher(interaction)) continue;
@@ -116,38 +113,6 @@ export class Client<T extends Transformers = Transformers> {
         this.#cachedCollectors = [...this.#collectors.entries()];
     }
 
-    //! This should be moved to the interaction class
-    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MatchedCallback, time?: number): void;
-    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MatchedCallback, time?: number): void;
-    public createComponentCollector(
-        type: CollectorType,
-        idOrFilter: string,
-        idOrCallback: string | MatchedCallback,
-        timeOrBothCallback?: number | MatchedCallback,
-        time?: number
-    ): void {
-        switch (type) {
-            case CollectorType.USER: {
-                if (typeof idOrCallback === "string") return;
-                if (typeof timeOrBothCallback === "function") return;
-                this.addCollector((int) => int.member.user.id === idOrFilter, idOrCallback, timeOrBothCallback);
-                break;
-            }
-            case CollectorType.BUTTON_ID: {
-                if (typeof idOrCallback === "string") return;
-                if (typeof timeOrBothCallback === "function") return;
-                this.addCollector((int) => int.data.id === idOrFilter, idOrCallback, timeOrBothCallback);
-                break;
-            }
-            case CollectorType.BOTH: {
-                if (typeof timeOrBothCallback === "undefined") return;
-                if (typeof timeOrBothCallback === "number") return;
-                this.addCollector((int) => int.data.id === idOrCallback && int.member.user.id === idOrFilter, timeOrBothCallback, time);
-                break;
-            }
-        }
-    }
-
     #generateListeners(options: BaseClientOptions<T>): DispatchFunction {
         const builder: Array<string> = [];
         const functions: [names: Array<string>, handlers: Array<(...args: any) => any>] = [[], []];
@@ -162,7 +127,7 @@ export class Client<T extends Transformers = Transformers> {
         }
 
         // eslint-disable-next-line @stylistic/max-len
-        builder.push("if(data.t === \"READY\"){Object.assign(client, {user:new User(client,data.d.user),guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});if (client.ready) return;client.ready = true;");
+        builder.push("if(data.t === \"READY\"){Object.assign(client, {user:data.d.user,guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});if (client.ready) return;client.ready = true;");
 
         if (typeof listeners.ready !== "undefined") {
             functions[0].push("ready");
@@ -209,7 +174,7 @@ export class Client<T extends Transformers = Transformers> {
 
         const [names, handlers] = functions;
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        return new Function("client", "User", ...names, `return async (data) => { ${builder.join("")} }`)(this, User, ...handlers) as never;
+        return new Function("client", ...names, `return async (data) => { ${builder.join("")} }`)(this, ...handlers) as never;
     }
 }
 

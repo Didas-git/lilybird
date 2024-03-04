@@ -2,11 +2,9 @@ import { MentionChannel, channelFactory } from "./channel.js";
 import { GuildMember } from "./guild-member.js";
 import { User } from "./user.js";
 
-import { MessageFlags } from "#enums";
+import { MessageFlags } from "lilybird";
 
-import type { MessageType } from "#enums";
 import type { Channel } from "./channel.js";
-import type { Client } from "../client.js";
 
 import type {
     CreateThreadFromMessageStructure,
@@ -27,8 +25,10 @@ import type {
     StickerStructure,
     EmbedStructure,
     RoleStructure,
-    ReplyOptions
-} from "../typings/index.js";
+    ReplyOptions,
+    MessageType,
+    Client
+} from "lilybird";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" ? K : never]: Message[K] };

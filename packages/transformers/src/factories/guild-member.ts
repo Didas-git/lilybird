@@ -1,11 +1,8 @@
-import { guildMemberAvatarURL } from "../http/cdn.js";
 import { User } from "./user.js";
 
-import type { GuildMemberStructure } from "../typings/index.js";
-import type { CDNOptions } from "../typings/image.js";
-import type { Client } from "../client.js";
+import { CDN } from "lilybird";
 
-import type { GuildMemberFlags } from "#enums";
+import type { GuildMemberStructure, CDNOptions, Client, GuildMemberFlags } from "lilybird";
 
 export interface GuildMemberWithGuildId extends GuildMember {
     readonly guildId: string;
@@ -80,6 +77,6 @@ export class GuildMember {
     public avatarURL(options: CDNOptions): string {
         if (this.avatar == null) return this.user.avatarURL(options);
         if (typeof this.guildId === "undefined") throw new Error("Something went wrong and the guild id does not exist");
-        return guildMemberAvatarURL(this.guildId, this.user.id, this.avatar, options);
+        return CDN.guildMemberAvatarURL(this.guildId, this.user.id, this.avatar, options);
     }
 }

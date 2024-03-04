@@ -1,14 +1,14 @@
+import { defaultTransformers } from "@lilybird/transformers";
 import { join } from "node:path";
+import type { DefaultTransformers, Interaction, Message } from "@lilybird/transformers";
 
 import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command.js";
 import type { MessageCommand } from "./message-commands.js";
 import type { Event } from "./events.js";
 
 import type {
-    ClientEventListeners,
     BaseClientOptions,
-    Interaction,
-    Message,
+    ClientListeners,
     Client
 } from "lilybird";
 
@@ -22,7 +22,7 @@ export class Handler {
     protected readonly guildSlashCommands = new Map<string, GuildSlashCommand>();
     protected readonly globalSlashCommands = new Map<string, GlobalSlashCommand>();
     protected readonly messageCommands = new Map<string, MessageCommand>();
-    protected readonly events = new Map<Event["event"], Event>();
+    protected readonly events = new Map<string, Event>();
     protected readonly messageCommandAliases = new Map<string, string>();
 
     protected readonly dirs: HandlerDirectories;
@@ -142,35 +142,35 @@ export class Handler {
         }
     }
 
-    public async buildListeners(): Promise<ClientEventListeners> {
+    public async buildListeners(): Promise<ClientListeners<DefaultTransformers>> {
         const slashCommandsExist = await this.readSlashCommandDir();
         const messageCommandsExist = await this.readMessageCommandDir();
         const eventsExist = await this.readEventDir();
         // eslint-disable-next-line func-style
-        let interactionCreateFn: Exclude<ClientEventListeners["interactionCreate"], undefined> | undefined = undefined;
+        let interactionCreateFn: Exclude<ClientListeners<any>["interactionCreate"], undefined> | undefined = undefined;
 
         // eslint-disable-next-line func-style
-        let messageCreateFn: Exclude<ClientEventListeners["messageCreate"], undefined> | undefined = undefined;
+        let messageCreateFn: Exclude<ClientListeners<any>["messageCreate"], undefined> | undefined = undefined;
 
-        const listeners: ClientEventListeners = {};
+        const listeners: ClientListeners<DefaultTransformers> = {} as never;
 
         if (eventsExist) {
             for (const [name, event] of this.events) {
                 if (name === "interactionCreate") {
-                    interactionCreateFn = event.run;
+                    interactionCreateFn = <never>event.run;
                     continue;
                 }
 
                 if (name === "messageCreate") {
-                    messageCreateFn = event.run;
+                    messageCreateFn = <never>event.run;
                     continue;
                 }
 
-                listeners[name] = event.run;
+                listeners[name as keyof DefaultTransformers] = event.run;
             }
         }
 
-        if (!slashCommandsExist) listeners.interactionCreate = interactionCreateFn;
+        if (!slashCommandsExist) listeners.interactionCreate = <never>interactionCreateFn;
         else if (typeof interactionCreateFn !== "undefined") {
             listeners.interactionCreate = async (interaction) => {
                 //@ts-expect-error It is being checked above...
@@ -183,7 +183,7 @@ export class Handler {
             };
         }
 
-        if (!messageCommandsExist) listeners.messageCreate = messageCreateFn;
+        if (!messageCommandsExist) listeners.messageCreate = <never>messageCreateFn;
         else if (typeof messageCreateFn !== "undefined") {
             listeners.messageCreate = async (message) => {
                 //@ts-expect-error It is being checked above...
@@ -209,10 +209,11 @@ export async function createHandler({
 }: {
     dirs: HandlerDirectories,
     prefix?: string | undefined
-}): Promise<Expand<Pick<Required<BaseClientOptions>, "listeners" | "setup">>> {
+}): Promise<Expand<Pick<Required<BaseClientOptions<DefaultTransformers>>, "listeners" | "transformers" | "setup">>> {
     const handler = new Handler(dirs, prefix);
 
     return {
+        transformers: defaultTransformers,
         listeners: await handler.buildListeners(),
         setup: async (client) => {
             await handler.registerGlobalCommands(client);

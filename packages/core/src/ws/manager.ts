@@ -1,5 +1,4 @@
 import { GatewayOpCode } from "#enums";
-//@ts-expect-error This exists...
 import { setTimeout } from "node:timers/promises";
 
 import type {
@@ -76,7 +75,7 @@ export class WebSocketManager {
 
             if (!response.ok) throw new Error("An invalid Token was provided");
 
-            const data: GetGatewayBotResponse = await response.json();
+            const data: GetGatewayBotResponse = await response.json() as never;
 
             data.url = `${data.url}/?v=10&encoding=json`;
             this.#gatewayInfo = data;

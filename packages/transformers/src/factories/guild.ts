@@ -1,31 +1,29 @@
 import { GuildMember } from "./guild-member.js";
 import { channelFactory } from "./channel.js";
 import type { Channel } from "./channel.js";
-import type { Client } from "../client.js";
 
 import type {
     DefaultMessageNotificationLevel,
-    ExplicitContentFilterLevel,
-    VerificationLevel,
-    GuildNSFWLevel,
-    PremiumTier,
-    MFALevel,
-    Locale
-} from "#enums";
-import type {
     GuildScheduleEventStructure,
+    ExplicitContentFilterLevel,
     UnavailableGuildStructure,
     PresenceUpdateEventFields,
     WelcomeScreenStructure,
     StageInstanceStructure,
     VoiceStateStructure,
     NewGuildStructure,
+    VerificationLevel,
     StickerStructure,
+    GuildNSFWLevel,
     EmojiStructure,
     GuildStructure,
     RoleStructure,
-    GuildFeatures
-} from "../typings/index.js";
+    GuildFeatures,
+    PremiumTier,
+    MFALevel,
+    Locale,
+    Client
+} from "lilybird";
 
 // No comments...
 export function guildFactory(client: Client, guild: NewGuildStructure): NewGuild;

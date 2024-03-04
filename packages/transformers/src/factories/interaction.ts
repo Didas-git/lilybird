@@ -10,11 +10,9 @@ import {
     InteractionType,
     ComponentType,
     MessageFlags
-} from "#enums";
+} from "lilybird";
 
-import type { ApplicationCommandType, Locale } from "#enums";
 import type { PartialChannel } from "./channel.js";
-import type { Client } from "../client.js";
 import type {
     AutocompleteCallbackDataStructure,
     ApplicationCommandDataStructure,
@@ -24,13 +22,16 @@ import type {
     ModalSubmitDataStructure,
     InteractionCallbackData,
     DMInteractionStructure,
+    ApplicationCommandType,
     ResolvedDataStructure,
     EntitlementStructure,
     InteractionStructure,
     ActionRowStructure,
     LilybirdAttachment,
-    ReplyOptions
-} from "../typings/index.js";
+    ReplyOptions,
+    Locale,
+    Client
+} from "lilybird";
 
 export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction {
     const data = interactionDataFactory(interaction);

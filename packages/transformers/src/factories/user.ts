@@ -1,11 +1,7 @@
-import { defaultUserAvatarURL, userAvatarURL } from "../http/cdn.js";
 import { GuildMember } from "./guild-member.js";
+import { PremiumType, CDN } from "lilybird";
 
-import { PremiumType } from "#enums";
-
-import type { UserStructure } from "../typings/index.js";
-import type { Client } from "../client.js";
-import type { CDNOptions } from "../typings/image.js";
+import type { UserStructure, Client, CDNOptions } from "lilybird";
 
 export class User {
     public readonly id: string;
@@ -50,9 +46,9 @@ export class User {
     }
 
     public avatarURL(options?: CDNOptions): string {
-        if (this.avatar === null) return defaultUserAvatarURL(this.#calculateIndex(), options);
+        if (this.avatar === null) return CDN.defaultUserAvatarURL(this.#calculateIndex(), options);
 
-        return userAvatarURL(this.id, this.avatar, options);
+        return CDN.userAvatarURL(this.id, this.avatar, options);
     }
 
     #calculateIndex(): string {
