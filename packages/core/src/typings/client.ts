@@ -1,51 +1,163 @@
-import type { UnavailableGuildStructure } from "./index.js";
-import type { Message, PartialMessage } from "../factories/message.js";
-import type { Channel, ExtendedThreadChannel, ThreadChannel } from "../factories/channel.js";
-import type { GuildMemberWithGuildId } from "../factories/guild-member.js";
-import type { InviteCreate, InviteDelete, MessageDeleteBulk, PresenceUpdate, Ready, UpdatePresenceStructure } from "./gateway/gateway-events.js";
-import type { Interaction } from "../factories/interaction.js";
-import type { User } from "../factories/user.js";
-import type { Intents } from "#enums";
+import type { Intents, TransformerReturnType } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
-import type { Guild, NewGuild } from "../factories/guild.js";
 
-export interface ClientEventListeners {
-    raw?: (data: unknown) => Awaitable<unknown>;
-    ready?: (client: Client, payload: Ready["d"]) => Awaitable<unknown>;
-    resumed?: (client: Client) => Awaitable<unknown>;
-    channelCreate?: (channel: Channel) => Awaitable<unknown>;
-    channelUpdate?: (channel: Channel) => Awaitable<unknown>;
-    channelDelete?: (channel: Channel) => Awaitable<unknown>;
-    channelPinsUpdate?: (guildId: string | undefined, channelId: string, lastPinTimestamp: Date | null) => Awaitable<unknown>;
-    threadCreate?: (channel: ExtendedThreadChannel) => Awaitable<unknown>;
-    threadUpdate?: (channel: Channel) => Awaitable<unknown>;
-    threadDelete?: (channel: Pick<ThreadChannel, "id" | "guildId" | "parentId" | "type">) => Awaitable<unknown>;
-    guildCreate?: (guild: UnavailableGuildStructure | NewGuild) => Awaitable<unknown>;
-    guildUpdate?: (guild: Guild) => Awaitable<unknown>;
-    guildDelete?: (guild: UnavailableGuildStructure) => Awaitable<unknown>;
-    guildMemberAdd?: (member: GuildMemberWithGuildId) => Awaitable<unknown>;
-    guildMemberRemove?: (id: string, user: User) => Awaitable<unknown>;
-    guildMemberUpdate?: (member: GuildMemberWithGuildId) => Awaitable<unknown>;
-    interactionCreate?: (interaction: Interaction) => Awaitable<unknown>;
-    inviteCreate?: (invite: InviteCreate["d"]) => Awaitable<unknown>;
-    inviteDelete?: (Invite: InviteDelete["d"]) => Awaitable<unknown>;
-    messageCreate?: (message: Message) => Awaitable<unknown>;
-    messageUpdate?: (message: PartialMessage) => Awaitable<unknown>;
-    messageDelete?: (message: PartialMessage) => Awaitable<unknown>;
-    messageDeleteBulk?: (message: MessageDeleteBulk["d"]) => Awaitable<unknown>;
-    presenceUpdate?: (presence: PresenceUpdate["d"]) => Awaitable<unknown>;
-    userUpdate?: (user: User) => Awaitable<unknown>;
+import type {
+    ApplicationCommandPermissionsUpdate,
+    AutoModerationActionExecution,
+    GuildScheduledEventUserRemove,
+    GuildScheduledEventUserAdd,
+    MessageReactionRemoveEmoji,
+    GuildScheduledEventCreate,
+    GuildScheduledEventDelete,
+    GuildScheduledEventUpdate,
+    AutoModerationRuleCreate,
+    AutoModerationRuleDelete,
+    AutoModerationRuleUpdate,
+    GuildAuditLogEntryCreate,
+    MessageReactionRemoveAll,
+    UpdatePresenceStructure,
+    GuildIntegrationsUpdate,
+    MessageReactionRemove,
+    ReceiveDispatchEvent,
+    GuildStickersUpdate,
+    StageInstanceCreate,
+    StageInstanceUpdate,
+    ThreadMembersUpdate,
+    MessageReactionAdd,
+    ThreadMemberUpdate,
+    MessageDeleteBulk,
+    IntegrationCreate,
+    IntegrationDelete,
+    IntegrationUpdate,
+    InteractionCreate,
+    VoiceServerUpdate,
+    ChannelPinsUpdate,
+    GuildMemberRemove,
+    GuildEmojisUpdate,
+    GuildMemberUpdate,
+    GuildMembersChunk,
+    VoiceStateUpdate,
+    GuildRoleCreate,
+    GuildRoleUpdate,
+    PresenceUpdate,
+    ThreadListSync,
+    GuildRoleDelete,
+    GuildMemberAdd,
+    GuildBanRemove,
+    MessageCreate,
+    MessageDelete,
+    ChannelCreate,
+    ChannelDelete,
+    ChannelUpdate,
+    MessageUpdate,
+    WebhookUpdate,
+    InviteCreate,
+    InviteDelete,
+    ThreadCreate,
+    ThreadDelete,
+    ThreadUpdate,
+    GuildBanAdd,
+    GuildCreate,
+    GuildDelete,
+    GuildUpdate,
+    TypingStart,
+    UserUpdate,
+    Ready
+} from "./gateway/gateway-events.js";
+
+export type ClientListeners<T extends Transformers> = {
+    [K in keyof T]: T[K] extends { handler: unknown }
+        ? (T[K] & {})["handler"] extends ((...args: any) => infer R)
+            ? R extends [unknown, ...Array<unknown>] ? ((...arg: R) => Awaitable<unknown>) : ((arg: R) => Awaitable<unknown>)
+            : never
+        : (T[K] & { handler: unknown })["handler"] extends ((...args: infer U) => unknown)
+            ? ((...args: U) => Awaitable<unknown>)
+            : never
+};
+
+export type Transformer<T> = {
+    return: TransformerReturnType,
+    handler: (...args: [client: Client, payload: T]) => unknown
+};
+
+export interface Transformers {
+    raw?: {
+        return: TransformerReturnType,
+        handler: (data: ReceiveDispatchEvent) => unknown
+    };
+    ready?: Transformer<Ready["d"]>;
+    resumed?: Transformer<undefined>;
+    applicationCommandPermissionsUpdate?: Transformer<ApplicationCommandPermissionsUpdate["d"]>;
+    autoModerationRuleCreate?: Transformer<AutoModerationRuleCreate["d"]>;
+    autoModerationRuleUpdate?: Transformer<AutoModerationRuleUpdate["d"]>;
+    autoModerationRuleDelete?: Transformer<AutoModerationRuleDelete["d"]>;
+    autoModerationActionExecution?: Transformer<AutoModerationActionExecution["d"]>;
+    channelCreate?: Transformer<ChannelCreate["d"]>;
+    channelUpdate?: Transformer<ChannelUpdate["d"]>;
+    channelDelete?: Transformer<ChannelDelete["d"]>;
+    channelPinsUpdate?: Transformer<ChannelPinsUpdate["d"]>;
+    threadCreate?: Transformer<ThreadCreate["d"]>;
+    threadUpdate?: Transformer<ThreadUpdate["d"]>;
+    threadDelete?: Transformer<ThreadDelete["d"]>;
+    threadListSync?: Transformer<ThreadListSync["d"]>;
+    threadMemberUpdate?: Transformer<ThreadMemberUpdate["d"]>;
+    threadMembersUpdate?: Transformer<ThreadMembersUpdate["d"]>;
+    guildCreate?: Transformer<GuildCreate["d"]>;
+    guildUpdate?: Transformer<GuildUpdate["d"]>;
+    guildDelete?: Transformer<GuildDelete["d"]>;
+    guildAuditLogEntryCreate?: Transformer<GuildAuditLogEntryCreate["d"]>;
+    guildBanAdd?: Transformer<GuildBanAdd["d"]>;
+    guildBanRemove?: Transformer<GuildBanRemove["d"]>;
+    guildEmojisUpdate?: Transformer<GuildEmojisUpdate["d"]>;
+    guildStickersUpdate?: Transformer<GuildStickersUpdate["d"]>;
+    guildIntegrationsUpdate?: Transformer<GuildIntegrationsUpdate["d"]>;
+    guildMemberAdd?: Transformer<GuildMemberAdd["d"]>;
+    guildMemberRemove?: Transformer<GuildMemberRemove["d"]>;
+    guildMemberUpdate?: Transformer<GuildMemberUpdate["d"]>;
+    guildMembersChunk?: Transformer<GuildMembersChunk["d"]>;
+    guildRoleCreate?: Transformer<GuildRoleCreate["d"]>;
+    guildRoleUpdate?: Transformer<GuildRoleUpdate["d"]>;
+    guildRoleDelete?: Transformer<GuildRoleDelete["d"]>;
+    guildScheduledEventCreate?: Transformer<GuildScheduledEventCreate["d"]>;
+    guildScheduledEventUpdate?: Transformer<GuildScheduledEventUpdate["d"]>;
+    guildScheduledEventDelete?: Transformer<GuildScheduledEventDelete["d"]>;
+    guildScheduledEventUserAdd?: Transformer<GuildScheduledEventUserAdd["d"]>;
+    guildScheduledEventUserRemove?: Transformer<GuildScheduledEventUserRemove["d"]>;
+    integrationCreate?: Transformer<IntegrationCreate["d"]>;
+    integrationUpdate?: Transformer<IntegrationUpdate["d"]>;
+    integrationDelete?: Transformer<IntegrationDelete["d"]>;
+    interactionCreate?: Transformer<InteractionCreate["d"]>;
+    inviteCreate?: Transformer<InviteCreate["d"]>;
+    inviteDelete?: Transformer<InviteDelete["d"]>;
+    messageCreate?: Transformer<MessageCreate["d"]>;
+    messageUpdate?: Transformer<MessageUpdate["d"]>;
+    messageDelete?: Transformer<MessageDelete["d"]>;
+    messageDeleteBulk?: Transformer<MessageDeleteBulk["d"]>;
+    messageReactionAdd?: Transformer<MessageReactionAdd["d"]>;
+    messageReactionRemove?: Transformer<MessageReactionRemove["d"]>;
+    messageReactionRemoveAll?: Transformer<MessageReactionRemoveAll["d"]>;
+    messageReactionRemoveEmoji?: Transformer<MessageReactionRemoveEmoji["d"]>;
+    presenceUpdate?: Transformer<PresenceUpdate["d"]>;
+    stageInstanceCreate?: Transformer<StageInstanceCreate["d"]>;
+    stageInstanceUpdate?: Transformer<StageInstanceUpdate["d"]>;
+    stageInstanceDelete?: Transformer<StageInstanceCreate["d"]>;
+    typingStart?: Transformer<TypingStart["d"]>;
+    userUpdate?: Transformer<UserUpdate["d"]>;
+    voiceStateUpdate?: Transformer<VoiceStateUpdate["d"]>;
+    voiceServerUpdate?: Transformer<VoiceServerUpdate["d"]>;
+    webhookUpdate?: Transformer<WebhookUpdate["d"]>;
 }
 
-export interface BaseClientOptions {
+export interface BaseClientOptions<T extends Transformers> {
     intents: number;
-    listeners: ClientEventListeners;
+    listeners: ClientListeners<T>;
+    transformers?: T;
     presence?: UpdatePresenceStructure;
     setup?: (client: Client) => Awaitable<any>;
 }
 
-export interface ClientOptions extends Omit<BaseClientOptions, "intents"> {
+export interface ClientOptions<T extends Transformers> extends Omit<BaseClientOptions<T>, "intents"> {
     intents: Array<Intents> | number;
     token: string;
     attachDebugListener?: boolean;

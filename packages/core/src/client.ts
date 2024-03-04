@@ -1,17 +1,11 @@
-import { ThreadChannel, channelFactory } from "./factories/channel.js";
-import { interactionFactory } from "./factories/interaction.js";
-import { GuildMember } from "./factories/guild-member.js";
-import { guildFactory } from "./factories/guild.js";
-import { Message } from "./factories/message.js";
-import { User } from "./factories/user.js";
 import { REST } from "./http/rest.js";
-
+import { User } from "./factories/user.js";
+import { CollectorType, TransformerReturnType } from "#enums";
 import { WebSocketManager } from "#ws";
-import { GatewayEvent, CollectorType } from "#enums";
-import type { GuildInteraction, MessageComponentData } from "./factories/interaction.js";
 
-import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
+import type { GuildInteraction, MessageComponentData } from "./factories/interaction.js";
 import type { DebugFunction, DispatchFunction } from "#ws";
+import type { Message } from "./factories/message.js";
 
 import type {
     UnavailableGuildStructure,
@@ -19,6 +13,8 @@ import type {
     ApplicationStructure,
     BaseClientOptions,
     ClientOptions,
+    Transformers,
+    Transformer,
     Awaitable
 } from "./typings/index.js";
 
@@ -44,16 +40,16 @@ export interface Client {
     extends the class or tries to create its own instance
 */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class Client {
+export class Client<T extends Transformers = Transformers> {
     public readonly rest: REST = new REST();
 
     readonly #ws: WebSocketManager;
     readonly #collectors = new Map<Matcher, { cb: MatchedCallback, timer: Timer }>();
 
-    #ready: boolean = false;
+    protected readonly ready: boolean = false;
     #cachedCollectors: Array<[Matcher, { cb: MatchedCallback, timer: Timer }]> = [];
 
-    public constructor(options: BaseClientOptions, debug?: DebugFunction) {
+    public constructor(options: BaseClientOptions<T>, debug?: DebugFunction) {
         this.#ws = new WebSocketManager(
             {
                 intents: options.intents,
@@ -152,140 +148,72 @@ export class Client {
         }
     }
 
-    //! Pending: Compiled listeners based on the options instead of accessing arbitrary keys (0.7)
-    #generateListeners(options: BaseClientOptions): DispatchFunction {
-        return async (data) => {
-            await options.listeners.raw?.(data.d);
+    #generateListeners(options: BaseClientOptions<T>): DispatchFunction {
+        const builder: Array<string> = [];
+        const functions: [names: Array<string>, handlers: Array<(...args: any) => any>] = [[], []];
 
-            switch (data.t) {
-                case GatewayEvent.Ready: {
-                    Object.assign(this, {
-                        user: new User(this, data.d.user),
-                        guilds: data.d.guilds,
-                        sessionId: data.d.session_id,
-                        application: data.d.application
-                    });
+        const { listeners } = options;
+        const transformers = (options.transformers ?? {}) as Record<string, Transformer<any>>;
 
-                    Object.assign(this.#ws.resumeInfo, {
-                        url: data.d.resume_gateway_url,
-                        id: data.d.session_id
-                    });
+        if (typeof listeners.raw !== "undefined") {
+            functions[0].push("raw");
+            functions[1].push(listeners.raw);
+            builder.push("await raw(data)");
+        }
 
-                    if (this.#ready) break;
+        // eslint-disable-next-line @stylistic/max-len
+        builder.push("if(data.t === \"READY\"){Object.assign(client, {user:new User(client,data.d.user),guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});if (client.ready) return;client.ready = true;");
 
-                    await options.setup?.(this);
-                    await options.listeners.ready?.(this, data.d);
-                    this.#ready = true;
+        if (typeof listeners.ready !== "undefined") {
+            functions[0].push("ready");
+            functions[1].push(listeners.ready);
+            builder.push("await ready(client, data.d)");
+        }
 
-                    break;
-                }
-                case GatewayEvent.Resumed: {
-                    await options.listeners.resumed?.(this);
-                    break;
-                }
-                case GatewayEvent.ChannelCreate: {
-                    await options.listeners.channelCreate?.(channelFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.ChannelUpdate: {
-                    await options.listeners.channelUpdate?.(channelFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.ChannelDelete: {
-                    await options.listeners.channelDelete?.(channelFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.ChannelPinsUpdate: {
-                    await options.listeners.channelPinsUpdate?.(
-                        data.d.guild_id,
-                        data.d.channel_id,
-                        typeof data.d.last_pin_timestamp === "string" ? new Date(data.d.last_pin_timestamp) : null
-                    );
-                    break;
-                }
-                case GatewayEvent.ThreadCreate: {
-                    await options.listeners.threadCreate?.(<never>channelFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.ThreadUpdate: {
-                    await options.listeners.threadUpdate?.(channelFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.ThreadDelete: {
-                    await options.listeners.threadDelete?.(new ThreadChannel(this, <never>data.d, false));
-                    break;
-                }
-                case GatewayEvent.GuildCreate: {
-                    await options.listeners.guildCreate?.(guildFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.GuildUpdate: {
-                    await options.listeners.guildUpdate?.(guildFactory(this, data.d));
-                    break;
-                }
-                case GatewayEvent.GuildDelete: {
-                    await options.listeners.guildDelete?.(data.d);
-                    break;
-                }
-                case GatewayEvent.GuildMemberAdd: {
-                    await options.listeners.guildMemberAdd?.(<GuildMemberWithGuildId> new GuildMember(this, data.d));
-                    break;
-                }
-                case GatewayEvent.GuildMemberRemove: {
-                    await options.listeners.guildMemberRemove?.(data.d.guild_id, new User(this, data.d.user));
-                    break;
-                }
-                case GatewayEvent.GuildMemberUpdate: {
-                    await options.listeners.guildMemberUpdate?.(<GuildMemberWithGuildId> new GuildMember(this, <never>data.d));
-                    break;
-                }
-                case GatewayEvent.InteractionCreate: {
-                    const interaction = interactionFactory(this, data.d);
-                    if (interaction.isMessageComponentInteraction() && interaction.inGuild())
-                        if (await this.getCollector(interaction)) break;
+        builder.push("}");
 
-                    await options.listeners.interactionCreate?.(interaction);
-                    break;
+        for (let i = 0, f = 0, listenerEntries = Object.entries(listeners), { length } = listenerEntries; i < length; i++) {
+            const [name, handler] = listenerEntries[i] as [string, () => unknown];
+            if (name === "raw" || name === "ready") continue;
+            if (typeof handler === "undefined") continue;
+
+            const event = name.replace(/[A-Z]/, "_$&").toUpperCase();
+            const func = `f${f}`;
+            f++;
+
+            functions[0].push(func);
+            functions[1].push(handler);
+            builder.push(`else if(data.t === "${event}")`);
+
+            const transformer = transformers[name];
+
+            if (typeof transformer !== "undefined") {
+                const transf = `f${f}`;
+                f++;
+                functions[0].push(transf);
+                functions[1].push(transformer.handler);
+
+                switch (transformer.return) {
+                    case TransformerReturnType.SINGLE: {
+                        builder.push(`${func}(${transf}(client, data.d))`);
+                        break;
+                    }
+                    case TransformerReturnType.MULTIPLE: {
+                        builder.push(`${func}(...${transf}(client, data.d))`);
+                        break;
+                    }
                 }
-                case GatewayEvent.InviteCreate: {
-                    await options.listeners.inviteCreate?.(data.d);
-                    break;
-                }
-                case GatewayEvent.InviteDelete: {
-                    await options.listeners.inviteDelete?.(data.d);
-                    break;
-                }
-                case GatewayEvent.MessageCreate: {
-                    await options.listeners.messageCreate?.(new Message(this, data.d));
-                    break;
-                }
-                case GatewayEvent.MessageUpdate: {
-                    await options.listeners.messageUpdate?.(new Message(this, <never>data.d));
-                    break;
-                }
-                case GatewayEvent.MessageDelete: {
-                    await options.listeners.messageDelete?.(new Message(this, <never>data.d));
-                    break;
-                }
-                case GatewayEvent.MessageDeleteBulk: {
-                    await options.listeners.messageDeleteBulk?.(data.d);
-                    break;
-                }
-                case GatewayEvent.PresenceUpdate: {
-                    await options.listeners.presenceUpdate?.(data.d);
-                    break;
-                }
-                case GatewayEvent.UserUpdate: {
-                    await options.listeners.userUpdate?.(new User(this, data.d));
-                    break;
-                }
-                default:
-            }
-        };
+            } else
+                builder.push(`${func}(client, data.d)`);
+        }
+
+        const [names, handlers] = functions;
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        return new Function("client", "User", ...names, `return async (data) => { ${builder.join("")} }`)(this, User, ...handlers) as never;
     }
 }
 
-export async function createClient(options: ClientOptions): Promise<Client> {
+export async function createClient<T extends Transformers = Transformers>(options: ClientOptions<T>): Promise<Client> {
     return new Promise((res) => {
         // This is a promise executer, it doesn't need to be async
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
