@@ -4,19 +4,17 @@ import { WebSocketManager } from "#ws";
 import type { DebugFunction, DispatchFunction } from "#ws";
 import type {
     UnavailableGuildStructure,
+    CollectorMatchedCallback,
     UpdatePresenceStructure,
     ApplicationStructure,
+    InteractionStructure,
     BaseClientOptions,
+    CollectorMatcher,
     ClientOptions,
-    Transformers,
-    Transformer,
-    Awaitable,
     UserStructure,
-    InteractionStructure
+    Transformers,
+    Transformer
 } from "./typings/index.js";
-
-type Matcher = (interaction: InteractionStructure) => boolean;
-type MatchedCallback = (interaction: InteractionStructure) => Awaitable<any>;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client {
@@ -41,10 +39,10 @@ export class Client<T extends Transformers = Transformers> {
     public readonly rest: REST = new REST();
 
     readonly #ws: WebSocketManager;
-    readonly #collectors = new Map<Matcher, { cb: MatchedCallback, timer: Timer }>();
+    readonly #collectors = new Map<CollectorMatcher<T>, { cb: CollectorMatchedCallback<T>, timer: Timer }>();
 
     protected readonly ready: boolean = false;
-    #cachedCollectors: Array<[Matcher, { cb: MatchedCallback, timer: Timer }]> = [];
+    #cachedCollectors: Array<[CollectorMatcher<T>, { cb: CollectorMatchedCallback<T>, timer: Timer }]> = [];
 
     public constructor(options: BaseClientOptions<T>, debug?: DebugFunction) {
         this.#ws = new WebSocketManager(
@@ -89,11 +87,11 @@ export class Client<T extends Transformers = Transformers> {
     public async getCollector(interaction: InteractionStructure): Promise<boolean> {
         for (let i = 0, { length } = this.#cachedCollectors; i < length; i++) {
             const [matcher, { cb, timer } ] = this.#cachedCollectors[i];
-            if (!matcher(interaction)) continue;
+            if (!matcher(<never>interaction)) continue;
 
             clearTimeout(timer);
             // eslint-disable-next-line no-await-in-loop
-            await cb(interaction);
+            await cb(<never>interaction);
             this.#collectors.delete(matcher);
             this.#cachedCollectors = [...this.#collectors.entries()];
 
@@ -103,12 +101,12 @@ export class Client<T extends Transformers = Transformers> {
         return false;
     }
 
-    public addCollector(
-        matcher: Matcher,
-        callback: MatchedCallback,
+    public addCollector<C extends Transformers = T>(
+        matcher: CollectorMatcher<C>,
+        callback: CollectorMatchedCallback<C>,
         time: number = 30000
     ): void {
-        this.#collectors.set(matcher, { cb: callback, timer: setTimeout(() => { this.#collectors.delete(matcher); }, time) });
+        this.#collectors.set(<never>matcher, { cb: <never>callback, timer: setTimeout(() => { this.#collectors.delete(<never>matcher); }, time) });
         this.#cachedCollectors = [...this.#collectors.entries()];
     }
 

@@ -1,3 +1,4 @@
+import type { InteractionStructure } from "./index.js";
 import type { Intents, InteractionCollectorType, TransformerReturnType } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
@@ -148,6 +149,19 @@ export interface Transformers {
     voiceServerUpdate?: Transformer<VoiceServerUpdate["d"]>;
     webhookUpdate?: Transformer<WebhookUpdate["d"]>;
 }
+
+export type CollectorMatcher<T extends Transformers> = (interaction: ExtractInteractionForCollector<T>) => boolean;
+export type CollectorMatchedCallback<T extends Transformers> = (interaction: ExtractInteractionForCollector<T>) => Awaitable<any>;
+
+export type ExtractInteractionForCollector<T extends Transformers> = T["interactionCreate"] extends undefined
+    ? InteractionStructure
+    : T["interactionCreate"] extends { handler: unknown }
+        ? (T["interactionCreate"] & {})["handler"] extends ((...args: any) => infer R)
+            ? R
+            : never
+        : (T["interactionCreate"] & { handler: unknown })["handler"] extends ((...args: infer U) => unknown)
+            ? U
+            : never;
 
 export interface BaseClientOptions<T extends Transformers> {
     intents: number;
