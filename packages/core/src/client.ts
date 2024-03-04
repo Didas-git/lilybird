@@ -212,6 +212,9 @@ export async function createClient<T extends Transformers = Transformers>(option
             {
                 intents: Array.isArray(options.intents) ? options.intents.reduce((prev, curr) => prev | curr, 0) : options.intents,
                 listeners: options.listeners,
+                transformers: options.transformers,
+                presence: options.presence,
+                collectors: options.collectors,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res
             },
