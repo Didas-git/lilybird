@@ -258,11 +258,11 @@ export class REST {
         return this.#makeAPIRequest("POST", `interactions/${interactionId}/${interactionToken}/callback`, body, files);
     }
 
-    public async getOriginalInteractionResponse(clientId: string, interactionToken: string): Promise<InteractionResponseStructure> {
+    public async getOriginalInteractionResponse(clientId: string, interactionToken: string): Promise<MessageStructure> {
         return this.#makeAPIRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/@original`);
     }
 
-    public async editOriginalInteractionResponse(clientId: string, interactionToken: string, body: EditWebhookStructure, files?: Array<LilybirdAttachment>): Promise<InteractionResponseStructure> {
+    public async editOriginalInteractionResponse(clientId: string, interactionToken: string, body: EditWebhookStructure, files?: Array<LilybirdAttachment>): Promise<MessageStructure> {
         return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/@original`, body, files);
     }
 
@@ -274,11 +274,11 @@ export class REST {
         return this.#makeAPIRequest("POST", `webhooks/${clientId}/${interactionToken}`, body, files);
     }
 
-    public async getFollowupMessage(clientId: string, interactionToken: string, messageId: string): Promise<InteractionResponseStructure> {
+    public async getFollowupMessage(clientId: string, interactionToken: string, messageId: string): Promise<MessageStructure> {
         return this.#makeAPIRequest("GET", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`);
     }
 
-    public async editFollowupMessage(clientId: string, interactionToken: string, messageId: string, body: EditWebhookStructure, files?: Array<LilybirdAttachment>): Promise<InteractionResponseStructure> {
+    public async editFollowupMessage(clientId: string, interactionToken: string, messageId: string, body: EditWebhookStructure, files?: Array<LilybirdAttachment>): Promise<MessageStructure> {
         return this.#makeAPIRequest("PATCH", `webhooks/${clientId}/${interactionToken}/messages/${messageId}`, body, files);
     }
 
