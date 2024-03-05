@@ -2,7 +2,7 @@ import { transformers } from "./transformers.js";
 import type { Transformers } from "lilybird";
 
 export type DefaultTransformers = MergeTransformers<typeof transformers>;
-export const defaultTransformers = transformers;
+export const defaultTransformers: DefaultTransformers = transformers;
 
 export type MergeTransformers<T extends Transformers> = T & {
     [K in keyof Transformers as T[K] extends {} ? never : K]: Transformers[K]
