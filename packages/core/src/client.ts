@@ -204,7 +204,7 @@ export class Client<T extends Transformers = Transformers> {
     }
 }
 
-export async function createClient<T extends Transformers = Transformers>(options: ClientOptions<T>): Promise<Client> {
+export async function createClient<T extends Transformers>(options: ClientOptions<T>): Promise<Client> {
     return new Promise((res) => {
         // This is a promise executer, it doesn't need to be async
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
