@@ -68,7 +68,7 @@ import type {
 } from "./gateway/gateway-events.js";
 
 export type ClientListeners<T extends Transformers> = {
-    [K in keyof T]: T[K] extends { handler: unknown }
+    [K in keyof T]?: T[K] extends { handler: unknown }
         ? (T[K] & {})["handler"] extends ((...args: any) => infer R)
             ? R extends [unknown, ...Array<unknown>] ? ((...arg: R) => Awaitable<unknown>) : ((arg: R) => Awaitable<unknown>)
             : never
