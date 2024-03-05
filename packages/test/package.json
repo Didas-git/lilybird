@@ -19,6 +19,7 @@
   "peerDependencies": {
     "lilybird": "workspace:*",
     "@lilybird/jsx": "workspace:*",
-    "@lilybird/handlers": "workspace:*"
+    "@lilybird/handlers": "workspace:*",
+    "@lilybird/transformers": "workspace:*"
   }
 }

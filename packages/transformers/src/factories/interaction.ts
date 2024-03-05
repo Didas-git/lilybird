@@ -21,7 +21,6 @@ import type {
     GuildInteractionStructure,
     MessageComponentStructure,
     ModalSubmitDataStructure,
-    CollectorMatchedCallback,
     InteractionCallbackData,
     DMInteractionStructure,
     ApplicationCommandType,
@@ -31,6 +30,7 @@ import type {
     ActionRowStructure,
     LilybirdAttachment,
     ReplyOptions,
+    Awaitable,
     Locale,
     Client
 } from "lilybird";
@@ -60,6 +60,8 @@ function interactionDataFactory(interaction: InteractionStructure): InteractionD
         }
     }
 }
+
+export type MessageComponentCollectorCallback = (interaction: GuildInteraction<MessageComponentData, Message>) => Awaitable<unknown>;
 
 export const enum CollectorType {
     USER,
@@ -299,9 +301,9 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         return new Message(this.client, await this.client.rest.createFollowupMessage(this.client.user.id, this.token, data, files));
     }
 
-    public async editReply(content: string, options?: InteractionEditOptions): Promise<void>;
-    public async editReply(options: InteractionEditOptions): Promise<void>;
-    public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
+    public async editReply(content: string, options?: InteractionEditOptions): Promise<Message>;
+    public async editReply(options: InteractionEditOptions): Promise<Message>;
+    public async editReply(content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<Message> {
         let data: InteractionEditOptions;
         let files: Array<LilybirdAttachment> | undefined;
 
@@ -320,12 +322,13 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else ({ files, ...data } = content);
-        await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files);
+
+        return new Message(this.client, await this.client.rest.editOriginalInteractionResponse(this.client.user.id, this.token, data, files));
     }
 
-    public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<void>;
-    public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<void>;
-    public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<void> {
+    public async editFollowUp(messageId: string, content: string, options?: InteractionEditOptions): Promise<Message>;
+    public async editFollowUp(messageId: string, options: InteractionEditOptions): Promise<Message>;
+    public async editFollowUp(messageId: string, content: string | InteractionEditOptions, options?: InteractionEditOptions): Promise<Message> {
         let data: InteractionEditOptions;
         let files: Array<LilybirdAttachment> | undefined;
 
@@ -345,7 +348,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
             }
         } else ({ files, ...data } = content);
 
-        await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files);
+        return new Message(this.client, await this.client.rest.editFollowupMessage(this.client.user.id, this.token, messageId, data, files));
     }
 
     public async deleteReply(): Promise<void> {
@@ -356,26 +359,26 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         await this.client.rest.deleteFollowupMessage(this.client.application.id, this.token, messageId);
     }
 
-    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: CollectorMatchedCallback<DefaultTransformers>, time?: number): void;
-    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: CollectorMatchedCallback<DefaultTransformers>, time?: number): void;
+    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MessageComponentCollectorCallback, time?: number): void;
+    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MessageComponentCollectorCallback, time?: number): void;
     public createComponentCollector(
         type: CollectorType,
         idOrFilter: string,
-        idOrCallback: string | CollectorMatchedCallback<DefaultTransformers>,
-        timeOrBothCallback?: number | CollectorMatchedCallback<DefaultTransformers>,
+        idOrCallback: string | MessageComponentCollectorCallback,
+        timeOrBothCallback?: number | MessageComponentCollectorCallback,
         time?: number
     ): void {
         switch (type) {
             case CollectorType.USER: {
                 if (typeof idOrCallback === "string") return;
                 if (typeof timeOrBothCallback === "function") return;
-                this.client.addCollector<DefaultTransformers>((int) => int.isMessageComponentInteraction() && int.inGuild() && int.member.user.id === idOrFilter, idOrCallback, timeOrBothCallback);
+                this.client.addCollector<DefaultTransformers>((int) => int.isMessageComponentInteraction() && int.inGuild() && int.member.user.id === idOrFilter, <never>idOrCallback, timeOrBothCallback);
                 break;
             }
             case CollectorType.BUTTON_ID: {
                 if (typeof idOrCallback === "string") return;
                 if (typeof timeOrBothCallback === "function") return;
-                this.client.addCollector<DefaultTransformers>((int) => int.isMessageComponentInteraction() && int.inGuild() && int.data.id === idOrFilter, idOrCallback, timeOrBothCallback);
+                this.client.addCollector<DefaultTransformers>((int) => int.isMessageComponentInteraction() && int.inGuild() && int.data.id === idOrFilter, <never>idOrCallback, timeOrBothCallback);
                 break;
             }
             case CollectorType.BOTH: {
@@ -383,7 +386,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 if (typeof timeOrBothCallback === "number") return;
                 this.client.addCollector<DefaultTransformers>(
                     (int) => int.isMessageComponentInteraction() && int.inGuild() && int.data.id === idOrCallback && int.member.user.id === idOrFilter,
-                    timeOrBothCallback,
+                    <never>timeOrBothCallback,
                     time
                 );
                 break;

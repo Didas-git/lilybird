@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/transformers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Event transformers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",

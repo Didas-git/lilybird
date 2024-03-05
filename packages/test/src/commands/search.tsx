@@ -84,7 +84,7 @@ export default {
         const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.SEARCH_KEY}&cx=${process.env.CX}&q=${query}&num=10`;
 
         const response = await fetch(url);
-        const body: GoogleAPIResponse = await response.json();
+        const body: GoogleAPIResponse = await response.json() as never;
 
         populateCache(body.items);
 

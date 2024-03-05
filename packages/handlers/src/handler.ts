@@ -152,7 +152,7 @@ export class Handler {
         // eslint-disable-next-line func-style
         let messageCreateFn: Exclude<ClientListeners<any>["messageCreate"], undefined> | undefined = undefined;
 
-        const listeners: ClientListeners<DefaultTransformers> = {} as never;
+        const listeners: ClientListeners<DefaultTransformers> & Record<string, unknown> = {} as never;
 
         if (eventsExist) {
             for (const [name, event] of this.events) {
@@ -166,7 +166,7 @@ export class Handler {
                     continue;
                 }
 
-                listeners[name as keyof DefaultTransformers] = event.run;
+                listeners[name] = event.run;
             }
         }
 
