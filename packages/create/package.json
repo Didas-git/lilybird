@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/create",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0",
   "description": "Create a new template bot using lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
