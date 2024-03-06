@@ -1,4 +1,4 @@
-name: Publish Handlers
+name: Publish Transformers
 
 on:
   workflow_dispatch:
@@ -20,8 +20,8 @@ jobs:
         run: sh ./build.sh
       # bun doesnt support methods like `-ws`, `-w or similar yet
       - name: Hop into the folder
-        run: cd packages/handlers
-      - name: Publish handlers
+        run: cd packages/transformers
+      - name: Publish transformers
       # Bun doesnt have any publish methods yet
         run: npm publish --provenance --no-git-checks --access public
         env:
