@@ -113,7 +113,7 @@ if (!packages.includes("@lilybird/handlers")) {
     if (installTransformers) packages.push("@lilybird/transformers")
 }
 
-const dependencies: Array<string> = packages.concat("lilybird")
+let dependencies: Array<string> = packages.concat("lilybird")
 
 const packageJSON = (await new Snippet({
     message: "Fill out your package.json",
@@ -155,6 +155,11 @@ if (dependencies.includes("@lilybird/handlers")) {
 }
 
 process.chdir(root);
+
+if (process.argv.at(-1) === "--alpha") {
+    dependencies = dependencies.map((dep) => `${dep}@alpha`)
+}
+
 execSync(`${pm} install ${dependencies.join(" ")}`, {
     stdio: "inherit"
 });
