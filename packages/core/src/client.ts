@@ -116,6 +116,15 @@ export class Client<T extends Transformers = Transformers> {
         this.#cachedCollectors = [...this.#collectors.entries()];
     }
 
+    /** @internal DO NOT USE OUTSIDE OF INTERNAL CODE*/
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    protected __updateResumeInfo(url: string, id: string): void {
+        Object.assign(this.#ws.resumeInfo, {
+            url,
+            id
+        });
+    }
+
     #generateListeners(options: BaseClientOptions<T>): DispatchFunction {
         const builder: Array<string> = [];
         const functions: [names: Array<string>, handlers: Array<(...args: any) => any>] = [[], []];
@@ -142,6 +151,7 @@ export class Client<T extends Transformers = Transformers> {
 
         builder.push(
             ",guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
+            "client.__updateResumeInfo(data.d.resume_gateway_url, data.d.session_id)",
             "if(client.ready)return;client.ready=true;"
         );
 
