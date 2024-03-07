@@ -144,6 +144,7 @@ export class Client<T extends Transformers = Transformers> {
         );
 
         if (typeof transformers.userUpdate !== "undefined") {
+            if (transformers.userUpdate.return === TransformerReturnType.MULTIPLE) throw new Error("The transformer for 'userUpdate' should only return 1 value");
             functions[0].push("user");
             functions[1].push(transformers.userUpdate.handler);
             builder.push("await user(client, data.d.user)");
