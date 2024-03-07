@@ -11,14 +11,19 @@ import type {
     BaseClientOptions,
     CollectorMatcher,
     ClientOptions,
-    UserStructure,
     Transformers,
     Transformer
 } from "./typings/index.js";
 
+type GetUserType<T extends Transformers> = (T["userUpdate"] & {}) extends { handler: ((...args: infer U) => infer R) }
+    ? unknown extends R
+        ? U[1]
+        : R
+    : never ;
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export interface Client {
-    readonly user: UserStructure;
+export interface Client<T extends Transformers> {
+    readonly user: GetUserType<T>;
     readonly guilds: Array<UnavailableGuildStructure>;
     readonly sessionId: string;
     readonly application: ApplicationStructure;
@@ -41,8 +46,9 @@ export class Client<T extends Transformers = Transformers> {
     readonly #ws: WebSocketManager;
     readonly #collectors = new Map<CollectorMatcher<T>, { cb: CollectorMatchedCallback<T>, timer: Timer }>();
 
-    protected readonly ready: boolean = false;
     #cachedCollectors: Array<[CollectorMatcher<T>, { cb: CollectorMatchedCallback<T>, timer: Timer }]> = [];
+
+    protected readonly ready: boolean = false;
 
     public constructor(options: BaseClientOptions<T>, debug?: DebugFunction) {
         this.#ws = new WebSocketManager(
@@ -125,7 +131,17 @@ export class Client<T extends Transformers = Transformers> {
 
         builder.push(
             "if(data.t === \"READY\"){",
-            "Object.assign(client,{user:data.d.user,guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
+            "Object.assign(client,{user:"
+        );
+
+        if (typeof transformers.userUpdate !== "undefined") {
+            functions[0].push("user");
+            functions[1].push(transformers.userUpdate.handler);
+            builder.push("await user(client, data.d.user)");
+        } else builder.push("data.d.user");
+
+        builder.push(
+            ",guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
             "if(client.ready)return;client.ready=true;"
         );
 
