@@ -74,6 +74,7 @@ export interface CreateMessageStructure {
     payload_json?: string;
     attachments?: Array<Partial<AttachmentStructure>>;
     flags?: number;
+    enforce_nonce?: boolean;
 }
 
 export interface EditMessageStructure {
