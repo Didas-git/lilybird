@@ -150,10 +150,13 @@ export class Client<T extends Transformers = Transformers> {
             builder.push("await user(client, data.d.user)");
         } else builder.push("data.d.user");
 
+        functions[0].push("setup");
+        functions[1].push(options.setup);
+
         builder.push(
             ",guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
             "client.__updateResumeInfo(data.d.resume_gateway_url, data.d.session_id);",
-            "if(client.ready)return;client.ready=true;"
+            "if(client.ready)return;client.ready=true;await setup(client)"
         );
 
         if (typeof listeners.ready !== "undefined") {
@@ -243,7 +246,7 @@ export async function createClient<T extends Transformers>(options: ClientOption
                 presence: options.presence,
                 collectors: options.collectors,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res
+                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup(client); res(client); } : res
             },
             options.attachDebugListener
                 ? options.debugListener ?? ((identifier, payload) => {
