@@ -150,19 +150,39 @@ export class Client<T extends Transformers = Transformers> {
             builder.push("await user(client, data.d.user)");
         } else builder.push("data.d.user");
 
-        functions[0].push("setup");
-        functions[1].push(options.setup);
-
         builder.push(
             ",guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
             "client.__updateResumeInfo(data.d.resume_gateway_url, data.d.session_id);",
-            "if(client.ready)return;client.ready=true;await setup(client)"
+            "if(client.ready)return;client.ready=true;"
         );
+
+        if (typeof options.setup !== "undefined") {
+            functions[0].push("setup");
+            functions[1].push(options.setup);
+            builder.push("await setup(client)");
+        }
 
         if (typeof listeners.ready !== "undefined") {
             functions[0].push("ready");
             functions[1].push(listeners.ready);
-            builder.push("await ready(client, data.d)");
+
+            const transformer = transformers.ready;
+
+            if (typeof transformer !== "undefined") {
+                functions[0].push("readyTransformer");
+                functions[1].push(transformer.handler);
+
+                switch (transformer.return) {
+                    case TransformerReturnType.SINGLE: {
+                        builder.push("await ready(readyTransformer(client, data.d))");
+                        break;
+                    }
+                    case TransformerReturnType.MULTIPLE: {
+                        builder.push("await ready(...readyTransformer(client, data.d))");
+                        break;
+                    }
+                }
+            } else builder.push("await ready(client, data.d)");
         }
 
         builder.push("}");
@@ -197,9 +217,9 @@ export class Client<T extends Transformers = Transformers> {
 
                         if (transformer.return === TransformerReturnType.MULTIPLE) throw new Error("Transformers being used for collectors can only return a single value");
                         builder.push(
-                            `const cd = ${transf}(client, data.d);`,
+                            `const cd = await ${transf}(client, data.d);`,
                             "if(await client.getCollector(cd)) return;",
-                            `${func}(cd)`
+                            `await ${func}(cd)`
                         );
                         continue;
                     }
@@ -214,16 +234,16 @@ export class Client<T extends Transformers = Transformers> {
 
                 switch (transformer.return) {
                     case TransformerReturnType.SINGLE: {
-                        builder.push(`${func}(${transf}(client, data.d))`);
+                        builder.push(`await ${func}(${transf}(client, data.d))`);
                         break;
                     }
                     case TransformerReturnType.MULTIPLE: {
-                        builder.push(`${func}(...${transf}(client, data.d))`);
+                        builder.push(`await ${func}(...${transf}(client, data.d))`);
                         break;
                     }
                 }
             } else
-                builder.push(`${func}(client, data.d)`);
+                builder.push(`await ${func}(client, data.d)`);
 
             builder.push("}");
         }
@@ -246,7 +266,7 @@ export async function createClient<T extends Transformers>(options: ClientOption
                 presence: options.presence,
                 collectors: options.collectors,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup(client); res(client); } : res
+                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res
             },
             options.attachDebugListener
                 ? options.debugListener ?? ((identifier, payload) => {

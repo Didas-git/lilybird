@@ -171,13 +171,12 @@ export interface BaseClientOptions<T extends Transformers> {
     collectors?: {
         interactions?: InteractionCollectorType
     };
-    setup: (client: Client) => Awaitable<any>;
+    setup?: (client: Client) => Awaitable<any>;
 }
 
-export interface ClientOptions<T extends Transformers> extends Omit<BaseClientOptions<T>, "intents" | "setup"> {
+export interface ClientOptions<T extends Transformers> extends Omit<BaseClientOptions<T>, "intents"> {
     intents: Array<Intents> | number;
     token: string;
     attachDebugListener?: boolean;
     debugListener?: (identifier: string, payload: unknown) => void;
-    setup?: (client: Client) => Awaitable<any>;
 }
