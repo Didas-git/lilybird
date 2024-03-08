@@ -152,7 +152,7 @@ export class Client<T extends Transformers = Transformers> {
 
         builder.push(
             ",guilds:data.d.guilds,sessionId:data.d.session_id,application:data.d.application});",
-            "client.__updateResumeInfo(data.d.resume_gateway_url, data.d.session_id)",
+            "client.__updateResumeInfo(data.d.resume_gateway_url, data.d.session_id);",
             "if(client.ready)return;client.ready=true;"
         );
 
