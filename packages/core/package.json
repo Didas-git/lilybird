@@ -1,6 +1,6 @@
 {
   "name": "lilybird",
-  "version": "0.6.0-alpha.6",
+  "version": "0.6.0-alpha.7",
   "description": "A bun-first discord client written in TS",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -68,6 +68,6 @@
     "eslint-plugin-import": "^2.29.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "bun-types": "1.0.30",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   }
 }
