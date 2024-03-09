@@ -3,10 +3,10 @@ title: Getting Started
 description: Learn how to setup Lilybird.
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
 
 :::danger[Important]
-Lilybird does not officially support `deno`. While the core will probably work, there's no guarantee that the modules or, for that matter, some of the example commands will.
+Lilybird <u>does not</u> officially support <u>**deno**</u>. While the core will probably work, there's no guarantee that the modules or, for that matter the examples will.
 :::
 
 ## Installation
@@ -44,15 +44,16 @@ After running the command you should see a file structure somewhat like this:
 The following structure is what is generated when you use TypeScript, the JavaScript template doesn't include the `globals.d.ts` and `tsconfig.json` files.
 :::
 
-```txt
-your-bot
-├── globals.d.ts
-├── tsconfig.json
-├── package.json
-├── .env
-└── src
-    └── index.ts
-```
+<FileTree>
+
+- globals.d.ts
+- tsconfig.json
+- package.json
+- .env \<- add your **token** here
+- src
+  - index.ts
+
+</FileTree>
 
 ### Adding your token
 
@@ -77,9 +78,13 @@ If you are using Bun you can run `bun start` no matter what language you are usi
   </TabItem>
 </Tabs>
 
-### Ready for production with TypeScript
+### Ready for production
 
 If you are using TypeScript we highly recommend adding `NODE_ENV="production"` to your `.env` file and if you are using Node, do the following.
+
+:::note
+If you are using <u>**Bun**</u> we highly encourage changing or adding a script to run production using `bun --smol`.
+:::
 
 ```bash
 npm run build

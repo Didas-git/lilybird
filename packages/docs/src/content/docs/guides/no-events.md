@@ -12,13 +12,13 @@ You might be wondering, "so how can I listen to events or even collect message c
 Let me answer that for you. Usually, it's very unlikely that you need to listen to an event more than once. If you do find yourself in that situation, you can always create multiple functions and call them from the same listeners, like so::
 
 ```ts
-import { createClient, Intents, Interaction } from "lilybird"
+import { createClient, Intents } from "lilybird"
 
-function useInteraction1(interaction: Interaction) {
+function useInteraction1(interaction) {
   console.log(interaction.token);
 }
 
-function useInteraction2(interaction: Interaction) {
+function useInteraction2(interaction) {
   console.log(interaction.data);
 }
 

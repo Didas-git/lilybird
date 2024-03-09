@@ -18,7 +18,7 @@ export default defineConfig({
                     tag: "link",
                     attrs: {
                         type: "application/json+oembed",
-                        href: "oembed/main.json"
+                        href: "/oembed/main.json"
                     }
                 },
                 {
@@ -46,33 +46,20 @@ export default defineConfig({
                             link: "guides/manual-setup"
                         },
                         {
+                            label: "Handling Application Commands",
+                            link: "guides/handling-commands"
+                        },
+                        {
+                            label: "Receiving Messages",
+                            link: "guides/receiving-messages"
+                        },
+                        {
                             label: "No Events",
                             link: "guides/no-events"
                         },
                         {
-                            label: "Creating a simple handler",
-                            link: "guides/creating-handler"
-                        }
-                    ]
-                },
-                {
-                    label: "Documentation",
-                    items: [
-                        {
-                            label: "Core",
-                            badge: {
-                                text: "New",
-                                variant: "note"
-                            },
-                            autogenerate: { directory: "docs/core" }
-                        },
-                        {
                             label: "JSX Components",
                             collapsed: true,
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-                            },
                             items: [
                                 {
                                     label: "Configuring JSX",
@@ -105,14 +92,6 @@ export default defineConfig({
                             },
                             items: [
                                 {
-                                    label: "API",
-                                    link: "docs/handlers/the-api",
-                                    badge: {
-                                        text: "Internals",
-                                        variant: "success"
-                                    }
-                                },
-                                {
                                     label: "Handling Application Commands",
                                     link: "docs/handlers/application-commands"
                                 },
@@ -125,6 +104,15 @@ export default defineConfig({
                                     link: "docs/handlers/message-commands"
                                 }
                             ]
+                        }
+                    ]
+                },
+                {
+                    label: "Documentation",
+                    items: [
+                        {
+                            label: "Coming soon...",
+                            items: []
                         }
                     ]
                 }
