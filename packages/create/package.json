@@ -16,12 +16,12 @@
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc && cp -r src/templates dist/templates",
+    "build": "rm -rf dist && tsc && cp .npmignore dist/ && cp -r src/templates dist/templates",
     "dev": "bun src/index.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Didas-git/lilybird"
+    "url": "git+https://github.com/Didas-git/lilybird.git"
   },
   "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/create",
   "bugs": {

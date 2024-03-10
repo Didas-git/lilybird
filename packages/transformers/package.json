@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/transformers",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0-alpha.1",
   "description": "Event transformers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -22,11 +22,11 @@
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc && cp .npmignore dist/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Didas-git/lilybird"
+    "url": "git+https://github.com/Didas-git/lilybird.git"
   },
   "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/transformers",
   "bugs": {
