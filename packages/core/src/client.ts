@@ -1,15 +1,15 @@
 import { REST } from "./http/rest.js";
-import { GatewayEvent, InteractionCollectorType, TransformerReturnType } from "#enums";
+import { TransformerReturnType } from "#enums";
 import { WebSocketManager } from "#ws";
+
 import type { DebugFunction, DispatchFunction } from "#ws";
+import type { GatewayEvent } from "#enums";
+
 import type {
     UnavailableGuildStructure,
-    CollectorMatchedCallback,
     UpdatePresenceStructure,
     ApplicationStructure,
-    InteractionStructure,
     BaseClientOptions,
-    CollectorMatcher,
     ClientOptions,
     Transformers,
     Transformer
@@ -44,9 +44,6 @@ export class Client<T extends Transformers = Transformers> {
     public readonly rest: REST = new REST();
 
     readonly #ws: WebSocketManager;
-    readonly #collectors = new Map<CollectorMatcher<T>, { cb: CollectorMatchedCallback<T>, timer: Timer }>();
-
-    #cachedCollectors: Array<[CollectorMatcher<T>, { cb: CollectorMatchedCallback<T>, timer: Timer }]> = [];
 
     protected readonly ready: boolean = false;
 
@@ -87,33 +84,6 @@ export class Client<T extends Transformers = Transformers> {
             ws: await this.#ws.ping(),
             rest: final
         };
-    }
-
-    //? Perhaps this should be turned into its own manager...
-    public async getCollector(interaction: InteractionStructure): Promise<boolean> {
-        for (let i = 0, { length } = this.#cachedCollectors; i < length; i++) {
-            const [matcher, { cb, timer } ] = this.#cachedCollectors[i];
-            if (!matcher(<never>interaction)) continue;
-
-            clearTimeout(timer);
-            // eslint-disable-next-line no-await-in-loop
-            await cb(<never>interaction);
-            this.#collectors.delete(matcher);
-            this.#cachedCollectors = [...this.#collectors.entries()];
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public addCollector<C extends Transformers = T>(
-        matcher: CollectorMatcher<C>,
-        callback: CollectorMatchedCallback<C>,
-        time: number = 30000
-    ): void {
-        this.#collectors.set(<never>matcher, { cb: <never>callback, timer: setTimeout(() => { this.#collectors.delete(<never>matcher); }, time) });
-        this.#cachedCollectors = [...this.#collectors.entries()];
     }
 
     /** @internal DO NOT USE OUTSIDE OF INTERNAL CODE*/
@@ -202,30 +172,6 @@ export class Client<T extends Transformers = Transformers> {
 
             const transformer = transformers[name];
 
-            if (typeof options.collectors?.interactions !== "undefined" && event === GatewayEvent.IntegrationCreate) {
-                switch (options.collectors.interactions) {
-                    case InteractionCollectorType.GENERIC: {
-                        builder.push("if(await client.getCollector(data.d)) return;");
-                        break;
-                    }
-                    case InteractionCollectorType.TRANSFORMED: {
-                        if (typeof transformer === "undefined") throw new Error("There is no transformer defined for interactions that can be used with collectors");
-                        const transf = `f${f}`;
-                        f++;
-                        functions[0].push(transf);
-                        functions[1].push(transformer.handler);
-
-                        if (transformer.return === TransformerReturnType.MULTIPLE) throw new Error("Transformers being used for collectors can only return a single value");
-                        builder.push(
-                            `const cd = await ${transf}(client, data.d);`,
-                            "if(await client.getCollector(cd)) return;",
-                            `await ${func}(cd)`
-                        );
-                        continue;
-                    }
-                }
-            }
-
             if (typeof transformer !== "undefined") {
                 const transf = `f${f}`;
                 f++;
@@ -264,7 +210,6 @@ export async function createClient<T extends Transformers>(options: ClientOption
                 listeners: options.listeners,
                 transformers: options.transformers,
                 presence: options.presence,
-                collectors: options.collectors,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res
             },

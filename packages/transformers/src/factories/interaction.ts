@@ -11,7 +11,6 @@ import {
     ComponentType,
     MessageFlags
 } from "lilybird";
-import type { DefaultTransformers } from "../index.js";
 
 import type { PartialChannel } from "./channel.js";
 import type {
@@ -30,7 +29,6 @@ import type {
     ActionRowStructure,
     LilybirdAttachment,
     ReplyOptions,
-    Awaitable,
     Locale,
     Client
 } from "lilybird";
@@ -59,14 +57,6 @@ function interactionDataFactory(interaction: InteractionStructure): InteractionD
             return new ModalSubmitData(interaction.data);
         }
     }
-}
-
-export type MessageComponentCollectorCallback = (interaction: GuildInteraction<MessageComponentData, Message>) => Awaitable<unknown>;
-
-export const enum CollectorType {
-    USER,
-    BUTTON_ID,
-    BOTH
 }
 
 export type InteractionData = ApplicationCommandData | AutocompleteData | MessageComponentData | ModalSubmitData | undefined;
@@ -357,41 +347,6 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
     public async deleteFollowUp(messageId: string): Promise<void> {
         await this.client.rest.deleteFollowupMessage(this.client.application.id, this.token, messageId);
-    }
-
-    public createComponentCollector(type: CollectorType.USER | CollectorType.BUTTON_ID, id: string, callback: MessageComponentCollectorCallback, time?: number): void;
-    public createComponentCollector(type: CollectorType.BOTH, userId: string, buttonId: string, callback: MessageComponentCollectorCallback, time?: number): void;
-    public createComponentCollector(
-        type: CollectorType,
-        idOrFilter: string,
-        idOrCallback: string | MessageComponentCollectorCallback,
-        timeOrBothCallback?: number | MessageComponentCollectorCallback,
-        time?: number
-    ): void {
-        switch (type) {
-            case CollectorType.USER: {
-                if (typeof idOrCallback === "string") return;
-                if (typeof timeOrBothCallback === "function") return;
-                this.client.addCollector<DefaultTransformers>((int) => int.isMessageComponentInteraction() && int.inGuild() && int.member.user.id === idOrFilter, <never>idOrCallback, timeOrBothCallback);
-                break;
-            }
-            case CollectorType.BUTTON_ID: {
-                if (typeof idOrCallback === "string") return;
-                if (typeof timeOrBothCallback === "function") return;
-                this.client.addCollector<DefaultTransformers>((int) => int.isMessageComponentInteraction() && int.inGuild() && int.data.id === idOrFilter, <never>idOrCallback, timeOrBothCallback);
-                break;
-            }
-            case CollectorType.BOTH: {
-                if (typeof timeOrBothCallback === "undefined") return;
-                if (typeof timeOrBothCallback === "number") return;
-                this.client.addCollector<DefaultTransformers>(
-                    (int) => int.isMessageComponentInteraction() && int.inGuild() && int.data.id === idOrCallback && int.member.user.id === idOrFilter,
-                    <never>timeOrBothCallback,
-                    time
-                );
-                break;
-            }
-        }
     }
 
     public isPingInteraction(): this is Interaction<undefined> {

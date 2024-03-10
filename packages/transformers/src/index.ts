@@ -48,7 +48,6 @@ export { User } from "./factories/user.js";
 export {
     GuildInteraction,
     DMInteraction,
-    CollectorType,
     Interaction
 } from "./factories/interaction.js";
 
