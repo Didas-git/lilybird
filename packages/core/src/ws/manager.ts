@@ -54,7 +54,7 @@ export class WebSocketManager {
     } = <never>{};
 
     public constructor(options: ManagerOptions, dispatch: DispatchFunction, debug?: DebugFunction) {
-        if (!options.intents) throw new Error("No intents were passed");
+        if (typeof options.intents !== "number" && Number.isNaN(options.intents)) throw new Error("Invalid intents");
 
         this.#dispatch = dispatch;
         this.#debug = debug;
