@@ -1,14 +1,14 @@
 import { defaultTransformers } from "@lilybird/transformers";
 import { join } from "node:path";
-import type { DefaultTransformers, Interaction, Message } from "@lilybird/transformers";
 
 import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command.js";
+import type { DefaultTransformers, Interaction, Message } from "@lilybird/transformers";
 import type { MessageCommand } from "./message-commands.js";
 import type { Event } from "./events.js";
 
 import type {
-    BaseClientOptions,
     ClientListeners,
+    ClientOptions,
     Client
 } from "lilybird";
 
@@ -209,12 +209,15 @@ export async function createHandler({
 }: {
     dirs: HandlerDirectories,
     prefix?: string | undefined
-}): Promise<Expand<Pick<Required<BaseClientOptions<DefaultTransformers>>, "listeners" | "transformers" | "setup">>> {
+}): Promise<Expand<Pick<Required<ClientOptions<DefaultTransformers>>, "listeners" | "transformers" | "setup" | "customCacheKeys">>> {
     const handler = new Handler(dirs, prefix);
 
     return {
         transformers: defaultTransformers,
         listeners: await handler.buildListeners(),
+        customCacheKeys: {
+            guild_voice_states: "voiceStates"
+        },
         setup: async (client) => {
             await handler.registerGlobalCommands(client);
             await handler.registerGuildCommands(client);
