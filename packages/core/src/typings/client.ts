@@ -1,4 +1,5 @@
-import type { Intents, TransformerReturnType } from "#enums";
+import type { CacheManagerStructure } from "./cache-manager.js";
+import type { CachingDelegationType, Intents, TransformerReturnType } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
 
@@ -149,11 +150,39 @@ export interface Transformers {
     webhookUpdate?: Transformer<WebhookUpdate["d"]>;
 }
 
+// Keep in sync with CacheElementType
+type CacheKeys = "user" | "guild" | "channel" | "voiceState";
+
+interface BaseCachingStructure {
+    delegate: CachingDelegationType;
+    applyTransformers?: boolean;
+    enabled: Partial<Record<CacheKeys, boolean>>;
+    customKeys?: {
+        guild_voice_states?: string,
+        voice_state_user_id?: string,
+        voice_state_channel_id?: string
+    };
+}
+
+export interface ExternalCache extends BaseCachingStructure {
+    delegate: CachingDelegationType.EXTERNAL;
+    manager: CacheManagerStructure;
+}
+
+export interface TransformersCache extends BaseCachingStructure {
+    delegate: CachingDelegationType.TRANSFORMERS;
+}
+
+export interface DefaultCache extends BaseCachingStructure {
+    delegate: CachingDelegationType.DEFAULT;
+}
+
 export interface BaseClientOptions<T extends Transformers> {
     intents: number;
     listeners: ClientListeners<T>;
     transformers?: T;
     presence?: UpdatePresenceStructure;
+    caching?: DefaultCache | ExternalCache | TransformersCache;
     setup?: (client: Client) => Awaitable<any>;
 }
 
@@ -161,5 +190,6 @@ export interface ClientOptions<T extends Transformers> extends Omit<BaseClientOp
     intents: Array<Intents> | number;
     token: string;
     attachDebugListener?: boolean;
+    customCacheKeys?: BaseCachingStructure["customKeys"];
     debugListener?: (identifier: string, payload: unknown) => void;
 }
