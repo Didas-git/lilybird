@@ -159,8 +159,8 @@ export class WebSocketManager {
                 intents: this.#options.intents,
                 properties: {
                     os: process.platform,
-                    browser: "LilyBird",
-                    device: "LilyBird"
+                    browser: "Lilybird",
+                    device: "Lilybird"
                 },
                 presence: this.#options.presence
             },
