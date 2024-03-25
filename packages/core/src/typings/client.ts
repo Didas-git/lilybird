@@ -150,13 +150,28 @@ export interface Transformers {
     webhookUpdate?: Transformer<WebhookUpdate["d"]>;
 }
 
-// Keep in sync with CacheElementType
-type CacheKeys = "user" | "guild" | "channel" | "voiceState";
-
 interface BaseCachingStructure {
     delegate: CachingDelegationType;
     applyTransformers?: boolean;
-    enabled: Partial<Record<CacheKeys, boolean>>;
+    enabled: {
+        user?: boolean,
+        guild?: boolean | {
+            create?: boolean,
+            update?: boolean,
+            delete?: boolean
+        },
+        channel?: boolean | {
+            create?: boolean,
+            update?: boolean,
+            delete?: boolean,
+            threads?: boolean | {
+                create?: boolean,
+                update?: boolean,
+                delete?: boolean
+            }
+        },
+        voiceState?: boolean
+    };
     customKeys?: {
         guild_voice_states?: string,
         voice_state_user_id?: string,

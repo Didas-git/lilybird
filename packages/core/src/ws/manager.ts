@@ -17,7 +17,7 @@ interface ManagerOptions {
     presence?: UpdatePresenceStructure;
 }
 
-export type Identifier = "WS_MESSAGE"
+export type DebugIdentifier = "WS_MESSAGE"
     | "HEARTBEAT"
     | "ACK"
     | "NEED_HEARTBEAT"
@@ -29,10 +29,11 @@ export type Identifier = "WS_MESSAGE"
     | "MISSING_ACK"
     | "ZOMBIE"
     | "ATTEMPTING_RESUME"
-    | "UNKNOWN_CODE";
+    | "UNKNOWN_CODE"
+    | "LISTENERS";
 
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
-export type DebugFunction = (identifier: Identifier, payload?: unknown) => any;
+export type DebugFunction = (identifier: DebugIdentifier, payload?: unknown) => any;
 
 export class WebSocketManager {
     readonly #dispatch: DispatchFunction;
