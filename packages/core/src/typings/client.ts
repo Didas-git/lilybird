@@ -1,5 +1,5 @@
 import type { CacheManagerStructure } from "./cache-manager.js";
-import type { CachingDelegationType, Intents, TransformerReturnType } from "#enums";
+import type { CachingDelegationType, DebugIdentifier, Intents, TransformerReturnType } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
 
@@ -191,6 +191,8 @@ export interface TransformersCache extends BaseCachingStructure {
 export interface DefaultCache extends BaseCachingStructure {
     delegate: CachingDelegationType.DEFAULT;
 }
+
+export type DebugFunction = (identifier: DebugIdentifier, payload?: unknown) => any;
 
 export interface BaseClientOptions<T extends Transformers> {
     intents: number;

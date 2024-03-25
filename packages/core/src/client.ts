@@ -1,16 +1,15 @@
 import { REST } from "./http/rest.js";
 import { CachingManager } from "./cache/manager.js";
-import { CachingDelegationType, TransformerReturnType, GatewayEvent, CacheElementType } from "#enums";
+import { CachingDelegationType, TransformerReturnType, GatewayEvent, CacheElementType, DebugIdentifier } from "#enums";
 import { WebSocketManager } from "#ws";
-
-import type { DebugFunction, DispatchFunction } from "#ws";
-
+import type { DispatchFunction } from "#ws";
 import type {
     UpdatePresenceStructure,
     CacheManagerStructure,
     ApplicationStructure,
     BaseClientOptions,
     ClientOptions,
+    DebugFunction,
     Transformers,
     Transformer
 } from "./typings/index.js";
@@ -368,7 +367,7 @@ export class Client<T extends Transformers = Transformers> {
         const names = functions.keys();
         const handlers = functions.values();
         const compiledListeners = [...builder.values()].join("");
-        this.#debug("LISTENERS", compiledListeners);
+        this.#debug(DebugIdentifier.CompiledListeners, compiledListeners);
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function("client", ...names, `return async (data) => { ${compiledListeners} }`)(this, ...handlers) as never;
     }
