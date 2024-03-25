@@ -89,7 +89,7 @@ export class Client<T extends Transformers = Transformers> {
         };
     }
 
-    /** @internal DO NOT USE OUTSIDE OF INTERNAL CODE*/
+    /** @internal DO NOT USE OUTSIDE OF INTERNAL CODE */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     protected __updateResumeInfo(url: string, id: string): void {
         Object.assign(this.#ws.resumeInfo, {
@@ -100,7 +100,6 @@ export class Client<T extends Transformers = Transformers> {
 
     #generateListeners(options: BaseClientOptions<T>): DispatchFunction {
         const builder = new Map<string, string>();
-        // const functions: [names: Set<string>, handlers: Array<(...args: any) => any>] = [new Set(), []];
         const functions = new Map<string, (...args: any) => any>();
 
         const { listeners, caching } = options;
@@ -243,8 +242,7 @@ export class Client<T extends Transformers = Transformers> {
                                 functions,
                                 GatewayEvent.GuildCreate,
                                 "guildCreate",
-                                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                listeners.guildCreate ?? (() => {}),
+                                listeners.guildCreate,
                                 transformers.guildCreate,
                                 gcb.join("")
                             );
@@ -255,8 +253,7 @@ export class Client<T extends Transformers = Transformers> {
                                 functions,
                                 GatewayEvent.GuildUpdate,
                                 "guildUpdate",
-                                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                listeners.guildUpdate ?? (() => {}),
+                                listeners.guildUpdate,
                                 transformers.guildUpdate,
                                 `await client.cache.set(${CacheElementType.GUILD}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"});`
                             );
@@ -267,8 +264,7 @@ export class Client<T extends Transformers = Transformers> {
                                 functions,
                                 GatewayEvent.GuildDelete,
                                 "guildDelete",
-                                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                listeners.guildDelete ?? (() => {}),
+                                listeners.guildDelete,
                                 transformers.guildDelete,
                                 `await client.cache.delete(${CacheElementType.GUILD}, ${caching.applyTransformers ? "td.id" : "data.d.id"});`
                             );
@@ -282,10 +278,9 @@ export class Client<T extends Transformers = Transformers> {
                                 functions,
                                 GatewayEvent.ChannelCreate,
                                 "channelCreate",
-                                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                listeners.channelCreate ?? (() => {}),
+                                listeners.channelCreate,
                                 transformers.channelCreate,
-                                `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"})`
+                                `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"});`
                             );
                         }
                         if (enabled === true || enabled.update) {
@@ -294,10 +289,9 @@ export class Client<T extends Transformers = Transformers> {
                                 functions,
                                 GatewayEvent.ChannelUpdate,
                                 "channelUpdate",
-                                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                listeners.channelUpdate ?? (() => {}),
+                                listeners.channelUpdate,
                                 transformers.channelUpdate,
-                                `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"})`
+                                `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"});`
                             );
                         }
                         if (enabled === true || enabled.delete) {
@@ -306,10 +300,9 @@ export class Client<T extends Transformers = Transformers> {
                                 functions,
                                 GatewayEvent.ChannelDelete,
                                 "channelDelete",
-                                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                listeners.channelDelete ?? (() => {}),
+                                listeners.channelDelete,
                                 transformers.channelDelete,
-                                `await client.cache.delete(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id" : "data.d.id"})`
+                                `await client.cache.delete(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id" : "data.d.id"});`
                             );
                         }
                         // Go figure why the rules are colliding like this
@@ -321,10 +314,9 @@ export class Client<T extends Transformers = Transformers> {
                                     functions,
                                     GatewayEvent.ThreadCreate,
                                     "threadCreate",
-                                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                    listeners.threadCreate ?? (() => {}),
+                                    listeners.threadCreate,
                                     transformers.threadCreate,
-                                    `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"})`
+                                    `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"});`
                                 );
                             }
                             if (enabled === true || enabled.threads === true || (<Exclude<typeof enabled.threads, false | undefined>>enabled.threads).update) {
@@ -333,10 +325,9 @@ export class Client<T extends Transformers = Transformers> {
                                     functions,
                                     GatewayEvent.ThreadUpdate,
                                     "threadUpdate",
-                                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                    listeners.threadUpdate ?? (() => {}),
+                                    listeners.threadUpdate,
                                     transformers.threadUpdate,
-                                    `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"})`
+                                    `await client.cache.set(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id, td" : "data.d.id, data.d"});`
                                 );
                             }
                             if (enabled === true || enabled.threads === true || (<Exclude<typeof enabled.threads, false | undefined>>enabled.threads).delete) {
@@ -345,10 +336,9 @@ export class Client<T extends Transformers = Transformers> {
                                     functions,
                                     GatewayEvent.ThreadDelete,
                                     "threadDelete",
-                                    // eslint-disable-next-line @typescript-eslint/no-empty-function
-                                    listeners.threadDelete ?? (() => {}),
+                                    listeners.threadDelete,
                                     transformers.threadDelete,
-                                    `await client.cache.delete(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id" : "data.d.id"})`
+                                    `await client.cache.delete(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id" : "data.d.id"});`
                                 );
                             }
                         }
@@ -377,12 +367,12 @@ export class Client<T extends Transformers = Transformers> {
         functions: Map<string, (...args: any) => any>,
         event: GatewayEvent,
         name: string,
-        handler: (...args: any) => any,
+        handler: ((...args: any) => any) | undefined,
         transformer: Transformer<any> | undefined,
         extra: string | undefined = undefined
     ): void {
         const temp = [];
-        functions.set(name, handler);
+        if (typeof handler !== "undefined") functions.set(name, handler);
         temp.push(`else if(data.t === "${event}"){`);
 
         if (typeof transformer !== "undefined") {
@@ -395,9 +385,9 @@ export class Client<T extends Transformers = Transformers> {
                         temp.push(
                             `const td = await ${transf}(client, data.d);`,
                             extra,
-                            `await ${name}(td)`
+                            typeof handler !== "undefined" ? `await ${name}(td)` : ""
                         );
-                    } else temp.push(`await ${name}(await ${transf}(client, data.d));`);
+                    } else if (typeof handler !== "undefined") temp.push(`await ${name}(await ${transf}(client, data.d));`);
                     break;
                 }
                 case TransformerReturnType.MULTIPLE: {
@@ -405,14 +395,35 @@ export class Client<T extends Transformers = Transformers> {
                         temp.push(
                             `const td = await ${transf}(client, data.d);`,
                             extra,
-                            `await ${name}(...td);`
+                            typeof handler !== "undefined" ? `await ${name}(...td);` : ""
                         );
-                    } else temp.push(`await ${name}(...(await ${transf}(client, data.d)));`);
+                    } else if (typeof handler !== "undefined") temp.push(`await ${name}(...(await ${transf}(client, data.d)));`);
                     break;
                 }
             }
-        } else if (typeof extra !== "undefined") temp.push("const td = data.d;", extra, `await ${name}(client, td);`);
-        else temp.push(`await ${name}(client, data.d);`);
+        } else if (typeof extra !== "undefined") temp.push("const td = data.d;", extra, typeof handler !== "undefined" ? `await ${name}(client, td);` : "");
+        else if (typeof handler !== "undefined") temp.push(`await ${name}(client, data.d);`);
+
+        // Dead code elimination
+        // transformed data sometimes might not be needed and its easier to do it this way
+        // than adding more complexity to all the branches that add listeners
+        switch (temp.length) {
+            // Nothing at all was added to the array
+            case 1: return;
+            case 4: {
+                if (!temp[1].startsWith("const td =")) break;
+                if (!temp[2].includes("td")) {
+                    if (temp[3] === "") {
+                        temp.pop();
+                        temp[1] = temp.pop();
+                    } else {
+                        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+                        temp[1] = temp[2];
+                        temp[2] = temp.pop();
+                    }
+                }
+            }
+        }
 
         temp.push("}");
 
