@@ -371,9 +371,8 @@ export class Client<T extends Transformers = Transformers> {
         transformer: Transformer<any> | undefined,
         extra: string | undefined = undefined
     ): void {
-        const temp = [];
+        const temp = [`else if(data.t === "${event}"){`];
         if (typeof handler !== "undefined") functions.set(name, handler);
-        temp.push(`else if(data.t === "${event}"){`);
 
         if (typeof transformer !== "undefined") {
             const transf = `t_${name}`;
@@ -415,11 +414,13 @@ export class Client<T extends Transformers = Transformers> {
                 if (!temp[2].includes("td")) {
                     if (temp[3] === "") {
                         temp.pop();
-                        temp[1] = temp.pop();
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        temp[1] = temp.pop()!;
                     } else {
                         // eslint-disable-next-line @typescript-eslint/prefer-destructuring
                         temp[1] = temp[2];
-                        temp[2] = temp.pop();
+                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                        temp[2] = temp.pop()!;
                     }
                 }
             }
