@@ -108,6 +108,13 @@ export default defineConfig({
                     ]
                 },
                 {
+                    label: "API",
+                    autogenerate: {
+                        directory: "/api",
+                        collapsed: true
+                    }
+                },
+                {
                     label: "Documentation",
                     items: [
                         {

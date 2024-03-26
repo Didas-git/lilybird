@@ -1,0 +1,45 @@
+...@shared
+
+shape: sequence_diagram
+
+lilybird
+discord
+manager
+listeners
+
+lilybird -> listeners: Compile listeners
+
+lilybird -> discord: Connect
+discord -> lilybird: Hello
+
+heartbeat cycle: {
+  class: capitalized
+  lilybird.hb -> discord.hb: Heartbeat
+  discord.hb -> lilybird.hb.ack: ACK
+}
+
+lilybird -> discord: Identify
+discord -> lilybird: Ready
+
+discord -> lilybird: Payload
+lilybird.ev -> manager.ev: Event
+manager.ev -> listeners: Dispatch (OP 0)
+
+internal handler: {
+  class: capitalized
+  manager.ev -> manager.ev.op: Events
+}
+
+if disconnected: {
+  class: capitalized
+  discord -> lilybird: Disconnect
+  lilybird -> discord: Connect
+  lilybird -> discord: Resume
+  if resumed: {
+    class: capitalized
+    discord -> lilybird.rev: Missed Events
+    lilybird.rev -> manager.ev: Events
+    discord -> lilybird.rev: Resume Event
+    lilybird.rev -> manager.ev: Event
+  }
+}

@@ -1,0 +1,57 @@
+...@shared
+
+classes: {
+  text: {
+    shape: text
+    style: {
+      fill: transparent
+      stroke-width: 0
+    }
+  }
+}
+
+you: {
+  shape: person
+}
+
+use: {
+  class: text
+}
+
+may use: {
+  class: text
+}
+
+you -- may use -> modules -- use
+may use -- use -> client.api
+
+client: {
+  ...@lilybird
+  compiler: {
+    raw: {
+      # label: build raw event
+      shape: step
+    }
+    ready: {
+      # label: build ready event
+      shape: step
+    }
+    user defined: {
+      shape: step
+    }
+    cache: {
+      shape: step
+    }
+    DCE: {
+      shape: step
+    }
+
+    raw -- ready -- user defined -- cache -- DCE
+  }
+
+  compiler -> manager.listeners
+
+  api.transformers -> compiler
+  api.listeners -> compiler
+  api.cache -> compiler
+}

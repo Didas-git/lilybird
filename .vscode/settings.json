@@ -20,5 +20,7 @@
     "[typescriptreact]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
-    "typescript.preferences.importModuleSpecifierEnding": "js"
+    "typescript.preferences.importModuleSpecifierEnding": "js",
+    "D2.previewTheme": "Terminal",
+    "D2.previewLayout": "elk"
 }

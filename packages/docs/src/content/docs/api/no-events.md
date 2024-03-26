@@ -1,6 +1,8 @@
 ---
-title: Understanding the no-events approach
-description: Learn and understand the approach taken by lilybird.
+title: No Events
+description: Learn and understand the no-events approach taken by lilybird.
+sidebar:
+  order: 0
 ---
 
 As you might have noticed by now Lilybird does not have an events API and you might be questioning this decision so let's discuss the motivation behind this.
