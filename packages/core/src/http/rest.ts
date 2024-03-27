@@ -146,7 +146,7 @@ export class REST {
         const response = await fetch(`${REST.BaseURL}${path}`, opts);
 
         if (!response.ok) {
-            const errorMessage: ErrorMessage = await response.json();
+            const errorMessage: ErrorMessage = await response.json() as never;
             throw new RestError(errorMessage);
         }
 
@@ -645,7 +645,7 @@ export class REST {
             mute?: boolean,
             deaf?: boolean
         }
-    ): Promise<GuildMemberStructure> {
+    ): Promise<GuildMemberStructure | null> {
         return this.#makeAPIRequest("PUT", `guilds/${guildId}/members/${userId}`, body);
     }
 

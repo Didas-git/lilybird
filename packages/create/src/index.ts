@@ -98,7 +98,22 @@ const packages = await new MultiSelect({
     ]
 }).run();
 
-const dependencies: Array<string> = packages.concat("lilybird")
+if (!packages.includes("@lilybird/handlers")) {
+    const installTransformers = await new Select({
+        message: "Would you like to install the default transformers?",
+        choices: [
+            { name: "YES", value: true },
+            { name: "NO", value: false }
+        ],
+        result(name: string) {
+            return this.find(name).value;
+        }
+    }).run();
+
+    if (installTransformers) packages.push("@lilybird/transformers")
+}
+
+let dependencies: Array<string> = packages.concat("lilybird")
 
 const packageJSON = (await new Snippet({
     message: "Fill out your package.json",
@@ -127,7 +142,23 @@ if (config !== null) await writeFile("tsconfig.json", generateTSConfig(config, p
 
 await mkdir("src");
 process.chdir(resolve("src"));
-await cp(new URL("./index-template.ts", import.meta.url), `./index.${type}`);
+
+if (dependencies.includes("@lilybird/handlers")) {
+    await cp(new URL("./templates/handlers-template.ts", import.meta.url), `./index.${type}`);
+    await mkdir("listeners")
+    process.chdir(resolve("listeners"))
+    await cp(new URL(`./templates/listener-template.${type}`, import.meta.url), `./ready.${type}`);
+} else if (dependencies.includes("@lilybird/transformers")) {
+    await cp(new URL("./templates/transformers-template.ts", import.meta.url), `./index.${type}`);
+} else {
+    await cp(new URL("./templates/basic-template.ts", import.meta.url), `./index.${type}`);
+}
+
+process.chdir(root);
+
+if (process.argv.at(-1) === "--alpha") {
+    dependencies = dependencies.map((dep) => `${dep}@alpha`)
+}
 
 execSync(`${pm} install ${dependencies.join(" ")}`, {
     stdio: "inherit"

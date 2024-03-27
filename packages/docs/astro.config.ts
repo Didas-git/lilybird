@@ -18,7 +18,7 @@ export default defineConfig({
                     tag: "link",
                     attrs: {
                         type: "application/json+oembed",
-                        href: "oembed/main.json"
+                        href: "/oembed/main.json"
                     }
                 },
                 {
@@ -36,22 +36,43 @@ export default defineConfig({
                 },
                 {
                     label: "Guides",
+                    autogenerate: {
+                        directory: "/guides"
+                    }
+                },
+                {
+                    label: "API",
+                    badge: {
+                        text: "Beta",
+                        variant: "danger"
+
+                    },
+                    autogenerate: {
+                        directory: "/api",
+                        collapsed: true
+                    }
+                },
+                {
+                    label: "Modules",
                     items: [
                         {
-                            label: "Getting Started",
-                            link: "guides/getting-started"
+                            label: "JSX Components",
+                            collapsed: true,
+                            autogenerate: {
+                                directory: "/modules/jsx"
+                            }
                         },
                         {
-                            label: "Manual Setup",
-                            link: "guides/manual-setup"
-                        },
-                        {
-                            label: "No Events",
-                            link: "guides/no-events"
-                        },
-                        {
-                            label: "Creating a simple handler",
-                            link: "guides/creating-handler"
+                            label: "Handlers",
+                            badge: {
+                                text: "Beta",
+                                variant: "danger"
+
+                            },
+                            collapsed: true,
+                            autogenerate: {
+                                directory: "/modules/handlers"
+                            }
                         }
                     ]
                 },
@@ -59,72 +80,8 @@ export default defineConfig({
                     label: "Documentation",
                     items: [
                         {
-                            label: "Core",
-                            badge: {
-                                text: "New",
-                                variant: "note"
-                            },
-                            autogenerate: { directory: "docs/core" }
-                        },
-                        {
-                            label: "JSX Components",
-                            collapsed: true,
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-                            },
-                            items: [
-                                {
-                                    label: "Configuring JSX",
-                                    link: "docs/jsx/configuring-jsx"
-                                },
-                                {
-                                    label: "Embeds",
-                                    link: "docs/jsx/embed"
-                                },
-                                {
-                                    label: "Application Commands",
-                                    link: "docs/jsx/command"
-                                },
-                                {
-                                    label: "Message Components",
-                                    link: "docs/jsx/components"
-                                },
-                                {
-                                    label: "Attachments",
-                                    link: "docs/jsx/attachment"
-                                }
-                            ]
-                        },
-                        {
-                            label: "Handlers",
-                            collapsed: true,
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-                            },
-                            items: [
-                                {
-                                    label: "API",
-                                    link: "docs/handlers/the-api",
-                                    badge: {
-                                        text: "Internals",
-                                        variant: "success"
-                                    }
-                                },
-                                {
-                                    label: "Handling Application Commands",
-                                    link: "docs/handlers/application-commands"
-                                },
-                                {
-                                    label: "Handling Events",
-                                    link: "docs/handlers/events"
-                                },
-                                {
-                                    label: "Handling Message Commands",
-                                    link: "docs/handlers/message-commands"
-                                }
-                            ]
+                            label: "Coming soon...",
+                            items: []
                         }
                     ]
                 }

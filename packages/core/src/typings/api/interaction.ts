@@ -82,7 +82,7 @@ export interface ChannelApplicationCommandOptionStructure extends BaseApplicatio
     channel_types?: Array<ChannelType>;
 }
 
-type CommandWithChoices<T> = T & { choices?: Array<ApplicationCommandOptionChoiceStructure> };
+export type CommandWithChoices<T> = T & { choices?: Array<ApplicationCommandOptionChoiceStructure> };
 export type CommandWithAutocomplete<T> = T & { autocomplete?: boolean };
 
 export type ApplicationCommandOptionStructure =

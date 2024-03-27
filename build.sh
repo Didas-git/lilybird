@@ -6,6 +6,10 @@ echo Building lilybird core
 cd packages/core
 bun run build
 
+echo Building lilybird transformers module
+cd ../transformers
+bun run build
+
 echo Building lilybird jsx module
 cd ../jsx
 bun run build

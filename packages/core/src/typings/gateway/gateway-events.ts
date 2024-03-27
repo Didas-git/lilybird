@@ -103,8 +103,8 @@ export interface Identify extends BasePayload {
         token: string,
         properties: {
             os: string,
-            browser: "LilyBird",
-            device: "LilyBird"
+            browser: "Lilybird",
+            device: "Lilybird"
         },
         /** @defaultValue false */
         compress?: boolean,
