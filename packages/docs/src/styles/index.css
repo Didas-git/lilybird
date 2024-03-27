@@ -2,15 +2,15 @@
 :root {
     --sl-color-accent-low: #040d31;
     --sl-color-accent: #3447ff;
-    --sl-color-accent-high: #f49ac2;
+    --sl-color-accent-high: #ad9ee7;
     --sl-color-white: #ffffff;
     --sl-color-gray-1: #eceef2;
     --sl-color-gray-2: #c0c2c7;
-    --sl-color-gray-3: #888b96;
-    --sl-color-gray-4: #545861;
-    --sl-color-gray-5: #353841;
-    --sl-color-gray-6: #24272f;
-    --sl-color-black: #17181c;
+    --sl-color-gray-3: #9690b1;
+    --sl-color-gray-4: #6c6780;
+    --sl-color-gray-5: #3f3d49;
+    --sl-color-gray-6: #1e1d22;
+    --sl-color-black: #19181b;
 }
 
 /* Light mode colors. */
