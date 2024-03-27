@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "rm -rf src/assets/diagrams && bash compile.sh",
+    "pre:build": "rm -rf src/assets/diagrams && bash compile.sh",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "check": "eslint \"src/**/*.ts\""
