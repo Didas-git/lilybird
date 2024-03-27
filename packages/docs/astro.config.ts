@@ -36,83 +36,45 @@ export default defineConfig({
                 },
                 {
                     label: "Guides",
-                    items: [
-                        {
-                            label: "Getting Started",
-                            link: "guides/getting-started"
-                        },
-                        {
-                            label: "Manual Setup",
-                            link: "guides/manual-setup"
-                        },
-                        {
-                            label: "Handling Application Commands",
-                            link: "guides/handling-commands"
-                        },
-                        {
-                            label: "Receiving Messages",
-                            link: "guides/receiving-messages"
-                        },
-                        {
-                            label: "No Events",
-                            link: "guides/no-events"
-                        },
-                        {
-                            label: "JSX Components",
-                            collapsed: true,
-                            items: [
-                                {
-                                    label: "Configuring JSX",
-                                    link: "docs/jsx/configuring-jsx"
-                                },
-                                {
-                                    label: "Embeds",
-                                    link: "docs/jsx/embed"
-                                },
-                                {
-                                    label: "Application Commands",
-                                    link: "docs/jsx/command"
-                                },
-                                {
-                                    label: "Message Components",
-                                    link: "docs/jsx/components"
-                                },
-                                {
-                                    label: "Attachments",
-                                    link: "docs/jsx/attachment"
-                                }
-                            ]
-                        },
-                        {
-                            label: "Handlers",
-                            collapsed: true,
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-                            },
-                            items: [
-                                {
-                                    label: "Handling Application Commands",
-                                    link: "docs/handlers/application-commands"
-                                },
-                                {
-                                    label: "Handling Events",
-                                    link: "docs/handlers/events"
-                                },
-                                {
-                                    label: "Handling Message Commands",
-                                    link: "docs/handlers/message-commands"
-                                }
-                            ]
-                        }
-                    ]
+                    autogenerate: {
+                        directory: "/guides"
+                    }
                 },
                 {
                     label: "API",
+                    badge: {
+                        text: "Beta",
+                        variant: "danger"
+
+                    },
                     autogenerate: {
                         directory: "/api",
                         collapsed: true
                     }
+                },
+                {
+                    label: "Modules",
+                    items: [
+                        {
+                            label: "JSX Components",
+                            collapsed: true,
+                            autogenerate: {
+                                directory: "/modules/jsx"
+                            }
+                        },
+                        {
+                            label: "Handlers",
+                            badge: {
+                                text: "Beta",
+                                variant: "danger"
+
+                            },
+                            collapsed: true,
+                            autogenerate: {
+                                directory: "/modules/handlers"
+                            }
+                        }
+                    ]
                 },
                 {
                     label: "Documentation",

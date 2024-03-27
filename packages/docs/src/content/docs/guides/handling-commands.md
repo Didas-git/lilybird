@@ -1,6 +1,8 @@
 ---
 title: Handling Application Commands
 description: Learn how to create and handle commands with Lilybird.
+sidebar:
+  order: 2
 ---
 
 Interactions/Application Commands are the most important building block when it comes to discord bots nowadays.

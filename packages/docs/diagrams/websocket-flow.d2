@@ -4,42 +4,97 @@ shape: sequence_diagram
 
 lilybird
 discord
-manager
+manager: WS Manager
 listeners
 
-lilybird -> listeners: Compile listeners
-
-lilybird -> discord: Connect
-discord -> lilybird: Hello
+lilybird -> listeners: {
+  label: Compile Listeners
+  class: arrow
+}
+lilybird -> discord: {
+  label: Connect
+  class: arrow
+}
+discord -> lilybird: {
+  label: Hello
+  class: arrow
+}
 
 heartbeat cycle: {
   class: capitalized
-  lilybird.hb -> discord.hb: Heartbeat
-  discord.hb -> lilybird.hb.ack: ACK
+  lilybird.hb -> discord.hb: {
+    label: Heartbeat
+    class: arrow
+  }
+  discord.hb -> lilybird.hb.ack: {
+    label: ACK
+    class: arrow
+  }
 }
 
-lilybird -> discord: Identify
-discord -> lilybird: Ready
-
-discord -> lilybird: Payload
-lilybird.ev -> manager.ev: Event
-manager.ev -> listeners: Dispatch (OP 0)
+lilybird -> discord: {
+  label: Identify
+  class: arrow
+}
+discord -> lilybird: {
+  label: Ready
+  class: arrow
+}
+discord -> lilybird: {
+  label: Payload
+  class: arrow
+}
+lilybird.ev -> manager.ev: {
+  label: Event
+  class: arrow
+}
+manager.ev -> listeners: {
+  label: Dispatch (OP 0)
+  class: arrow
+}
 
 internal handler: {
   class: capitalized
-  manager.ev -> manager.ev.op: Events
+  manager.ev -> manager.ev.hd: {
+    label: Events
+    class: arrow
+    style: {
+      border-radius: 20
+    }
+  }
 }
 
 if disconnected: {
   class: capitalized
-  discord -> lilybird: Disconnect
-  lilybird -> discord: Connect
-  lilybird -> discord: Resume
+  discord -> lilybird: {
+    label: Disconnect
+    class: arrow
+  }
+  lilybird -> discord: {
+    label: Connect
+    class: arrow
+  }
+  lilybird -> discord: {
+    label: Resume
+    class: arrow
+  }
   if resumed: {
     class: capitalized
-    discord -> lilybird.rev: Missed Events
-    lilybird.rev -> manager.ev: Events
-    discord -> lilybird.rev: Resume Event
-    lilybird.rev -> manager.ev: Event
+    discord -> lilybird.rev: {
+      label: Missed Events
+      class: arrow
+    }
+    lilybird.rev -> manager.ev: {
+      label: Events
+      class: arrow
+    }
+    discord -> lilybird.rev: {
+      label: Resume Event
+      class: arrow
+    }
+    lilybird.rev -> manager.ev: {
+      label: Event
+      class: arrow
+    }
   }
 }

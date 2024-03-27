@@ -11,4 +11,8 @@ sidebar:
 import compilerDiagram from "../../../assets/diagrams/compiler.svg"
 import { Image } from 'astro:assets';
 
+The compiler in lilybird is what makes our api possible, it builds all the listeners **once** at startup so you only get both, what you defined and with proper transformers (if present) without any runtime checks after the bot starts.
+
+The lack of this extra checks on every event is what makes lilybird so fast, the workflow is just<br/> `event -> listener` with the only thing possibly in the middle being the transformers you define or in some cases the cache code.
+
 <Image src={compilerDiagram} alt="internal flow"/>

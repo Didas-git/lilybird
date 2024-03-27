@@ -1,6 +1,8 @@
 ---
 title: Embeds
 description: How to use Lilybird's Embed components.
+sidebar:
+  order: 2
 ---
 
 ## Creating embeds

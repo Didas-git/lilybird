@@ -1,6 +1,8 @@
 ---
 title: Handling Message Commands
 description: How to use lilybird's handlers for application commands.
+sidebar:
+  order: 2
 ---
 
 Currently the `@lilybird/handlers` package provides only one way of handling application commands, however, I can assure you there are more to come.

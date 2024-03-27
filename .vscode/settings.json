@@ -21,6 +21,10 @@
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "typescript.preferences.importModuleSpecifierEnding": "js",
+    "cSpell.enableFiletypes": [
+        "d2",
+        "mdx"
+    ],
     "D2.previewTheme": "Terminal",
-    "D2.previewLayout": "elk"
+    "D2.previewLayout": "tala"
 }

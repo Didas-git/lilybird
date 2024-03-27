@@ -1,6 +1,8 @@
 ---
 title: Application Commands
 description: How to use lilybird's ApplicationCommand component.
+sidebar:
+  order: 1
 ---
 
 ## Slash Commands

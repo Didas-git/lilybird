@@ -1,15 +1,5 @@
 ...@shared
 
-classes: {
-  text: {
-    shape: text
-    style: {
-      fill: transparent
-      stroke-width: 0
-    }
-  }
-}
-
 you: {
   shape: person
 }
@@ -22,11 +12,19 @@ may use: {
   class: text
 }
 
-you -- may use -> modules -- use
-may use -- use -> client.api
+you -- may use -> modules -- use: {
+  class: round-connection
+}
+you -- use -> client.api
+
+manager: { 
+  near: client.compiler
+  label: WS Manager
+}
+
+client.compiler -> manager.listeners
 
 client: {
-  ...@lilybird
   compiler: {
     raw: {
       # label: build raw event
@@ -42,16 +40,52 @@ client: {
     cache: {
       shape: step
     }
-    DCE: {
+    dce: {
       shape: step
     }
 
     raw -- ready -- user defined -- cache -- DCE
   }
 
-  compiler -> manager.listeners
+  api: {
+    # TALA currently seems to have some issues with clustering when using this option so its disabled rn
+    # grid-columns: 3
+    transformers
+    listeners
+    cache
+  }
 
-  api.transformers -> compiler
-  api.listeners -> compiler
-  api.cache -> compiler
+  api.transformers -> compiler: {
+    class: round-connection
+  }
+  api.listeners -> compiler: {
+    class: round-connection
+  }
+  api.cache -> compiler: {
+    class: round-connection
+  }
 }
+
+dce: {
+  near: client
+  style: {
+    font-size: 12
+  }
+  class: text
+  label: |md
+    # ● Definitions
+    
+    - Raw - Define the raw listener if it exists, raw is always first level with 0 conditionals.
+    - Ready - Define the ready listener, this is done manually for a few reasons.
+      - The setup api needs to also be added if it exists.
+      - The inner `user` object of the client might have a transformer assigned.
+    - User Defined - This handles creating the listeners you passed in on the api.
+      - This always adds the transformer for the event if it exists.
+    - Cache - Define the caching listeners, this process has some caveats right now.
+      - Caching always occurs before the listener.
+      - If the cache is delegated to the transformers this will be completely ignored.
+    - DCE - Dead Code Elimination happens for each listener to get rid of unused transformers.
+  |
+}
+
+client.compiler -- dce

@@ -1,6 +1,8 @@
 ---
 title: Message Components
 description: How to use Lilybird's message components.
+sidebar:
+  order: 3
 ---
 
 The building block of all message components is the `ActionRow` component.

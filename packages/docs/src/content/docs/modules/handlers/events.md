@@ -1,6 +1,8 @@
 ---
 title: Handling Events
 description: How to use lilybird's handlers for events.
+sidebar:
+  order: 1
 ---
 
 Currently the `@lilybird/handlers` package provides only one way of handling events, however, I can assure you there are more to come.
