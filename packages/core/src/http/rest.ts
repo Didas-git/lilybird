@@ -61,7 +61,10 @@ import type {
     RoleStructure,
     ErrorMessage,
     BanStructure,
-    ImageData
+    ImageData,
+    ApplicationRoleConnectionMetadataStructure,
+    AutoModerationRuleStructure,
+    POSTAutoModerationRule
 } from "../typings/index.js";
 
 export class RestError extends Error {
@@ -288,11 +291,11 @@ export class REST {
 
     //#endregion Application
     //#region Application Role Connection Metadata
-    public async getApplicationRoleConnectionMetadataRecords(applicationId: string): Promise<Array<unknown>> {
+    public async getApplicationRoleConnectionMetadataRecords(applicationId: string): Promise<Array<ApplicationRoleConnectionMetadataStructure>> {
         return this.makeAPIRequest("GET", `applications/${applicationId}/role-connections/metadata`);
     }
 
-    public async updateApplicationRoleConnectionMetadataRecords(applicationId: string): Promise<Array<unknown>> {
+    public async updateApplicationRoleConnectionMetadataRecords(applicationId: string): Promise<Array<ApplicationRoleConnectionMetadataStructure>> {
         return this.makeAPIRequest("PUT", `applications/${applicationId}/role-connections/metadata`);
     }
 
@@ -325,6 +328,28 @@ export class REST {
     }
 
     //#endregion Audit Log
+    //#region Auto Moderation
+    public async listAutoModerationRulesForGuild(guildId: string): Promise<Array<AutoModerationRuleStructure>> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/auto-moderation/rules`);
+    }
+
+    public async getAutoModerationRule(guildId: string, ruleId: string): Promise<AutoModerationRuleStructure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/auto-moderation/rules/${ruleId}`);
+    }
+
+    public async createAutoModerationRule(guildId: string, rule: POSTAutoModerationRule): Promise<AutoModerationRuleStructure> {
+        return this.makeAPIRequest("POST", `guilds/${guildId}/auto-moderation/rules`, rule);
+    }
+
+    public async modifyAutoModerationRule(guildId: string, ruleId: string, rule: Partial<Omit<POSTAutoModerationRule, "trigger_type">>): Promise<AutoModerationRuleStructure> {
+        return this.makeAPIRequest("PATCH", `guilds/${guildId}/auto-moderation/rules/${ruleId}`, rule);
+    }
+
+    public async deleteAutoModerationRule(guildId: string, ruleId: string, reason: string): Promise<null> {
+        return this.makeAPIRequest("DELETE", `guilds/${guildId}/auto-moderation/rules/${ruleId}`, { reason });
+    }
+
+    //#endregion
     //#region Channel
     public async getChannel(channelId: string): Promise<ChannelStructure> {
         return this.makeAPIRequest("GET", `channels/${channelId}`);
