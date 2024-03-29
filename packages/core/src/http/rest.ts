@@ -64,7 +64,9 @@ import type {
     ImageData,
     ApplicationRoleConnectionMetadataStructure,
     AutoModerationRuleStructure,
-    POSTAutoModerationRule
+    POSTAutoModerationRule,
+    GuildScheduleEventStructure,
+    CreateGuildScheduledEventStructure
 } from "../typings/index.js";
 
 export class RestError extends Error {
@@ -894,6 +896,58 @@ export class REST {
     }
 
     //#endregion Guild
+    //#region Guild Scheduled Event
+    public async listScheduledEventsForGuild(guildId: string, params: { with_user_count?: boolean }): Promise<Array<GuildScheduleEventStructure>> {
+        let url = `guilds/${guildId}/scheduled-events?`;
+        if (typeof params.with_user_count !== "undefined")
+            url += `with_user_count=${params.with_user_count}`;
+
+        return this.makeAPIRequest("GET", url);
+    }
+
+    public async createGuildScheduledEvent(guildId: string, event: CreateGuildScheduledEventStructure): Promise<GuildScheduleEventStructure> {
+        return this.makeAPIRequest("POST", `guilds/${guildId}/scheduled-events`, event);
+    }
+
+    public async getGuildScheduledEvent(guildId: string, eventId: string, params: { with_user_count?: boolean }): Promise<Array<GuildScheduleEventStructure>> {
+        let url = `guilds/${guildId}/scheduled-events/${eventId}?`;
+        if (typeof params.with_user_count !== "undefined")
+            url += `with_user_count=${params.with_user_count}`;
+
+        return this.makeAPIRequest("GET", url);
+    }
+
+    public async modifyGuildScheduledEvent(guildId: string, eventId: string, event: Partial<CreateGuildScheduledEventStructure>): Promise<GuildScheduleEventStructure> {
+        return this.makeAPIRequest("PATCH", `guilds/${guildId}/scheduled-events/${eventId}`, event);
+    }
+
+    public async deleteGuildScheduledEvent(guildId: string, eventId: string): Promise<null> {
+        return this.makeAPIRequest("DELETE", `guilds/${guildId}/scheduled-events/${eventId}`);
+    }
+
+    public async getGuildScheduledEventUsers(guildId: string, eventId: string, params: {
+        limit?: number,
+        with_member?: boolean,
+        before?: string,
+        after?: string
+    }): Promise<null> {
+        let url = `guilds/${guildId}/scheduled-events/${eventId}?`;
+        if (typeof params.with_member !== "undefined")
+            url += `with_member=${params.with_member}&`;
+
+        if (typeof params.before !== "undefined")
+            url += `before=${params.before}&`;
+
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.makeAPIRequest("DELETE", url);
+    }
+
+    //#endregion
     //#region Invite
     public async getInvite(inviteCode: string): Promise<InviteStructure> {
         return this.makeAPIRequest("GET", `invites/${inviteCode}`);

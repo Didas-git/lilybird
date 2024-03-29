@@ -8,7 +8,9 @@ import type {
     EmojiStructure,
     GuildFeatures,
     RoleStructure,
-    UserStructure
+    UserStructure,
+    GuildScheduledEventEntityMetadata,
+    ImageData
 } from "../index.js";
 
 import type {
@@ -22,7 +24,9 @@ import type {
     SortOrderType,
     ChannelType,
     PromptType,
-    Locale
+    Locale,
+    GuildScheduledEventPrivacyLevel,
+    GuildScheduledEventEntityType
 } from "#enums";
 
 export interface CreateGuildStructure {
@@ -178,4 +182,19 @@ export interface OnboardingPromptOptionStructure {
     emoji_animated?: boolean;
     title: string;
     description: string | null;
+}
+
+export interface CreateGuildScheduledEventStructure {
+    channel_id?: string;
+    entity_metadata?: GuildScheduledEventEntityMetadata;
+    name: string;
+    privacy_level: GuildScheduledEventPrivacyLevel;
+    /* ISO8601 Timestamp */
+    scheduled_start_time: string;
+    /* ISO8601 Timestamp */
+    scheduled_end_time?: string;
+    description?: string;
+    entity_type: GuildScheduledEventEntityType;
+    image?: ImageData;
+    reason?: string;
 }

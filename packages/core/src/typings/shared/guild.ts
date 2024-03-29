@@ -1,4 +1,5 @@
-import type { IntegrationExpireBehavior } from "#enums";
+import type { GuildScheduledEventEntityMetadata } from "./guild-schedule-event.js";
+import type { GuildScheduledEventEntityType, GuildScheduledEventPrivacyLevel, GuildScheduledEventStatus, IntegrationExpireBehavior } from "#enums";
 import type { OAuthScopes } from "../gateway/oauth2.js";
 import type { UserStructure } from "./user.js";
 
@@ -45,4 +46,25 @@ export interface IntegrationApplicationStructure {
     icon: string | null;
     description: string;
     bot?: UserStructure;
+}
+
+export interface GuildScheduledEventStructure {
+    id: string;
+    guild_id: string;
+    channel_id: string | null;
+    creator_id?: string | null;
+    name: string;
+    description?: string | null;
+    /* ISO8601 Timestamp */
+    scheduled_start_time: string;
+    /* ISO8601 Timestamp */
+    scheduled_end_time: string | null;
+    privacy_level: GuildScheduledEventPrivacyLevel;
+    status: GuildScheduledEventStatus;
+    entity_type: GuildScheduledEventEntityType;
+    entity_id: string | null;
+    entity_metadata: GuildScheduledEventEntityMetadata | null;
+    creator?: UserStructure;
+    user_count?: number;
+    image?: string | null;
 }
