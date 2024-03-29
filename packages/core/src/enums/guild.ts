@@ -80,7 +80,3 @@ export const enum PromptType {
     MULTIPLE_CHOICE,
     DROPDOWN
 }
-
-export const enum GuildScheduledEventPrivacyLevel {
-    GUILD_ONLY = 2
-}
