@@ -212,7 +212,7 @@ export class Client<T extends Transformers = Transformers> {
                     : undefined;
 
             if (typeof enabledGuild?.create !== "undefined") {
-                const gcb: Array<string> = [];
+                const temp: Array<string> = [];
                 if (typeof enabledChannel?.create !== "undefined") {
                     if (caching.applyTransformers) {
                         if (!functions.has("t_channelCreate")) {
@@ -220,11 +220,23 @@ export class Client<T extends Transformers = Transformers> {
                             functions.set("t_channelCreate", transformers.channelCreate.handler);
                         }
                     }
-                    gcb.push(
+                    temp.push(
                         "for (let i = 0, {channels} = td, {length} = channels; i < length; i++){",
                         `const channel = ${caching.applyTransformers ? "t_channelCreate(client, channels[i])" : "channels[i]"};`,
                         `await client.cache.set(${CacheElementType.CHANNEL}, channel.id, channel);`,
-                        "}",
+                        "}"
+                    );
+                }
+
+                if (typeof enabledThreads?.create !== "undefined") {
+                    if (caching.applyTransformers) {
+                        if (!functions.has("t_channelCreate")) {
+                            if (typeof transformers.channelCreate === "undefined") throw Error("Missing 'channelCreate' transformer");
+                            functions.set("t_channelCreate", transformers.channelCreate.handler);
+                        }
+                    }
+
+                    temp.push(
                         "for (let i = 0, {threads} = td, {length} = threads; i < length; i++){",
                         `const channel = ${caching.applyTransformers ? "t_channelCreate(client, threads[i])" : "threads[i]"};`,
                         `await client.cache.set(${CacheElementType.CHANNEL}, channel.id, channel);`,
@@ -239,10 +251,12 @@ export class Client<T extends Transformers = Transformers> {
                             functions.set("t_voiceStateUpdate", transformers.voiceStateUpdate.handler);
                         }
                     }
+
                     const key = caching.customKeys?.guild_voice_states ?? "voice_states";
                     const vCid = caching.customKeys?.voice_state_channel_id ?? "channel_id";
                     const vUid = caching.customKeys?.voice_state_user_id ?? "user_id";
-                    gcb.push(
+
+                    temp.push(
                         `for (let i = 0, {${key}} = td, {length} = ${key}; i < length; i++){`,
                         `const voice = ${caching.applyTransformers ? `t_voiceStateUpdate(client, ${key}[i])` : `${key}[i]`};`,
                         `await client.cache.set(${CacheElementType.VOICE_STATE}, \`\${voice.${vUid}}:\${voice.${vCid}}\`, voice);`,
@@ -250,7 +264,7 @@ export class Client<T extends Transformers = Transformers> {
                     );
                 }
 
-                gcb.push(
+                temp.push(
                     `await client.cache.set(${CacheElementType.GUILD},`,
                     `${caching.applyTransformers ? "td.id, td" : "data.d.id, {...data.d,channels: undefined,threads:undefined,voice_states:undefined}"}`,
                     ");"
@@ -263,7 +277,7 @@ export class Client<T extends Transformers = Transformers> {
                     "guildCreate",
                     listeners.guildCreate,
                     transformers.guildCreate,
-                    { when: enabledGuild.create, content: gcb.join("") }
+                    { when: enabledGuild.create, content: temp.join("") }
                 );
             }
             if (typeof enabledGuild?.update !== "undefined") {
@@ -375,6 +389,28 @@ export class Client<T extends Transformers = Transformers> {
                     {
                         when: enabledThreads.delete,
                         content: `await client.cache.delete(${CacheElementType.CHANNEL}, ${caching.applyTransformers ? "td.id" : "data.d.id"});`
+                    }
+                );
+            }
+            if (typeof caching.enabled.self !== "undefined") {
+                if (caching.applyTransformers) {
+                    if (!functions.has("t_userUpdate")) {
+                        if (typeof transformers.userUpdate === "undefined") throw new Error("Missing 'userUpdate' transformer");
+                        if (transformers.userUpdate.return === TransformerReturnType.MULTIPLE) throw new Error("The transformer for 'userUpdate' should only return 1 value");
+                        functions.set("t_userUpdate", transformers.userUpdate.handler);
+                    }
+                }
+
+                this.#createListener(
+                    builder,
+                    functions,
+                    GatewayEvent.UserUpdate,
+                    "userUpdate",
+                    listeners.userUpdate,
+                    transformers.userUpdate,
+                    {
+                        when: caching.enabled.self,
+                        content: `client.user = ${caching.applyTransformers ? "td" : "data.d"}`
                     }
                 );
             }

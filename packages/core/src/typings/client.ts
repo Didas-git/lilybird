@@ -167,7 +167,7 @@ interface BaseCachingStructure {
     delegate: CachingDelegationType;
     applyTransformers?: boolean;
     enabled: {
-        user?: boolean | SelectiveCache,
+        self?: CacheExecutionPolicy,
         guild?: boolean | SelectiveCache,
         channel?: boolean | (SelectiveCache & {
             threads?: boolean | SelectiveCache

@@ -1,5 +1,5 @@
 export const enum CacheElementType {
-    USER,
+    // USER,
     GUILD,
     CHANNEL,
     VOICE_STATE
