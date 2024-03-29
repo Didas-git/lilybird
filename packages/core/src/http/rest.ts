@@ -1095,4 +1095,9 @@ export class REST {
     }
 
     //#endregion User
+    //#region Voice
+    public async listVoiceRegions(): Promise<Array<VoiceRegionStructure>> {
+        return this.makeAPIRequest("GET", "voice/regions");
+    }
+    //#endregion
 }
