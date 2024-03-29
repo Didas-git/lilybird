@@ -62,6 +62,7 @@ import type {
     ChannelStructure,
     APIRoleStructure,
     StickerStructure,
+    WebhookStructure,
     InviteStructure,
     GuildStructure,
     EmojiStructure,
@@ -69,8 +70,7 @@ import type {
     RoleStructure,
     ErrorMessage,
     BanStructure,
-    ImageData,
-    WebhookStructure
+    ImageData
 } from "../typings/index.js";
 
 export class RestError extends Error {
