@@ -287,6 +287,16 @@ export class REST {
     }
 
     //#endregion Application
+    //#region Application Role Connection Metadata
+    public async getApplicationRoleConnectionMetadataRecords(applicationId: string): Promise<Array<unknown>> {
+        return this.makeAPIRequest("GET", `applications/${applicationId}/role-connections/metadata`);
+    }
+
+    public async updateApplicationRoleConnectionMetadataRecords(applicationId: string): Promise<Array<unknown>> {
+        return this.makeAPIRequest("PUT", `applications/${applicationId}/role-connections/metadata`);
+    }
+
+    //#endregion
     //#region Audit Log
     public async getGuildAuditLog(guildId: string, params: {
         user_id?: string,
