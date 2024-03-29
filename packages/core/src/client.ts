@@ -211,6 +211,8 @@ export class Client<T extends Transformers = Transformers> {
                             : undefined
                     : undefined;
 
+            if (typeof caching.enabled.voiceState !== "undefined" && typeof enabledGuild?.create === "undefined") throw new Error("The 'voiceState' cache needs the `guildCreate' cache to be enabled");
+
             if (typeof enabledGuild?.create !== "undefined") {
                 const temp: Array<string> = [];
                 if (typeof enabledChannel?.create !== "undefined") {
@@ -244,17 +246,31 @@ export class Client<T extends Transformers = Transformers> {
                     );
                 }
 
-                if (caching.enabled.voiceState) {
+                if (typeof caching.enabled.voiceState !== "undefined") {
                     if (caching.applyTransformers) {
                         if (!functions.has("t_voiceStateUpdate")) {
                             if (typeof transformers.voiceStateUpdate === "undefined") throw Error("Missing 'voiceStateUpdate' transformer");
                             functions.set("t_voiceStateUpdate", transformers.voiceStateUpdate.handler);
                         }
                     }
-
                     const key = caching.customKeys?.guild_voice_states ?? "voice_states";
                     const vCid = caching.customKeys?.voice_state_channel_id ?? "channel_id";
                     const vUid = caching.customKeys?.voice_state_user_id ?? "user_id";
+
+                    this.#createListener(
+                        builder,
+                        functions,
+                        GatewayEvent.VoiceStateUpdate,
+                        "voiceStateUpdate",
+                        listeners.voiceStateUpdate,
+                        transformers.voiceStateUpdate,
+                        {
+                            when: caching.enabled.voiceState,
+                            content: `await client.cache.set(${CacheElementType.VOICE_STATE}, ${caching.applyTransformers
+                                ? `\`\${td.${vUid}}:\${td.${vCid}}\``
+                                : `\`\${data.d.${vUid}}:\${data.d.${vCid}}\``}, data.d);`
+                        }
+                    );
 
                     temp.push(
                         `for (let i = 0, {${key}} = td, {length} = ${key}; i < length; i++){`,
@@ -437,8 +453,8 @@ export class Client<T extends Transformers = Transformers> {
         const temp = [`else if(data.t === "${event}"){`];
         if (typeof handler !== "undefined") functions.set(name, handler);
 
+        const transf = `t_${name}`;
         if (typeof transformer !== "undefined") {
-            const transf = `t_${name}`;
             functions.set(transf, transformer.handler);
 
             switch (transformer.return) {
@@ -508,12 +524,15 @@ export class Client<T extends Transformers = Transformers> {
                     temp[1] = temp[2];
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     temp[2] = temp.pop()!;
+                    functions.delete(transf);
                 }
             //@ts-expect-error We are rechecking because we modify the length inside this case
             // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            } else if (temp.length === 3 && !temp[2].includes("td"))
+            } else if (temp.length === 3 && !temp[2].includes("td")) {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 temp[1] = temp.pop()!;
+                functions.delete(transf);
+            }
         }
 
         temp.push("}");

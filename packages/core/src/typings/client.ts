@@ -173,7 +173,7 @@ interface BaseCachingStructure {
         channel?: boolean | (SelectiveCache & {
             threads?: boolean | SelectiveCache
         }),
-        voiceState?: boolean
+        voiceState?: CacheExecutionPolicy
     };
     customKeys?: {
         guild_voice_states?: string,
