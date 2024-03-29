@@ -23,3 +23,10 @@ export const enum CachingDelegationType {
      */
     TRANSFORMERS
 }
+
+export const enum CacheExecutionPolicy {
+    /** Execute cache handlers when the event is received */
+    FIRST,
+    /** Execute cache handlers after the user listener gets called */
+    LAST
+}

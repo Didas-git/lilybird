@@ -1,7 +1,14 @@
 import type { CacheManagerStructure } from "./cache-manager.js";
-import type { CachingDelegationType, DebugIdentifier, Intents, TransformerReturnType } from "#enums";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
+
+import type {
+    CachingDelegationType,
+    TransformerReturnType,
+    CacheExecutionPolicy,
+    DebugIdentifier,
+    Intents
+} from "#enums";
 
 import type {
     ApplicationCommandPermissionsUpdate,
@@ -150,26 +157,21 @@ export interface Transformers {
     webhookUpdate?: Transformer<WebhookUpdate["d"]>;
 }
 
+export interface SelectiveCache {
+    create?: CacheExecutionPolicy;
+    update?: CacheExecutionPolicy;
+    delete?: CacheExecutionPolicy;
+}
+
 interface BaseCachingStructure {
     delegate: CachingDelegationType;
     applyTransformers?: boolean;
     enabled: {
-        user?: boolean,
-        guild?: boolean | {
-            create?: boolean,
-            update?: boolean,
-            delete?: boolean
-        },
-        channel?: boolean | {
-            create?: boolean,
-            update?: boolean,
-            delete?: boolean,
-            threads?: boolean | {
-                create?: boolean,
-                update?: boolean,
-                delete?: boolean
-            }
-        },
+        user?: boolean | SelectiveCache,
+        guild?: boolean | SelectiveCache,
+        channel?: boolean | (SelectiveCache & {
+            threads?: boolean | SelectiveCache
+        }),
         voiceState?: boolean
     };
     customKeys?: {
