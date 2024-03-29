@@ -1,7 +1,7 @@
 //@ts-expect-error We don't want the package.json being added to dist
 import { version } from "../../package.json" with { type: "json" };
 
-import type { AuditLogEvent, MFALevel, OnboardingMode } from "#enums";
+import type { AuditLogEvent, MFALevel, OnboardingMode, PrivacyLevel } from "#enums";
 
 import type {
     LocalizationGlobalApplicationCommandStructure,
@@ -67,7 +67,9 @@ import type {
     POSTAutoModerationRule,
     GuildScheduleEventStructure,
     CreateGuildScheduledEventStructure,
-    GuildTemplateStructure
+    GuildTemplateStructure,
+    StageInstanceStructure,
+    CreateStageInstanceStructure
 } from "../typings/index.js";
 
 export class RestError extends Error {
@@ -989,6 +991,24 @@ export class REST {
     }
 
     //#endregion Invite
+    //#region Stage Instance
+    public async createStageInstance(instance: CreateStageInstanceStructure): Promise<StageInstanceStructure> {
+        return this.makeAPIRequest("POST", "stage-instances", instance);
+    }
+
+    public async getStageInstance(channelId: string): Promise<StageInstanceStructure> {
+        return this.makeAPIRequest("GET", `stage-instances/${channelId}`);
+    }
+
+    public async modifyStageInstance(channelId: string, data: { topic?: string, privacy_level?: PrivacyLevel, reason?: string }): Promise<StageInstanceStructure> {
+        return this.makeAPIRequest("PATCH", `stage-instances/${channelId}`, data);
+    }
+
+    public async deleteStageInstance(channelId: string, reason?: string): Promise<null> {
+        return this.makeAPIRequest("DELETE", `stage-instances/${channelId}`, { reason });
+    }
+
+    //#endregion
     //#region Sticker
     public async getSticker(stickerId: string): Promise<StickerStructure> {
         return this.makeAPIRequest("GET", `stickers/${stickerId}`);
