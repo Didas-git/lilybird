@@ -8,9 +8,11 @@ import type {
     LocalizationGuildApplicationCommandStructure,
     GuildApplicationCommandPermissionsStructure,
     LocalizedGlobalApplicationCommandStructure,
+    ApplicationRoleConnectionMetadataStructure,
     LocalizedGuildApplicationCommandStructure,
     ApplicationCommandPermissionsStructure,
     ListArchivedThreadsReturnStructure,
+    CreateGuildScheduledEventStructure,
     CreateThreadFromMessageStructure,
     POSTApplicationCommandStructure,
     CreateForumMediaThreadStructure,
@@ -20,6 +22,9 @@ import type {
     ModifyThreadChannelStructure,
     CreateChannelInviteStructure,
     GuildWidgetSettingsStructure,
+    AutoModerationRuleStructure,
+    CreateStageInstanceStructure,
+    GuildScheduleEventStructure,
     ModifyGuildChannelStructure,
     GetChannelMessagesStructure,
     CreateGuildChannelStructure,
@@ -29,6 +34,9 @@ import type {
     GuildOnboardingStructure,
     PATCHCurrentApplication,
     ExecuteWebhookStructure,
+    POSTAutoModerationRule,
+    GuildTemplateStructure,
+    StageInstanceStructure,
     CreateMessageStructure,
     ThreadChannelStructure,
     WelcomeScreenStructure,
@@ -61,15 +69,7 @@ import type {
     RoleStructure,
     ErrorMessage,
     BanStructure,
-    ImageData,
-    ApplicationRoleConnectionMetadataStructure,
-    AutoModerationRuleStructure,
-    POSTAutoModerationRule,
-    GuildScheduleEventStructure,
-    CreateGuildScheduledEventStructure,
-    GuildTemplateStructure,
-    StageInstanceStructure,
-    CreateStageInstanceStructure
+    ImageData
 } from "../typings/index.js";
 
 export class RestError extends Error {

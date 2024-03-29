@@ -1,4 +1,5 @@
 import type {
+    GuildScheduledEventEntityMetadata,
     DefaultReactionStructure,
     GuildMemberStructure,
     OverwriteStructure,
@@ -6,16 +7,17 @@ import type {
     ChannelStructure,
     StickerStructure,
     EmojiStructure,
+    GuildStructure,
     GuildFeatures,
     RoleStructure,
     UserStructure,
-    GuildScheduledEventEntityMetadata,
-    ImageData,
-    GuildStructure
+    ImageData
 } from "../index.js";
 
 import type {
     DefaultMessageNotificationLevel,
+    GuildScheduledEventPrivacyLevel,
+    GuildScheduledEventEntityType,
     ExplicitContentFilterLevel,
     SystemChannelFlags,
     VerificationLevel,
@@ -25,9 +27,7 @@ import type {
     SortOrderType,
     ChannelType,
     PromptType,
-    Locale,
-    GuildScheduledEventPrivacyLevel,
-    GuildScheduledEventEntityType
+    Locale
 } from "#enums";
 
 export interface CreateGuildStructure {
