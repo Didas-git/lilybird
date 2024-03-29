@@ -93,7 +93,7 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.Hello: {
-                    const interval = Math.round(payload.d.heartbeat_interval * Math.random());
+                    const interval = this.#getInterval(payload.d.heartbeat_interval);
                     this.#startTimer(interval);
 
                     if (!this.#isResuming) this.#identify();
@@ -128,6 +128,19 @@ export class WebSocketManager {
 
             return;
         });
+    }
+
+    #getInterval(interval: number): number {
+        let res = 0;
+        let i = 0;
+
+        do {
+            // eslint-disable-next-line @stylistic/no-extra-parens
+            res = Math.round((interval * Math.random()) + i);
+            i++;
+        } while (res < interval / 2);
+
+        return res;
     }
 
     #sendHeartbeatPayload(): void {
