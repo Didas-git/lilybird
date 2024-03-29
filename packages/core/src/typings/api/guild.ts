@@ -10,7 +10,8 @@ import type {
     RoleStructure,
     UserStructure,
     GuildScheduledEventEntityMetadata,
-    ImageData
+    ImageData,
+    GuildStructure
 } from "../index.js";
 
 import type {
@@ -197,4 +198,20 @@ export interface CreateGuildScheduledEventStructure {
     entity_type: GuildScheduledEventEntityType;
     image?: ImageData;
     reason?: string;
+}
+
+export interface GuildTemplateStructure {
+    code: string;
+    name: string;
+    description: string | null;
+    usage_count: number;
+    creator_id: string;
+    creator: UserStructure;
+    /* ISO8601 Timestamp */
+    created_at: string;
+    /* ISO8601 Timestamp */
+    updated_at: string;
+    source_guild_id: string;
+    serialized_source_guild: Partial<GuildStructure>;
+    is_dirty: boolean | null;
 }

@@ -66,7 +66,8 @@ import type {
     AutoModerationRuleStructure,
     POSTAutoModerationRule,
     GuildScheduleEventStructure,
-    CreateGuildScheduledEventStructure
+    CreateGuildScheduledEventStructure,
+    GuildTemplateStructure
 } from "../typings/index.js";
 
 export class RestError extends Error {
@@ -930,7 +931,7 @@ export class REST {
         with_member?: boolean,
         before?: string,
         after?: string
-    }): Promise<null> {
+    }): Promise<{ guild_scheduled_event_id: string, user: UserStructure, member?: GuildMemberStructure }> {
         let url = `guilds/${guildId}/scheduled-events/${eventId}?`;
         if (typeof params.with_member !== "undefined")
             url += `with_member=${params.with_member}&`;
@@ -945,6 +946,36 @@ export class REST {
             url += `limit=${params.limit}`;
 
         return this.makeAPIRequest("DELETE", url);
+    }
+
+    //#endregion
+    //#region Guild Template
+    public async getGuildTemplate(templateCode: string): Promise<GuildTemplateStructure> {
+        return this.makeAPIRequest("GET", `guilds/templates/${templateCode}`);
+    }
+
+    public async createGuildFromGuildTemplate(templateCode: string, guild: { name: string, image?: ImageData }): Promise<GuildStructure> {
+        return this.makeAPIRequest("POST", `guilds/templates/${templateCode}`, guild);
+    }
+
+    public async getGuildTemplates(guildId: string): Promise<Array<GuildTemplateStructure>> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/templates`);
+    }
+
+    public async createGuildTemplate(guildId: string, template: { name: string, description?: string | null }): Promise<GuildTemplateStructure> {
+        return this.makeAPIRequest("POST", `guilds/${guildId}/templates`, template);
+    }
+
+    public async syncGuildTemplate(guildId: string, templateCode: string): Promise<Array<GuildTemplateStructure>> {
+        return this.makeAPIRequest("PUT", `guilds/${guildId}/templates/${templateCode}`);
+    }
+
+    public async modifyGuildTemplate(guildId: string, templateCode: string, template: { name?: string, description?: string | null }): Promise<GuildTemplateStructure> {
+        return this.makeAPIRequest("PATCH", `guilds/${guildId}/templates/${templateCode}`, template);
+    }
+
+    public async deleteGuildTemplate(guildId: string, templateCode: string): Promise<GuildTemplateStructure> {
+        return this.makeAPIRequest("DELETE", `guilds/${guildId}/templates/${templateCode}`);
     }
 
     //#endregion
