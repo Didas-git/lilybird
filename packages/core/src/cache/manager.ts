@@ -10,10 +10,6 @@ export class CachingManager implements CacheManagerStructure {
 
     public set(type: CacheElementType, id: string, payload: any): void {
         switch (type) {
-            case CacheElementType.USER: {
-                this.users.set(id, payload);
-                break;
-            }
             case CacheElementType.GUILD: {
                 this.guilds.set(id, payload);
                 break;
@@ -31,9 +27,6 @@ export class CachingManager implements CacheManagerStructure {
 
     public get(type: CacheElementType, id: string): Record<string, unknown> | undefined {
         switch (type) {
-            case CacheElementType.USER: {
-                return this.users.get(id) as never;
-            }
             case CacheElementType.GUILD: {
                 return this.guilds.get(id) as never;
             }
@@ -48,9 +41,6 @@ export class CachingManager implements CacheManagerStructure {
 
     public delete(type: CacheElementType, id: string): boolean {
         switch (type) {
-            case CacheElementType.USER: {
-                return this.users.delete(id);
-            }
             case CacheElementType.GUILD: {
                 return this.guilds.delete(id);
             }

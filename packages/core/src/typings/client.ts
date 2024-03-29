@@ -165,6 +165,7 @@ export interface SelectiveCache {
 
 interface BaseCachingStructure {
     delegate: CachingDelegationType;
+    manager?: CacheManagerStructure;
     applyTransformers?: boolean;
     enabled: {
         self?: CacheExecutionPolicy,

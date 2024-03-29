@@ -58,7 +58,7 @@ export class Client<T extends Transformers = Transformers> {
     protected readonly ready: boolean = false;
 
     public constructor(options: BaseClientOptions<T>, debug?: DebugFunction) {
-        this.cache = options.caching?.delegate === CachingDelegationType.EXTERNAL ? options.caching.manager : new CachingManager();
+        this.cache = typeof options.caching?.manager !== "undefined" ? options.caching.manager : new CachingManager();
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         this.#debug = debug ?? (() => {});
         this.#ws = new WebSocketManager(
