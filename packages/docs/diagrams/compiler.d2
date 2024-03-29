@@ -17,7 +17,7 @@ you -- may use -> modules -- use: {
 }
 you -- use -> client.api
 
-manager: { 
+manager: {
   near: client.compiler
   label: WS Manager
 }
@@ -74,16 +74,14 @@ dce: {
   class: text
   label: |md
     # ● Definitions
-    
+
     - Raw - Define the raw listener if it exists, raw is always first level with 0 conditionals.
     - Ready - Define the ready listener, this is done manually for a few reasons.
       - The setup api needs to also be added if it exists.
       - The inner `user` object of the client might have a transformer assigned.
     - User Defined - This handles creating the listeners you passed in on the api.
       - This always adds the transformer for the event if it exists.
-    - Cache - Define the caching listeners, this process has some caveats right now.
-      - Caching always occurs before the listener.
-      - If the cache is delegated to the transformers this will be completely ignored.
+    - Cache - Define the caching listeners.
     - DCE - Dead Code Elimination happens for each listener to get rid of unused transformers.
   |
 }

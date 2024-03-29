@@ -3,98 +3,168 @@
 shape: sequence_diagram
 
 lilybird
-discord
-manager: WS Manager
 listeners
+manager: WS Manager
+discord
 
 lilybird -> listeners: {
   label: Compile Listeners
   class: arrow
 }
-lilybird -> discord: {
+listeners -> manager: {
+  label: Setup
+  class: arrow
+}
+
+lilybird -> manager: {
+  label: Token (LOGIN)
+  class: arrow
+}
+
+manager -> discord: {
   label: Connect
   class: arrow
 }
-discord -> lilybird: {
+discord -> manager: {
   label: Hello
   class: arrow
 }
 
 heartbeat cycle: {
   class: capitalized
-  lilybird.hb -> discord.hb: {
+  manager.hb -> discord.hb: {
     label: Heartbeat
     class: arrow
   }
-  discord.hb -> lilybird.hb.ack: {
+  discord.hb -> manager.hb.ack: {
     label: ACK
     class: arrow
   }
 }
 
-lilybird -> discord: {
+manager -> discord: {
   label: Identify
   class: arrow
 }
-discord -> lilybird: {
+
+discord -> manager: {
   label: Ready
   class: arrow
 }
-discord -> lilybird: {
-  label: Payload
+manager -> listeners: {
+  label: Ready
   class: arrow
 }
-lilybird.ev -> manager.ev: {
-  label: Event
+listeners -> lilybird.trr: {
+  label: Ready Transform
   class: arrow
 }
-manager.ev -> listeners: {
-  label: Dispatch (OP 0)
+lilybird.trr -> lilybird: {
+  label: Handle Ready
   class: arrow
+  style: {
+    border-radius: 20
+  }
 }
 
-internal handler: {
+event cycle: {
   class: capitalized
-  manager.ev -> manager.ev.hd: {
-    label: Events
+  discord -> manager: {
+    label: Payload
+    class: arrow
+  }
+  manager -> listeners: {
+    label: Dispatch (OP 0)
+    class: arrow
+  }
+  listeners -> lilybird.tr: {
+    label: Transform
+    class: arrow
+  }
+  lilybird.tr -> lilybird: {
+    label: Handle Event
     class: arrow
     style: {
       border-radius: 20
+    }
+  }
+
+  internal handler: {
+    class: capitalized
+    manager.ev -> manager.ev.hd: {
+      label: Events
+      class: arrow
+      style: {
+        border-radius: 20
+      }
     }
   }
 }
 
 if disconnected: {
   class: capitalized
-  discord -> lilybird: {
+  discord -> manager: {
     label: Disconnect
     class: arrow
   }
-  lilybird -> discord: {
+  manager -> discord: {
     label: Connect
     class: arrow
   }
-  lilybird -> discord: {
+  manager -> discord: {
     label: Resume
     class: arrow
   }
   if resumed: {
     class: capitalized
-    discord -> lilybird.rev: {
+    discord -> manager: {
       label: Missed Events
       class: arrow
     }
-    lilybird.rev -> manager.ev: {
-      label: Events
+    manager -> listeners: {
+      label: Dispatch (OP 0)
       class: arrow
     }
-    discord -> lilybird.rev: {
-      label: Resume Event
+    listeners -> lilybird.trd: {
+      label: Transform
       class: arrow
     }
-    lilybird.rev -> manager.ev: {
-      label: Event
+    lilybird.trd -> lilybird: {
+      label: Handle Events
       class: arrow
+      style: {
+        border-radius: 20
+      }
+    }
+    internal handler: {
+      class: capitalized
+      manager.evd -> manager.evd.hd: {
+        label: Events
+        class: arrow
+        style: {
+          border-radius: 20
+        }
+      }
+    }
+
+    discord -> manager: {
+      label: Resume
+      class: arrow
+    }
+    manager -> listeners: {
+      label: Resume
+      class: arrow
+    }
+    listeners -> lilybird.trs: {
+      label: Resume Transform
+      class: arrow
+    }
+    lilybird.trs -> lilybird: {
+      label: Handle Resume
+      class: arrow
+      style: {
+        border-radius: 20
+      }
     }
   }
 }
