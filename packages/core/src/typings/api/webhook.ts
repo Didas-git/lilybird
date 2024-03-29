@@ -3,7 +3,6 @@ import type {
     MessageComponentStructure,
     AllowedMentionsStructure,
     AttachmentStructure,
-    LilybirdAttachment,
     ChannelStructure,
     GuildStructure,
     EmbedStructure,
@@ -15,8 +14,6 @@ export interface EditWebhookStructure {
     embeds?: Array<EmbedStructure> | null;
     allowed_mentions?: AllowedMentionsStructure | null;
     components?: Array<MessageComponentStructure> | null;
-    files?: Array<LilybirdAttachment>;
-    payload_json?: string | null;
     attachments?: Array<Partial<AttachmentStructure>> | null;
 }
 
@@ -28,12 +25,11 @@ export interface ExecuteWebhookStructure {
     embeds?: Array<EmbedStructure>;
     allowed_mentions?: AllowedMentionsStructure;
     components?: Array<MessageComponentStructure>;
-    files?: Array<LilybirdAttachment>;
-    payload_json?: string;
     attachments?: Array<Partial<AttachmentStructure>>;
     /** MessageFlags.EPHEMERAL | MessageFlags.SUPPRESS_EMBEDS */
     flags?: number;
     thread_name?: string;
+    applied_tags?: Array<string>;
 }
 
 export interface WebhookStructure {

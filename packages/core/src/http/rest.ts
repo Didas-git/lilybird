@@ -69,7 +69,8 @@ import type {
     RoleStructure,
     ErrorMessage,
     BanStructure,
-    ImageData
+    ImageData,
+    WebhookStructure
 } from "../typings/index.js";
 
 export class RestError extends Error {
@@ -1098,6 +1099,100 @@ export class REST {
     //#region Voice
     public async listVoiceRegions(): Promise<Array<VoiceRegionStructure>> {
         return this.makeAPIRequest("GET", "voice/regions");
+    }
+
+    //#endregion
+    //#region Webhook
+    public async createWebhook(channelId: string, webhook: { name: string, avatar?: ImageData | null }): Promise<WebhookStructure> {
+        return this.makeAPIRequest("POST", `channels/${channelId}/webhooks`, webhook);
+    }
+
+    public async getChannelWebhooks(channelId: string): Promise<Array<WebhookStructure>> {
+        return this.makeAPIRequest("GET", `channels/${channelId}/webhooks`);
+    }
+
+    public async getGuildWebhooks(guildId: string): Promise<Array<WebhookStructure>> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/webhooks`);
+    }
+
+    public async getWebhook(webhookId: string): Promise<WebhookStructure> {
+        return this.makeAPIRequest("GET", `webhooks/${webhookId}`);
+    }
+
+    public async getWebhookWithToken(webhookId: string, token: string): Promise<WebhookStructure> {
+        return this.makeAPIRequest("GET", `webhooks/${webhookId}/${token}`);
+    }
+
+    public async modifyWebhook(webhookId: string, webhook: { name?: string, avatar?: ImageData | null, channel_id?: string, reason?: string }): Promise<WebhookStructure> {
+        return this.makeAPIRequest("PATCH", `webhooks/${webhookId}`, webhook);
+    }
+
+    public async modifyWebhookWithToken(webhookId: string, token: string, webhook: {
+        name?: string,
+        avatar?: ImageData | null,
+        channel_id?: string, reason?: string
+    }): Promise<WebhookStructure> {
+        return this.makeAPIRequest("PATCH", `webhooks/${webhookId}/${token}`, webhook);
+    }
+
+    public async deleteWebhook(webhookId: string, reason?: string): Promise<WebhookStructure> {
+        return this.makeAPIRequest("DELETE", `webhooks/${webhookId}`, { reason });
+    }
+
+    public async deleteWebhookWithToken(webhookId: string, token: string, reason?: string): Promise<WebhookStructure> {
+        return this.makeAPIRequest("DELETE", `webhooks/${webhookId}/${token}`, { reason });
+    }
+
+    public async executeWebhook(
+        webhookId: string,
+        token: string,
+        params: { wait?: boolean, thread_id?: string },
+        body: ExecuteWebhookStructure,
+        files?: Array<LilybirdAttachment>
+    ): Promise<MessageStructure | null> {
+        let url = `webhooks/${webhookId}/${token}?`;
+
+        if (typeof params.wait !== "undefined")
+            url += `wait=${params.wait}&`;
+
+        if (typeof params.thread_id !== "undefined")
+            url += `thread_id=${params.thread_id}&`;
+
+        return this.makeAPIRequest("POST", url, body, files);
+    }
+
+    public async getWebhookMessage(webhookId: string, token: string, messageId: string, params: { thread_id?: string }): Promise<MessageStructure> {
+        let url = `webhooks/${webhookId}/${token}/messages/${messageId}?`;
+
+        if (typeof params.thread_id !== "undefined")
+            url += `thread_id=${params.thread_id}`;
+
+        return this.makeAPIRequest("GET", url);
+    }
+
+    public async editWebhookMessage(
+        webhookId: string,
+        token: string,
+        messageId: string,
+        params: { thread_id?: string },
+        body: EditWebhookStructure,
+        files?: Array<LilybirdAttachment>
+    ): Promise<MessageStructure> {
+        let url = `webhooks/${webhookId}/${token}/messages/${messageId}?`;
+
+        if (typeof params.thread_id !== "undefined")
+            url += `thread_id=${params.thread_id}`;
+
+        return this.makeAPIRequest("PATCH", url, body, files);
+    }
+
+    public async deleteWebhookMessage(webhookId: string, token: string, messageId: string, params: { thread_id?: string }): Promise<null> {
+        let url = `webhooks/${webhookId}/${token}/messages/${messageId}?`;
+
+        if (typeof params.thread_id !== "undefined")
+            url += `thread_id=${params.thread_id}`;
+
+        return this.makeAPIRequest("DELETE", url);
     }
     //#endregion
 }
