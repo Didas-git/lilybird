@@ -496,27 +496,24 @@ export class Client<T extends Transformers = Transformers> {
                 // eslint-disable-next-line @typescript-eslint/prefer-destructuring
                 temp[2] = temp[3];
                 temp.pop();
-            }
+            } else if (temp[3] === "")
+                temp.pop();
 
-            if (!temp[1].startsWith("const td =")) throw new Error("There was something wrong internally with the compiler");
-            if (!temp[2].includes("td") || !temp[3].includes("td")) {
-                if (temp[2] === "") {
-                    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
-                    temp[2] = temp[3];
-                    temp.pop();
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    temp[1] = temp.pop()!;
-                } else if (temp[3] === "") {
-                    temp.pop();
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    temp[1] = temp.pop()!;
-                } else {
+            if (!temp[1].startsWith("const td ="))
+                throw new Error("There was something wrong internally with the compiler");
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            if (temp.length === 4 && !temp[3].includes("td")) {
+                if (!temp[2].includes("td")) {
                     // eslint-disable-next-line @typescript-eslint/prefer-destructuring
                     temp[1] = temp[2];
                     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     temp[2] = temp.pop()!;
                 }
-            }
+            //@ts-expect-error We are rechecking because we modify the length inside this case
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            } else if (temp.length === 3 && !temp[2].includes("td"))
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                temp[1] = temp.pop()!;
         }
 
         temp.push("}");
