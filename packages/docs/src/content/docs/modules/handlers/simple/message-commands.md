@@ -13,7 +13,7 @@ Let's create a simple `ping` command to demonstrate how it works.
 
 ```diff lang="ts" title="index.ts"
 import { createClient, Intents } from "lilybird";
-+import { createHandler } from "@lilybird/handlers";
++import { createHandler } from "@lilybird/handlers/simple";
 
 +const listeners = await createHandler({
 +    dirs: {
@@ -40,7 +40,7 @@ message.content.slice(this.prefix.length)
 :::
 
 ```ts title="commands/ping.ts"
-import { MessageCommand } from "@lilybird/handlers";
+import { MessageCommand } from "@lilybird/handlers/simple";
 
 export default {
   name: "ping",

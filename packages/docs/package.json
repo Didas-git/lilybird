@@ -23,5 +23,8 @@
     "sharp": "^0.33.1",
     "bun-types": "1.1.0",
     "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@expressive-code/plugin-line-numbers": "^0.33.5"
   }
 }

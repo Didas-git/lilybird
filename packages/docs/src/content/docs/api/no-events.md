@@ -13,7 +13,7 @@ You might be wondering, "so how can I listen to events or even collect message c
 
 Let me answer that for you. Usually, it's very unlikely that you need to listen to an event more than once. If you do find yourself in that situation, you can always create multiple functions and call them from the same listeners, like so::
 
-```ts
+```ts showLineNumbers
 import { createClient, Intents } from "lilybird"
 
 function useInteraction1(interaction) {

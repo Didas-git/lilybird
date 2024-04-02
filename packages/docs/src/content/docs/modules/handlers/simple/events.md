@@ -11,7 +11,7 @@ Currently the `@lilybird/handlers` package provides only one way of handling eve
 
 ```diff lang="ts" title="index.ts"
 import { createClient, Intents } from "lilybird";
-+import { createHandler } from "@lilybird/handlers";
++import { createHandler } from "@lilybird/handlers/simple";
 
 +const listeners = await createHandler({
 +    dirs: {
@@ -28,7 +28,7 @@ await createClient({
 ```
 
 ```ts title="events/ping.ts"
-import { Event } from "@lilybird/handlers";
+import { Event } from "@lilybird/handlers/simple";
 
 export default {
   event: "ready",

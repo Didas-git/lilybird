@@ -19,7 +19,7 @@ While in the example, we're using `@lilybird/jsx` to create the command data, yo
 
 ```diff lang="ts" title="index.ts"
 import { createClient, Intents } from "lilybird";
-+import { createHandler } from "@lilybird/handlers";
++import { createHandler } from "@lilybird/handlers/simple";
 
 +const listeners = await createHandler({
 +  dirs: {
@@ -36,7 +36,7 @@ await createClient({
 ```
 
 ```tsx title="commands/ping.tsx"
-import { SlashCommand } from "@lilybird/handlers";
+import { SlashCommand } from "@lilybird/handlers/simple";
 
 export default {
   post: "GLOBAL",

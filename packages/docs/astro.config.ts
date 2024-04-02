@@ -1,18 +1,26 @@
+import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-// https://astro.build/config
 export default defineConfig({
     integrations: [
         starlight({
             title: "Lilybird",
+            description: "Lightweight and performant Discord client built by the community for the community.",
+            customCss: ["./src/styles/index.css"],
+            lastUpdated: true,
             social: {
                 github: "https://github.com/Didas-git/lilybird"
             },
             editLink: {
                 baseUrl: "https://github.com/Didas-git/lilybird/edit/main/packages/docs"
             },
-            customCss: ["./src/styles/index.css"],
+            expressiveCode: {
+                plugins: [pluginLineNumbers()],
+                defaultProps: {
+                    showLineNumbers: false
+                }
+            },
             head: [
                 {
                     tag: "link",
@@ -64,20 +72,34 @@ export default defineConfig({
                         },
                         {
                             label: "Handlers",
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-
-                            },
                             collapsed: true,
-                            autogenerate: {
-                                directory: "/modules/handlers"
-                            }
+                            items: [
+                                {
+                                    label: "Simple",
+                                    collapsed: true,
+                                    autogenerate: {
+                                        directory: "/modules/handlers/simple"
+                                    }
+                                },
+                                {
+                                    label: "Advanced",
+                                    collapsed: true,
+                                    badge: {
+                                        text: "Beta",
+                                        variant: "danger"
+
+                                    },
+                                    autogenerate: {
+                                        directory: "/modules/handlers/default"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
                 {
                     label: "Documentation",
+                    // collapsed: true,
                     items: [
                         {
                             label: "Coming soon...",

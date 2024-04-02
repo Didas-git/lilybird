@@ -8,7 +8,7 @@ sidebar:
 
 Sending messages can be done with the `REST` helper, and if you wish to do the same as a `reply` in discord you can use `message_reference`
 
-```ts
+```ts showLineNumbers
 await createClient({
   ...,
   listeners: {

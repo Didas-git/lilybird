@@ -24,7 +24,7 @@ There are a few ways you can do this, we will be registering our commands using 
 
 So, lets create a helper function for this.
 
-```ts
+```ts showLineNumbers
 import type { Client } from "lilybird";
 
 async function ready(client: Client): Promise<void> {
@@ -42,7 +42,7 @@ async function ready(client: Client): Promise<void> {
 
 Above we created a command called `ping` and now we want to handle it, lets create a simple handler to do this.
 
-```ts
+```ts showLineNumbers
 import type { 
   ApplicationCommandInteractionStructure,
   InteractionStructure,
@@ -69,7 +69,7 @@ async function handleCommand(
 
 Now, everything left for us to do is put it all together.
 
-```ts
+```ts showLineNumbers
 import {
   InteractionType,
   createClient

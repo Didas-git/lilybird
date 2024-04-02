@@ -8,7 +8,7 @@ sidebar:
 import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
 
 :::danger[Important]
-Lilybird <u>does not</u> officially support <u>**deno**</u>. While the core will probably work, there's no guarantee that the modules or, for that matter the examples will.
+Lilybird <u>does not</u> officially support <u>**deno**</u>. While the core should work, there's no guarantee that the modules or, for that matter the examples will.
 :::
 
 ## Installation
@@ -16,22 +16,22 @@ Lilybird <u>does not</u> officially support <u>**deno**</u>. While the core will
 The fastest way to get started with Lilybird is by using our template generator.
 
 <Tabs>
-  <TabItem label="bun">
+  <TabItem label="bun" icon="bun">
     ```bash frame="none"
     bun create @lilybird
     ```
   </TabItem>
-  <TabItem label="npm">
+  <TabItem label="npm" icon="seti:npm">
     ```bash frame="none"
     npm create @lilybird
     ```
   </TabItem>
-  <TabItem label="pnpm">
+  <TabItem label="pnpm" icon="pnpm">
     ```bash frame="none"
     pnpm create @lilybird
     ```
   </TabItem>
-  <TabItem label="yarn">
+  <TabItem label="yarn" icon="seti:yarn">
     ```bash frame="none"
     yarn create @lilybird
     ```
@@ -88,7 +88,7 @@ If you are using TypeScript we highly recommend adding `NODE_ENV="production"` t
 If you are using <u>**Bun**</u> we highly encourage changing or adding a script to run production using `bun --smol`.
 :::
 
-```bash
+```bash frame="none"
 npm run build
 npm run start
 ```
