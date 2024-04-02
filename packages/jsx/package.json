@@ -20,7 +20,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.0.15",
+    "bun": ">=1.1.0",
     "node": ">=21.0.0"
   },
   "files": [
@@ -62,7 +62,7 @@
     "@stylistic/eslint-plugin": "^1.6.3",
     "eslint-plugin-import": "^2.29.0",
     "eslint-import-resolver-typescript": "^3.6.1",
-    "bun-types": "1.0.30",
+    "bun-types": "1.1.0",
     "typescript": "^5.4.2"
   }
 }
