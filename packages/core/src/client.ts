@@ -137,13 +137,15 @@ export class Client<T extends Transformers = Transformers> {
         readyArr.push(
             ",sessionId:data.d.session_id,application:data.d.application});",
             "client.__updateResumeInfo(data.d.resume_gateway_url, data.d.session_id);",
-            "if(client.ready)return;client.ready=true;"
+            "if(!client.ready){client.ready=true;"
         );
 
         if (typeof options.setup !== "undefined") {
             functions.set("setup", options.setup);
             readyArr.push("await setup(client);");
         }
+
+        readyArr.push("}");
 
         if (typeof listeners.ready !== "undefined") {
             functions.set("ready", listeners.ready);
