@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.4.0-alpha.2",
+  "version": "0.4.0-beta.0",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -11,6 +11,11 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./simple": {
+      "types": "./dist/simple.d.ts",
+      "require": "./dist/simple.js",
+      "default": "./dist/simple.js"
     },
     "./package.json": "./package.json"
   },
@@ -47,7 +52,7 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.6.0-alpha.5",
+    "lilybird": "^0.6.0-beta.0",
     "@lilybird/transformers": "^0.2.0-alpha.0"
   },
   "devDependencies": {
