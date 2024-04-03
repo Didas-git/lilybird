@@ -71,6 +71,19 @@ export default defineConfig({
                             }
                         },
                         {
+                            label: "Transformers",
+                            // collapsed: true,
+                            // autogenerate: {
+                            //     directory: "/modules/transformers"
+                            // }
+                            items: [
+                                {
+                                    label: "Coming soon...",
+                                    items: []
+                                }
+                            ]
+                        },
+                        {
                             label: "Handlers",
                             collapsed: true,
                             items: [
