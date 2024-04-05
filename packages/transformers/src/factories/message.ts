@@ -227,7 +227,12 @@ export class Message {
         return channelFactory(this.client, await this.client.rest.startThreadFromMessage(this.channelId, this.id, options));
     }
 
-    public async fetchChannel(): Promise<Channel> {
+    public async fetchChannel(force: boolean = false): Promise<Channel> {
+        if (!force) {
+            const cachedChannel = await this.client.cache.channels.get(this.channelId);
+            if (typeof cachedChannel !== "undefined") return cachedChannel;
+        }
+
         return channelFactory(this.client, await this.client.rest.getChannel(this.channelId));
     }
 

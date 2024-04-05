@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/transformers",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "description": "Event transformers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -48,7 +48,7 @@
     "transformers"
   ],
   "peerDependencies": {
-    "lilybird": "^0.6.0-alpha.5"
+    "lilybird": "^0.6.0-beta.1"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
