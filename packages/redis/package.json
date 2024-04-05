@@ -1,7 +1,7 @@
 {
   "name": "@lilybird/redis",
   "version": "0.1.0",
-  "description": "A redis module to use with lilybird",
+  "description": "A Redis module for caching with lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
   "license": "Apache-2.0",
