@@ -1,7 +1,4 @@
-import type { VoiceStateStructure } from "./gateway/voice.js";
-import type { ChannelStructure } from "./gateway/channel.js";
 import type { CacheElementType } from "../enums/cache.js";
-import type { GuildStructure } from "./gateway/guild.js";
 import type { Awaitable } from "./utils.js";
 
 export interface MapLike<T> {
@@ -11,9 +8,9 @@ export interface MapLike<T> {
 }
 
 export interface CacheManagerStructure {
-    readonly guilds: MapLike<GuildStructure>;
-    readonly channels: MapLike<ChannelStructure>;
-    readonly voiceStates: MapLike<VoiceStateStructure>;
+    readonly guilds: MapLike<any>;
+    readonly channels: MapLike<any>;
+    readonly voiceStates: MapLike<any>;
 
     set: (type: CacheElementType, id: string, payload: unknown) => Awaitable<void>;
     get: (type: CacheElementType, id: string) => Awaitable<undefined | Record<string, unknown>>;

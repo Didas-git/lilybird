@@ -21,7 +21,8 @@ import type {
     ClientOptions,
     DebugFunction,
     Transformers,
-    Transformer
+    Transformer,
+    ParseCachingManager
 } from "./typings/index.js";
 
 type GetUserType<T extends Transformers> = (T["userUpdate"] & {}) extends { handler: ((...args: infer U) => infer R) }
@@ -48,9 +49,9 @@ export interface Client<T extends Transformers> {
     extends the class or tries to create its own instance
 */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export class Client<T extends Transformers = Transformers> {
+export class Client<T extends Transformers = Transformers, C extends CacheManagerStructure = CacheManagerStructure> {
     public readonly rest: REST = new REST();
-    public readonly cache: CacheManagerStructure;
+    public readonly cache: C;
 
     readonly #ws: WebSocketManager;
     readonly #debug: DebugFunction;
@@ -58,7 +59,7 @@ export class Client<T extends Transformers = Transformers> {
     protected readonly ready: boolean = false;
 
     public constructor(options: BaseClientOptions<T>, debug?: DebugFunction) {
-        this.cache = typeof options.caching?.manager !== "undefined" ? options.caching.manager : new CachingManager();
+        this.cache = typeof options.caching?.manager !== "undefined" ? <C>options.caching.manager : <C><unknown> new CachingManager();
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         this.#debug = debug ?? (() => {});
         this.#ws = new WebSocketManager(
@@ -543,7 +544,7 @@ export class Client<T extends Transformers = Transformers> {
     }
 }
 
-export async function createClient<T extends Transformers>(options: ClientOptions<T>): Promise<Client<T>> {
+export async function createClient<T extends Transformers, O extends ClientOptions<T>>(options: O): Promise<Client<T, ParseCachingManager<O>>> {
     if (typeof options.caching?.customKeys !== "undefined") options.caching.customKeys = { ...options.customCacheKeys, ...options.caching.customKeys };
     else if (typeof options.caching !== "undefined") options.caching.customKeys = options.customCacheKeys;
 
@@ -556,9 +557,9 @@ export async function createClient<T extends Transformers>(options: ClientOption
                 listeners: options.listeners,
                 transformers: options.transformers,
                 presence: options.presence,
-                caching: options.caching,
+                caching: <never>options.caching,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(client); } : res
+                setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(<never>client); } : <never>res
             },
             options.attachDebugListener
                 ? options.debugListener ?? ((identifier, payload) => {

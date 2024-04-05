@@ -1,3 +1,4 @@
+import type { CachingManager } from "../cache/manager.js";
 import type { CacheManagerStructure } from "./cache-manager.js";
 import type { Awaitable } from "./utils.js";
 import type { Client } from "../client.js";
@@ -163,10 +164,24 @@ export interface SelectiveCache {
     delete?: CacheExecutionPolicy;
 }
 
+interface CacheWithoutTransformers {
+    applyTransformers?: false;
+}
+
+interface CacheWithTransformers {
+    applyTransformers: true;
+    transformerTypes: {
+        guild: unknown,
+        channel: unknown,
+        voiceState: unknown
+    };
+}
+
+type ApplyTransformers = CacheWithTransformers | CacheWithoutTransformers;
+
 interface BaseCachingStructure {
     delegate: CachingDelegationType;
     manager?: CacheManagerStructure;
-    applyTransformers?: boolean;
     enabled: {
         self?: CacheExecutionPolicy,
         guild?: boolean | SelectiveCache,
@@ -195,6 +210,15 @@ export interface DefaultCache extends BaseCachingStructure {
     delegate: CachingDelegationType.DEFAULT;
 }
 
+export type ParseCachingManager<T extends ClientOptions<Transformers>> = T["caching"] extends {}
+    ? T["caching"]["applyTransformers"] extends true
+        ? T["caching"] extends { transformerTypes: (infer U extends CacheWithTransformers["transformerTypes"]) }
+            ? CachingManager<U["guild"], U["channel"], U["voiceState"]> : never
+        : T["caching"]["delegate"] extends CachingDelegationType.EXTERNAL
+            ? T["caching"]["manager"] & {}
+            : CachingManager
+    : never;
+
 export type DebugFunction = (identifier: DebugIdentifier, payload?: unknown) => any;
 
 export interface BaseClientOptions<T extends Transformers> {
@@ -202,7 +226,7 @@ export interface BaseClientOptions<T extends Transformers> {
     listeners: ClientListeners<T>;
     transformers?: T;
     presence?: UpdatePresenceStructure;
-    caching?: DefaultCache | ExternalCache | TransformersCache;
+    caching?: (DefaultCache | ExternalCache | TransformersCache) & ApplyTransformers;
     setup?: (client: Client) => Awaitable<any>;
 }
 

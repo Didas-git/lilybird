@@ -2,10 +2,10 @@
 import { CacheElementType } from "../enums/cache.js";
 import type { CacheManagerStructure, ChannelStructure, GuildStructure, VoiceStateStructure } from "../typings/index.js";
 
-export class CachingManager implements CacheManagerStructure {
-    public readonly guilds = new Map<string, GuildStructure>();
-    public readonly channels = new Map<string, ChannelStructure>();
-    public readonly voiceStates = new Map<string, VoiceStateStructure>();
+export class CachingManager<G = GuildStructure, C = ChannelStructure, V = VoiceStateStructure> implements CacheManagerStructure {
+    public readonly guilds = new Map<string, G>();
+    public readonly channels = new Map<string, C>();
+    public readonly voiceStates = new Map<string, V>();
 
     public set(type: CacheElementType, id: string, payload: any): void {
         switch (type) {
