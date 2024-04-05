@@ -229,7 +229,7 @@ export class Message {
 
     public async fetchChannel(force: boolean = false): Promise<Channel> {
         if (!force) {
-            const cachedChannel = await this.client.cache.channels.get(this.channelId);
+            const cachedChannel = await this.client.cache.channels.get(this.channelId) as Channel;
             if (typeof cachedChannel !== "undefined") return cachedChannel;
         }
 
