@@ -200,6 +200,7 @@ interface BaseCachingStructure {
 export interface ExternalCache extends BaseCachingStructure {
     delegate: CachingDelegationType.EXTERNAL;
     manager: CacheManagerStructure;
+    safeToTransform?: boolean;
 }
 
 export interface TransformersCache extends BaseCachingStructure {

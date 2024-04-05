@@ -192,7 +192,13 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
         //#endregion
         //#region Cache handlers
         if (typeof caching !== "undefined" && caching.delegate !== CachingDelegationType.TRANSFORMERS) {
-            if (caching.delegate === CachingDelegationType.EXTERNAL) throw new Error("External caching is not yet supported");
+            if (caching.delegate === CachingDelegationType.EXTERNAL && caching.applyTransformers === true && !caching.safeToTransform) {
+                process.emitWarning("Transformers will be applied to external solution!", {
+                    code: "EXTERNAL_TRANSFORMERS",
+                    detail: "Some external caching managers might not support transformers, please read their documentation before proceeding."
+                });
+            }
+
             if (Object.keys(caching.enabled).length === 0) throw new Error("");
 
             const defaults: SelectiveCache = {
