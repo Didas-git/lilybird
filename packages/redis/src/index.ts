@@ -45,7 +45,7 @@ export class RedisCacheManager implements CacheManagerStructure {
     readonly #connection: NodeRedisClient;
 
     /**
-     * @param connection An open connection to redis
+     * @param connection - An open connection to redis
      */
     public constructor(connection: NodeRedisClient) {
         this.#connection = connection;

@@ -1,32 +1,36 @@
-{
-    "ignorePatterns": [
-        "*.js",
-        "*.d.ts",
-        "*.json",
+//@ts-check
+import tsEslint from "typescript-eslint";
+import stylistic from "@stylistic/eslint-plugin";
+import jsdoc from "eslint-plugin-jsdoc";
+
+export default tsEslint.config({
+    ignores: [
+        "**/*.js",
+        "**/*.d.ts",
+        "**/*.json",
         "dist/",
+        "templates/",
         "node_modules/**/*"
     ],
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "tsconfigRootDir": ".",
-        "project": [
-            "./tsconfig.json",
-            "./packages/*/tsconfig.json"
-        ]
+}, {
+    files: ["**/*.ts"],
+    plugins: {
+        "@typescript-eslint": tsEslint.plugin,
+        "@stylistic": stylistic,
+        jsdoc
     },
-    "settings": {
-        "import/resolver": {
-            "typescript": true
+    languageOptions: {
+        parser: tsEslint.parser,
+        ecmaVersion: "latest",
+        parserOptions: {
+            tsconfigRootDir: ".",
+            project: [
+                "./tsconfig.json",
+                "./packages/*/tsconfig.json"
+            ]
         }
     },
-    "plugins": [
-        "import",
-        "@stylistic",
-        "@typescript-eslint/eslint-plugin"
-    ],
-    "rules": {
+    rules: {
         // #region Eslint
         "array-callback-return": "error",
         "constructor-super": "error",
@@ -683,49 +687,70 @@
             "after"
         ],
         // #endregion Stylistic
+        // #region JSDoc
+        "jsdoc/check-access": "error",
+        "jsdoc/check-alignment": "warn",
+        "jsdoc/check-indentation": "error",
+        "jsdoc/check-param-names": "warn",
+        "jsdoc/check-property-names": "warn",
+        "jsdoc/check-tag-names": "warn",
+        "jsdoc/check-values": "error",
+        "jsdoc/empty-tags": "warn",
+        "jsdoc/implements-on-classes": "error",
+        "jsdoc/informative-docs": "error",
+        "jsdoc/multiline-blocks": "warn",
+        "jsdoc/no-bad-blocks": "warn",
+        "jsdoc/no-blank-block-descriptions": "warn",
+        "jsdoc/no-blank-blocks": "warn",
+        "jsdoc/no-defaults": "warn",
+        "jsdoc/no-multi-asterisks": "warn",
+        "jsdoc/no-types": "warn",
+        "jsdoc/require-asterisk-prefix": "warn",
+        "jsdoc/require-hyphen-before-param-description": ["error", "always"]
+        // #endregion
         // #region Import
-        "import/default": "error",
-        "import/export": "error",
-        "import/first": "warn",
-        "import/no-cycle": "error",
-        "import/namespace": "error",
-        "import/newline-after-import": "warn",
-        "import/no-absolute-path": "warn",
-        "import/no-deprecated": "error",
-        "import/no-duplicates": "warn",
-        "import/no-empty-named-blocks": "warn",
-        "import/no-mutable-exports": "error",
-        "import/no-named-as-default-member": "warn",
-        "import/no-named-as-default": "warn",
-        "import/no-namespace": "warn",
-        "import/no-self-import": "error",
-        "import/no-useless-path-segments": "warn",
-        "import/no-webpack-loader-syntax": "error",
-        "import/consistent-type-specifier-style": [
-            "warn",
-            "prefer-top-level"
-        ],
-        "import/no-anonymous-default-export": [
-            "error",
-            {
-                "allowObject": true
-            }
-        ],
-        "import/order": [
-            "warn",
-            {
-                "groups": [
-                    "index",
-                    "parent",
-                    "sibling",
-                    "internal",
-                    "external",
-                    "builtin",
-                    "object",
-                    "type"
-                ]
-            }
-        ]
+        // "import/default": "error",
+        // "import/export": "error",
+        // "import/first": "warn",
+        // "import/no-cycle": "error",
+        // "import/namespace": "error",
+        // "import/newline-after-import": "warn",
+        // "import/no-absolute-path": "warn",
+        // "import/no-deprecated": "error",
+        // "import/no-duplicates": "warn",
+        // "import/no-empty-named-blocks": "warn",
+        // "import/no-mutable-exports": "error",
+        // "import/no-named-as-default-member": "warn",
+        // "import/no-named-as-default": "warn",
+        // "import/no-namespace": "warn",
+        // "import/no-self-import": "error",
+        // "import/no-useless-path-segments": "warn",
+        // "import/no-webpack-loader-syntax": "error",
+        // "import/consistent-type-specifier-style": [
+        //     "warn",
+        //     "prefer-top-level"
+        // ],
+        // "import/no-anonymous-default-export": [
+        //     "error",
+        //     {
+        //         "allowObject": true
+        //     }
+        // ],
+        // "import/order": [
+        //     "warn",
+        //     {
+        //         "groups": [
+        //             "index",
+        //             "parent",
+        //             "sibling",
+        //             "internal",
+        //             "external",
+        //             "builtin",
+        //             "object",
+        //             "type"
+        //         ]
+        //     }
+        // ]
         // #endregion Import
     }
-}
+});

@@ -2,6 +2,7 @@
   "private": true,
   "author": "DidaS",
   "license": "Apache-2.0",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Didas-git/lilybird"
@@ -14,6 +15,14 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "eslint \"packages/*/**/*.ts\""
+    "check": "eslint ."
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^1.7.0",
+    "bun-types": "1.1.2",
+    "eslint": "^9.0.0",
+    "eslint-plugin-jsdoc": "^48.2.3",
+    "typescript": "^5.4.4",
+    "typescript-eslint": "^7.5.0"
   }
 }

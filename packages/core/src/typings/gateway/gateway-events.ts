@@ -106,11 +106,11 @@ export interface Identify extends BasePayload {
             browser: "Lilybird",
             device: "Lilybird"
         },
-        /** @defaultValue false */
+        /** @default false */
         compress?: boolean,
         /**
          * Value between 50 and 250
-         * @defaultValue 50
+         * @default 50
          */
         large_threshold?: number,
         shard?: [number, number],

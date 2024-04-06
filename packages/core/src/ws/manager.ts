@@ -192,7 +192,6 @@ export class WebSocketManager {
         this.#timer = setInterval(async () => {
             if (!this.#gotACK) {
                 this.#debug?.(DebugIdentifier.MissingACK);
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 await setTimeout(500);
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (!this.#gotACK) {

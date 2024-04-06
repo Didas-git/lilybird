@@ -55,8 +55,8 @@ export interface GetChannelMessagesStructure {
     before?: string;
     after?: string;
     /**
-     *  0-100
-     * @defaultValue 50
+     * 0-100
+     * @default 50
      */
     limit?: number;
 }

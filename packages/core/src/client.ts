@@ -31,7 +31,6 @@ type GetUserType<T extends Transformers> = (T["userUpdate"] & {}) extends { hand
         : R
     : never ;
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface Client<T extends Transformers> {
     readonly user: GetUserType<T>;
     readonly sessionId: string;
@@ -100,7 +99,10 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
         };
     }
 
-    /** @internal DO NOT USE OUTSIDE OF INTERNAL CODE */
+    /**
+     * DO NOT USE OUTSIDE OF INTERNAL CODE
+     * @internal
+     */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     protected __updateResumeInfo(url: string, id: string): void {
         Object.assign(this.#ws.resumeInfo, {

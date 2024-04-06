@@ -1,9 +1,0 @@
-{
-    "ignorePatterns": [
-        "src/index.ts",
-        "src/templates/**/*.ts"
-    ],
-    "extends": [
-        "../../.eslintrc.json"
-    ]
-}

@@ -48,16 +48,6 @@
     "bun-first",
     "esm"
   ],
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "@typescript-eslint/parser": "^7.1.1",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@stylistic/eslint-plugin": "^1.6.3",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "bun-types": "1.1.0",
-    "typescript": "^5.4.2"
-  },
   "peerDependencies": {
     "lilybird": "^0.6.0-beta.0",
     "@redis/client": "^1.5.14",

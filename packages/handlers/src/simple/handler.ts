@@ -57,7 +57,7 @@ export class Handler {
         for await (const fileName of files) {
             if (fileName.endsWith(".d.ts")) continue;
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             const command: SlashCommand = (await import(join(dir, fileName))).default;
             if (typeof command === "undefined") continue;
 
@@ -76,7 +76,7 @@ export class Handler {
         for await (const fileName of files) {
             if (fileName.endsWith(".d.ts")) continue;
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             const event: Event = (await import(join(dir, fileName))).default;
             if (typeof event === "undefined") continue;
 
@@ -94,7 +94,7 @@ export class Handler {
         for await (const fileName of files) {
             if (fileName.endsWith(".d.ts")) continue;
 
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, no-await-in-loop
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             const command: MessageCommand = (await import(join(dir, fileName))).default;
             if (typeof command === "undefined") continue;
 
@@ -146,10 +146,8 @@ export class Handler {
         const slashCommandsExist = await this.readSlashCommandDir();
         const messageCommandsExist = await this.readMessageCommandDir();
         const eventsExist = await this.readEventDir();
-        // eslint-disable-next-line func-style
-        let interactionCreateFn: Exclude<ClientListeners<any>["interactionCreate"], undefined> | undefined = undefined;
 
-        // eslint-disable-next-line func-style
+        let interactionCreateFn: Exclude<ClientListeners<any>["interactionCreate"], undefined> | undefined = undefined;
         let messageCreateFn: Exclude<ClientListeners<any>["messageCreate"], undefined> | undefined = undefined;
 
         const listeners: ClientListeners<DefaultTransformers> & Record<string, unknown> = {} as never;

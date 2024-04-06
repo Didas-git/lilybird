@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import Enquirer from "enquirer";
 import c from "ansi-colors";
@@ -8,18 +10,18 @@ const { Input, Select, MultiSelect, Snippet } = Enquirer;
 import { resolve } from "node:path";
 import { stat, mkdir, readdir, writeFile, cp } from "node:fs/promises";
 import { execSync } from "node:child_process";
-import { platform } from "node:os"
+import { platform } from "node:os";
 import { generateGlobalTypes, generateREADME, generateTSConfig } from "./templates.cjs";
 
-//#region Directory 
+//#region Directory
 const directory = await new Input({
     message: "What will the name of the directory be?"
-}).run();
+}).run() as string;
 
 const root = resolve(directory);
 
 const directoryStats = await stat(root).catch(async (error) => {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
         await mkdir(root, { recursive: true });
         return stat(root);
     }
@@ -28,7 +30,7 @@ const directoryStats = await stat(root).catch(async (error) => {
 });
 
 if (!directoryStats.isDirectory()) {
-    console.error(c.red("The given path is not a directory"))
+    console.error(c.red("The given path is not a directory"));
     process.exit(1);
 }
 
@@ -47,9 +49,9 @@ const pm = await new Select({
         { name: "YARN", value: "yarn" }
     ],
     result(name: string) {
-        return this.find(name).value;
+        return this.find(name).value as string;
     }
-}).run();
+}).run() as string;
 
 const type = await new Select({
     message: "What language will you be using?",
@@ -58,9 +60,9 @@ const type = await new Select({
         { name: "Typescript", value: "ts" }
     ],
     result(name: string) {
-        return this.find(name).value;
+        return this.find(name).value as string;
     }
-}).run();
+}).run() as string;
 
 let config: null | "strict" | "normal" = null;
 const devDeps: Array<string> = [];
@@ -75,9 +77,9 @@ if (type === "ts") {
             { name: "None", value: null }
         ],
         result(name: string) {
-            return this.find(name).value;
+            return this.find(name).value as "strict" | "normal" | null;
         }
-    }).run();
+    }).run() as "strict" | "normal" | null;
 }
 
 const packages = await new MultiSelect({
@@ -96,7 +98,7 @@ const packages = await new MultiSelect({
         //     value: "builders",
         // }
     ]
-}).run();
+}).run() as Array<string>;
 
 if (!packages.includes("@lilybird/handlers")) {
     const installTransformers = await new Select({
@@ -106,15 +108,16 @@ if (!packages.includes("@lilybird/handlers")) {
             { name: "NO", value: false }
         ],
         result(name: string) {
-            return this.find(name).value;
+            return this.find(name).value as boolean;
         }
-    }).run();
+    }).run() as boolean;
 
-    if (installTransformers) packages.push("@lilybird/transformers")
+    if (installTransformers) packages.push("@lilybird/transformers");
 }
 
-let dependencies: Array<string> = packages.concat("lilybird")
+let dependencies: Array<string> = packages.concat("lilybird");
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const packageJSON = (await new Snippet({
     message: "Fill out your package.json",
     required: true,
@@ -125,10 +128,14 @@ const packageJSON = (await new Snippet({
   "type": "module",
   "main": ${pm === "bun" ? `"./src/index.${type}"` : '"./dist/index.js"'},
   "scripts": {
-    ${pm === "bun" ? '"start": "bun ."' : type === "ts" ? `"dev": "ts-node --env-file=.env ./src/index.ts",\n    "build": "${platform() === "win32" ? "rmdir /s /q dist" : "rm -rf dist"} && tsc",\n    "start": "node --env-file=.env ."` : `"start": "node ."`}
+    ${pm === "bun"
+        ? '"start": "bun ."'
+        : type === "ts"
+            ? `"dev": "ts-node --env-file=.env ./src/index.ts",\n    "build": "${platform() === "win32" ? "rmdir /s /q dist" : "rm -rf dist"} && tsc",\n    "start": "node --env-file=.env ."`
+            : "\"start\": \"node .\""}
   }
 }`
-}).run()).result;
+}).run()).result as string;
 
 process.chdir(root);
 
@@ -136,8 +143,7 @@ await writeFile("package.json", packageJSON);
 await writeFile("README.md", generateREADME(pm, type));
 await writeFile(".env", "TOKEN=");
 
-
-if (type === "ts") await writeFile("globals.d.ts", generateGlobalTypes(pm))
+if (type === "ts") await writeFile("globals.d.ts", generateGlobalTypes(pm));
 if (config !== null) await writeFile("tsconfig.json", generateTSConfig(config, pm));
 
 await mkdir("src");
@@ -145,20 +151,15 @@ process.chdir(resolve("src"));
 
 if (dependencies.includes("@lilybird/handlers")) {
     await cp(new URL("./templates/handlers-template.ts", import.meta.url), `./index.${type}`);
-    await mkdir("listeners")
-    process.chdir(resolve("listeners"))
+    await mkdir("listeners");
+    process.chdir(resolve("listeners"));
     await cp(new URL(`./templates/listener-template.${type}`, import.meta.url), `./ready.${type}`);
-} else if (dependencies.includes("@lilybird/transformers")) {
-    await cp(new URL("./templates/transformers-template.ts", import.meta.url), `./index.${type}`);
-} else {
-    await cp(new URL("./templates/basic-template.ts", import.meta.url), `./index.${type}`);
-}
+} else if (dependencies.includes("@lilybird/transformers")) await cp(new URL("./templates/transformers-template.ts", import.meta.url), `./index.${type}`);
+else await cp(new URL("./templates/basic-template.ts", import.meta.url), `./index.${type}`);
 
 process.chdir(root);
 
-if (process.argv.at(-1) === "--alpha") {
-    dependencies = dependencies.map((dep) => `${dep}@alpha`)
-}
+if (process.argv.at(-1) === "--alpha") dependencies = dependencies.map((dep) => `${dep}@alpha`);
 
 execSync(`${pm} install ${dependencies.join(" ")}`, {
     stdio: "inherit"
@@ -169,7 +170,6 @@ else devDeps.push("ts-node", "@types/node");
 
 execSync(`${pm} install -D ${devDeps.join(" ")}`, {
     stdio: "inherit"
-})
-
+});
 
 console.log(c.green("All done!"));
