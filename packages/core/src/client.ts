@@ -16,13 +16,13 @@ import type {
     UpdatePresenceStructure,
     CacheManagerStructure,
     ApplicationStructure,
+    ParseCachingManager,
     BaseClientOptions,
     SelectiveCache,
     ClientOptions,
     DebugFunction,
     Transformers,
-    Transformer,
-    ParseCachingManager
+    Transformer
 } from "./typings/index.js";
 
 type GetUserType<T extends Transformers> = (T["userUpdate"] & {}) extends { handler: ((...args: infer U) => infer R) }
@@ -91,7 +91,7 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
     public async ping(): Promise<{ ws: number, rest: number }> {
         const start = performance.now();
         await this.rest.getGateway();
-        const final = Math.floor(performance.now() - start);
+        const final = performance.now() - start;
 
         return {
             ws: await this.#ws.ping(),

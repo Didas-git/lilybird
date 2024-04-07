@@ -224,7 +224,7 @@ export class WebSocketManager {
                 "pong",
                 () => {
                     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                    res(Math.round(performance.now() - start));
+                    res(performance.now() - start);
                 },
                 { once: true }
             );
