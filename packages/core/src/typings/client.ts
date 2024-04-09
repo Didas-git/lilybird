@@ -236,5 +236,5 @@ export interface ClientOptions<T extends Transformers> extends Omit<BaseClientOp
     token: string;
     attachDebugListener?: boolean;
     customCacheKeys?: BaseCachingStructure["customKeys"];
-    debugListener?: (identifier: string, payload: unknown) => void;
+    debugListener?: (identifier: DebugIdentifier, payload: unknown) => void;
 }
