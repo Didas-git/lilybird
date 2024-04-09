@@ -1,5 +1,5 @@
 //@ts-expect-error We don't want the package.json being added to dist
-import { version } from "../../package.json" with { type: "json" };
+import packageJson from "../../package.json" with { type: "json" };
 
 import type { AuditLogEvent, MFALevel, OnboardingMode, PrivacyLevel } from "#enums";
 
@@ -106,7 +106,7 @@ export class REST {
             headers: {
                 Authorization: `Bot ${this.#token}`,
                 // eslint-disable-next-line @typescript-eslint/naming-convention
-                "User-Agent": `DiscordBot/LilyBird/${version}`
+                "User-Agent": `DiscordBot/LilyBird/${(<{ version: string }>packageJson).version}`
             }
         };
 
