@@ -1,5 +1,5 @@
 import { createHandler } from "@lilybird/handlers";
-import { CachingDelegationType, Intents, createClient } from "lilybird";
+import { DebugIdentifier, Intents, createClient } from "lilybird";
 
 const listeners = await createHandler({
     dirs: {
@@ -11,14 +11,10 @@ const listeners = await createHandler({
 await createClient({
     token: process.env.TOKEN,
     intents: [Intents.GUILDS],
-    // attachDebugListener: true,
-    caching: {
-        delegate: CachingDelegationType.DEFAULT,
-        applyTransformers: true,
-        enabled: {
-            guild: true,
-            channel: true
-        }
+    attachDebugListener: true,
+    debugListener(identifier, payload) {
+        if (identifier === DebugIdentifier.Message) return;
+        console.log(identifier, payload ?? "");
     },
     ...listeners
 });

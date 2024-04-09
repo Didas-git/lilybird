@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun ./src/index.ts",
+    "dev:node": "rm -rf dist && tsc && node --experimental-websocket --env-file=.env.local dist/index.js",
     "check": "eslint \"src/**/*.ts\""
   },
   "peerDependencies": {
