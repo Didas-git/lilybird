@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createClient, Intents } from "lilybird";
 
 await createClient({

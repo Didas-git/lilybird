@@ -3,7 +3,6 @@ import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 // const [createCoreDocumentation, coreDocumentationSidebar] = createStarlightTypeDocPlugin();
 
 export default defineConfig({

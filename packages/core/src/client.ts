@@ -552,7 +552,7 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
     }
 }
 
-export async function createClient<T extends Transformers, O extends ClientOptions<T>>(options: O): Promise<Client<T, ParseCachingManager<O>>> {
+export async function createClient<T extends Transformers, O extends ClientOptions<T> = ClientOptions<T>>(options: O): Promise<Client<T, ParseCachingManager<O>>> {
     if (typeof options.caching?.customKeys !== "undefined") options.caching.customKeys = { ...options.customCacheKeys, ...options.caching.customKeys };
     else if (typeof options.caching !== "undefined") options.caching.customKeys = options.customCacheKeys;
 
