@@ -13,7 +13,8 @@ export default defineConfig({
             customCss: ["./src/styles/index.css"],
             lastUpdated: true,
             social: {
-                github: "https://github.com/Didas-git/lilybird"
+                github: "https://github.com/Didas-git/lilybird",
+                discord: "https://discord.gg/vER3sh7uyY"
             },
             editLink: {
                 baseUrl: "https://github.com/Didas-git/lilybird/edit/main/packages/docs"
