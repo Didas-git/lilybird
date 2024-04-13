@@ -202,7 +202,7 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
                 });
             }
 
-            if (Object.keys(caching.enabled).length === 0) throw new Error("");
+            if (Object.keys(caching.enabled).length === 0) throw new Error("Got unexpected empty object");
 
             const defaults: SelectiveCache = {
                 create: CacheExecutionPolicy.FIRST,
