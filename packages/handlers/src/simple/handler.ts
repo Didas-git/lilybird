@@ -1,7 +1,7 @@
 import { defaultTransformers } from "@lilybird/transformers";
 import { join } from "node:path";
 
-import type { GlobalSlashCommand, GuildSlashCommand, SlashCommand } from "./slash-command.js";
+import type { GlobalApplicationCommand, GuildApplicationCommand, ApplicationCommand } from "./application-command.js";
 import type { DefaultTransformers, Interaction, Message } from "@lilybird/transformers";
 import type { MessageCommand } from "./message-commands.js";
 import type { Event } from "./events.js";
@@ -19,8 +19,8 @@ interface HandlerDirectories {
 }
 
 export class Handler {
-    protected readonly guildSlashCommands = new Map<string, GuildSlashCommand>();
-    protected readonly globalSlashCommands = new Map<string, GlobalSlashCommand>();
+    protected readonly guildApplicationCommands = new Map<string, GuildApplicationCommand>();
+    protected readonly globalApplicationCommands = new Map<string, GlobalApplicationCommand>();
     protected readonly messageCommands = new Map<string, MessageCommand>();
     protected readonly events = new Map<string, Event>();
     protected readonly messageCommandAliases = new Map<string, string>();
@@ -36,11 +36,11 @@ export class Handler {
     }
 
     public async registerGlobalCommands(client: Client): Promise<void> {
-        await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, [...this.globalSlashCommands.values()].map((e) => e.data));
+        await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, [...this.globalApplicationCommands.values()].map((e) => e.data));
     }
 
     public async registerGuildCommands(client: Client): Promise<void> {
-        for await (const command of this.guildSlashCommands.values()) {
+        for await (const command of this.guildApplicationCommands.values()) {
             if (Array.isArray(command.post)) {
                 const temp: Array<Promise<unknown>> = [];
                 for (let i = 0; i < command.post.length; i++) temp.push(client.rest.createGuildApplicationCommand(client.user.id, command.post[i], command.data));
@@ -58,11 +58,11 @@ export class Handler {
             if (fileName.endsWith(".d.ts")) continue;
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-            const command: SlashCommand = (await import(join(dir, fileName))).default;
+            const command: ApplicationCommand = (await import(join(dir, fileName))).default;
             if (typeof command === "undefined") continue;
 
-            if (fileName.startsWith("/guild") || command.post !== "GLOBAL") this.guildSlashCommands.set(command.data.name, <GuildSlashCommand>command);
-            else this.globalSlashCommands.set(command.data.name, command);
+            if (fileName.startsWith("/guild") || command.post !== "GLOBAL") this.guildApplicationCommands.set(command.data.name, <GuildApplicationCommand>command);
+            else this.globalApplicationCommands.set(command.data.name, command);
         }
 
         return true;
@@ -111,11 +111,11 @@ export class Handler {
 
     private async onInteraction(interaction: Interaction): Promise<void> {
         if (interaction.isApplicationCommandInteraction()) {
-            await this.globalSlashCommands.get(interaction.data.name)?.run(interaction);
-            if (interaction.inGuild()) await this.guildSlashCommands.get(interaction.data.name)?.run(interaction);
+            await this.globalApplicationCommands.get(interaction.data.name)?.run(interaction);
+            if (interaction.inGuild()) await this.guildApplicationCommands.get(interaction.data.name)?.run(interaction);
         } else if (interaction.isAutocompleteInteraction()) {
-            await this.globalSlashCommands.get(interaction.data.name)?.autocomplete?.(interaction);
-            if (interaction.inGuild()) await this.guildSlashCommands.get(interaction.data.name)?.autocomplete?.(interaction);
+            await this.globalApplicationCommands.get(interaction.data.name)?.autocomplete?.(interaction);
+            if (interaction.inGuild()) await this.guildApplicationCommands.get(interaction.data.name)?.autocomplete?.(interaction);
         }
     }
 
