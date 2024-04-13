@@ -7,6 +7,7 @@ import { User } from "./user.js";
 import {
     ApplicationCommandOptionType,
     InteractionCallbackType,
+    ApplicationCommandType,
     InteractionType,
     ComponentType,
     MessageFlags
@@ -22,7 +23,6 @@ import type {
     ModalSubmitDataStructure,
     InteractionCallbackData,
     DMInteractionStructure,
-    ApplicationCommandType,
     ResolvedDataStructure,
     EntitlementStructure,
     InteractionStructure,
@@ -565,6 +565,18 @@ export class ApplicationCommandData<T extends undefined | FocusedOption = undefi
 
     public isUIApplicationCommand(): this is UIApplicationCommandData<T> {
         return typeof this.targetId !== "undefined";
+    }
+
+    public isChatInputCommand(): this is { type: ApplicationCommandType.CHAT_INPUT } {
+        return this.type === ApplicationCommandType.CHAT_INPUT;
+    }
+
+    public isUserCommand(): this is { type: ApplicationCommandType.USER } {
+        return this.type === ApplicationCommandType.USER;
+    }
+
+    public isMessageCommand(): this is { type: ApplicationCommandType.MESSAGE } {
+        return this.type === ApplicationCommandType.MESSAGE;
     }
 
     public getFocused<F extends string | number | boolean = string | number | boolean>(): ParseFocusedReturnType<T, F> {
