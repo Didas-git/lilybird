@@ -1,8 +1,8 @@
 //@ts-expect-error We don't want the package.json being added to dist
 import packageJson from "../../package.json" with { type: "json" };
+import { DebugIdentifier } from "#enums";
 
 import type { AuditLogEvent, MFALevel, OnboardingMode, PrivacyLevel } from "#enums";
-
 import type {
     LocalizationGlobalApplicationCommandStructure,
     LocalizationGuildApplicationCommandStructure,
@@ -68,6 +68,7 @@ import type {
     EmojiStructure,
     UserStructure,
     RoleStructure,
+    DebugFunction,
     ErrorMessage,
     BanStructure,
     ImageData
@@ -1195,4 +1196,26 @@ export class REST {
         return this.makeAPIRequest("DELETE", url);
     }
     //#endregion
+}
+
+export class DebugREST extends REST {
+    readonly #debug: DebugFunction;
+
+    public constructor(debug?: DebugFunction, token?: string) {
+        super(token);
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        this.#debug = debug ?? (() => {});
+    }
+
+    public override async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data: FormData, reason?: string | undefined): Promise<T>;
+    public override async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any> | undefined, files?: Array<LilybirdAttachment> | undefined): Promise<T>;
+    public override async makeAPIRequest<T>(
+        method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT",
+        path: string,
+        data?: FormData | Record<string, any> | undefined,
+        filesOrReason?: string | Array<LilybirdAttachment> | undefined
+    ): Promise<T> {
+        this.#debug(DebugIdentifier.RESTCall, { method, path, data, filesOrReason });
+        return super.makeAPIRequest(<never>method, <never>path, <never> data, <never>filesOrReason);
+    }
 }

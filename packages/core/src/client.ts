@@ -1,5 +1,5 @@
-import { REST } from "./http/rest.js";
 import { CachingManager } from "./cache/manager.js";
+import { DebugREST, REST } from "./http/rest.js";
 import { WebSocketManager } from "#ws";
 
 import {
@@ -49,7 +49,7 @@ export interface Client<T extends Transformers> {
 */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class Client<T extends Transformers = Transformers, C extends CacheManagerStructure = CacheManagerStructure> {
-    public readonly rest: REST = new REST();
+    public readonly rest: REST;
     public readonly cache: C;
 
     readonly #ws: WebSocketManager;
@@ -58,6 +58,7 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
     protected readonly ready: boolean = false;
 
     public constructor(options: BaseClientOptions<T>, debug?: DebugFunction) {
+        this.rest = options.useDebugRest === true ? new DebugREST(debug) : new REST();
         this.cache = typeof options.caching?.manager !== "undefined" ? <C>options.caching.manager : <C><unknown> new CachingManager();
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         this.#debug = debug ?? (() => {});

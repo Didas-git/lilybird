@@ -228,6 +228,7 @@ export interface BaseClientOptions<T extends Transformers> {
     transformers?: T;
     presence?: UpdatePresenceStructure;
     caching?: (DefaultCache | ExternalCache | TransformersCache) & ApplyTransformers;
+    useDebugRest?: boolean;
     setup?: (client: Client) => Awaitable<any>;
 }
 
