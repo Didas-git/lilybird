@@ -73,6 +73,7 @@ export class WebSocketManager {
         });
         this.#ws.addEventListener("close", async ({ code }) => {
             this.#clearTimer();
+            if (code === 1000) return;
             if (typeof code === "undefined" || code === 1001 || closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
                 return;

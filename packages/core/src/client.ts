@@ -567,6 +567,7 @@ export async function createClient<T extends Transformers, O extends ClientOptio
                 transformers: options.transformers,
                 presence: options.presence,
                 caching: <never>options.caching,
+                useDebugRest: options.useDebugRest,
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 setup: typeof options.setup !== "undefined" ? async (client) => { await options.setup!(client); res(<never>client); } : <never>res
             },
