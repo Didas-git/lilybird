@@ -1,6 +1,6 @@
 ---
 title: Philosophy
-description: A quick rundown on how it works.
+description: Understand what the Lilybird project is.
 ---
 
 Lilybird is a community driven library that focuses on providing the tools you need to interact with the Discord Gateway and API, every abstraction on top of something that already exists and is simple should not be built into the core.

@@ -16,7 +16,7 @@ export const enum CachingDelegationType {
     /**
      * This still uses the built-in CachingManager
      * But instead of the client managing it
-     * only the applied and existing listeners will have control over the cache
+     * only the applied and existing transformers will have control over the cache
      *
      * In sum: Cache is manually controlled by the transformers
      */

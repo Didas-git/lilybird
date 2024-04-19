@@ -1,9 +1,10 @@
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
-// import { createStarlightTypeDocPlugin } from "starlight-typedoc";
+import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-// const [createCoreDocumentation, coreDocumentationSidebar] = createStarlightTypeDocPlugin();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const [createCoreDocumentation, coreDocumentationSidebar] = createStarlightTypeDocPlugin();
 
 export default defineConfig({
     integrations: [
@@ -25,23 +26,22 @@ export default defineConfig({
                     showLineNumbers: false
                 }
             },
-            // plugins: [
-            //     createCoreDocumentation({
-            //         entryPoints: ["../core/src/index.ts"],
-            //         output: "documentation",
-            //         tsconfig: "../core/tsconfig.json",
-            //         sidebar: {
-            //             label: "Documentation",
-            //             collapsed: true
-            //         },
-            //         typeDoc: {
-            //             useCodeBlocks: true,
-            //             parametersFormat: "table",
-            //             enumMembersFormat: "table",
-            //             publicPath: "/documentation/"
-            //         }
-            //     })
-            // ],
+            plugins: [
+                createCoreDocumentation({
+                    entryPoints: ["../core/src/index.ts"],
+                    output: "documentation",
+                    tsconfig: "../core/tsconfig.json",
+                    sidebar: {
+                        label: "Documentation",
+                        collapsed: true
+                    },
+                    typeDoc: {
+                        parametersFormat: "table",
+                        enumMembersFormat: "table",
+                        publicPath: "/documentation/"
+                    }
+                })
+            ],
             head: [
                 {
                     tag: "link",
@@ -126,8 +126,8 @@ export default defineConfig({
                             ]
                         }
                     ]
-                }
-                // coreDocumentationSidebar
+                },
+                coreDocumentationSidebar
             ]
         })
     ]

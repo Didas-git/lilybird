@@ -13,9 +13,9 @@
   "devDependencies": {
     "@expressive-code/plugin-line-numbers": "^0.33.5",
     "@astrojs/check": "0.5.10",
-    "@astrojs/starlight": "0.21.4",
-    "starlight-typedoc": "^0.10.0",
-    "typedoc": "^0.25.12",
+    "@astrojs/starlight": "0.21.5",
+    "starlight-typedoc": "^0.11.1",
+    "typedoc": "^0.25.13",
     "typedoc-plugin-markdown": "^4.0.0-next.54",
     "astro": "4.5.16",
     "sharp": "^0.33.3"

@@ -8,3 +8,4 @@ coverage/
 .dccache
 
 packages/docs/diagrams/*.svg
+packages/docs/src/content/docs/documentation
