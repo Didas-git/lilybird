@@ -233,7 +233,10 @@ export class Message {
             if (typeof cachedChannel !== "undefined") return cachedChannel;
         }
 
-        return channelFactory(this.client, await this.client.rest.getChannel(this.channelId));
+        const channel = channelFactory(this.client, await this.client.rest.getChannel(this.channelId));
+        await this.client.cache.channels.set(channel.id, channel);
+
+        return channel;
     }
 
     public hasContent(): this is this & { content: string } {
