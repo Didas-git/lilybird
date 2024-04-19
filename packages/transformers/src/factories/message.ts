@@ -241,18 +241,18 @@ export class Message {
     }
 
     public hasAttachments(): this is this & { attachments: Array<AttachmentStructure> } {
-        return typeof this.attachments !== "undefined";
+        return typeof this.attachments !== "undefined" && this.attachments.length > 0;
     }
 
     public hasEmbeds(): this is this & { embeds: Array<EmbedStructure> } {
-        return typeof this.embeds !== "undefined";
+        return typeof this.embeds !== "undefined" && this.embeds.length > 0;
     }
 
     public hasComponents(): this is this & { components: Array<MessageComponentStructure> } {
-        return typeof this.components !== "undefined";
+        return typeof this.components !== "undefined" && this.components.length > 0;
     }
 
     public hasStickers(): this is this & { stickers: Array<StickerStructure> } {
-        return typeof this.stickers !== "undefined";
+        return typeof this.stickers !== "undefined" && this.stickers.length > 0;
     }
 }
