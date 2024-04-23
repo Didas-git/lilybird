@@ -1,0 +1,53 @@
+{
+  "name": "@lilybird/transformers",
+  "version": "0.2.0",
+  "description": "Event transformers and more for lilybird",
+  "main": "./dist/index.js",
+  "author": "DidaS",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "bun": ">=1.1.0"
+  },
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "check": "eslint \"src/**/*.ts\"",
+    "build": "rm -rf dist && tsc && cp .npmignore dist/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Didas-git/lilybird.git"
+  },
+  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/transformers",
+  "bugs": {
+    "url": "https://github.com/Didas-git/lilybird/issues"
+  },
+  "keywords": [
+    "lilybird",
+    "jsx",
+    "lilybird-jsx",
+    "tsx",
+    "discord",
+    "wrapper",
+    "client",
+    "discord-client",
+    "discord-wrapper",
+    "bun",
+    "bunjs",
+    "bun-first",
+    "transformers"
+  ],
+  "peerDependencies": {
+    "lilybird": "^0.6.0"
+  }
+}

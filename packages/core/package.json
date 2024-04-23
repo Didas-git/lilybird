@@ -1,6 +1,6 @@
 {
   "name": "lilybird",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "description": "A bun-first discord client written in TS",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -29,7 +29,7 @@
     "#ws": "./dist/ws/manager.js"
   },
   "engines": {
-    "bun": ">=1.0.22",
+    "bun": ">=1.1.0",
     "node": ">=21.0.0"
   },
   "files": [
@@ -37,11 +37,11 @@
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc && cp .npmignore dist/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Didas-git/lilybird"
+    "url": "git+https://github.com/Didas-git/lilybird.git"
   },
   "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/core",
   "bugs": {
@@ -59,15 +59,5 @@
     "bunjs",
     "bun-first",
     "esm"
-  ],
-  "devDependencies": {
-    "eslint": "^8.55.0",
-    "@typescript-eslint/parser": "^6.13.2",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@stylistic/eslint-plugin": "^1.4.1",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "bun-types": "1.0.18",
-    "typescript": "^5.3.2"
-  }
+  ]
 }

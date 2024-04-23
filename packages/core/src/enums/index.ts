@@ -10,6 +10,8 @@ export * from "./gateway.js";
 export * from "./message.js";
 export * from "./webhook.js";
 export * from "./others.js";
+export * from "./client.js";
 export * from "./guild.js";
 export * from "./image.js";
+export * from "./cache.js";
 export * from "./user.js";

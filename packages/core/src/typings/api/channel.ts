@@ -55,8 +55,8 @@ export interface GetChannelMessagesStructure {
     before?: string;
     after?: string;
     /**
-     *  0-100
-     * @defaultValue 50
+     * 0-100
+     * @default 50
      */
     limit?: number;
 }
@@ -74,6 +74,7 @@ export interface CreateMessageStructure {
     payload_json?: string;
     attachments?: Array<Partial<AttachmentStructure>>;
     flags?: number;
+    enforce_nonce?: boolean;
 }
 
 export interface EditMessageStructure {

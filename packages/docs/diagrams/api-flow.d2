@@ -1,0 +1,30 @@
+...@shared
+
+# direction: right
+
+listener -> transform
+
+transform -> call transformer: yes
+call transformer -> cache
+transform -> cache: no
+
+handle fast: {
+  label: handle
+}
+
+cache -> when: yes
+cache -> handle fast: no
+
+handle normal: {
+  label: handle
+}
+when -> handle normal: after
+
+cache manager: {
+  label: call caching manager
+}
+
+handle normal -> cache manager: then
+
+when -> call caching manager: before
+call caching manager -> handle: then

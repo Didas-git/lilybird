@@ -1,6 +1,6 @@
 import type { UserStructure } from "../index.js";
 
-import type { GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityTypes, GuildScheduledEventStatus } from "#enums";
+import type { GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityType, GuildScheduledEventStatus } from "#enums";
 
 export interface GuildScheduleEventStructure {
     id: string;
@@ -15,7 +15,7 @@ export interface GuildScheduleEventStructure {
     scheduled_end_time: string | null;
     privacy_level: GuildScheduledEventPrivacyLevel;
     status: GuildScheduledEventStatus;
-    entity_type: GuildScheduledEventEntityTypes;
+    entity_type: GuildScheduledEventEntityType;
     entity_id: string | null;
     entity_metadata: GuildScheduledEventEntityMetadata | null;
     creator?: UserStructure;

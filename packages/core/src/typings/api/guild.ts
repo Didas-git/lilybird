@@ -1,4 +1,5 @@
 import type {
+    GuildScheduledEventEntityMetadata,
     DefaultReactionStructure,
     GuildMemberStructure,
     OverwriteStructure,
@@ -6,13 +7,17 @@ import type {
     ChannelStructure,
     StickerStructure,
     EmojiStructure,
+    GuildStructure,
     GuildFeatures,
     RoleStructure,
-    UserStructure
+    UserStructure,
+    ImageData
 } from "../index.js";
 
 import type {
     DefaultMessageNotificationLevel,
+    GuildScheduledEventPrivacyLevel,
+    GuildScheduledEventEntityType,
     ExplicitContentFilterLevel,
     SystemChannelFlags,
     VerificationLevel,
@@ -178,4 +183,35 @@ export interface OnboardingPromptOptionStructure {
     emoji_animated?: boolean;
     title: string;
     description: string | null;
+}
+
+export interface CreateGuildScheduledEventStructure {
+    channel_id?: string;
+    entity_metadata?: GuildScheduledEventEntityMetadata;
+    name: string;
+    privacy_level: GuildScheduledEventPrivacyLevel;
+    /* ISO8601 Timestamp */
+    scheduled_start_time: string;
+    /* ISO8601 Timestamp */
+    scheduled_end_time?: string;
+    description?: string;
+    entity_type: GuildScheduledEventEntityType;
+    image?: ImageData;
+    reason?: string;
+}
+
+export interface GuildTemplateStructure {
+    code: string;
+    name: string;
+    description: string | null;
+    usage_count: number;
+    creator_id: string;
+    creator: UserStructure;
+    /* ISO8601 Timestamp */
+    created_at: string;
+    /* ISO8601 Timestamp */
+    updated_at: string;
+    source_guild_id: string;
+    serialized_source_guild: Partial<GuildStructure>;
+    is_dirty: boolean | null;
 }

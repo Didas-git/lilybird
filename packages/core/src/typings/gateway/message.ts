@@ -38,9 +38,9 @@ export interface MessageStructure {
     mentions: Array<UserStructure>;
     mention_roles: Array<RoleStructure>;
     mention_channels?: Array<ChannelMentionStructure>;
-    // This does not exist without the intent
+    /** This does not exist without the intent */
     attachments: Array<AttachmentStructure>;
-    // This does not exist without the intent
+    /** This does not exist without the intent */
     embeds: Array<EmbedStructure>;
     reactions: Array<ReactionStructure>;
     nonce?: number | string;
@@ -55,7 +55,7 @@ export interface MessageStructure {
     referenced_message?: MessageStructure | null;
     interaction?: MessageInteractionStructure;
     thread?: ChannelStructure;
-    // This does not exist without the intent
+    /** This does not exist without the intent */
     components?: Array<MessageComponentStructure>;
     sticker_items?: Array<StickerItemStructure>;
     stickers?: Array<StickerStructure>;

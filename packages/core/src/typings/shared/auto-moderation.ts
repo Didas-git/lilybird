@@ -12,14 +12,7 @@ export interface AutoModerationRuleStructure {
     creator_id: string;
     event_type: AutoModerationEventType;
     trigger_type: AutoModerationTriggerType;
-    trigger_metadata: {
-        keyword_filter?: Array<string>,
-        regex_patterns?: Array<string>,
-        presets?: Array<AutoModerationKeywordPresetTypes>,
-        allow_list?: Array<string>,
-        mention_total_limit?: number,
-        mention_raid_protection_enabled?: boolean
-    };
+    trigger_metadata: AutoModerationTriggerMetadata;
     actions: Array<AutoModerationActionStructure>;
     enabled: true;
     exempt_roles: Array<string>;
@@ -33,4 +26,13 @@ export interface AutoModerationActionStructure {
         duration_seconds: number,
         custom_message?: string
     };
+}
+
+export interface AutoModerationTriggerMetadata {
+    keyword_filter?: Array<string>;
+    regex_patterns?: Array<string>;
+    presets?: Array<AutoModerationKeywordPresetTypes>;
+    allow_list?: Array<string>;
+    mention_total_limit?: number;
+    mention_raid_protection_enabled?: boolean;
 }
