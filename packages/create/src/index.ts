@@ -7,11 +7,11 @@ import c from "ansi-colors";
 //@ts-expect-error Enquirer moment
 const { Input, Select, MultiSelect, Snippet } = Enquirer;
 
-import { resolve } from "node:path";
+import { generateGlobalTypes, generateREADME, generateTSConfig } from "./templates.cjs";
 import { stat, mkdir, readdir, writeFile, cp } from "node:fs/promises";
 import { execSync } from "node:child_process";
+import { resolve } from "node:path";
 import { platform } from "node:os";
-import { generateGlobalTypes, generateREADME, generateTSConfig } from "./templates.cjs";
 
 //#region Directory
 const directory = await new Input({
@@ -113,6 +113,10 @@ if (!packages.includes("@lilybird/handlers")) {
     }).run() as boolean;
 
     if (installTransformers) packages.push("@lilybird/transformers");
+} else {
+    // We want to install the transformers together with the handlers for DX purposes.
+    // The users can easily import the types this way.
+    packages.push("@lilybird/transformers");
 }
 
 let dependencies: Array<string> = packages.concat("lilybird");
