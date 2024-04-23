@@ -11,10 +11,22 @@ When enabling cache you have options to use, for example, and external cache be 
 
 Currently there are 4 different contents that can be cached by default:
 
-- `self` - If the current user (`client.user`) should listen for changes and auto update.
-- `guild` - Enable caching guilds.
-- `channel` - Enable caching channels.
-- `voiceState` - Enable caching guild voice states.
+- `self` - If the current user (`client.user`) should listen for changes and auto update. Attaches to:
+  - `UserUpdate`
+- `guild` - Enable caching guilds. Attaches to:
+  - `GuildCreate`
+  - `GuildUpdate`
+  - `GuildDelete`
+- `channel` - Enable caching channels. Attaches to:
+  - `ChannelCreate`
+  - `ChannelUpdate`
+  - `ChannelDelete`
+  - Threads:
+    - `ThreadCreate`
+    - `ThreadUpdate`
+    - `ThreadDelete`
+- `voiceState` - Enable caching guild voice states (This requires the guild create cache to be enabled). Attaches to:
+  - `VoiceStateUpdate`
 
 Other than self you can be selective with how the cache works, for example, you can tell the cache to not listen to delete events so it doesn't delete the entry from the cache.
 

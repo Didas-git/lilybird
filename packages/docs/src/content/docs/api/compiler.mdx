@@ -25,3 +25,7 @@ Lets look at the following diagram:
 <Image src={compilerDiagram} alt="compiler"/>
 
 This illustrates how the compiler analyses your options and creates each listener, all the checks it does occur only once so during runtime each listener runs its own straight line without any checks.
+
+:::note
+The client will always have the `READY` listener attached no matter if you have your callback to execute or not.
+:::
