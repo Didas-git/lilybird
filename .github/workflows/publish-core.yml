@@ -17,7 +17,7 @@ jobs:
         with:
           bun-version: latest
       - name: Install Dependencies
-        run: bun i
+        run: bun i --frozen-lockfile
       # bun doesnt support methods like `-ws`, `-w or similar yet
       - name: Hop into the folder
         run: cd packages/core
