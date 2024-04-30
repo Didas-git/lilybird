@@ -3,9 +3,6 @@
     "compilerOptions": {
         "outDir": "dist",
         "baseUrl": ".",
-        "types": [
-            "bun-types"
-        ],
         "paths": {
             "#enums": [
                 "./src/enums/index.ts"

@@ -27,6 +27,9 @@
         "stripInternal": true,
         "skipLibCheck": true,
         "removeComments": true,
-        "preserveConstEnums": true
+        "preserveConstEnums": true,
+        "types": [
+            "bun-types"
+        ]
     }
 }
