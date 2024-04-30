@@ -19,12 +19,10 @@ jobs:
       - name: Install Dependencies
         run: bun i --frozen-lockfile
       # bun doesnt support methods like `-ws`, `-w or similar yet
-      - name: Hop into the folder
-        run: cd packages/create
       - name: Build
-        run: bun run build
+        run: cd packages/create && bun run build
       - name: Publish create
       # Bun doesnt have any publish methods yet
-        run: npm publish --provenance --no-git-checks --access public
+        run: cd packages/core && npm publish --provenance --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM}}
