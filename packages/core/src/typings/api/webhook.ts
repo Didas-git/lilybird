@@ -15,6 +15,7 @@ export interface EditWebhookStructure {
     allowed_mentions?: AllowedMentionsStructure | null;
     components?: Array<MessageComponentStructure> | null;
     attachments?: Array<Partial<AttachmentStructure>> | null;
+    thread_id?: string;
 }
 
 export interface ExecuteWebhookStructure {
@@ -30,6 +31,7 @@ export interface ExecuteWebhookStructure {
     flags?: number;
     thread_name?: string;
     applied_tags?: Array<string>;
+    thread_id?: string;
 }
 
 export interface WebhookStructure {

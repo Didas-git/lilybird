@@ -1,0 +1,70 @@
+---
+title: Webhooks
+description: Learn how to use WebhookClient
+---
+WebhookClient implements basic webhook functionality
+
+## Setup
+
+```ts showLineNumbers
+import { WebhookClient } from "lilybird"
+
+const webhookClient = new WebhookClient({
+  // Specify the webhook url
+  url: "https://discord.com/api/webhooks/<webhook id>/<webhook token>",
+  // or provide token and id separately
+  id: "<webhook id>",
+  token: "<webhook token>",
+})
+```
+
+### Send a message
+
+```ts showLineNumbers
+await webhookClient.send({
+    content: "Hello, World!",
+    embeds: [...],
+    username: "Lilybird",
+})
+```
+
+:::note
+You can also specify avatar and username with each message. Webhooks also allow to send embeds (up to 10 per message) and files.
+:::
+
+### Fetch a message
+
+```ts showLineNumbers
+const message = await webhookClient.message("1226976271238697003");
+```
+
+### Edit a message
+
+Same as sending a message, but you need to provide the message id
+
+```ts showLineNumbers
+await webhookClient.editMessage("1226976271238697003", {
+    content: "This message was edited!",
+    embeds: [...],
+})
+```
+
+### Delete a message
+
+```ts showLineNumbers
+await webhookClient.deleteMessage("1226976271238697003");
+```
+
+### Delete webhook
+
+This allows you to delete the webhook using `token` provided in the constructor
+
+```ts showLineNumbers
+await webhookClient.delete();
+```
+
+### Utility functions
+
+- `<>.url` - Returns the webhook url
+- `<>.avatarUrl` - Return avatar if specified in the constructor
+- `<>.isIncoming`, `<>.isApplication`, `<>.isChannelFollower` - Checks the type of webhook
