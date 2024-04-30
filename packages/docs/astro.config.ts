@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const [createCoreDocumentation, coreDocumentationSidebar] = createStarlightTypeDocPlugin();
+const [createTransformersDocumentation, transformersDocumentationSidebar] = createStarlightTypeDocPlugin();
 
 export default defineConfig({
     integrations: [
@@ -39,6 +40,21 @@ export default defineConfig({
                         parametersFormat: "table",
                         enumMembersFormat: "table",
                         publicPath: "/documentation/"
+                    }
+                }),
+                createTransformersDocumentation({
+                    entryPoints: ["../transformers/src/index.ts"],
+                    output: "modules/transformers/documentation",
+                    tsconfig: "../transformers/tsconfig.json",
+                    sidebar: {
+                        label: "Documentation",
+                        collapsed: true
+                    },
+                    typeDoc: {
+                        excludeExternals: true,
+                        parametersFormat: "table",
+                        enumMembersFormat: "table",
+                        publicPath: "/modules/transformers/documentation/"
                     }
                 })
             ],
@@ -93,12 +109,8 @@ export default defineConfig({
                         },
                         {
                             label: "Transformers",
-                            items: [
-                                {
-                                    label: "Coming soon...",
-                                    items: []
-                                }
-                            ]
+                            collapsed: true,
+                            items: [transformersDocumentationSidebar]
                         },
                         {
                             label: "Handlers",
