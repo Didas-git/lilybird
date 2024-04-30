@@ -16,6 +16,11 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      # This is needed to be able to properly publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          registry-url: https://registry.npmjs.org
       - name: Install Dependencies & Build
         run: sh ./build.sh
       - name: Publish Redis
