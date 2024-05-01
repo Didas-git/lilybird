@@ -8,6 +8,8 @@ export type MergeTransformers<T extends Transformers> = T & {
     [K in keyof Transformers as T[K] extends {} ? never : K]: Transformers[K]
 };
 
+export type * from "./typings/index.js";
+
 export type {
     GuildApplicationCommandData,
     InteractionShowModalOptions,

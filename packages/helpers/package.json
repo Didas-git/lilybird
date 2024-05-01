@@ -1,7 +1,7 @@
 {
-  "name": "@lilybird/transformers",
-  "version": "0.2.1",
-  "description": "Event transformers and more for lilybird",
+  "name": "@lilybird/helpers",
+  "version": "0.1.0",
+  "description": "A collection of helpers and formatters for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
   "license": "Apache-2.0",
@@ -12,10 +12,26 @@
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./formatters": {
+      "types": "./dist/message-formatting.d.ts",
+      "require": "./dist/message-formatting.js",
+      "default": "./dist/message-formatting.js"
+    },
+    "./webhook": {
+      "types": "./dist/webhook.d.ts",
+      "require": "./dist/webhook.js",
+      "default": "./dist/webhook.js"
+    },
+    "./markdown": {
+      "types": "./dist/markdown.d.ts",
+      "require": "./dist/markdown.js",
+      "default": "./dist/markdown.js"
+    },
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.1.0"
+    "bun": ">=1.1.0",
+    "node": ">=21.0.0"
   },
   "files": [
     "./dist"
@@ -28,14 +44,14 @@
     "type": "git",
     "url": "git+https://github.com/Didas-git/lilybird.git"
   },
-  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/transformers",
+  "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/helpers",
   "bugs": {
     "url": "https://github.com/Didas-git/lilybird/issues"
   },
   "keywords": [
     "lilybird",
-    "jsx",
-    "lilybird-jsx",
+    "helpers",
+    "lilybird-helpers",
     "tsx",
     "discord",
     "wrapper",
@@ -44,8 +60,7 @@
     "discord-wrapper",
     "bun",
     "bunjs",
-    "bun-first",
-    "transformers"
+    "bun-first"
   ],
   "peerDependencies": {
     "lilybird": "^0.6.0"
