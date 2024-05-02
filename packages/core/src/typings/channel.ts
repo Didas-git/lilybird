@@ -127,11 +127,7 @@ export declare namespace Channel {
         managed?: boolean;
     }
 
-<<<<<<< HEAD
     export interface CategoryStructure extends Base {
-=======
-    export interface ChannelCategoryStructure extends Base {
->>>>>>> 7cfd140 (Completely change type organization)
         type: ChannelType.GUILD_CATEGORY;
         permission_overwrites: Array<OverwriteStructure>;
         name: string;
@@ -177,11 +173,7 @@ export declare namespace Channel {
         | GuildVoiceChannelStructure
         | DMChannelStructure
         | GroupDMChannelStructure
-<<<<<<< HEAD
         | CategoryStructure
-=======
-        | ChannelCategoryStructure
->>>>>>> 7cfd140 (Completely change type organization)
         | ThreadChannelStructure
         | ThreadLikeChannelStructure
         | ProbablyBaseChannelsStructure;
