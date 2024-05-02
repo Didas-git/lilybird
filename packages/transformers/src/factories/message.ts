@@ -1,9 +1,9 @@
 import { MentionChannel, channelFactory } from "./channel.js";
 import { GuildMember } from "./guild-member.js";
+import { MessageFlags } from "lilybird";
 import { User } from "./user.js";
 
-import { MessageFlags } from "lilybird";
-
+import type { ReplyOptions } from "../typings/shared.js";
 import type { Channel } from "./channel.js";
 
 import type {
@@ -25,7 +25,6 @@ import type {
     StickerStructure,
     EmbedStructure,
     RoleStructure,
-    ReplyOptions,
     MessageType,
     Client
 } from "lilybird";

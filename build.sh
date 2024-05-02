@@ -22,6 +22,9 @@ echo Building lilybird jsx module
 cd ../jsx
 bun run build
 
+echo Building lilybird helpers module
+cd ../helpers
+bun run build
 
 echo Building create-bot package
 cd ../create
