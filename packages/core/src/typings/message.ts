@@ -59,7 +59,10 @@ export declare namespace Message {
         position?: number;
         role_subscription_data?: Role.SubscriptionDataStructure;
         resolved?: ResolvedDataStructure;
+<<<<<<< HEAD
         poll?: Poll.Structure;
+=======
+>>>>>>> 7cfd140 (Completely change type organization)
     }
 
     export interface GuildStructure extends Structure {
@@ -125,7 +128,10 @@ export declare namespace Message {
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
         flags?: number;
         enforce_nonce?: boolean;
+<<<<<<< HEAD
         poll?: Poll.CreateStructure;
+=======
+>>>>>>> 7cfd140 (Completely change type organization)
     }
 
     export interface EditJSONParams {
