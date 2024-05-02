@@ -1,8 +1,9 @@
+import { ChannelType, VideoQualityMode, MessageFlags } from "lilybird";
 import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import { ChannelType, VideoQualityMode, MessageFlags } from "lilybird";
+import type { ReplyOptions } from "../typings/shared.js";
 
 import type {
     GuildVoiceChannelStructure,
@@ -25,7 +26,6 @@ import type {
     ChannelStructure,
     ForumLayoutType,
     SortOrderType,
-    ReplyOptions,
     Client
 } from "lilybird";
 

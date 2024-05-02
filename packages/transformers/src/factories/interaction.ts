@@ -13,7 +13,9 @@ import {
     MessageFlags
 } from "lilybird";
 
+import type { ReplyOptions } from "../typings/shared.js";
 import type { PartialChannel } from "./channel.js";
+
 import type {
     AutocompleteCallbackDataStructure,
     ApplicationCommandDataStructure,
@@ -28,7 +30,6 @@ import type {
     InteractionStructure,
     ActionRowStructure,
     LilybirdAttachment,
-    ReplyOptions,
     Locale,
     Client
 } from "lilybird";
