@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { CacheElementType } from "../enums/cache.js";
-import type { CacheManagerStructure, ChannelStructure, GuildStructure, VoiceStateStructure } from "../typings/index.js";
+import type { CacheManagerStructure, Channel, Guild, Voice } from "../typings/index.js";
 
-export class CachingManager<G = GuildStructure, C = ChannelStructure, V = VoiceStateStructure> implements CacheManagerStructure {
+export class CachingManager<G = Guild.Structure, C = Channel.Structure, V = Voice.StateStructure> implements CacheManagerStructure {
     public readonly guilds = new Map<string, G>();
     public readonly channels = new Map<string, C>();
     public readonly voiceStates = new Map<string, V>();

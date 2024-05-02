@@ -48,5 +48,3 @@ export const PermissionFlags = {
     USE_EXTERNAL_SOUNDS: 35184372088832n,
     SEND_VOICE_MESSAGES: 70368744177664n
 } as const;
-
-export type PermissionFlag = (typeof PermissionFlags)[keyof typeof PermissionFlags];

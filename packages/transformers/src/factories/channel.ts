@@ -38,7 +38,7 @@ export interface ResolvedChannel extends Channel {
 export function channelFactory(client: Client, channel: ChannelStructure): Channel;
 export function channelFactory(client: Client, channel: Partial<ChannelStructure>): PartialChannel;
 export function channelFactory(client: Client, channel: ChannelStructure, resolved: true): ResolvedChannel;
-export function channelFactory(client: Client, channel: ChannelStructure | Partial<ChannelStructure>, resolved = false): Channel | PartialChannel | ResolvedChannel {
+export function channelFactory(client: Client, channel: ChannelStructure, resolved = false): Channel | PartialChannel | ResolvedChannel {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     switch (channel.type!) {
         case ChannelType.GUILD_TEXT: {

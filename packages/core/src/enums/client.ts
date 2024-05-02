@@ -23,5 +23,6 @@ export const enum DebugIdentifier {
     AttemptingResume = "ATTEMPTING_RESUME",
     UnknownCode = "UNKNOWN_CODE",
     CompiledListeners = "LISTENERS",
-    RESTCall = "REST"
+    RESTCall = "REST_IN",
+    RESTError = "REST_ERROR"
 }

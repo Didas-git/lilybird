@@ -1,31 +1,19 @@
 import type { AutoModerationTriggerType, InviteTargetType, GatewayOpCode, GatewayEvent } from "#enums";
-
-import type {
-    ApplicationCommandPermissionsStructure,
-    AutoModerationActionStructure,
-    AutoModerationRuleStructure,
-    GuildScheduleEventStructure,
-    UnavailableGuildStructure,
-    StageInstanceStructure,
-    AuditLogEntryStructure,
-    ThreadChannelStructure,
-    ThreadMemberStructure,
-    GuildMessageStructure,
-    IntegrationStructure,
-    GuildMemberStructure,
-    ApplicationStructure,
-    InteractionStructure,
-    BotActivityStructure,
-    VoiceStateStructure,
-    ActivityStructure,
-    ChannelStructure,
-    StickerStructure,
-    GuildStructure,
-    EmojiStructure,
-    UserStructure,
-    RoleStructure,
-    NewGuildStructure
-} from "../index.js";
+import type { ActivityStructure, BotActivityStructure } from "./activity.js";
+import type { ApplicationCommand } from "./application-command.js";
+import type { AutoModeration } from "./auto-moderation.js";
+import type { StageInstance } from "./stage-instance.js";
+import type { Application } from "./application.js";
+import type { Interaction } from "./interaction.js";
+import type { AuditLog } from "./audit-log.js";
+import type { Channel } from "./channel.js";
+import type { Message } from "./message.js";
+import type { Sticker } from "./sticker.js";
+import type { Emoji } from "./emoji.js";
+import type { Guild } from "./guild.js";
+import type { Voice } from "./voice.js";
+import type { Role } from "./role.js";
+import type { User } from "./user.js";
 
 export interface GetGatewayResponse {
     /** Gateway Websocket URL */
@@ -84,7 +72,7 @@ export interface UpdatePresenceStructure {
 }
 
 export interface PresenceUpdateEventFields {
-    user: Partial<UserStructure> & {
+    user: Partial<User.Structure> & {
         id: string
     };
     guild_id: string;
@@ -256,12 +244,12 @@ export interface InvalidSession extends BasePayload {
 export interface Ready extends DispatchPayload {
     d: {
         v: number,
-        user: UserStructure,
-        guilds: Array<UnavailableGuildStructure>,
+        user: User.Structure,
+        guilds: Array<Guild.UnavailableStructure>,
         session_id: string,
         resume_gateway_url: string,
         shard?: [number, number],
-        application: Partial<ApplicationStructure>
+        application: Partial<Application.Structure>
     };
     t: GatewayEvent.Ready;
 }
@@ -271,29 +259,29 @@ export interface Resumed extends DispatchPayload {
 }
 
 export interface ApplicationCommandPermissionsUpdate extends DispatchPayload {
-    d: ApplicationCommandPermissionsStructure;
+    d: ApplicationCommand.PermissionsStructure;
     t: GatewayEvent.ApplicationCommandPermissionsUpdate;
 }
 
 export interface AutoModerationRuleCreate extends DispatchPayload {
-    d: AutoModerationRuleStructure;
+    d: AutoModeration.RuleStructure;
     t: GatewayEvent.AutoModerationRuleCreate;
 }
 
 export interface AutoModerationRuleUpdate extends DispatchPayload {
-    d: AutoModerationRuleStructure;
+    d: AutoModeration.RuleStructure;
     t: GatewayEvent.AutoModerationRuleUpdate;
 }
 
 export interface AutoModerationRuleDelete extends DispatchPayload {
-    d: AutoModerationRuleStructure;
+    d: AutoModeration.RuleStructure;
     t: GatewayEvent.AutoModerationRuleDelete;
 }
 
 export interface AutoModerationActionExecution extends DispatchPayload {
     d: {
         guild_id: string,
-        action: AutoModerationActionStructure,
+        action: AutoModeration.ActionStructure,
         rule_id: string,
         rule_trigger_type: AutoModerationTriggerType,
         user_id: string,
@@ -308,17 +296,17 @@ export interface AutoModerationActionExecution extends DispatchPayload {
 }
 
 export interface ChannelCreate extends DispatchPayload {
-    d: ChannelStructure;
+    d: Channel.Structure;
     t: GatewayEvent.ChannelCreate;
 }
 
 export interface ChannelUpdate extends DispatchPayload {
-    d: ChannelStructure;
+    d: Channel.Structure;
     t: GatewayEvent.ChannelUpdate;
 }
 
 export interface ChannelDelete extends DispatchPayload {
-    d: ChannelStructure;
+    d: Channel.Structure;
     t: GatewayEvent.ChannelDelete;
 }
 
@@ -333,21 +321,21 @@ export interface ChannelPinsUpdate extends DispatchPayload {
 }
 
 export interface ThreadCreate extends DispatchPayload {
-    d: ChannelStructure & {
+    d: Channel.Structure & {
         newly_created: boolean,
         // ThreadChannelStructure
-        member: ThreadMemberStructure | undefined
+        member: Channel.ThreadMemberStructure | undefined
     };
     t: GatewayEvent.ThreadCreate;
 }
 
 export interface ThreadUpdate extends DispatchPayload {
-    d: ChannelStructure;
+    d: Channel.Structure;
     t: GatewayEvent.ThreadUpdate;
 }
 
 export interface ThreadDelete extends DispatchPayload {
-    d: Pick<ThreadChannelStructure, "id" | "guild_id" | "parent_id" | "type">;
+    d: Pick<Channel.ThreadChannelStructure, "id" | "guild_id" | "parent_id" | "type">;
     t: GatewayEvent.ThreadDelete;
 }
 
@@ -355,14 +343,14 @@ export interface ThreadListSync extends DispatchPayload {
     d: {
         guild_id: string,
         channel_ids?: Array<string>,
-        threads: Array<ChannelStructure>,
-        members: Array<ThreadMemberStructure>
+        threads: Array<Channel.Structure>,
+        members: Array<Channel.ThreadMemberStructure>
     };
     t: GatewayEvent.ThreadListSync;
 }
 
 export interface ThreadMemberUpdate extends DispatchPayload {
-    d: ThreadMemberStructure & {
+    d: Channel.ThreadMemberStructure & {
         guild_id: string
     };
     t: GatewayEvent.ThreadMemberUpdate;
@@ -373,37 +361,36 @@ export interface ThreadMembersUpdate extends DispatchPayload {
         id: string,
         guild_id: string,
         member_count: number,
-        added_members?: Array<ThreadMemberStructure & GuildMemberStructure & (PresenceUpdateEventFields | null)>,
+        added_members?: Array<Channel.ThreadMemberStructure & Guild.MemberStructure & (PresenceUpdateEventFields | null)>,
         removed_member_ids?: Array<string>
     };
     t: GatewayEvent.ThreadMembersUpdate;
 }
 
 export interface GuildCreate extends DispatchPayload {
-    d: UnavailableGuildStructure
-    | NewGuildStructure;
+    d: Guild.UnavailableStructure | Guild.New;
     t: GatewayEvent.GuildCreate;
 }
 
 export interface GuildUpdate extends DispatchPayload {
-    d: GuildStructure;
+    d: Guild.Structure;
     t: GatewayEvent.GuildUpdate;
 }
 
 export interface GuildDelete extends DispatchPayload {
-    d: UnavailableGuildStructure;
+    d: Guild.UnavailableStructure;
     t: GatewayEvent.GuildDelete;
 }
 
 export interface GuildAuditLogEntryCreate extends DispatchPayload {
-    d: AuditLogEntryStructure;
+    d: AuditLog.EntryStructure;
     t: GatewayEvent.GuildAuditLogEntryCreate;
 }
 
 export interface GuildBanAdd extends DispatchPayload {
     d: {
         guild_id: string,
-        user: UserStructure
+        user: User.Structure
     };
     t: GatewayEvent.GuildBanAdd;
 }
@@ -411,7 +398,7 @@ export interface GuildBanAdd extends DispatchPayload {
 export interface GuildBanRemove extends DispatchPayload {
     d: {
         guild_id: string,
-        user: UserStructure
+        user: User.Structure
     };
     t: GatewayEvent.GuildBanRemove;
 }
@@ -419,7 +406,7 @@ export interface GuildBanRemove extends DispatchPayload {
 export interface GuildEmojisUpdate extends DispatchPayload {
     d: {
         guild_id: string,
-        emojis: Array<EmojiStructure>
+        emojis: Array<Emoji.Structure>
     };
     t: GatewayEvent.GuildEmojisUpdate;
 }
@@ -427,7 +414,7 @@ export interface GuildEmojisUpdate extends DispatchPayload {
 export interface GuildStickersUpdate extends DispatchPayload {
     d: {
         guild_id: string,
-        stickers: Array<StickerStructure>
+        stickers: Array<Sticker.Structure>
     };
     t: GatewayEvent.GuildStickersUpdate;
 }
@@ -440,7 +427,7 @@ export interface GuildIntegrationsUpdate extends DispatchPayload {
 }
 
 export interface GuildMemberAdd extends DispatchPayload {
-    d: GuildMemberStructure & {
+    d: Guild.MemberStructure & {
         guild_id: string
     };
     t: GatewayEvent.GuildMemberAdd;
@@ -449,7 +436,7 @@ export interface GuildMemberAdd extends DispatchPayload {
 export interface GuildMemberRemove extends DispatchPayload {
     d: {
         guild_id: string,
-        user: UserStructure
+        user: User.Structure
     };
     t: GatewayEvent.GuildMemberRemove;
 }
@@ -458,7 +445,7 @@ export interface GuildMemberUpdate extends DispatchPayload {
     d: {
         guild_id: string,
         roles: Array<string>,
-        user: UserStructure,
+        user: User.Structure,
         nick?: string | null,
         avatar: string | null,
         /** ISO8601 Timestamp */
@@ -477,7 +464,7 @@ export interface GuildMemberUpdate extends DispatchPayload {
 export interface GuildMembersChunk extends DispatchPayload {
     d: {
         guild_id: string,
-        members: Array<GuildMemberStructure>,
+        members: Array<Guild.MemberStructure>,
         chunk_index: number,
         chunk_count: number,
         not_found?: Array<string>,
@@ -490,7 +477,7 @@ export interface GuildMembersChunk extends DispatchPayload {
 export interface GuildRoleCreate extends DispatchPayload {
     d: {
         guild_id: string,
-        role: RoleStructure
+        role: Role.Structure
     };
     t: GatewayEvent.GuildRoleCreate;
 }
@@ -498,7 +485,7 @@ export interface GuildRoleCreate extends DispatchPayload {
 export interface GuildRoleUpdate extends DispatchPayload {
     d: {
         guild_id: string,
-        role: RoleStructure
+        role: Role.Structure
     };
     t: GatewayEvent.GuildRoleUpdate;
 }
@@ -512,17 +499,17 @@ export interface GuildRoleDelete extends DispatchPayload {
 }
 
 export interface GuildScheduledEventCreate extends DispatchPayload {
-    d: GuildScheduleEventStructure;
+    d: Guild.ScheduledEventStructure;
     t: GatewayEvent.GuildScheduledEventCreate;
 }
 
 export interface GuildScheduledEventUpdate extends DispatchPayload {
-    d: GuildScheduleEventStructure;
+    d: Guild.ScheduledEventStructure;
     t: GatewayEvent.GuildScheduledEventUpdate;
 }
 
 export interface GuildScheduledEventDelete extends DispatchPayload {
-    d: GuildScheduleEventStructure;
+    d: Guild.ScheduledEventStructure;
     t: GatewayEvent.GuildScheduledEventDelete;
 }
 
@@ -545,14 +532,14 @@ export interface GuildScheduledEventUserRemove extends DispatchPayload {
 }
 
 export interface IntegrationCreate extends DispatchPayload {
-    d: IntegrationStructure & {
+    d: Guild.IntegrationStructure & {
         guild_id: string
     };
     t: GatewayEvent.IntegrationCreate;
 }
 
 export interface IntegrationUpdate extends DispatchPayload {
-    d: IntegrationStructure & {
+    d: Guild.IntegrationStructure & {
         guild_id: string
     };
     t: GatewayEvent.IntegrationUpdate;
@@ -568,7 +555,7 @@ export interface IntegrationDelete extends DispatchPayload {
 }
 
 export interface InteractionCreate extends DispatchPayload {
-    d: InteractionStructure;
+    d: Interaction.Structure;
     t: GatewayEvent.InteractionCreate;
 }
 
@@ -579,12 +566,12 @@ export interface InviteCreate extends DispatchPayload {
         /** ISO8601 Timestamp */
         created_at: string,
         guild_id?: string,
-        inviter?: UserStructure,
+        inviter?: User.Structure,
         max_age: number,
         max_uses: number,
         target_type?: InviteTargetType,
-        target_user?: UserStructure,
-        target_application?: Partial<ApplicationStructure>,
+        target_user?: User.Structure,
+        target_application?: Partial<Application.Structure>,
         temporary: boolean,
         uses: number
     };
@@ -601,12 +588,12 @@ export interface InviteDelete extends DispatchPayload {
 }
 
 export interface MessageCreate extends DispatchPayload {
-    d: GuildMessageStructure;
+    d: Message.GuildStructure;
     t: GatewayEvent.MessageCreate;
 }
 
 export interface MessageUpdate extends DispatchPayload {
-    d: Partial<GuildMessageStructure>;
+    d: Partial<Message.GuildStructure>;
     t: GatewayEvent.MessageUpdate;
 }
 
@@ -634,8 +621,8 @@ export interface MessageReactionAdd extends DispatchPayload {
         channel_id: string,
         message_id: string,
         guild_id?: string,
-        member?: GuildMemberStructure,
-        emoji: Partial<EmojiStructure>,
+        member?: Guild.MemberStructure,
+        emoji: Partial<Emoji.Structure>,
         message_author_id?: string
     };
     t: GatewayEvent.MessageReactionAdd;
@@ -647,7 +634,7 @@ export interface MessageReactionRemove extends DispatchPayload {
         channel_id: string,
         message_id: string,
         guild_id?: string,
-        emoji: Partial<EmojiStructure>
+        emoji: Partial<Emoji.Structure>
     };
     t: GatewayEvent.MessageReactionRemove;
 }
@@ -666,7 +653,7 @@ export interface MessageReactionRemoveEmoji extends DispatchPayload {
         channel_id: string,
         guild_id?: string,
         message_id: string,
-        emoji: Partial<EmojiStructure>
+        emoji: Partial<Emoji.Structure>
     };
     t: GatewayEvent.MessageReactionRemoveEmoji;
 }
@@ -674,7 +661,7 @@ export interface MessageReactionRemoveEmoji extends DispatchPayload {
 export interface PresenceUpdate extends DispatchPayload {
     d: {
         /** Only `id` will always exist */
-        user: Partial<UserStructure> & Pick<UserStructure, "id">,
+        user: Partial<User.Structure> & Pick<User.Structure, "id">,
         guild_id: string,
         status: Status,
         activities: Array<ActivityStructure>,
@@ -688,17 +675,17 @@ export interface PresenceUpdate extends DispatchPayload {
 }
 
 export interface StageInstanceCreate extends DispatchPayload {
-    d: StageInstanceStructure;
+    d: StageInstance.Structure;
     t: GatewayEvent.StageInstanceCreate;
 }
 
 export interface StageInstanceUpdate extends DispatchPayload {
-    d: StageInstanceStructure;
+    d: StageInstance.Structure;
     t: GatewayEvent.StageInstanceUpdate;
 }
 
 export interface StageInstanceDelete extends DispatchPayload {
-    d: StageInstanceStructure;
+    d: StageInstance.Structure;
     t: GatewayEvent.StageInstanceDelete;
 }
 
@@ -708,18 +695,18 @@ export interface TypingStart extends DispatchPayload {
         guild_id?: string,
         user_id: string,
         timestamp: number,
-        member?: GuildMemberStructure
+        member?: Guild.MemberStructure
     };
     t: GatewayEvent.TypingStart;
 }
 
 export interface UserUpdate extends DispatchPayload {
-    d: UserStructure;
+    d: User.Structure;
     t: GatewayEvent.UserUpdate;
 }
 
 export interface VoiceStateUpdate extends DispatchPayload {
-    d: VoiceStateStructure;
+    d: Voice.StateStructure;
     t: GatewayEvent.VoiceStateUpdate;
 }
 

@@ -15,13 +15,13 @@ import type { DispatchFunction } from "#ws";
 import type {
     UpdatePresenceStructure,
     CacheManagerStructure,
-    ApplicationStructure,
     ParseCachingManager,
     BaseClientOptions,
     SelectiveCache,
     ClientOptions,
     DebugFunction,
     Transformers,
+    Application,
     Transformer
 } from "./typings/index.js";
 
@@ -34,7 +34,7 @@ type GetUserType<T extends Transformers> = (T["userUpdate"] & {}) extends { hand
 export interface Client<T extends Transformers> {
     readonly user: GetUserType<T>;
     readonly sessionId: string;
-    readonly application: ApplicationStructure;
+    readonly application: Application.Structure;
 }
 
 /*

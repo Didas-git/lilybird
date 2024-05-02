@@ -73,7 +73,7 @@ import type {
     TypingStart,
     UserUpdate,
     Ready
-} from "./gateway/gateway-events.js";
+} from "./gateway-events.js";
 
 export type ClientListeners<T extends Transformers> = {
     [K in keyof T]?: T[K] extends { handler: unknown }

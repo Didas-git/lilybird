@@ -21,3 +21,8 @@ export const enum ApplicationRoleConnectionMetadataType {
     BOOLEAN_EQUAL,
     BOOLEAN_NOT_EQUAL
 }
+
+export const enum ApplicationIntegrationType {
+    GUILD_INSTALL,
+    USER_INSTALL
+}

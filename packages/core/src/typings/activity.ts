@@ -35,8 +35,10 @@ export interface ActivityStructure {
         match?: string
     };
     instance?: boolean;
-    /** `OR`ed ActivityFlags */
-    flags?: ActivityFlags;
+    /**
+     * Bitfield of {@link ActivityFlags}
+     */
+    flags?: number;
     buttons?: Array<{
         label: string,
         url: string
