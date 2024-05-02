@@ -15,6 +15,7 @@ import {
 
 import type { ReplyOptions } from "../typings/shared.js";
 import type { PartialChannel } from "./channel.js";
+
 import type {
     Interaction as LilyInteraction,
     Message as LilyMessage,
