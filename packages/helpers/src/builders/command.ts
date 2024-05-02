@@ -1,8 +1,9 @@
-import type { LocalizationsShared, POSTApplicationCommandStructure, PermissionFlag, StringApplicationCommandOptionStructure } from "lilybird";
 import { ApplicationCommandOptionType, ApplicationCommandType } from "lilybird";
 
+import type { ApplicationCommand, Localizations, PermissionFlags } from "lilybird";
+
 export class ApplicationCommandBuilder {
-    readonly #command: POSTApplicationCommandStructure = <never>{};
+    readonly #command: ApplicationCommand.Create.ApplicationCommandJSONParams = <never>{};
 
     public constructor(type: ApplicationCommandType = ApplicationCommandType.CHAT_INPUT) {
         this.#command.type = type;
@@ -13,7 +14,7 @@ export class ApplicationCommandBuilder {
         return this;
     }
 
-    public setNameLocalizations(localizations: POSTApplicationCommandStructure["name_localizations"]): this {
+    public setNameLocalizations(localizations: ApplicationCommand.Create.ApplicationCommandJSONParams["name_localizations"]): this {
         this.#command.name_localizations = localizations;
         return this;
     }
@@ -23,7 +24,7 @@ export class ApplicationCommandBuilder {
         return this;
     }
 
-    public setDescriptionLocalizations(localizations: POSTApplicationCommandStructure["description_localizations"]): this {
+    public setDescriptionLocalizations(localizations: ApplicationCommand.Create.ApplicationCommandJSONParams["description_localizations"]): this {
         this.#command.description_localizations = localizations;
         return this;
     }
@@ -38,27 +39,27 @@ export class ApplicationCommandBuilder {
         return this;
     }
 
-    public setDefaultMemberPermissions(bitfield: number | bigint | Array<PermissionFlag>): this {
+    public setDefaultMemberPermissions(bitfield: number | bigint | Array<typeof PermissionFlags[keyof typeof PermissionFlags]>): this {
         if (Array.isArray(bitfield)) bitfield = bitfield.reduce((a, b) => a | b, 0n);
 
         this.#command.default_member_permissions = bitfield.toString();
         return this;
     }
 
-    public toJSON(): POSTApplicationCommandStructure {
+    public toJSON(): ApplicationCommand.Create.ApplicationCommandJSONParams {
         return this.#command;
     }
 }
 
 export class StringOptionBuilder {
-    readonly #option: StringApplicationCommandOptionStructure = <never>{ type: ApplicationCommandOptionType.STRING };
+    readonly #option: ApplicationCommand.Option.StringStructure = <never>{ type: ApplicationCommandOptionType.STRING };
 
     public setName(name: string): this {
         this.#option.name = name;
         return this;
     }
 
-    public setNameLocalizations(localizations: LocalizationsShared["name_localizations"]): this {
+    public setNameLocalizations(localizations: Localizations.Base["name_localizations"]): this {
         this.#option.name_localizations = localizations;
         return this;
     }
@@ -68,7 +69,7 @@ export class StringOptionBuilder {
         return this;
     }
 
-    public setDescriptionLocalizations(localizations: LocalizationsShared["description_localizations"]): this {
+    public setDescriptionLocalizations(localizations: Localizations.Base["description_localizations"]): this {
         this.#option.description_localizations = localizations;
         return this;
     }
@@ -78,7 +79,7 @@ export class StringOptionBuilder {
         return this;
     }
 
-    public toJSON(): StringApplicationCommandOptionStructure {
+    public toJSON(): ApplicationCommand.Option.StringStructure {
         return this.#option;
     }
 }

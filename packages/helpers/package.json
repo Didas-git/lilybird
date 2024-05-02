@@ -63,6 +63,6 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.6.0"
+    "lilybird": "^0.7.0"
   }
 }

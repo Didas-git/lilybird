@@ -127,7 +127,7 @@ export declare namespace Channel {
         managed?: boolean;
     }
 
-    export interface ChannelCategoryStructure extends Base {
+    export interface CategoryStructure extends Base {
         type: ChannelType.GUILD_CATEGORY;
         permission_overwrites: Array<OverwriteStructure>;
         name: string;
@@ -173,7 +173,7 @@ export declare namespace Channel {
         | GuildVoiceChannelStructure
         | DMChannelStructure
         | GroupDMChannelStructure
-        | ChannelCategoryStructure
+        | CategoryStructure
         | ThreadChannelStructure
         | ThreadLikeChannelStructure
         | ProbablyBaseChannelsStructure;

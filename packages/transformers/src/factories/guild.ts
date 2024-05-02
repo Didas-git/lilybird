@@ -3,37 +3,32 @@ import { channelFactory } from "./channel.js";
 import type { Channel } from "./channel.js";
 
 import type {
+    Guild as LilyGuild,
     DefaultMessageNotificationLevel,
-    GuildScheduleEventStructure,
     ExplicitContentFilterLevel,
-    UnavailableGuildStructure,
     PresenceUpdateEventFields,
-    WelcomeScreenStructure,
-    StageInstanceStructure,
-    VoiceStateStructure,
-    NewGuildStructure,
     VerificationLevel,
-    StickerStructure,
     GuildNSFWLevel,
-    EmojiStructure,
-    GuildStructure,
-    RoleStructure,
-    GuildFeatures,
     PremiumTier,
     MFALevel,
     Locale,
-    Client
+    Client,
+    Role,
+    Emoji,
+    Sticker,
+    Voice,
+    StageInstance
 } from "lilybird";
 
 // No comments...
-export function guildFactory(client: Client, guild: NewGuildStructure): NewGuild;
-export function guildFactory(client: Client, guild: UnavailableGuildStructure): UnavailableGuildStructure;
-export function guildFactory(client: Client, guild: GuildStructure): Guild;
-export function guildFactory(client: Client, guild: UnavailableGuildStructure | NewGuildStructure): UnavailableGuildStructure | NewGuild;
-export function guildFactory(client: Client, guild: UnavailableGuildStructure | GuildStructure | NewGuildStructure): UnavailableGuildStructure | Guild | NewGuild {
+export function guildFactory(client: Client, guild: LilyGuild.New): NewGuild;
+export function guildFactory(client: Client, guild: LilyGuild.UnavailableStructure): LilyGuild.UnavailableStructure;
+export function guildFactory(client: Client, guild: LilyGuild.Structure): Guild;
+export function guildFactory(client: Client, guild: LilyGuild.UnavailableStructure | LilyGuild.New): LilyGuild.UnavailableStructure | NewGuild;
+export function guildFactory(client: Client, guild: LilyGuild.UnavailableStructure | LilyGuild.Structure | LilyGuild.New): LilyGuild.UnavailableStructure | Guild | NewGuild {
     if ("joined_at" in guild) return new NewGuild(client, guild);
     if ("unavailable" in guild) return guild;
-    return new Guild(client, <GuildStructure>guild);
+    return new Guild(client, <LilyGuild.Structure>guild);
 }
 
 export class Guild {
@@ -53,9 +48,9 @@ export class Guild {
     public readonly verificationLevel: VerificationLevel;
     public readonly defaultMessageNotifications: DefaultMessageNotificationLevel;
     public readonly explicitContentFilter: ExplicitContentFilterLevel;
-    public readonly roles: Array<RoleStructure>;
-    public readonly emojis: Array<EmojiStructure>;
-    public readonly features: Array<GuildFeatures>;
+    public readonly roles: Array<Role.Structure>;
+    public readonly emojis: Array<Emoji.Structure>;
+    public readonly features: Array<LilyGuild.Feature>;
     public readonly mfaLevel: MFALevel;
     public readonly applicationId: string | null;
     public readonly systemChannelId: string | null;
@@ -74,15 +69,15 @@ export class Guild {
     public readonly maxStageVideoChannelUsers: number | undefined;
     public readonly approximateMemberCount: number | undefined;
     public readonly approximatePresenceCount: number | undefined;
-    public readonly welcomeScreen: WelcomeScreenStructure | undefined;
+    public readonly welcomeScreen: LilyGuild.WelcomeScreenStructure | undefined;
     public readonly nsfwLevel: GuildNSFWLevel;
-    public readonly stickers: Array<StickerStructure>;
+    public readonly stickers: Array<Sticker.Structure>;
     public readonly premiumProgressBarEnabled: boolean;
     public readonly safetyAlertsChannelId: string | null;
 
     public readonly client: Client;
 
-    public constructor(client: Client, guild: GuildStructure) {
+    public constructor(client: Client, guild: LilyGuild.Structure) {
         this.client = client;
 
         this.id = guild.id;
@@ -135,15 +130,15 @@ export class NewGuild extends Guild {
     public readonly large: boolean;
     public readonly unavailable: boolean;
     public readonly memberCount: number;
-    public readonly voiceStates: Array<Partial<VoiceStateStructure>>;
+    public readonly voiceStates: Array<Partial<Voice.StateStructure>>;
     public readonly members: Array<GuildMember>;
     public readonly channels: Array<Channel>;
     public readonly threads: Array<Channel>;
     public readonly presences: Array<Partial<PresenceUpdateEventFields>>;
-    public readonly stageInstances: Array<StageInstanceStructure>;
-    public readonly guildScheduledEvents: Array<GuildScheduleEventStructure>;
+    public readonly stageInstances: Array<StageInstance.Structure>;
+    public readonly guildScheduledEvents: Array<LilyGuild.ScheduledEventStructure>;
 
-    public constructor(client: Client, guild: NewGuildStructure) {
+    public constructor(client: Client, guild: LilyGuild.New) {
         super(client, guild);
 
         this.joinedAt = guild.joined_at;

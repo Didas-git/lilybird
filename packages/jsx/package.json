@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/jsx",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "JSX support & builders for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -53,6 +53,6 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.4.0"
+    "lilybird": "^0.7.0"
   }
 }

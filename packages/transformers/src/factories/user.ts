@@ -1,7 +1,7 @@
 import { GuildMember } from "./guild-member.js";
 import { PremiumType, CDN } from "lilybird";
 
-import type { UserStructure, Client, CDNOptions } from "lilybird";
+import type { User as LilyUser, Client, CDNOptions } from "lilybird";
 
 export class User {
     public readonly id: string;
@@ -23,7 +23,7 @@ export class User {
     public readonly avatarDecoration: string | undefined | null;
     public readonly member: GuildMember | undefined;
 
-    public constructor(client: Client, user: UserStructure) {
+    public constructor(client: Client, user: LilyUser.Structure) {
         this.id = user.id;
         this.username = user.username;
         this.discriminator = user.discriminator;

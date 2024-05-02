@@ -1,9 +1,9 @@
-import type { AttachmentStructure, EmbedStructure, LilybirdAttachment, MessageComponentStructure } from "lilybird";
+import type { Channel, Embed, LilybirdAttachment, Message } from "lilybird";
 
 export interface ReplyOptions {
     content?: string;
-    embeds?: Array<EmbedStructure>;
-    components?: Array<MessageComponentStructure>;
-    attachments?: Array<Partial<AttachmentStructure>>;
+    embeds?: Array<Embed.Structure>;
+    components?: Array<Message.Component.Structure>;
+    attachments?: Array<Partial<Channel.AttachmentStructure>>;
     files?: Array<LilybirdAttachment>;
 }

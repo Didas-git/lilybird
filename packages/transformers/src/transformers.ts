@@ -10,7 +10,7 @@ import type { Interaction, PartialMessage } from "./index.js";
 import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
 import type { Guild, NewGuild } from "./factories/guild.js";
 import type { Channel, ExtendedThreadChannel } from "./factories/channel.js";
-import type { Transformers, UnavailableGuildStructure } from "lilybird";
+import type { Transformers, Guild as LilyGuild } from "lilybird";
 
 export const transformers = {
     channelCreate: {
@@ -47,7 +47,7 @@ export const transformers = {
     },
     guildCreate: {
         return: TransformerReturnType.SINGLE,
-        handler: (client, data): UnavailableGuildStructure | NewGuild => guildFactory(client, data)
+        handler: (client, data): LilyGuild.UnavailableStructure | NewGuild => guildFactory(client, data)
     },
     guildUpdate: {
         return: TransformerReturnType.SINGLE,

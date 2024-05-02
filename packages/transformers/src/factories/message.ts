@@ -4,30 +4,20 @@ import { User } from "./user.js";
 
 import { MessageFlags } from "lilybird";
 
+import type { ReplyOptions } from "../typings/shared.js";
 import type { Channel } from "./channel.js";
 
 import type {
-    CreateThreadFromMessageStructure,
-    RoleSubscriptionDataStructure,
-    MessageInteractionStructure,
-    MessageComponentStructure,
-    MessageReferenceStructure,
-    MessageActivityStructure,
-    CreateMessageStructure,
+    Channel as LilyChannel,
+    Message as LilyMessage,
     ResolvedDataStructure,
-    GuildMessageStructure,
-    ApplicationStructure,
-    StickerItemStructure,
-    EditMessageStructure,
-    AttachmentStructure,
     LilybirdAttachment,
-    ReactionStructure,
-    StickerStructure,
-    EmbedStructure,
-    RoleStructure,
-    ReplyOptions,
     MessageType,
-    Client
+    Application,
+    Sticker,
+    Client,
+    Embed,
+    Role
 } from "lilybird";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -53,28 +43,28 @@ export class Message {
     public readonly tts: boolean;
     public readonly mentionsEveryone: boolean;
     public readonly mentions!: Array<User>;
-    public readonly mentionedRoles: Array<RoleStructure>;
+    public readonly mentionedRoles: Array<Role.Structure>;
     public readonly mentionedChannels: Array<MentionChannel>;
-    public readonly attachments: Array<AttachmentStructure> | undefined;
-    public readonly embeds: Array<EmbedStructure> | undefined;
-    public readonly reactions: Array<ReactionStructure>;
+    public readonly attachments: Array<LilyChannel.AttachmentStructure> | undefined;
+    public readonly embeds: Array<Embed.Structure> | undefined;
+    public readonly reactions: Array<LilyMessage.ReactionStructure>;
     public readonly nonce: string | number | undefined;
     public readonly pinned: boolean;
     public readonly webhookId: string | undefined;
     public readonly type: MessageType;
-    public readonly activity: MessageActivityStructure | undefined;
-    public readonly application: Partial<ApplicationStructure> | undefined;
+    public readonly activity: LilyMessage.ActivityStructure | undefined;
+    public readonly application: Partial<Application.Structure> | undefined;
     public readonly applicationId: string | undefined;
-    public readonly messageReference: MessageReferenceStructure | undefined;
+    public readonly messageReference: LilyMessage.ReferenceStructure | undefined;
     public readonly flags: number;
     public readonly referencedMessage: Message | undefined;
-    public readonly interaction: MessageInteractionStructure | undefined;
+    public readonly interaction: LilyMessage.InteractionStructure | undefined;
     public readonly thread: Channel | undefined;
-    public readonly components: Array<MessageComponentStructure> | undefined;
-    public readonly stickerItems: Array<StickerItemStructure> | undefined;
-    public readonly stickers: Array<StickerStructure> | undefined;
+    public readonly components: Array<LilyMessage.Component.Structure> | undefined;
+    public readonly stickerItems: Array<Sticker.ItemStructure> | undefined;
+    public readonly stickers: Array<Sticker.Structure> | undefined;
     public readonly position: number | undefined;
-    public readonly roleSubscriptionData: RoleSubscriptionDataStructure | undefined;
+    public readonly roleSubscriptionData: Role.SubscriptionDataStructure | undefined;
     public readonly resolved: ResolvedDataStructure | undefined;
     public readonly guildId: string | undefined;
     public readonly member: GuildMember | undefined;
@@ -82,7 +72,7 @@ export class Message {
     public readonly client: Client;
 
     // Technically a `Partial` message
-    public constructor(client: Client, message: GuildMessageStructure) {
+    public constructor(client: Client, message: LilyMessage.GuildStructure | LilyMessage.Structure) {
         this.client = client;
 
         this.id = message.id;
@@ -111,13 +101,15 @@ export class Message {
         this.position = message.position;
         this.roleSubscriptionData = message.role_subscription_data;
         this.resolved = message.resolved;
+        //@ts-expect-error We can safely ignore this because accessing excess properties returns undefined
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         this.guildId = message.guild_id;
 
         if (typeof message.author !== "undefined") this.author = new User(client, message.author);
         if (typeof message.timestamp !== "undefined") this.timestamp = new Date(message.timestamp);
         if (typeof message.mentions !== "undefined") this.mentions = message.mentions.map((mention) => new User(client, mention));
-        if (typeof message.member !== "undefined") this.member = new GuildMember(client, <never>message.member);
         if (typeof message.thread !== "undefined") this.thread = channelFactory(client, message.thread);
+        if ("member" in message) this.member = new GuildMember(client, <never>message.member);
 
         if (message.referenced_message != null) this.referencedMessage = new Message(client, message.referenced_message);
         if (message.edited_timestamp != null) this.editedTimestamp = new Date(message.edited_timestamp);
@@ -127,7 +119,7 @@ export class Message {
     public async reply(options: MessageReplyOptions): Promise<Message>;
     public async reply(content: string | MessageReplyOptions, options?: MessageReplyOptions): Promise<Message> {
         let flags = 0;
-        let data: CreateMessageStructure;
+        let data: LilyMessage.CreateJSONParams;
         let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
@@ -169,7 +161,7 @@ export class Message {
     public async edit(options: MessageEditOptions): Promise<Message>;
     public async edit(content: string | MessageEditOptions, options?: MessageEditOptions): Promise<Message> {
         let flags = 0;
-        let data: EditMessageStructure;
+        let data: LilyMessage.EditJSONParams;
         let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
@@ -222,7 +214,7 @@ export class Message {
     }
 
     public async startThread(name: string): Promise<Channel>;
-    public async startThread(options: string | CreateThreadFromMessageStructure): Promise<Channel> {
+    public async startThread(options: string | LilyChannel.Create.ThreadFromMessageJSONParams): Promise<Channel> {
         if (typeof options === "string") options = { name: options };
         return channelFactory(this.client, await this.client.rest.startThreadFromMessage(this.channelId, this.id, options));
     }
@@ -243,19 +235,19 @@ export class Message {
         return typeof this.content !== "undefined";
     }
 
-    public hasAttachments(): this is this & { attachments: Array<AttachmentStructure> } {
+    public hasAttachments(): this is this & { attachments: Array<LilyChannel.AttachmentStructure> } {
         return typeof this.attachments !== "undefined" && this.attachments.length > 0;
     }
 
-    public hasEmbeds(): this is this & { embeds: Array<EmbedStructure> } {
+    public hasEmbeds(): this is this & { embeds: Array<Embed.Structure> } {
         return typeof this.embeds !== "undefined" && this.embeds.length > 0;
     }
 
-    public hasComponents(): this is this & { components: Array<MessageComponentStructure> } {
+    public hasComponents(): this is this & { components: Array<LilyMessage.Component.Structure> } {
         return typeof this.components !== "undefined" && this.components.length > 0;
     }
 
-    public hasStickers(): this is this & { stickers: Array<StickerStructure> } {
+    public hasStickers(): this is this & { stickers: Array<Sticker.Structure> } {
         return typeof this.stickers !== "undefined" && this.stickers.length > 0;
     }
 }

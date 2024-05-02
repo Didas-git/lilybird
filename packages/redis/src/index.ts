@@ -3,7 +3,7 @@ import { CacheElementType } from "lilybird";
 import RedisJSON from "@redis/json";
 
 import type { RedisClientType } from "@redis/client";
-import type { CacheManagerStructure, ChannelStructure, GuildStructure, MapLike, VoiceStateStructure } from "lilybird";
+import type { CacheManagerStructure, Channel, Guild, MapLike, Voice } from "lilybird";
 
 export type NodeRedisClient = RedisClientType<{ json: typeof RedisJSON.default }>;
 
@@ -38,9 +38,9 @@ type MapCacheFields<T extends Record<string, CacheField>> = {
 };
 
 export class RedisCacheManager implements CacheManagerStructure {
-    public readonly guilds: IndividualCacheManager<GuildStructure>;
-    public readonly channels: IndividualCacheManager<ChannelStructure>;
-    public readonly voiceStates: IndividualCacheManager<VoiceStateStructure>;
+    public readonly guilds: IndividualCacheManager<Guild.Structure>;
+    public readonly channels: IndividualCacheManager<Channel.Structure>;
+    public readonly voiceStates: IndividualCacheManager<Voice.StateStructure>;
 
     readonly #connection: NodeRedisClient;
 
