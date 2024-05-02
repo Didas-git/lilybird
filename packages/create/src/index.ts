@@ -92,11 +92,11 @@ const packages = await new MultiSelect({
         {
             name: "@lilybird/handlers",
             value: "handlers"
+        },
+        {
+            name: "@lilybird/helpers",
+            value: "helpers"
         }
-        // {
-        //     name: "@lilybird/builders",
-        //     value: "builders",
-        // }
     ]
 }).run() as Array<string>;
 
