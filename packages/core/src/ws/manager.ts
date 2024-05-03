@@ -115,7 +115,7 @@ export class WebSocketManager {
                 case GatewayOpCode.InvalidSession: {
                     this.#debug?.(DebugIdentifier.InvalidSession);
                     if (payload.d) this.#ws.close(1001);
-                    else this.#ws.close(1000);
+                    else this.#ws.close(3000);
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {
