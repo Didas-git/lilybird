@@ -19,6 +19,7 @@ import type {
     Embed,
     Role
 } from "lilybird";
+import { Poll } from "./poll.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" ? K : never]: Message[K] };
@@ -66,6 +67,7 @@ export class Message {
     public readonly position: number | undefined;
     public readonly roleSubscriptionData: Role.SubscriptionDataStructure | undefined;
     public readonly resolved: ResolvedDataStructure | undefined;
+    public readonly poll: Poll | undefined;
     public readonly guildId: string | undefined;
     public readonly member: GuildMember | undefined;
 
@@ -110,6 +112,7 @@ export class Message {
         if (typeof message.mentions !== "undefined") this.mentions = message.mentions.map((mention) => new User(client, mention));
         if (typeof message.thread !== "undefined") this.thread = channelFactory(client, message.thread);
         if ("member" in message) this.member = new GuildMember(client, <never>message.member);
+        if (typeof message.poll !== "undefined") this.poll = new Poll(client, message.channel_id, message.id, message.poll);
 
         if (message.referenced_message != null) this.referencedMessage = new Message(client, message.referenced_message);
         if (message.edited_timestamp != null) this.editedTimestamp = new Date(message.edited_timestamp);

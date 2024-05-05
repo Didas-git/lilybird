@@ -59,7 +59,7 @@ export declare namespace Message {
         position?: number;
         role_subscription_data?: Role.SubscriptionDataStructure;
         resolved?: ResolvedDataStructure;
-        poll?: Poll.CreateStructure;
+        poll?: Poll.Structure;
     }
 
     export interface GuildStructure extends Structure {

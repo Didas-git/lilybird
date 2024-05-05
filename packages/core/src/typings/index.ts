@@ -26,3 +26,4 @@ export type * from "./voice.js";
 export type * from "./role.js";
 export type * from "./team.js";
 export type * from "./user.js";
+export type * from "./poll.js";

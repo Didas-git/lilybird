@@ -982,7 +982,7 @@ export class REST {
     public async getPollAnswerVoters(
         channelId: string,
         messageId: string,
-        answerId: string,
+        answerId: number,
         params: {
             after?: string,
             /**

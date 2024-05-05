@@ -28,12 +28,14 @@ import type {
     UpdatePresenceStructure,
     GuildIntegrationsUpdate,
     MessageReactionRemove,
+    MessagePollVoteRemove,
     ReceiveDispatchEvent,
     GuildStickersUpdate,
     StageInstanceCreate,
     StageInstanceUpdate,
     ThreadMembersUpdate,
     MessageReactionAdd,
+    MessagePollVoteAdd,
     ThreadMemberUpdate,
     MessageDeleteBulk,
     IntegrationCreate,
@@ -156,6 +158,8 @@ export interface Transformers {
     voiceStateUpdate?: Transformer<VoiceStateUpdate["d"]>;
     voiceServerUpdate?: Transformer<VoiceServerUpdate["d"]>;
     webhookUpdate?: Transformer<WebhookUpdate["d"]>;
+    messagePollVoteAdd?: Transformer<MessagePollVoteAdd["d"]>;
+    messagePollVoteRemove?: Transformer<MessagePollVoteRemove["d"]>;
 }
 
 export interface SelectiveCache {
