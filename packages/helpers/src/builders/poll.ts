@@ -13,10 +13,14 @@ export class PollBuilder {
         return this;
     }
 
-    public addAnswer(answer: Poll.AnswerStructure): this {
-        if (!Array.isArray(this.#poll.answers)) this.#poll.answers = [];
+    public addAnswer(answer: ((answer: PollAnswerBuilder) => PollAnswerBuilder) | PollAnswerBuilder): this {
+        const realAnswer = typeof answer === "function"
+            ? answer(new PollAnswerBuilder()).toJSON()
+            : answer.toJSON();
 
-        this.#poll.answers.push(answer);
+        if (!Array.isArray(this.#poll.answers)) this.#poll.answers = [];
+        this.#poll.answers.push(realAnswer);
+
         return this;
     }
 
