@@ -38,7 +38,7 @@ export class PollAnswer {
         limit?: number
     } = {}): Promise<Array<User>> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const voters = await this.client.rest.getPollAnswerVoters(this.channelId, this.messageId, this.id, params);
+        const voters = await this.client.rest.getAnswerVoters(this.channelId, this.messageId, this.id, params);
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         return voters.users.map((voter: LilyUser.Structure) => new User(this.client, voter));

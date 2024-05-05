@@ -979,7 +979,7 @@ export class REST {
 
     //#endregion Invite
     //#region Poll
-    public async getPollAnswerVoters(
+    public async getAnswerVoters(
         channelId: string,
         messageId: string,
         answerId: number,
