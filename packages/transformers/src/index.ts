@@ -72,9 +72,3 @@ export {
     Poll,
     PollAnswer
 } from "./factories/poll.js";
-
-export type {
-    PollAnswerCount,
-    PollMedia,
-    PollResult
-} from "./factories/poll.js";
