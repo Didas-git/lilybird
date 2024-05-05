@@ -5,7 +5,8 @@ export declare namespace Poll {
    * @see {@link https://discord.com/developers/docs/resources/poll#poll-object-poll-object-structure}
    */
   export interface Structure extends CreateStructure {
-    expiry: number;
+    /** ISO8601 Timestamp */
+    expiry: string | null;
     results?: ResultStructure;
   }
 
