@@ -3,10 +3,6 @@ import type { Poll, PollLayoutType } from "lilybird";
 export class PollBuilder {
     readonly #poll: Poll.CreateStructure = <never>{};
 
-    public constructor(type: PollLayoutType) {
-        this.#poll.layout_type = type;
-    }
-
     public setQuestion(question: Poll.MediaStructure): this {
         this.#poll.question = question;
         return this;
@@ -31,6 +27,11 @@ export class PollBuilder {
 
     public setAllowMultiselect(allowMultiselect: boolean): this {
         this.#poll.allow_multiselect = allowMultiselect;
+        return this;
+    }
+
+    public setLayoutType(layoutType: PollLayoutType): this {
+        this.#poll.layout_type = layoutType;
         return this;
     }
 
