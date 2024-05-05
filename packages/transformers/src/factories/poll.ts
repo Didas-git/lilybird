@@ -45,26 +45,15 @@ export class PollAnswer {
     }
 }
 
-export class PollAnswerCount {
-    public readonly id: number;
-    public readonly count: number;
-    public readonly meVoted: boolean;
-
-    public constructor(answerCount: LilyPoll.AnswerCountStructure) {
-        this.id = answerCount.id;
-        this.count = answerCount.count;
-        this.meVoted = answerCount.me_voted;
-    }
+export interface PollAnswerCount {
+    id: number;
+    count: number;
+    meVoted: boolean;
 }
 
-export class PollResult {
-    public readonly isFinalized: boolean;
-    public readonly answerCounts: Array<PollAnswerCount>;
-
-    public constructor(result: LilyPoll.ResultStructure) {
-        this.isFinalized = result.is_finalized;
-        this.answerCounts = result.answer_counts.map((answerCount) => new PollAnswerCount(answerCount));
-    }
+export interface PollResult {
+    isFinalized: boolean;
+    answerCounts: Array<PollAnswerCount>;
 }
 
 export class Poll {
@@ -89,7 +78,16 @@ export class Poll {
         this.expiresTimestamp = poll.expiry ? new Date(poll.expiry) : undefined;
         this.allowMultiselect = poll.allow_multiselect;
         this.layoutType = poll.layout_type;
-        this.results = poll.results ? new PollResult(poll.results) : undefined;
+        this.results = poll.results
+            ? {
+                isFinalized: poll.results.is_finalized,
+                answerCounts: poll.results.answer_counts.map((answerCount) => ({
+                    id: answerCount.id,
+                    count: answerCount.count,
+                    meVoted: answerCount.me_voted
+                }))
+            }
+            : undefined;
     }
 
     public async end(): Promise<Message> {
