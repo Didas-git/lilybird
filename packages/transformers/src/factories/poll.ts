@@ -2,14 +2,20 @@ import type { Client, Emoji, PollLayoutType, Poll as LilyPoll, User as LilyUser 
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-export class PollMedia {
-    public readonly text: string | undefined;
-    public readonly emoji: Partial<Emoji.Structure> | undefined;
+export interface PollMedia {
+    text: string | undefined;
+    emoji: Partial<Emoji.Structure> | undefined;
+}
 
-    public constructor(media: LilyPoll.MediaStructure) {
-        this.text = media.text;
-        this.emoji = media.emoji;
-    }
+export interface PollAnswerCount {
+    id: number;
+    count: number;
+    meVoted: boolean;
+}
+
+export interface PollResult {
+    isFinalized: boolean;
+    answerCounts: Array<PollAnswerCount>;
 }
 
 export class PollAnswer {
@@ -26,7 +32,10 @@ export class PollAnswer {
         this.messageId = messageId;
 
         this.id = answer.answer_id;
-        this.media = new PollMedia(answer.poll_media);
+        this.media = {
+            text: answer.poll_media.text,
+            emoji: answer.poll_media.emoji
+        };
     }
 
     public async fetchVoters(params: {
@@ -43,17 +52,6 @@ export class PollAnswer {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         return voters.users.map((voter: LilyUser.Structure) => new User(this.client, voter));
     }
-}
-
-export interface PollAnswerCount {
-    id: number;
-    count: number;
-    meVoted: boolean;
-}
-
-export interface PollResult {
-    isFinalized: boolean;
-    answerCounts: Array<PollAnswerCount>;
 }
 
 export class Poll {
@@ -73,7 +71,10 @@ export class Poll {
         this.channelId = channelId;
         this.messageId = messageId;
 
-        this.question = new PollMedia(poll.question);
+        this.question = {
+            text: poll.question.text,
+            emoji: poll.question.emoji
+        };
         this.answers = poll.answers.map((answer) => new PollAnswer(this.client, this.channelId, this.messageId, answer));
         this.expiresTimestamp = poll.expiry ? new Date(poll.expiry) : undefined;
         this.allowMultiselect = poll.allow_multiselect;
