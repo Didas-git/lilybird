@@ -140,10 +140,7 @@ export declare namespace Interaction {
         components?: Array<Message.Component.Structure>;
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
         files?: Array<LilybirdAttachment>;
-<<<<<<< HEAD
         poll?: Poll.CreateStructure;
-=======
->>>>>>> 7cfd140 (Completely change type organization)
     }
 
     export interface ModalCallbackDataStructure {
