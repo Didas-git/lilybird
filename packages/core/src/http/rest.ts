@@ -23,9 +23,9 @@ import type {
     Guild,
     Voice,
     Role,
-    User
+    User,
+    Poll
 } from "../typings/index.js";
-import type { Poll } from "src/typings/poll.js";
 
 export interface DiscordErrorMessage {
     code: number;
