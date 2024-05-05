@@ -65,9 +65,7 @@ export declare namespace Message {
     export interface GuildStructure extends Structure {
         guild_id: string;
         member: Partial<Guild.MemberStructure>;
-        mentions: Array<
-      User.Structure & { member?: Partial<Guild.MemberStructure> }
-        >;
+        mentions: Array<User.Structure & { member?: Partial<Guild.MemberStructure> }>;
     }
 
     export interface InteractionStructure {
