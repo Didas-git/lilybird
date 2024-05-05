@@ -1,4 +1,5 @@
 import type { ApplicationCommand } from "@lilybird/handlers";
+import { Message } from "@lilybird/transformers";
 
 export default {
   post: "GLOBAL",
@@ -23,5 +24,8 @@ export default {
         duration: 168
       }
     })
+
+    const msg = new Message(interaction.client, await interaction.client.rest.getOriginalInteractionResponse(interaction.client.application.id, interaction.token));
+    console.log(await msg.poll?.answers[0].fetchVoters({}));
   }
 } satisfies ApplicationCommand;
