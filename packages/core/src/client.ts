@@ -176,12 +176,13 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
         //#endregion
         //#region User defined listeners
         for (let i = 0, listenerEntries = Object.entries(listeners), { length } = listenerEntries; i < length; i++) {
-            const [name, handler] = listenerEntries[i] as [string, () => unknown];
-            if (name === "raw" || name === "ready") continue;
+            const [handlerName, handler] = listenerEntries[i] as [string, () => unknown];
+            if (handlerName === "raw" || handlerName === "ready") continue;
             if (typeof handler === "undefined") continue;
 
-            const event = name.replace(/[A-Z]/, "_$&").toUpperCase() as GatewayEvent;
-            const transformer = transformers[name];
+            const name = `${handlerName[0].toUpperCase()}${handlerName.slice(1)}`;
+            const event: GatewayEvent = GatewayEvent[<never>name];
+            const transformer = transformers[handlerName];
 
             this.#createListener(
                 builder,
