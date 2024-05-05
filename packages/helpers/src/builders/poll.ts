@@ -24,6 +24,9 @@ export class PollBuilder {
         return this;
     }
 
+    /**
+     * @param duration - in hours (1 - 168)
+     */
     public setDuration(duration: number): this {
         this.#poll.duration = duration;
         return this;

@@ -22,6 +22,7 @@ export declare namespace Poll {
     export interface CreateStructure {
         question: MediaStructure;
         answers: Array<AnswerStructure>;
+        /** in hours (1 - 168) */
         duration: number;
         allow_multiselect: boolean;
         layout_type?: PollLayoutType;
