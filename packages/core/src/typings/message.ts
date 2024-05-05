@@ -127,6 +127,7 @@ export declare namespace Message {
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
         flags?: number;
         enforce_nonce?: boolean;
+        poll?: Poll.CreateStructure;
     }
 
     export interface EditJSONParams {

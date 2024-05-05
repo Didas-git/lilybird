@@ -25,6 +25,7 @@ import type {
     Role,
     User
 } from "../typings/index.js";
+import type { Poll } from "src/typings/poll.js";
 
 export interface DiscordErrorMessage {
     code: number;
@@ -977,6 +978,35 @@ export class REST {
     }
 
     //#endregion Invite
+    //#region Poll
+    public async getPollAnswerVoters(
+        channelId: string,
+        messageId: string,
+        answerId: string,
+        params: {
+            after?: string,
+            /**
+             * 0-100
+             * @default 25
+             */
+            limit?: number
+        }
+    ): Promise<Poll.AnswerVotersStructure> {
+        let url = `channels/${channelId}/polls/${messageId}/answers/${answerId}?`;
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.makeAPIRequest("GET", url);
+    }
+
+    public async endPoll(channelId: string, messageId: string): Promise<Message.Structure> {
+        return this.makeAPIRequest("POST", `channels/${channelId}/polls/${messageId}`);
+    }
+
+    //#endregion
     //#region Stage Instance
     public async createStageInstance(instance: StageInstance.CreateJSONParams): Promise<StageInstance.Structure> {
         return this.makeAPIRequest("POST", "stage-instances", instance);

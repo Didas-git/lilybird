@@ -1,5 +1,6 @@
 import type { PollLayoutType } from "#enums";
 import type { Emoji } from "./emoji.js";
+import type { User } from "./user.js";
 
 export declare namespace Poll {
     /**
@@ -57,5 +58,12 @@ export declare namespace Poll {
         id: number;
         count: number;
         me_voted: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/resources/poll#get-answer-voters-response-body}
+     */
+    export interface AnswerVotersStructure {
+        users: Array<User.Structure>;
     }
 }
