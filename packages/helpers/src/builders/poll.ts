@@ -33,4 +33,26 @@ export class PollBuilder {
         this.#poll.allow_multiselect = allowMultiselect;
         return this;
     }
+
+    public toJSON(): Poll.CreateStructure {
+        return this.#poll;
+    }
+}
+
+export class PollAnswerBuilder {
+    readonly #answer: Poll.AnswerStructure = <never>{};
+
+    public setId(id: number): this {
+        this.#answer.answer_id = id;
+        return this;
+    }
+
+    public setMedia(media: Poll.MediaStructure): this {
+        this.#answer.poll_media = media;
+        return this;
+    }
+
+    public toJSON(): Poll.AnswerStructure {
+        return this.#answer;
+    }
 }
