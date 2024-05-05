@@ -4,9 +4,20 @@ export declare namespace Poll {
   /**
    * @see {@link https://discord.com/developers/docs/resources/poll#poll-object-poll-object-structure}
    */
-  export interface Structure {
+  export interface Structure extends CreateStructure {
+    expiry: number;
+    results?: ResultStructure;
+  }
+
+  /**
+   * @see {@link https://discord.com/developers/docs/resources/poll#poll-create-request-object-poll-create-request-object-structure}
+   */
+  export interface CreateStructure {
     question: MediaStructure;
     answers: Array<AnswerStructure>;
+    duration: number;
+    allow_multiselect: boolean;
+    layout_type: LayoutType;
   }
 
   /**
@@ -47,16 +58,5 @@ export declare namespace Poll {
    */
   export enum LayoutType {
     DEFAULT = 1,
-  }
-
-  /**
-   * @see {@link https://discord.com/developers/docs/resources/poll#poll-create-request-object-poll-create-request-object-structure}
-   */
-  export interface CreateJSONParams {
-    question: MediaStructure;
-    answers: Array<AnswerStructure>;
-    duration: number;
-    allow_multiselect: boolean;
-    layout_type: LayoutType;
   }
 }
