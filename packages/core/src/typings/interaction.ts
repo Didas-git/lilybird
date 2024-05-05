@@ -6,6 +6,7 @@ import type { Message } from "./message.js";
 import type { Guild } from "./guild.js";
 import type { Embed } from "./embed.js";
 import type { User } from "./user.js";
+import type { Poll } from "./poll.js";
 
 import type {
     InteractionCallbackType,
@@ -139,6 +140,7 @@ export declare namespace Interaction {
         components?: Array<Message.Component.Structure>;
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
         files?: Array<LilybirdAttachment>;
+        poll?: Poll.CreateStructure;
     }
 
     export interface ModalCallbackDataStructure {

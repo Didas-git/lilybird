@@ -16,3 +16,4 @@ export * from "./image.js";
 export * from "./cache.js";
 export * from "./user.js";
 export * from "./team.js";
+export * from "./poll.js";

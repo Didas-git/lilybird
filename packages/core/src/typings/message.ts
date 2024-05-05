@@ -10,6 +10,7 @@ import type { Emoji } from "./emoji.js";
 import type { Guild } from "./guild.js";
 import type { User } from "./user.js";
 import type { Role } from "./role.js";
+import type { Poll } from "./poll.js";
 
 export declare namespace Message {
     export import Component = _Component;
@@ -58,6 +59,7 @@ export declare namespace Message {
         position?: number;
         role_subscription_data?: Role.SubscriptionDataStructure;
         resolved?: ResolvedDataStructure;
+        poll?: Poll.Structure;
     }
 
     export interface GuildStructure extends Structure {
@@ -123,6 +125,7 @@ export declare namespace Message {
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
         flags?: number;
         enforce_nonce?: boolean;
+        poll?: Poll.CreateStructure;
     }
 
     export interface EditJSONParams {

@@ -14,6 +14,7 @@ import type { Guild } from "./guild.js";
 import type { Voice } from "./voice.js";
 import type { Role } from "./role.js";
 import type { User } from "./user.js";
+import type { Poll } from "./poll.js";
 
 export interface GetGatewayResponse {
     /** Gateway Websocket URL */
@@ -217,7 +218,9 @@ export type ReceiveDispatchEvent =
     | UserUpdate // X
     | VoiceStateUpdate
     | VoiceServerUpdate
-    | WebhookUpdate;
+    | WebhookUpdate
+    | MessagePollVoteAdd
+    | MessagePollVoteRemove;
 
 export type ReceiveOpCodeEvent = Hello | Reconnect | InvalidSession;
 
@@ -725,6 +728,16 @@ export interface WebhookUpdate extends DispatchPayload {
         channel_id: string
     };
     t: GatewayEvent.WebhookUpdate;
+}
+
+export interface MessagePollVoteAdd extends DispatchPayload {
+    d: Poll.GatewayPayload;
+    t: GatewayEvent.MessagePollVoteAdd;
+}
+
+export interface MessagePollVoteRemove extends DispatchPayload {
+    d: Poll.GatewayPayload;
+    t: GatewayEvent.MessagePollVoteRemove;
 }
 
 //#endregion ReceiveEvent

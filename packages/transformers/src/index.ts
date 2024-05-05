@@ -67,3 +67,8 @@ export {
     DMChannel,
     Channel
 } from "./factories/channel.js";
+
+export {
+    Poll,
+    PollAnswer
+} from "./factories/poll.js";
