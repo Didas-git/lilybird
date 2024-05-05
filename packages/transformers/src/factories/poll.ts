@@ -36,7 +36,7 @@ export class PollAnswer {
          * @default 25
          */
         limit?: number
-    }): Promise<Array<User>> {
+    } = {}): Promise<Array<User>> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const voters = await this.client.rest.getPollAnswerVoters(this.channelId, this.messageId, this.id, params);
 
