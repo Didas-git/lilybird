@@ -5,9 +5,13 @@ export declare namespace Poll {
     /**
      * @see {@link https://discord.com/developers/docs/resources/poll#poll-object-poll-object-structure}
      */
-    export interface Structure extends CreateStructure {
-    /** ISO8601 Timestamp */
+    export interface Structure {
+        question: MediaStructure;
+        answers: Array<AnswerStructure>;
+        /** ISO8601 Timestamp */
         expiry: string | null;
+        allow_multiselect: boolean;
+        layout_type: PollLayoutType;
         results?: ResultStructure;
     }
 
@@ -19,7 +23,7 @@ export declare namespace Poll {
         answers: Array<AnswerStructure>;
         duration: number;
         allow_multiselect: boolean;
-        layout_type: PollLayoutType;
+        layout_type?: PollLayoutType;
     }
 
     /**
