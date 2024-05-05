@@ -1003,7 +1003,7 @@ export class REST {
     }
 
     public async endPoll(channelId: string, messageId: string): Promise<Message.Structure> {
-        return this.makeAPIRequest("POST", `channels/${channelId}/polls/${messageId}`);
+        return this.makeAPIRequest("POST", `channels/${channelId}/polls/${messageId}/expire`);
     }
 
     //#endregion

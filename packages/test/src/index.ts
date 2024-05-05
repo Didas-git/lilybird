@@ -10,7 +10,7 @@ const listeners = await createHandler({
 
 await createClient({
     token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
+    intents: [Intents.GUILDS, Intents.GUILD_MESSAGES, Intents.MESSAGE_CONTENT],
     attachDebugListener: true,
     debugListener(identifier, payload) {
         if (identifier === DebugIdentifier.Message) return;
