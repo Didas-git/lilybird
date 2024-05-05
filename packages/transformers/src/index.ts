@@ -70,7 +70,10 @@ export {
 
 export {
     Poll,
-    PollAnswer,
+    PollAnswer
+} from "./factories/poll.js";
+
+export type {
     PollAnswerCount,
     PollMedia,
     PollResult

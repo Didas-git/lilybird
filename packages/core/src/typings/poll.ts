@@ -66,4 +66,16 @@ export declare namespace Poll {
     export interface AnswerVotersStructure {
         users: Array<User.Structure>;
     }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/topics/gateway-events#message-poll-vote-add-message-poll-vote-add-fields}
+     * @see {@link https://discord.com/developers/docs/topics/gateway-events#message-poll-vote-remove-message-poll-vote-remove-fields}
+     */
+    export interface GatewayPayload {
+        user_id: string;
+        channel_id: string;
+        message_id: string;
+        guild_id?: string;
+        answer_id: number;
+    }
 }

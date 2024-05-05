@@ -14,6 +14,7 @@ import type { Guild } from "./guild.js";
 import type { Voice } from "./voice.js";
 import type { Role } from "./role.js";
 import type { User } from "./user.js";
+import type { Poll } from "./poll.js";
 
 export interface GetGatewayResponse {
     /** Gateway Websocket URL */
@@ -730,24 +731,12 @@ export interface WebhookUpdate extends DispatchPayload {
 }
 
 export interface MessagePollVoteAdd extends DispatchPayload {
-    d: {
-        user_id: string,
-        channel_id: string,
-        message_id: string,
-        guild_id?: string,
-        answer_id: number
-    };
+    d: Poll.GatewayPayload;
     t: GatewayEvent.MessagePollVoteAdd;
 }
 
 export interface MessagePollVoteRemove extends DispatchPayload {
-    d: {
-        user_id: string,
-        channel_id: string,
-        message_id: string,
-        guild_id?: string,
-        answer_id: number
-    };
+    d: Poll.GatewayPayload;
     t: GatewayEvent.MessagePollVoteRemove;
 }
 
