@@ -217,7 +217,9 @@ export type ReceiveDispatchEvent =
     | UserUpdate // X
     | VoiceStateUpdate
     | VoiceServerUpdate
-    | WebhookUpdate;
+    | WebhookUpdate
+    | MessagePollVoteAdd
+    | MessagePollVoteRemove;
 
 export type ReceiveOpCodeEvent = Hello | Reconnect | InvalidSession;
 
@@ -725,6 +727,28 @@ export interface WebhookUpdate extends DispatchPayload {
         channel_id: string
     };
     t: GatewayEvent.WebhookUpdate;
+}
+
+export interface MessagePollVoteAdd extends DispatchPayload {
+    d: {
+        user_id: string,
+        channel_id: string,
+        message_id: string,
+        guild_id?: string,
+        answer_id: number
+    };
+    t: GatewayEvent.MessagePollVoteAdd;
+}
+
+export interface MessagePollVoteRemove extends DispatchPayload {
+    d: {
+        user_id: string,
+        channel_id: string,
+        message_id: string,
+        guild_id?: string,
+        answer_id: number
+    };
+    t: GatewayEvent.MessagePollVoteRemove;
 }
 
 //#endregion ReceiveEvent

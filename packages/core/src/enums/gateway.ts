@@ -59,7 +59,9 @@ export const enum GatewayEvent {
     UserUpdate = "USER_UPDATE",
     VoiceStateUpdate = "VOICE_STATE_UPDATE",
     VoiceServerUpdate = "VOICE_SERVER_UPDATE",
-    WebhookUpdate = "WEBHOOK_UPDATE"
+    WebhookUpdate = "WEBHOOK_UPDATE",
+    MessagePollVoteAdd = "MESSAGE_POLL_VOTE_ADD",
+    MessagePollVoteRemove = "MESSAGE_POLL_VOTE_REMOVE"
 }
 
 export const enum GatewayOpCode {
