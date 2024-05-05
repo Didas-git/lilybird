@@ -1,4 +1,4 @@
-export const enum GatewayEvent {
+export enum GatewayEvent {
     Ready = "READY",
     Resumed = "RESUMED",
     ApplicationCommandPermissionsUpdate = "APPLICATION_COMMAND_PERMISSIONS_UPDATE",
