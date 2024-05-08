@@ -90,4 +90,5 @@ export declare namespace Application {
         description: string;
     }
 
+    export type IntegrationTypeMap = Record<ApplicationIntegrationType, string>;
 }

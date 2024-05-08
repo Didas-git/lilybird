@@ -51,7 +51,7 @@ export declare namespace ApplicationCommand {
         description: string;
         options?: Array<Option.Structure>;
         default_member_permissions: string | null;
-        /** @deprecated Use contexts instead */
+        /** @deprecated Use {@link GlobalStructure.contexts} instead */
         dm_permission: boolean;
         nsfw?: boolean;
         integration_types?: Array<ApplicationIntegrationType>;
@@ -70,7 +70,6 @@ export declare namespace ApplicationCommand {
         default_member_permissions: string | null;
         nsfw?: boolean;
         integration_types?: Array<ApplicationIntegrationType>;
-        contexts?: Array<InteractionContextType>;
         version: number;
     }
 
@@ -127,7 +126,7 @@ export declare namespace ApplicationCommand {
             description?: string;
             options?: Array<ApplicationCommandOption.Structure>;
             default_member_permissions?: string | null;
-            /** @deprecated Use contexts instead */
+            /** @deprecated Use {@link ApplicationCommandJSONParams.contexts} instead */
             dm_permission?: boolean | null;
             integration_types?: Array<ApplicationIntegrationType>;
             contexts?: Array<InteractionContextType>;
