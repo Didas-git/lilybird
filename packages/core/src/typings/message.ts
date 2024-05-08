@@ -1,6 +1,6 @@
 import { Component as _Component } from "./message-components.js";
 
-import type { InteractionType, MessageActivityType, MessageType } from "#enums";
+import type { ApplicationIntegrationType, InteractionType, MessageActivityType, MessageType } from "#enums";
 import type { LilybirdAttachment, ResolvedDataStructure } from "./others.js";
 import type { Application } from "./application.js";
 import type { Channel } from "./channel.js";
@@ -50,6 +50,7 @@ export declare namespace Message {
          */
         flags?: number;
         referenced_message?: Structure | null;
+        interaction_metadata?: InteractionMetadataStructure;
         interaction?: InteractionStructure;
         thread?: Channel.Structure;
         /** This does not exist without the intent */
@@ -74,6 +75,19 @@ export declare namespace Message {
         name: string;
         user: User.Structure;
         member?: Partial<Guild.MemberStructure>;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/resources/channel#message-interaction-metadata-object-message-interaction-metadata-structure}
+     */
+    export interface InteractionMetadataStructure {
+        id: string;
+        type: InteractionType;
+        user: User.Structure;
+        authorizing_integration_owners: Record<ApplicationIntegrationType, string>;
+        original_response_message_id?: string;
+        interacted_message_id?: string;
+        triggering_interaction_metadata?: InteractionMetadataStructure;
     }
 
     /**

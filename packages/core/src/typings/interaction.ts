@@ -13,7 +13,9 @@ import type {
     EntitlementType,
     InteractionType,
     ComponentType,
-    Locale
+    Locale,
+    InteractionContextType,
+    ApplicationIntegrationType
 } from "#enums";
 
 export declare namespace Interaction {
@@ -26,8 +28,11 @@ export declare namespace Interaction {
         data?: DataStructure;
         token: string;
         version: number;
+        app_permissions: string;
         locale: Locale;
         entitlements: Array<EntitlementStructure>;
+        authorizing_integration_owners: Record<ApplicationIntegrationType, string>;
+        context?: InteractionContextType;
     }
 
     export interface GuildStructure extends Base {
@@ -35,7 +40,6 @@ export declare namespace Interaction {
         channel: Partial<Channel.Structure>;
         channel_id: string;
         member: Guild.MemberStructure;
-        app_permissions: string;
         guild_locale: Locale;
     }
 
