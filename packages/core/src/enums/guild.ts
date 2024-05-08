@@ -45,11 +45,18 @@ export const enum GuildNSFWLevel {
     AGE_RESTRICTED
 }
 
-export const enum GuildMemberFlags {
+export const enum GuildMemberFlag {
     DID_REJOIN = 1,
     COMPLETED_ONBOARDING,
     BYPASSES_VERIFICATION = 4,
     STARTED_ONBOARDING = 8
+}
+
+export const enum IntegrationType {
+    Twitch = "twitch",
+    Youtube = "youtube",
+    Discord = "discord",
+    GuildSubscription = "guild_subscription"
 }
 
 export const enum IntegrationExpireBehavior {

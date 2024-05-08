@@ -1,4 +1,4 @@
-import type { EditWebhookStructure, ExecuteWebhookStructure, LilybirdAttachment, MessageStructure, REST } from "lilybird";
+import type { Webhook, Message, LilybirdAttachment, REST } from "lilybird";
 
 export function parseDiscordWebhookURL(url: string): {
     branch: "ptb" | "canary" | "stable",
@@ -24,11 +24,11 @@ export function parseDiscordWebhookURL(url: string): {
     return { branch, version, id, token: url.slice(finalSlash + 1) };
 }
 
-export interface WebhookEditOptions extends EditWebhookStructure {
+export interface WebhookEditOptions extends Webhook.EditWebhookJSONParams {
     files?: Array<LilybirdAttachment> | undefined;
 }
 
-export interface WebhookExecuteOptions extends ExecuteWebhookStructure {
+export interface WebhookExecuteOptions extends Webhook.ExecuteWebhookJSONParams {
     files?: Array<LilybirdAttachment> | undefined;
 }
 
@@ -58,7 +58,7 @@ export class DiscordWebhook {
      * @param messageId
      * @param options
      */
-    public async editMessage(messageId: string, options: WebhookEditOptions): Promise<MessageStructure | null> {
+    public async editMessage(messageId: string, options: WebhookEditOptions): Promise<Message.Structure | null> {
         const { files, ...obj } = options;
         return this.#rest.editWebhookMessage(this.id, this.token, messageId, {}, obj, files);
     }
@@ -69,7 +69,7 @@ export class DiscordWebhook {
      * @param messageId
      * @param options
      */
-    public async editMessageInThread(threadId: string, messageId: string, options: WebhookEditOptions): Promise<MessageStructure | null> {
+    public async editMessageInThread(threadId: string, messageId: string, options: WebhookEditOptions): Promise<Message.Structure | null> {
         const { files, ...obj } = options;
         return this.#rest.editWebhookMessage(this.id, this.token, messageId, { thread_id: threadId }, obj, files);
     }
@@ -78,7 +78,7 @@ export class DiscordWebhook {
      * Send a message using the webhook
      * @param options
      */
-    public async send(options: WebhookExecuteOptions): Promise<MessageStructure> {
+    public async send(options: WebhookExecuteOptions): Promise<Message.Structure> {
         const { files, ...obj } = options;
         const message = await this.#rest.executeWebhook(this.id, this.token, {
             wait: true
@@ -94,7 +94,7 @@ export class DiscordWebhook {
      * @param threadId
      * @param options
      */
-    public async sendInThread(threadId: string, options: WebhookExecuteOptions): Promise<MessageStructure> {
+    public async sendInThread(threadId: string, options: WebhookExecuteOptions): Promise<Message.Structure> {
         const { files, ...obj } = options;
         const message = await this.#rest.executeWebhook(this.id, this.token, {
             wait: true,
@@ -122,7 +122,7 @@ export class DiscordWebhook {
      * @param messageId
      * @param threadId
      */
-    public async getMessage(messageId: string, threadId?: string): Promise<MessageStructure> {
+    public async getMessage(messageId: string, threadId?: string): Promise<Message.Structure> {
         return this.#rest.getWebhookMessage(this.id, this.token, messageId, { thread_id: threadId });
     }
 

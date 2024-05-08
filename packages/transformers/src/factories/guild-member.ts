@@ -2,7 +2,7 @@ import { User } from "./user.js";
 
 import { CDN } from "lilybird";
 
-import type { GuildMemberStructure, CDNOptions, Client, GuildMemberFlags } from "lilybird";
+import type { CDNOptions, Client, Guild, GuildMemberFlag } from "lilybird";
 
 export interface GuildMemberWithGuildId extends GuildMember {
     readonly guildId: string;
@@ -20,7 +20,7 @@ export interface ModifyMemberOptions {
     deaf?: boolean;
     channel_id?: string;
     communication_disabled_until?: Date | string;
-    flags?: Array<GuildMemberFlags>;
+    flags?: Array<GuildMemberFlag>;
 }
 
 export class GuildMember {
@@ -42,7 +42,7 @@ export class GuildMember {
 
     public readonly client: Client;
 
-    public constructor(client: Client, member: GuildMemberStructure) {
+    public constructor(client: Client, member: Guild.MemberStructure) {
         this.client = client;
 
         this.nick = member.nick;

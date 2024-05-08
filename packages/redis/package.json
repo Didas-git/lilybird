@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/redis",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Redis module for caching with lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -49,7 +49,7 @@
     "esm"
   ],
   "peerDependencies": {
-    "lilybird": "^0.6.0",
+    "lilybird": "^0.7.0",
     "@redis/client": "^1.5.14",
     "@redis/json": "^1.0.6"
   }

@@ -1,29 +1,14 @@
-import { ChannelType, VideoQualityMode, MessageFlags } from "lilybird";
+import type { ReplyOptions } from "../typings/shared.js";
 import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
 
-import type { ReplyOptions } from "../typings/shared.js";
+import { ChannelType, VideoQualityMode, MessageFlags } from "lilybird";
 
 import type {
-    GuildVoiceChannelStructure,
-    ThreadLikeChannelStructure,
-    GuildTextChannelStructure,
-    ChannelCategoryStructure,
-    DefaultReactionStructure,
-    ThreadMetadataStructure,
-    GroupDMChannelStructure,
-    ChannelMentionStructure,
-    ThreadChannelStructure,
-    CreateMessageStructure,
-    GuildChannelStructure,
-    ThreadMemberStructure,
-    AutoArchiveDuration,
-    DMChannelStructure,
-    OverwriteStructure,
+    Channel as LilyChannel,
+    Message as LilyMessage,
     LilybirdAttachment,
-    ForumTagStructure,
-    ChannelStructure,
     ForumLayoutType,
     SortOrderType,
     Client
@@ -35,12 +20,13 @@ export interface ResolvedChannel extends Channel {
     permissions: string;
 }
 
-export function channelFactory(client: Client, channel: ChannelStructure): Channel;
-export function channelFactory(client: Client, channel: Partial<ChannelStructure>): PartialChannel;
-export function channelFactory(client: Client, channel: ChannelStructure, resolved: true): ResolvedChannel;
-export function channelFactory(client: Client, channel: ChannelStructure | Partial<ChannelStructure>, resolved = false): Channel | PartialChannel | ResolvedChannel {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    switch (channel.type!) {
+export function channelFactory(client: Client, channel: LilyChannel.Structure): Channel;
+export function channelFactory(client: Client, channel: Partial<LilyChannel.Structure>): PartialChannel;
+export function channelFactory(client: Client, channel: LilyChannel.Structure, resolved: true): ResolvedChannel;
+export function channelFactory(client: Client, channel: LilyChannel.Structure | Partial<LilyChannel.Structure>, resolved = false): Channel | PartialChannel | ResolvedChannel {
+    if (typeof channel.type === "undefined") throw new Error("Cannot parse invalid channel. Missing channel type");
+
+    switch (channel.type) {
         case ChannelType.GUILD_TEXT: {
             return new GuildTextChannel(client, <never>channel, resolved);
         }
@@ -89,7 +75,7 @@ export class Channel {
 
     public readonly client: Client;
 
-    public constructor(client: Client, channel: ChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.Structure, resolved: boolean) {
         this.client = client;
 
         this.id = channel.id;
@@ -105,7 +91,7 @@ export class Channel {
     public async send(options: MessageSendOptions): Promise<Message>;
     public async send(content: string | MessageSendOptions, options?: MessageSendOptions): Promise<Message> {
         let flags = 0;
-        let data: CreateMessageStructure;
+        let data: LilyMessage.CreateJSONParams;
         let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
@@ -197,7 +183,7 @@ export class MentionChannel extends Channel {
     public readonly guildId: string;
     public readonly name: string;
 
-    public constructor(client: Client, channel: ChannelMentionStructure) {
+    public constructor(client: Client, channel: LilyChannel.MentionStructure) {
         super(client, <never>channel, false);
 
         this.guildId = channel.guild_id;
@@ -209,14 +195,14 @@ export class GuildChannel extends Channel {
     public readonly guildId: string;
     public readonly name: string;
     public readonly position: number;
-    public readonly permissionOverwrites: Array<OverwriteStructure>;
+    public readonly permissionOverwrites: Array<LilyChannel.OverwriteStructure>;
     public readonly nsfw: boolean;
     public readonly topic: string | null;
     public readonly lastMessageId: string | null;
     public readonly parentId: string | null;
-    public readonly defaultAutoArchiveDuration: AutoArchiveDuration;
+    public readonly defaultAutoArchiveDuration: LilyChannel.AutoArchiveDuration;
 
-    public constructor(client: Client, channel: GuildChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.BaseGuildChannelStructure, resolved: boolean) {
         super(client, <never>channel, resolved);
 
         this.guildId = channel.guild_id;
@@ -234,7 +220,7 @@ export class GuildChannel extends Channel {
 export class GuildTextChannel extends GuildChannel {
     public readonly rateLimitPerUser: number;
 
-    public constructor(client: Client, channel: GuildTextChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.GuildTextChannelStructure, resolved: boolean) {
         super(client, channel, resolved);
 
         this.rateLimitPerUser = channel.rate_limit_per_user;
@@ -247,7 +233,7 @@ export class GuildVoiceChannel extends Channel {
     public readonly guildId: string;
     public readonly name: string;
     public readonly position: number;
-    public readonly permissionOverwrites: Array<OverwriteStructure>;
+    public readonly permissionOverwrites: Array<LilyChannel.OverwriteStructure>;
     public readonly lastMessageId: string | null;
     public readonly parentId: string | null;
     public readonly nsfw: boolean;
@@ -257,7 +243,7 @@ export class GuildVoiceChannel extends Channel {
     public readonly bitrate: number;
     public readonly videoQualityMode: VideoQualityMode;
 
-    public constructor(client: Client, channel: GuildVoiceChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.GuildVoiceChannelStructure, resolved: boolean) {
         super(client, channel, resolved);
 
         this.guildId = channel.guild_id;
@@ -279,7 +265,7 @@ export class DMChannel extends Channel {
     public readonly lastMessageId: string | null;
     public readonly recipients: Array<User>;
 
-    public constructor(client: Client, channel: DMChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.DMChannelStructure, resolved: boolean) {
         super(client, channel, resolved);
 
         this.lastMessageId = channel.last_message_id;
@@ -294,7 +280,7 @@ export class GroupDMChannel extends DMChannel {
     public readonly applicationId: string | undefined;
     public readonly managed: boolean | undefined;
 
-    public constructor(client: Client, channel: GroupDMChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.GroupDMChannelStructure, resolved: boolean) {
         super(client, <never>channel, resolved);
 
         this.name = channel.name;
@@ -310,14 +296,14 @@ export class GroupDMChannel extends DMChannel {
 }
 
 export class GuildChannelCategory extends Channel {
-    public readonly permissionOverwrites: Array<OverwriteStructure>;
+    public readonly permissionOverwrites: Array<LilyChannel.OverwriteStructure>;
     public readonly name: string;
     public readonly nsfw: boolean;
     public readonly position: number;
     public readonly guildId: string;
     public readonly rateLimitPerUser: number;
 
-    public constructor(client: Client, channel: ChannelCategoryStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.CategoryStructure, resolved: boolean) {
         super(client, channel, resolved);
 
         this.permissionOverwrites = channel.permission_overwrites;
@@ -341,12 +327,12 @@ export class ThreadChannel extends Channel {
     public readonly lastMessageId: string | null;
     public readonly messageCount: number;
     public readonly memberCount: number;
-    public readonly threadMetadata: ThreadMetadataStructure;
+    public readonly threadMetadata: LilyChannel.ThreadMetadataStructure;
     public readonly totalMessageSent: number;
     public readonly member: ThreadMember | undefined;
     public readonly defaultThreadRateLimitPerUser: number;
 
-    public constructor(client: Client, channel: ThreadChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.ThreadChannelStructure, resolved: boolean) {
         super(client, channel, resolved);
 
         this.guildId = channel.guild_id;
@@ -377,7 +363,7 @@ export class ThreadMember {
     public readonly flags: number;
     public readonly member: GuildMember | undefined;
 
-    public constructor(client: Client, member: ThreadMemberStructure) {
+    public constructor(client: Client, member: LilyChannel.ThreadMemberStructure) {
         this.id = member.id;
         this.userId = member.user_id;
         this.joinTimestamp = new Date(member.join_timestamp);
@@ -388,14 +374,14 @@ export class ThreadMember {
 }
 
 export class ThreadLikeChannel extends Channel {
-    public readonly availableTags: Array<ForumTagStructure> | undefined;
+    public readonly availableTags: Array<LilyChannel.ForumTagStructure> | undefined;
     public readonly appliedTags: Array<string> | undefined;
     public readonly defaultThreadRateLimitPerUser: number | undefined;
     public readonly defaultSortOrder: SortOrderType | null | undefined;
     public readonly defaultForumLayout: ForumLayoutType | undefined;
-    public readonly defaultReactionEmoji: DefaultReactionStructure | null | undefined;
+    public readonly defaultReactionEmoji: LilyChannel.DefaultReactionStructure | null | undefined;
 
-    public constructor(client: Client, channel: ThreadLikeChannelStructure, resolved: boolean) {
+    public constructor(client: Client, channel: LilyChannel.ThreadLikeChannelStructure, resolved: boolean) {
         super(client, channel, resolved);
 
         this.availableTags = channel.available_tags;

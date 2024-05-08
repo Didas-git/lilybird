@@ -2,23 +2,17 @@
 import { ComponentType } from "lilybird";
 
 import type {
-    SelectDefaultValueStructure,
-    MessageComponentStructure,
-    SelectOptionStructure,
-    SelectMenuStructure,
-    ActionRowStructure,
-    TextInputStructure,
-    ButtonStructure,
-    EmojiStructure,
     ChannelType,
-    ButtonStyle
+    ButtonStyle,
+    Message,
+    Emoji
 } from "lilybird";
 
 export function ActionRow({
     children
 }: {
-    children: Array<Exclude<MessageComponentStructure, ActionRowStructure>> | Exclude<MessageComponentStructure, ActionRowStructure>
-}): ActionRowStructure {
+    children: Array<Exclude<Message.Component.Structure, Message.Component.ActionRowStructure>> | Exclude<Message.Component.Structure, Message.Component.ActionRowStructure>
+}): Message.Component.ActionRowStructure {
     if (!Array.isArray(children))children = [children];
 
     return {
@@ -31,16 +25,16 @@ export function Button(props: {
     id: string,
     style: Exclude<ButtonStyle, ButtonStyle.Link>,
     label?: string,
-    emoji?: Pick<EmojiStructure, "name" | "id" | "animated">,
+    emoji?: Pick<Emoji.Structure, "name" | "id" | "animated">,
     disabled?: boolean
 } | {
     url: string,
     style: ButtonStyle.Link,
     label?: string,
-    emoji?: Pick<EmojiStructure, "name" | "id" | "animated">,
+    emoji?: Pick<Emoji.Structure, "name" | "id" | "animated">,
     disabled?: boolean
-}): ButtonStructure {
-    const base: ButtonStructure = {
+}): Message.Component.ButtonStructure {
+    const base: Message.Component.ButtonStructure = {
         type: ComponentType.Button,
         style: props.style,
         label: props.label,
@@ -66,9 +60,9 @@ export function TextInputModal({
     required,
     value,
     placeholder
-}: Omit<TextInputStructure, "custom_id" | "type"> & {
+}: Omit<Message.Component.TextInputStructure, "custom_id" | "type"> & {
     id: string
-}): TextInputStructure {
+}): Message.Component.TextInputStructure {
     return {
         type: ComponentType.TextInput,
         custom_id: id,
@@ -98,8 +92,8 @@ export function StringSelectMenu({
     disabled,
     children
 }: BaseSelectMenuOptions & {
-    children: Array<SelectOptionStructure> | SelectOptionStructure
-}): SelectMenuStructure {
+    children: Array<Message.Component.SelectOptionStructure> | Message.Component.SelectOptionStructure
+}): Message.Component.SelectMenuStructure {
     if (!Array.isArray(children)) children = [children];
 
     return {
@@ -121,8 +115,8 @@ export function UserSelectMenu({
     disabled,
     children
 }: BaseSelectMenuOptions & {
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
-}): SelectMenuStructure {
+    children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
+}): Message.Component.SelectMenuStructure {
     if (children != null && !Array.isArray(children)) children = [children];
 
     return {
@@ -144,8 +138,8 @@ export function RoleSelectMenu({
     disabled,
     children
 }: BaseSelectMenuOptions & {
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
-}): SelectMenuStructure {
+    children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
+}): Message.Component.SelectMenuStructure {
     if (children != null && !Array.isArray(children))
         children = [children];
 
@@ -168,8 +162,8 @@ export function MentionableSelectMenu({
     disabled,
     children
 }: BaseSelectMenuOptions & {
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
-}): SelectMenuStructure {
+    children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
+}): Message.Component.SelectMenuStructure {
     if (children != null && !Array.isArray(children)) children = [children];
 
     return {
@@ -193,8 +187,8 @@ export function ChannelSelectMenu({
     children
 }: BaseSelectMenuOptions & {
     channel_types?: Array<ChannelType>,
-    children?: Array<SelectDefaultValueStructure> | SelectDefaultValueStructure
-}): SelectMenuStructure {
+    children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
+}): Message.Component.SelectMenuStructure {
     if (children != null && !Array.isArray(children)) children = [children];
 
     return {

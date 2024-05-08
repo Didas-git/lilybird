@@ -17,24 +17,16 @@ import type { ReplyOptions } from "../typings/shared.js";
 import type { PartialChannel } from "./channel.js";
 
 import type {
-    AutocompleteCallbackDataStructure,
-    ApplicationCommandDataStructure,
-    MessageComponentDataStructure,
-    GuildInteractionStructure,
-    MessageComponentStructure,
-    ModalSubmitDataStructure,
-    InteractionCallbackData,
-    DMInteractionStructure,
+    Interaction as LilyInteraction,
+    Message as LilyMessage,
     ResolvedDataStructure,
-    EntitlementStructure,
-    InteractionStructure,
-    ActionRowStructure,
     LilybirdAttachment,
     Locale,
-    Client
+    Client,
+    ApplicationCommand
 } from "lilybird";
 
-export function interactionFactory(client: Client, interaction: InteractionStructure): Interaction {
+export function interactionFactory(client: Client, interaction: LilyInteraction.Structure): Interaction {
     const data = interactionDataFactory(interaction);
     // No clue why eslint is flagging this as an error with classes set to false...
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -43,7 +35,7 @@ export function interactionFactory(client: Client, interaction: InteractionStruc
     return new DMInteraction(client, interaction, false, data);
 }
 
-function interactionDataFactory(interaction: InteractionStructure): InteractionData {
+function interactionDataFactory(interaction: LilyInteraction.Structure): InteractionData {
     switch (interaction.type) {
         case InteractionType.PING:
             return undefined;
@@ -73,7 +65,7 @@ export interface InteractionReplyOptions extends ReplyOptions {
 export interface InteractionShowModalOptions {
     title: string;
     id: string;
-    components: Array<ActionRowStructure>;
+    components: Array<LilyMessage.Component.ActionRowStructure>;
 }
 
 export interface InteractionEditOptions extends ReplyOptions {}
@@ -87,13 +79,13 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public readonly version = 1;
     /** This is only undefined if type is PING */
     public readonly locale: Locale | undefined;
-    public readonly entitlements: Array<EntitlementStructure>;
+    public readonly entitlements: Array<LilyInteraction.EntitlementStructure>;
     public readonly data: T;
     public readonly message: M = <M>undefined;
 
     readonly #inGuild: boolean;
 
-    protected constructor(client: Client, interaction: GuildInteractionStructure | DMInteractionStructure, isGuild: boolean, data?: T) {
+    protected constructor(client: Client, interaction: LilyInteraction.GuildStructure | LilyInteraction.DMStructure, isGuild: boolean, data?: T) {
         this.#inGuild = isGuild;
 
         this.client = client;
@@ -113,7 +105,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public async reply(options: InteractionReplyOptions): Promise<void>;
     public async reply(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
-        let data: InteractionCallbackData;
+        let data: LilyInteraction.CallbackData;
         let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
@@ -176,7 +168,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public async updateComponents(options: InteractionReplyOptions): Promise<void>;
     public async updateComponents(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<void> {
         let flags = 0;
-        let data: InteractionCallbackData;
+        let data: LilyInteraction.CallbackData;
         let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
@@ -217,17 +209,17 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         }, files);
     }
 
-    public async showChoices(choices: AutocompleteCallbackDataStructure["choices"]): Promise<void> {
+    public async showChoices(choices: LilyInteraction.AutocompleteCallbackDataStructure["choices"]): Promise<void> {
         await this.client.rest.createInteractionResponse(this.id, this.token, {
             type: InteractionCallbackType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT,
             data: { choices }
         });
     }
 
-    public async showModal(title: string, id: string, components: Array<ActionRowStructure>): Promise<void>;
+    public async showModal(title: string, id: string, components: Array<LilyMessage.Component.ActionRowStructure>): Promise<void>;
     public async showModal(options: InteractionShowModalOptions): Promise<void>;
-    public async showModal(titleOrOptions: string | InteractionShowModalOptions, id?: string, components?: Array<ActionRowStructure>): Promise<void> {
-        let data: InteractionCallbackData;
+    public async showModal(titleOrOptions: string | InteractionShowModalOptions, id?: string, components?: Array<LilyMessage.Component.ActionRowStructure>): Promise<void> {
+        let data: LilyInteraction.CallbackData;
 
         if (typeof titleOrOptions === "string") {
             data = {
@@ -254,7 +246,7 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public async followUp(options: InteractionReplyOptions): Promise<Message>;
     public async followUp(content: string | InteractionReplyOptions, options?: InteractionReplyOptions): Promise<Message> {
         let flags = 0;
-        let data: InteractionCallbackData;
+        let data: LilyInteraction.CallbackData;
         let files: Array<LilybirdAttachment> | undefined;
 
         if (typeof content === "string") {
@@ -400,7 +392,7 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
     public readonly appPermissions: string;
     public readonly guildLocale: Locale;
 
-    public constructor(client: Client, interaction: GuildInteractionStructure, isDM: boolean, data?: T) {
+    public constructor(client: Client, interaction: LilyInteraction.GuildStructure, isDM: boolean, data?: T) {
         super(client, interaction, isDM, data);
 
         this.guildId = interaction.guild_id;
@@ -428,7 +420,7 @@ export interface DMInteraction<T extends InteractionData, M extends undefined | 
 export class DMInteraction<T extends InteractionData, M extends undefined | Message = undefined | Message> extends Interaction<T, M> {
     public readonly user: User;
 
-    public constructor(client: Client, interaction: DMInteractionStructure, isDM: boolean, data?: T) {
+    public constructor(client: Client, interaction: LilyInteraction.DMStructure, isDM: boolean, data?: T) {
         super(client, interaction, isDM, data);
 
         this.user = new User(client, interaction.user);
@@ -465,7 +457,7 @@ export class ApplicationCommandData<T extends undefined | FocusedOption = undefi
     #subCommandGroup: string | undefined;
     #subCommand: string | undefined;
 
-    public constructor(data: ApplicationCommandDataStructure) {
+    public constructor(data: ApplicationCommand.DataStructure) {
         this.id = data.id;
         this.name = data.name;
         this.type = data.type;
@@ -476,7 +468,7 @@ export class ApplicationCommandData<T extends undefined | FocusedOption = undefi
         this.#parseOptions(data.options);
     }
 
-    #parseOptions(options: ApplicationCommandDataStructure["options"]): void {
+    #parseOptions(options: ApplicationCommand.DataStructure["options"]): void {
         if (!options) return;
 
         for (let i = 0, { length } = options; i < length; i++) {
@@ -694,7 +686,7 @@ export class MessageComponentData<T extends Array<string> | undefined = undefine
     public readonly values: T;
     public readonly resolved?: ResolvedDataStructure;
 
-    public constructor(data: MessageComponentDataStructure) {
+    public constructor(data: LilyInteraction.MessageComponentDataStructure) {
         this.id = data.custom_id;
         this.type = data.component_type;
         this.resolved = data.resolved;
@@ -712,9 +704,9 @@ export class MessageComponentData<T extends Array<string> | undefined = undefine
 
 export class ModalSubmitData {
     public readonly id: string;
-    public readonly components: Array<MessageComponentStructure>;
+    public readonly components: Array<LilyMessage.Component.Structure>;
 
-    public constructor(data: ModalSubmitDataStructure) {
+    public constructor(data: LilyInteraction.ModalSubmitDataStructure) {
         this.id = data.custom_id;
         this.components = data.components;
     }

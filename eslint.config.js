@@ -180,7 +180,6 @@ export default tsEslint.config({
         "@typescript-eslint/no-meaningless-void-operator": "warn",
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-mixed-enums": "error",
-        "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-non-null-asserted-nullish-coalescing": "error",
         "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
         "@typescript-eslint/no-non-null-assertion": "error",
@@ -203,7 +202,6 @@ export default tsEslint.config({
         "@typescript-eslint/no-unsafe-member-access": "error",
         "@typescript-eslint/no-unsafe-return": "error",
         "@typescript-eslint/no-unsafe-unary-minus": "error",
-        "@typescript-eslint/no-unused-vars": "error",
         "@typescript-eslint/no-useless-constructor": "error",
         "@typescript-eslint/no-useless-empty-export": "warn",
         "@typescript-eslint/no-var-requires": "error",
@@ -229,6 +227,10 @@ export default tsEslint.config({
         "@typescript-eslint/switch-exhaustiveness-check": "error",
         "@typescript-eslint/triple-slash-reference": "error",
         "@typescript-eslint/unified-signatures": "error",
+        "@typescript-eslint/no-namespace": [
+            "error",
+            { allowDeclarations: true }
+        ],
         "@typescript-eslint/array-type": [
             "warn",
             {

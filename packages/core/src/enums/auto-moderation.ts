@@ -9,7 +9,7 @@ export const enum AutoModerationTriggerType {
     MENTION_SPAM
 }
 
-export const enum AutoModerationKeywordPresetTypes {
+export const enum AutoModerationKeywordPresetType {
     PROFANITY = 1,
     SEXUAL_CONTENT,
     SLURS
