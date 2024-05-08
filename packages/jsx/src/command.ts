@@ -5,7 +5,9 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from "lilybird";
 import type {
     ApplicationCommand as LilyApplicationCommand,
     PermissionFlags,
-    Locale
+    Locale,
+    ApplicationIntegrationType,
+    InteractionContextType
 } from "lilybird";
 
 export function ApplicationCommand({
@@ -13,6 +15,8 @@ export function ApplicationCommand({
     description,
     defaultMemberPermissions,
     dmPermission,
+    integrationTypes,
+    contexts,
     name_localizations,
     description_localizations,
     nsfw,
@@ -22,6 +26,8 @@ export function ApplicationCommand({
     description: string,
     defaultMemberPermissions?: Array<typeof PermissionFlags[keyof typeof PermissionFlags]> | null,
     dmPermission?: boolean | null,
+    integrationTypes?: Array<ApplicationIntegrationType> | null,
+    contexts?: Array<InteractionContextType> | null,
     nsfw?: boolean,
     name_localizations?: Record<Locale, string> | null,
     description_localizations?: Record<Locale, string> | null,
@@ -34,6 +40,8 @@ export function ApplicationCommand({
         name,
         description,
         dm_permission: dmPermission,
+        integration_types: integrationTypes,
+        contexts,
         name_localizations,
         description_localizations,
         nsfw,

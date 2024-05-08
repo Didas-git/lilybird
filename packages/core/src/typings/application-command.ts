@@ -128,8 +128,8 @@ export declare namespace ApplicationCommand {
             default_member_permissions?: string | null;
             /** @deprecated Use {@link ApplicationCommandJSONParams.contexts} instead */
             dm_permission?: boolean | null;
-            integration_types?: Array<ApplicationIntegrationType>;
-            contexts?: Array<InteractionContextType>;
+            integration_types?: Array<ApplicationIntegrationType> | null;
+            contexts?: Array<InteractionContextType> | null;
             type?: ApplicationCommandType;
             nsfw?: boolean;
         }
