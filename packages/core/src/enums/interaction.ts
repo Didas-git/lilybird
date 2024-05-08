@@ -7,7 +7,7 @@ export const enum InteractionType {
 }
 
 export const enum InteractionContextType {
-    GUILD = 0,
+    GUILD,
     BOT_DM,
     PRIVATE_CHANNEL
 }
