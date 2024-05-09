@@ -1,8 +1,21 @@
-import type { SlashCommand } from "@lilybird/handlers";
+import type { ApplicationCommand } from "@lilybird/handlers";
+import { ApplicationIntegrationType, InteractionContextType } from "lilybird";
 
 export default {
     post: "GLOBAL",
-    data: { name: "ping", description: "pong" },
+    data: {
+        name: "ping",
+        description: "pong",
+        integration_types: [
+            ApplicationIntegrationType.GUILD_INSTALL,
+            ApplicationIntegrationType.USER_INSTALL
+        ],
+        contexts: [
+            InteractionContextType.BOT_DM,
+            InteractionContextType.GUILD,
+            InteractionContextType.PRIVATE_CHANNEL
+        ],
+    },
     run: async (interaction) => {
         await interaction.deferReply();
 
@@ -17,4 +30,4 @@ export default {
             depth: 1
         }));
     }
-} satisfies SlashCommand;
+} satisfies ApplicationCommand;

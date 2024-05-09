@@ -17,13 +17,15 @@ import type { ReplyOptions } from "../typings/shared.js";
 import type { PartialChannel } from "./channel.js";
 
 import type {
+    Application as LilyApplication,
     Interaction as LilyInteraction,
     Message as LilyMessage,
     ResolvedDataStructure,
     LilybirdAttachment,
     Locale,
     Client,
-    ApplicationCommand
+    ApplicationCommand,
+    InteractionContextType
 } from "lilybird";
 
 export function interactionFactory(client: Client, interaction: LilyInteraction.Structure): Interaction {
@@ -77,9 +79,12 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
     public readonly type: InteractionType;
     public readonly token: string;
     public readonly version = 1;
+    public readonly appPermissions: string;
     /** This is only undefined if type is PING */
     public readonly locale: Locale | undefined;
     public readonly entitlements: Array<LilyInteraction.EntitlementStructure>;
+    public readonly authorizingIntegrationOwners: LilyApplication.IntegrationTypeMap;
+    public readonly context: InteractionContextType | undefined;
     public readonly data: T;
     public readonly message: M = <M>undefined;
 
@@ -93,8 +98,11 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         this.applicationId = interaction.application_id;
         this.type = interaction.type;
         this.token = interaction.token;
+        this.appPermissions = interaction.app_permissions;
         this.locale = interaction.locale;
         this.entitlements = interaction.entitlements;
+        this.authorizingIntegrationOwners = interaction.authorizing_integration_owners;
+        this.context = interaction.context;
 
         this.data = <never>data;
 
@@ -389,7 +397,6 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
     public readonly channel: PartialChannel;
     public readonly channelId: string;
     public readonly member: GuildMember;
-    public readonly appPermissions: string;
     public readonly guildLocale: Locale;
 
     public constructor(client: Client, interaction: LilyInteraction.GuildStructure, isDM: boolean, data?: T) {
@@ -399,7 +406,6 @@ export class GuildInteraction<T extends InteractionData, M extends undefined | M
         this.channel = channelFactory(client, interaction.channel);
         this.channelId = interaction.channel_id;
         this.member = new GuildMember(client, interaction.member);
-        this.appPermissions = interaction.app_permissions;
         this.guildLocale = interaction.guild_locale;
     }
 }

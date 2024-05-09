@@ -1,4 +1,11 @@
-import type { ApplicationCommandOptionType, ApplicationCommandPermissionType, ApplicationCommandType, ChannelType } from "#enums";
+import type {
+    ApplicationCommandOptionType,
+    ApplicationCommandPermissionType,
+    ApplicationCommandType,
+    ApplicationIntegrationType,
+    ChannelType,
+    InteractionContextType
+} from "#enums";
 import type { ResolvedDataStructure } from "./others.js";
 import type { Localizations as _Localizations } from "./localizations.js";
 
@@ -44,8 +51,11 @@ export declare namespace ApplicationCommand {
         description: string;
         options?: Array<Option.Structure>;
         default_member_permissions: string | null;
+        /** @deprecated Use {@link GlobalStructure.contexts} instead */
         dm_permission: boolean;
         nsfw?: boolean;
+        integration_types?: Array<ApplicationIntegrationType>;
+        contexts?: Array<InteractionContextType>;
         version: number;
     }
 
@@ -59,6 +69,7 @@ export declare namespace ApplicationCommand {
         options?: Array<Option.Structure>;
         default_member_permissions: string | null;
         nsfw?: boolean;
+        integration_types?: Array<ApplicationIntegrationType>;
         version: number;
     }
 
@@ -115,7 +126,10 @@ export declare namespace ApplicationCommand {
             description?: string;
             options?: Array<ApplicationCommandOption.Structure>;
             default_member_permissions?: string | null;
+            /** @deprecated Use {@link ApplicationCommandJSONParams.contexts} instead */
             dm_permission?: boolean | null;
+            integration_types?: Array<ApplicationIntegrationType> | null;
+            contexts?: Array<InteractionContextType> | null;
             type?: ApplicationCommandType;
             nsfw?: boolean;
         }
