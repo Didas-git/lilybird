@@ -140,14 +140,7 @@ export declare namespace Message {
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
         flags?: number;
         enforce_nonce?: boolean;
-<<<<<<< HEAD
-<<<<<<< HEAD
         poll?: Poll.CreateStructure;
-=======
->>>>>>> 7cfd140 (Completely change type organization)
-=======
-        poll?: Poll.CreateStructure;
->>>>>>> 84848c8 (Add support for Polls (#21))
     }
 
     export interface EditJSONParams {
