@@ -3,6 +3,10 @@ import { EmbedType } from "lilybird";
 
 import type { Embed } from "lilybird";
 
+function parseHexToByte10(hex: string): number {
+    return Number(hex.replace("#", "0x"));
+}
+
 function parseEmbedChildren(children: Array<EmbedComponent> | EmbedComponent | undefined): Omit<Embed.Structure, "title" | "type" | "description" | "url" | "timestamp" | "color"> | undefined {
     if (children == null) return;
     if (!Array.isArray(children)) return { [children.type]: children.data };
