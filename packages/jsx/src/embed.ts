@@ -85,7 +85,6 @@ export function Embed({
     if (typeof timestamp === "boolean") timestamp = new Date();
 
     if (typeof color === "string") color = parseHexToByte10(color);
-    if (typeof color === "string") color = parseHexToByte10(color);
     else if (Array.isArray(color)) color = rgbToByte10(color);
 
     return {
