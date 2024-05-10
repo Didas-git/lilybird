@@ -1,0 +1,31 @@
+---
+title: Listeners Compiler
+description: Lets try to break down how the compiler works.
+sidebar:
+  order: 4
+  badge:
+    text: Internal
+    variant: note
+---
+
+import overviewDiagram from "../../../assets/diagrams/compiler.svg"
+import compilerDiagram from "../../../assets/diagrams/api-flow.svg"
+import { Image } from 'astro:assets';
+
+The compiler in lilybird is what makes our api possible, it builds all the listeners **once** at startup so you only get both, what you defined and with proper transformers (if present) without any runtime checks after the bot starts.
+
+The lack of this extra checks on every event is what makes lilybird so fast, the workflow is just<br/> `event -> listener` with the only thing possibly in the middle being the transformers you define or in some cases the cache code.
+
+<Image src={overviewDiagram} alt="overview"/>
+
+The great advantage of the compiler is that your listeners run smoothly without having to do any checks because it does all the checks when its compiling them.
+
+Lets look at the following diagram:
+
+<Image src={compilerDiagram} alt="compiler"/>
+
+This illustrates how the compiler analyses your options and creates each listener, all the checks it does occur only once so during runtime each listener runs its own straight line without any checks.
+
+:::note
+The client will always have the `READY` listener attached no matter if you have your callback to execute or not.
+:::

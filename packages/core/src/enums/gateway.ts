@@ -1,4 +1,4 @@
-export const enum GatewayEvent {
+export enum GatewayEvent {
     Ready = "READY",
     Resumed = "RESUMED",
     ApplicationCommandPermissionsUpdate = "APPLICATION_COMMAND_PERMISSIONS_UPDATE",
@@ -59,7 +59,9 @@ export const enum GatewayEvent {
     UserUpdate = "USER_UPDATE",
     VoiceStateUpdate = "VOICE_STATE_UPDATE",
     VoiceServerUpdate = "VOICE_SERVER_UPDATE",
-    WebhookUpdate = "WEBHOOK_UPDATE"
+    WebhookUpdate = "WEBHOOK_UPDATE",
+    MessagePollVoteAdd = "MESSAGE_POLL_VOTE_ADD",
+    MessagePollVoteRemove = "MESSAGE_POLL_VOTE_REMOVE"
 }
 
 export const enum GatewayOpCode {
@@ -95,7 +97,9 @@ export const enum Intents {
     MESSAGE_CONTENT = 32768,
     GUILD_SCHEDULED_EVENTS = 65536,
     AUTO_MODERATION_CONFIGURATION = 1048576,
-    AUTO_MODERATION_EXECUTION = 2097152
+    AUTO_MODERATION_EXECUTION = 2097152,
+    GUILD_MESSAGE_POLLS = 16777216,
+    DIRECT_MESSAGE_POLLS = 33554432
 }
 
 export const enum GatewayCloseEventCode {

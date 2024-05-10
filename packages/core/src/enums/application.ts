@@ -10,3 +10,19 @@ export const enum ApplicationFlags {
     GATEWAY_MESSAGE_CONTENT_LIMITED = 524288,
     APPLICATION_COMMAND_BADGE = 8388608
 }
+
+export const enum ApplicationRoleConnectionMetadataType {
+    INTEGER_LESS_THAN_OR_EQUAL = 1,
+    INTEGER_GREATER_THAN_OR_EQUAL,
+    INTEGER_EQUAL,
+    INTEGER_NOT_EQUAL,
+    DATETIME_LESS_THAN_OR_EQUAL,
+    DATETIME_GREATER_THAN_OR_EQUAL,
+    BOOLEAN_EQUAL,
+    BOOLEAN_NOT_EQUAL
+}
+
+export const enum ApplicationIntegrationType {
+    GUILD_INSTALL,
+    USER_INSTALL
+}

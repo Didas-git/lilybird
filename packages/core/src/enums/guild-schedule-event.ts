@@ -9,7 +9,7 @@ export const enum GuildScheduledEventStatus {
     CANCELED
 }
 
-export const enum GuildScheduledEventEntityTypes {
+export const enum GuildScheduledEventEntityType {
     STAGE_INSTANCE = 1,
     VOICE,
     EXTERNAL

@@ -1,0 +1,89 @@
+...@shared
+
+you: {
+  shape: person
+}
+
+use: {
+  class: text
+}
+
+may use: {
+  class: text
+}
+
+you -- may use -> modules -- use: {
+  class: round-connection
+}
+you -- use -> client.api
+
+manager: {
+  near: client.compiler
+  label: WS Manager
+}
+
+client.compiler -> manager.listeners
+
+client: {
+  compiler: {
+    raw: {
+      # label: build raw event
+      shape: step
+    }
+    ready: {
+      # label: build ready event
+      shape: step
+    }
+    user defined: {
+      shape: step
+    }
+    cache: {
+      shape: step
+    }
+    dce: {
+      shape: step
+    }
+
+    raw -- ready -- user defined -- cache -- DCE
+  }
+
+  api: {
+    # TALA currently seems to have some issues with clustering when using this option so its disabled rn
+    # grid-columns: 3
+    transformers
+    listeners
+    cache
+  }
+
+  api.transformers -> compiler: {
+    class: round-connection
+  }
+  api.listeners -> compiler: {
+    class: round-connection
+  }
+  api.cache -> compiler: {
+    class: round-connection
+  }
+}
+
+dce: {
+  near: client
+  style: {
+    font-size: 12
+  }
+  class: text
+  label: |md
+    # ● Definitions
+
+    - Raw - Define the raw listener if it exists, raw is always first level with 0 conditionals.
+    - Ready - Define the ready listener, this is done manually for a few reasons.
+      - The setup api needs to also be added if it exists.
+      - The inner `user` object of the client might have a transformer assigned.
+    - User Defined - This handles creating the listeners you passed in on the api.
+      - This always adds the transformer for the event if it exists.
+    - Cache - Define the caching listeners.
+    - DCE - Dead Code Elimination happens for each listener to get rid of unused transformers.
+  |
+}
+
+client.compiler -- dce

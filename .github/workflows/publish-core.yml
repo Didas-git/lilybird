@@ -16,15 +16,18 @@ jobs:
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      # This is needed to be able to properly publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          registry-url: https://registry.npmjs.org
       - name: Install Dependencies
-        run: bun i
+        run: bun i --frozen-lockfile
       # bun doesnt support methods like `-ws`, `-w or similar yet
-      - name: Hop into the folder
-        run: cd packages/core
       - name: Build
-        run: bun run build
+        run: cd packages/core && bun run build
       - name: Publish core
       # Bun doesnt have any publish methods yet
-        run: npm publish --provenance --no-git-checks --access public
+        run: cd packages/core && npm publish --provenance --no-git-checks --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM}}

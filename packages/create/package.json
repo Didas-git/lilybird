@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/create",
-  "version": "0.1.8",
+  "version": "0.3.0",
   "description": "Create a new template bot using lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -8,7 +8,7 @@
   "license": "Apache-2.0",
   "bin": "./dist/index.js",
   "engines": {
-    "bun": ">=1.0.15",
+    "bun": ">=1.1.0",
     "node": ">=21.0.0"
   },
   "files": [
@@ -16,12 +16,12 @@
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc && cp src/index-template.ts dist",
+    "build": "rm -rf dist && tsc && cp .npmignore dist/ && cp -r src/templates dist/templates",
     "dev": "bun src/index.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Didas-git/lilybird"
+    "url": "git+https://github.com/Didas-git/lilybird.git"
   },
   "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/create",
   "bugs": {
@@ -44,16 +44,6 @@
     "bunjs",
     "bun-first"
   ],
-  "devDependencies": {
-    "eslint": "^8.55.0",
-    "@typescript-eslint/parser": "^6.13.2",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@stylistic/eslint-plugin": "^1.4.1",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "bun-types": "1.0.18",
-    "typescript": "^5.3.2"
-  },
   "dependencies": {
     "ansi-colors": "^4.1.3",
     "enquirer": "^2.4.1"

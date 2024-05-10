@@ -1,5 +1,4 @@
-import { GatewayOpCode } from "#enums";
-//@ts-expect-error This exists...
+import { DebugIdentifier, GatewayOpCode } from "#enums";
 import { setTimeout } from "node:timers/promises";
 
 import type {
@@ -7,6 +6,7 @@ import type {
     GetGatewayBotResponse,
     ReceiveDispatchEvent,
     UpdatePresence,
+    DebugFunction,
     Identify,
     Payload,
     Resume
@@ -18,22 +18,7 @@ interface ManagerOptions {
     presence?: UpdatePresenceStructure;
 }
 
-export type Identifier = "WS_MESSAGE"
-    | "HEARTBEAT"
-    | "ACK"
-    | "NEED_HEARTBEAT"
-    | "IDENTIFY"
-    | "RESUME"
-    | "INVALID_SESSION"
-    | "RECONNECT"
-    | "ERROR"
-    | "MISSING_ACK"
-    | "ZOMBIE"
-    | "ATTEMPTING_RESUME"
-    | "UNKNOWN_CODE";
-
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
-export type DebugFunction = (identifier: Identifier, payload?: unknown) => any;
 
 export class WebSocketManager {
     readonly #dispatch: DispatchFunction;
@@ -55,7 +40,7 @@ export class WebSocketManager {
     } = <never>{};
 
     public constructor(options: ManagerOptions, dispatch: DispatchFunction, debug?: DebugFunction) {
-        if (!options.intents) throw new Error("No intents were passed");
+        if (typeof options.intents !== "number" && Number.isNaN(options.intents)) throw new Error("Invalid intents");
 
         this.#dispatch = dispatch;
         this.#debug = debug;
@@ -76,7 +61,7 @@ export class WebSocketManager {
 
             if (!response.ok) throw new Error("An invalid Token was provided");
 
-            const data: GetGatewayBotResponse = await response.json();
+            const data: GetGatewayBotResponse = await response.json() as never;
 
             data.url = `${data.url}/?v=10&encoding=json`;
             this.#gatewayInfo = data;
@@ -84,21 +69,22 @@ export class WebSocketManager {
 
         this.#ws = new WebSocket(url ?? this.#gatewayInfo.url);
         this.#ws.addEventListener("error", (err) => {
-            this.#debug?.("ERROR", err);
+            this.#debug?.(DebugIdentifier.WSError, err);
         });
         this.#ws.addEventListener("close", async ({ code }) => {
             this.#clearTimer();
+            if (code === 1000) return;
             if (typeof code === "undefined" || code === 1001 || closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
                 return;
             }
 
-            this.#debug?.("UNKNOWN_CODE", code);
+            this.#debug?.(DebugIdentifier.UnknownCode, code);
             this.#isResuming = false;
             await this.connect();
         });
         this.#ws.addEventListener("message", (event) => {
-            this.#debug?.("WS_MESSAGE", event.data);
+            this.#debug?.(DebugIdentifier.Message, event.data);
             const payload = <Payload>JSON.parse((event.data as Buffer).toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
 
@@ -108,7 +94,7 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.Hello: {
-                    const interval = Math.round(payload.d.heartbeat_interval * Math.random());
+                    const interval = this.#getInterval(payload.d.heartbeat_interval);
                     this.#startTimer(interval);
 
                     if (!this.#isResuming) this.#identify();
@@ -117,24 +103,24 @@ export class WebSocketManager {
                     break;
                 }
                 case GatewayOpCode.Heartbeat: {
-                    this.#debug?.("NEED_HEARTBEAT");
+                    this.#debug?.(DebugIdentifier.HeartbeatRequest);
                     this.#sendHeartbeatPayload();
                     break;
                 }
                 case GatewayOpCode.Reconnect: {
-                    this.#debug?.("RECONNECT");
+                    this.#debug?.(DebugIdentifier.Reconnect);
                     this.#ws.close(1001);
                     break;
                 }
                 case GatewayOpCode.InvalidSession: {
-                    this.#debug?.("INVALID_SESSION");
+                    this.#debug?.(DebugIdentifier.InvalidSession);
                     if (payload.d) this.#ws.close(1001);
-                    else this.#ws.close(1000);
+                    else this.#ws.close(3000);
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {
                     this.#gotACK = true;
-                    this.#debug?.("ACK");
+                    this.#debug?.(DebugIdentifier.ACK);
                     break;
                 }
                 default:
@@ -143,6 +129,19 @@ export class WebSocketManager {
 
             return;
         });
+    }
+
+    #getInterval(interval: number): number {
+        let res = 0;
+        let i = 0;
+
+        do {
+            // eslint-disable-next-line @stylistic/no-extra-parens
+            res = Math.round((interval * Math.random()) + i);
+            i++;
+        } while (res < interval / 2);
+
+        return res;
     }
 
     #sendHeartbeatPayload(): void {
@@ -160,8 +159,8 @@ export class WebSocketManager {
                 intents: this.#options.intents,
                 properties: {
                     os: process.platform,
-                    browser: "LilyBird",
-                    device: "LilyBird"
+                    browser: "Lilybird",
+                    device: "Lilybird"
                 },
                 presence: this.#options.presence
             },
@@ -169,7 +168,7 @@ export class WebSocketManager {
             t: null
         };
 
-        this.#debug?.("IDENTIFY");
+        this.#debug?.(DebugIdentifier.Identify);
         this.#ws.send(JSON.stringify(payload));
     }
 
@@ -185,7 +184,7 @@ export class WebSocketManager {
             t: null
         };
 
-        this.#debug?.("RESUME");
+        this.#debug?.(DebugIdentifier.Resume);
         this.#ws.send(JSON.stringify(payload));
     }
 
@@ -193,18 +192,17 @@ export class WebSocketManager {
         this.#gotACK = true;
         this.#timer = setInterval(async () => {
             if (!this.#gotACK) {
-                this.#debug?.("MISSING_ACK");
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                this.#debug?.(DebugIdentifier.MissingACK);
                 await setTimeout(500);
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 if (!this.#gotACK) {
-                    this.#debug?.("ZOMBIE");
+                    this.#debug?.(DebugIdentifier.ZombieConnection);
                     this.#ws.close(1001);
                     return;
                 }
             }
 
-            this.#debug?.("HEARTBEAT");
+            this.#debug?.(DebugIdentifier.Heartbeat);
             this.#sendHeartbeatPayload();
         }, interval);
     }
@@ -215,7 +213,7 @@ export class WebSocketManager {
     }
 
     async #attemptResume(): Promise<void> {
-        this.#debug?.("ATTEMPTING_RESUME");
+        this.#debug?.(DebugIdentifier.AttemptingResume);
         this.#isResuming = true;
         await this.connect(`${this.resumeInfo.url}/?v=10&encoding=json`);
     }
@@ -227,7 +225,7 @@ export class WebSocketManager {
                 "pong",
                 () => {
                     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-                    res(Math.round(performance.now() - start));
+                    res(performance.now() - start);
                 },
                 { once: true }
             );

@@ -6,3 +6,6 @@ coverage/
 .DS_Store
 .obsidian
 .dccache
+
+packages/docs/diagrams/*.svg
+packages/docs/src/content/docs/**/documentation/

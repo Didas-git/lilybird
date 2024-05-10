@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/jsx",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "JSX support & builders for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -20,7 +20,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "bun": ">=1.0.15",
+    "bun": ">=1.1.0",
     "node": ">=21.0.0"
   },
   "files": [
@@ -28,11 +28,11 @@
   ],
   "scripts": {
     "check": "eslint \"src/**/*.ts\"",
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc && cp .npmignore dist/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Didas-git/lilybird"
+    "url": "git+https://github.com/Didas-git/lilybird.git"
   },
   "homepage": "https://github.com/Didas-git/lilybird/tree/main/packages/jsx",
   "bugs": {
@@ -53,16 +53,6 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.4.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.55.0",
-    "@typescript-eslint/parser": "^6.13.2",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@stylistic/eslint-plugin": "^1.4.1",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "bun-types": "1.0.18",
-    "typescript": "^5.3.2"
+    "lilybird": "^0.7.0"
   }
 }

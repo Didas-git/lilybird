@@ -1,0 +1,21 @@
+---
+title: WebSocket Workflow
+description: Understand what lilybird is doing under the hood.
+sidebar:
+  badge:
+    text: Internal
+    variant: note
+---
+
+import workflowDiagram from "../../../assets/diagrams/websocket-flow.svg"
+import { Image } from 'astro:assets';
+
+The diagram bellow illustrates all the steps taken by lilybird when your bot starts.
+
+<Image src={workflowDiagram} alt="internal flow"/>
+
+### Important steps
+
+The most important step in this entire diagram is the listeners compilation. This is the main reason lilybird can provide such an open API without any performance loss while also allowing us to just discard any unwanted/unused events.
+
+We go into more detail about what exactly the compiler does in the next section.

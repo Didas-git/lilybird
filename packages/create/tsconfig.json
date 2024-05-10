@@ -2,15 +2,12 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "outDir": "dist",
-        "baseUrl": ".",
-        "types": [
-            "bun-types"
-        ]
+        "baseUrl": "."
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
-        "src/index-template.ts"
+        "src/templates/**/*.ts"
     ]
 }

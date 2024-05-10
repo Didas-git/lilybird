@@ -1,31 +1,76 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
+import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
-// https://astro.build/config
+const [createCoreDocumentation, coreDocumentationSidebar] = createStarlightTypeDocPlugin();
+const [createTransformersDocumentation, transformersDocumentationSidebar] = createStarlightTypeDocPlugin();
+
 export default defineConfig({
     integrations: [
         starlight({
             title: "Lilybird",
+            description: "Lightweight and performant Discord client built by the community for the community.",
+            customCss: ["./src/styles/index.css"],
+            lastUpdated: true,
             social: {
-                github: "https://github.com/Didas-git/lilybird"
+                github: "https://github.com/Didas-git/lilybird",
+                discord: "https://discord.gg/vER3sh7uyY"
             },
             editLink: {
                 baseUrl: "https://github.com/Didas-git/lilybird/edit/main/packages/docs"
             },
-            customCss: ["./src/styles/index.css"],
+            expressiveCode: {
+                plugins: [pluginLineNumbers()],
+                defaultProps: {
+                    showLineNumbers: false
+                }
+            },
+            plugins: [
+                createCoreDocumentation({
+                    entryPoints: ["../core/src/index.ts"],
+                    output: "documentation",
+                    tsconfig: "../core/tsconfig.json",
+                    sidebar: {
+                        label: "Documentation",
+                        collapsed: true
+                    },
+                    typeDoc: {
+                        parametersFormat: "table",
+                        enumMembersFormat: "table",
+                        publicPath: "/documentation/"
+                    }
+                }),
+                createTransformersDocumentation({
+                    entryPoints: ["../transformers/src/index.ts"],
+                    output: "modules/transformers/documentation",
+                    tsconfig: "../transformers/tsconfig.json",
+                    sidebar: {
+                        label: "Documentation",
+                        collapsed: true
+                    },
+                    typeDoc: {
+                        excludeExternals: true,
+                        parametersFormat: "table",
+                        enumMembersFormat: "table",
+                        publicPath: "/modules/transformers/documentation/"
+                    }
+                })
+            ],
             head: [
                 {
                     tag: "link",
                     attrs: {
                         type: "application/json+oembed",
-                        href: "oembed/main.json"
+                        href: "/oembed/main.json"
                     }
                 },
                 {
                     tag: "meta",
                     attrs: {
                         name: "theme-color",
-                        content: "#f49ac2"
+                        content: "#ad9ee7"
                     }
                 }
             ],
@@ -36,98 +81,65 @@ export default defineConfig({
                 },
                 {
                     label: "Guides",
-                    items: [
-                        {
-                            label: "Getting Started",
-                            link: "guides/getting-started"
-                        },
-                        {
-                            label: "Manual Setup",
-                            link: "guides/manual-setup"
-                        },
-                        {
-                            label: "No Events",
-                            link: "guides/no-events"
-                        },
-                        {
-                            label: "Creating a simple handler",
-                            link: "guides/creating-handler"
-                        }
-                    ]
+                    autogenerate: {
+                        directory: "/guides"
+                    }
                 },
                 {
-                    label: "Documentation",
+                    label: "API",
+                    badge: {
+                        text: "Beta",
+                        variant: "danger"
+
+                    },
+                    autogenerate: {
+                        directory: "/api",
+                        collapsed: true
+                    }
+                },
+                {
+                    label: "Modules",
                     items: [
-                        {
-                            label: "Core",
-                            badge: {
-                                text: "New",
-                                variant: "note"
-                            },
-                            autogenerate: { directory: "docs/core" }
-                        },
                         {
                             label: "JSX Components",
                             collapsed: true,
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-                            },
-                            items: [
-                                {
-                                    label: "Configuring JSX",
-                                    link: "docs/jsx/configuring-jsx"
-                                },
-                                {
-                                    label: "Embeds",
-                                    link: "docs/jsx/embed"
-                                },
-                                {
-                                    label: "Application Commands",
-                                    link: "docs/jsx/command"
-                                },
-                                {
-                                    label: "Message Components",
-                                    link: "docs/jsx/components"
-                                },
-                                {
-                                    label: "Attachments",
-                                    link: "docs/jsx/attachment"
-                                }
-                            ]
+                            autogenerate: {
+                                directory: "/modules/jsx"
+                            }
+                        },
+                        {
+                            label: "Transformers",
+                            collapsed: true,
+                            items: [transformersDocumentationSidebar]
                         },
                         {
                             label: "Handlers",
                             collapsed: true,
-                            badge: {
-                                text: "Beta",
-                                variant: "danger"
-                            },
                             items: [
                                 {
-                                    label: "API",
-                                    link: "docs/handlers/the-api",
-                                    badge: {
-                                        text: "Internals",
-                                        variant: "success"
+                                    label: "Simple",
+                                    collapsed: true,
+                                    autogenerate: {
+                                        directory: "/modules/handlers/simple"
                                     }
                                 },
                                 {
-                                    label: "Handling Application Commands",
-                                    link: "docs/handlers/application-commands"
-                                },
-                                {
-                                    label: "Handling Events",
-                                    link: "docs/handlers/events"
-                                },
-                                {
-                                    label: "Handling Message Commands",
-                                    link: "docs/handlers/message-commands"
+                                    label: "Advanced",
+                                    collapsed: true,
+                                    badge: {
+                                        text: "Beta",
+                                        variant: "danger"
+
+                                    },
+                                    autogenerate: {
+                                        directory: "/modules/handlers/default"
+                                    }
                                 }
                             ]
                         }
                     ]
-                }
+                },
+                coreDocumentationSidebar
             ]
         })
     ]

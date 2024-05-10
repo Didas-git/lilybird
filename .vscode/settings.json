@@ -2,19 +2,32 @@
     "cSpell.words": [
         "astro",
         "astrojs",
+        "bitfield",
         "CDNURL",
         "crosspost",
+        "CROSSPOSTED",
         "HYPESQUAD",
         "invitable",
-        "lilybird"
+        "lilybird",
+        "oembed",
+        "REQUALIFIED",
+        "UPSELL"
     ],
     "typescript.tsdk": "node_modules/typescript/lib",
+    "eslint.experimental.useFlatConfig": true,
     "eslint.format.enable": true,
+    "eslint.enable": true,
     "[typescript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     "[typescriptreact]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
-    "typescript.preferences.importModuleSpecifierEnding": "js"
+    "typescript.preferences.importModuleSpecifierEnding": "js",
+    "cSpell.enableFiletypes": [
+        "d2",
+        "mdx"
+    ],
+    "D2.previewTheme": "Terminal",
+    "D2.previewLayout": "tala"
 }
