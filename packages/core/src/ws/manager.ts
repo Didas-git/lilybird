@@ -48,7 +48,7 @@ export class WebSocketManager {
     }
 
     public close(): void {
-        this.#ws.close(1000);
+        this.#ws.close(3000);
     }
 
     public async connect(url?: string): Promise<void> {
@@ -72,14 +72,14 @@ export class WebSocketManager {
             this.#debug?.(DebugIdentifier.WSError, err);
         });
         this.#ws.addEventListener("close", async ({ code }) => {
+            this.#debug?.(DebugIdentifier.CloseCode, code);
             this.#clearTimer();
-            if (code === 1000) return;
+            if (code === 3000) return;
             if (typeof code === "undefined" || code === 1001 || closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
                 return;
             }
 
-            this.#debug?.(DebugIdentifier.UnknownCode, code);
             this.#isResuming = false;
             await this.connect();
         });
@@ -115,7 +115,7 @@ export class WebSocketManager {
                 case GatewayOpCode.InvalidSession: {
                     this.#debug?.(DebugIdentifier.InvalidSession);
                     if (payload.d) this.#ws.close(1001);
-                    else this.#ws.close(3000);
+                    else this.#ws.close(1000);
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {

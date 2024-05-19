@@ -21,7 +21,7 @@ export const enum DebugIdentifier {
     MissingACK = "MISSING_ACK",
     ZombieConnection = "ZOMBIE",
     AttemptingResume = "ATTEMPTING_RESUME",
-    UnknownCode = "UNKNOWN_CODE",
+    CloseCode = "CLOSE_CODE",
     CompiledListeners = "LISTENERS",
     RESTCall = "REST_IN",
     RESTError = "REST_ERROR"
