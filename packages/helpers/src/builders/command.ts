@@ -270,8 +270,8 @@ export class StringOptionBuilder extends BaseOptionBuilder {
     }
 
     public override toJSON(): ApplicationCommand.Option.StringStructure {
-        const opt: ApplicationCommand.Option.WithAutocomplete<ApplicationCommand.Option.StringStructure>
-        & ApplicationCommand.Option.WithChoices<ApplicationCommand.Option.StringStructure> = <never> super.toJSON();
+        const opt: ApplicationCommand.Option.WithAutocomplete<ApplicationCommand.Option.BaseStringStructure>
+        & ApplicationCommand.Option.WithChoices<ApplicationCommand.Option.BaseStringStructure> = <never> super.toJSON();
 
         opt.min_length = this.#min;
         opt.max_length = this.#max;
@@ -319,8 +319,8 @@ export class NumericOptionBuilder extends BaseOptionBuilder {
     }
 
     public override toJSON(): ApplicationCommand.Option.NumericStructure {
-        const opt: ApplicationCommand.Option.WithAutocomplete<ApplicationCommand.Option.NumericStructure>
-        & ApplicationCommand.Option.WithChoices<ApplicationCommand.Option.NumericStructure> = <never> super.toJSON();
+        const opt: ApplicationCommand.Option.WithAutocomplete<ApplicationCommand.Option.BaseNumericStructure>
+        & ApplicationCommand.Option.WithChoices<ApplicationCommand.Option.BaseNumericStructure> = <never> super.toJSON();
 
         opt.min_value = this.#min;
         opt.max_value = this.#max;
