@@ -13,7 +13,6 @@ import {
     MessageFlags
 } from "lilybird";
 
-import type { ReplyOptions } from "../typings/shared.js";
 import type { PartialChannel } from "./channel.js";
 
 import type {
@@ -23,7 +22,8 @@ import type {
     LilybirdAttachment,
     Locale,
     Client,
-    ApplicationCommand
+    ApplicationCommand,
+    Webhook
 } from "lilybird";
 
 export function interactionFactory(client: Client, interaction: LilyInteraction.Structure): Interaction {
@@ -56,11 +56,12 @@ export type InteractionData = ApplicationCommandData | AutocompleteData | Messag
 
 export interface AutocompleteData extends ApplicationCommandData<FocusedOption> {}
 
-export interface InteractionReplyOptions extends ReplyOptions {
-    ephemeral?: boolean;
-    tts?: boolean;
-    suppressEmbeds?: boolean;
-}
+export type InteractionReplyOptions = LilyInteraction.CallbackData & {
+    files: Array<LilybirdAttachment>,
+    ephemeral?: boolean,
+    tts?: boolean,
+    suppressEmbeds?: boolean
+};
 
 export interface InteractionShowModalOptions {
     title: string;
@@ -68,7 +69,9 @@ export interface InteractionShowModalOptions {
     components: Array<LilyMessage.Component.ActionRowStructure>;
 }
 
-export interface InteractionEditOptions extends ReplyOptions {}
+export interface InteractionEditOptions extends Webhook.EditWebhookJSONParams {
+    files?: Array<LilybirdAttachment>;
+}
 
 export class Interaction<T extends InteractionData = InteractionData, M extends undefined | Message = undefined | Message> {
     public readonly client: Client;

@@ -1,10 +1,8 @@
 import { MentionChannel, channelFactory } from "./channel.js";
 import { GuildMember } from "./guild-member.js";
+import { MessageFlags } from "lilybird";
 import { User } from "./user.js";
 
-import { MessageFlags } from "lilybird";
-
-import type { ReplyOptions } from "../typings/shared.js";
 import type { Channel } from "./channel.js";
 
 import type {
@@ -24,11 +22,11 @@ import { Poll } from "./poll.js";
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" ? K : never]: Message[K] };
 
-export interface MessageEditOptions extends ReplyOptions {
+export interface MessageEditOptions extends LilyMessage.EditJSONParams {
     suppressEmbeds?: boolean;
 }
 
-export interface MessageReplyOptions extends ReplyOptions {
+export interface MessageReplyOptions extends LilyMessage.CreateJSONParams {
     tts?: boolean;
     suppressEmbeds?: boolean;
     suppressNotifications?: boolean;
