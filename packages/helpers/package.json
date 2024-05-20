@@ -32,6 +32,11 @@
       "require": "./dist/markdown.js",
       "default": "./dist/markdown.js"
     },
+    "./util": {
+      "types": "./dist/util.d.ts",
+      "require": "./dist/util.js",
+      "default": "./dist/util.js"
+    },
     "./package.json": "./package.json"
   },
   "engines": {
