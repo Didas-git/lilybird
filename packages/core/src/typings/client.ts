@@ -183,7 +183,7 @@ interface CacheWithTransformers {
 
 type ApplyTransformers = CacheWithTransformers | CacheWithoutTransformers;
 
-interface BaseCachingStructure {
+export interface BaseCachingStructure {
     delegate: CachingDelegationType;
     manager?: CacheManagerStructure;
     enabled: {
