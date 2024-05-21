@@ -56,10 +56,8 @@ export type InteractionData = ApplicationCommandData | AutocompleteData | Messag
 
 export interface AutocompleteData extends ApplicationCommandData<FocusedOption> {}
 
-export type InteractionReplyOptions = LilyInteraction.CallbackData & {
-    files: Array<LilybirdAttachment>,
+export type InteractionReplyOptions = LilyInteraction.MessageCallbackDataStructure & {
     ephemeral?: boolean,
-    tts?: boolean,
     suppressEmbeds?: boolean
 };
 
