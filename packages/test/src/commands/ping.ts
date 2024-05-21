@@ -1,4 +1,4 @@
-import type { SlashCommand } from "@lilybird/handlers";
+import type { ApplicationCommand } from "@lilybird/handlers";
 
 export default {
     post: "GLOBAL",
@@ -11,10 +11,5 @@ export default {
         await interaction.editReply({
             content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
         });
-
-        console.log(Bun.inspect(interaction.client.cache, {
-            colors: true,
-            depth: 1
-        }));
     }
-} satisfies SlashCommand;
+} satisfies ApplicationCommand;

@@ -9,3 +9,4 @@ coverage/
 
 packages/docs/diagrams/*.svg
 packages/docs/src/content/docs/**/documentation/
+packages/test/**/lily-cache/
