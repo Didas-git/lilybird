@@ -17,6 +17,11 @@
       "require": "./dist/simple/index.js",
       "default": "./dist/simple/index.js"
     },
+    "./advanced": {
+      "types": "./dist/advanced/index.d.ts",
+      "require": "./dist/advanced/index.js",
+      "default": "./dist/advanced/index.js"
+    },
     "./package.json": "./package.json"
   },
   "engines": {
