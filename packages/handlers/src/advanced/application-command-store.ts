@@ -83,15 +83,20 @@ export class ApplicationCommandStore {
         if (!Array.isArray(options) || options.length === 0) {
             if (typeof handle === "undefined") return this.#emit?.(HandlerIdentifier.INVALID_COMMAND, actualCommand.name);
             const cmd = this.#compileCommand(actualCommand, { base_executor: handle, auto_executor: autocomplete }, isContinuingChain, actualCommand.name);
-
+            if (cmd === null) throw new Error("Uh Oh!");
             commands.set(actualCommand.name, cmd);
             return;
         }
 
         this.#emit?.(HandlerIdentifier.SKIPPING_HANDLER, actualCommand.name);
         const cmd = this.#compileCommand(actualCommand, options, isContinuingChain, actualCommand.name);
-
-        commands.set(actualCommand.name, cmd);
+        if (cmd === null) {
+            if (typeof handle === "undefined") return this.#emit?.(HandlerIdentifier.INVALID_COMMAND, actualCommand.name);
+            (<CommandStructure>actualCommand).options = options;
+            const cmd2 = this.#compileCommand(actualCommand, { base_executor: handle, auto_executor: autocomplete }, isContinuingChain, actualCommand.name);
+            if (cmd2 === null) throw new Error("Uh Oh!");
+            commands.set(actualCommand.name, cmd2);
+        } else commands.set(actualCommand.name, cmd);
     }
 
     #compileCommand(
@@ -101,7 +106,7 @@ export class ApplicationCommandStore {
         // Used to keep track of sub command function naming
         name: string,
         matchTo: "interaction_name" | "sub_command" | "sub_command_group" = "interaction_name"
-    ): CompiledCommand {
+    ): CompiledCommand | null {
         if ("base_executor" in options) {
             const names = [`handle_${name.replace("-", "_")}`];
             const handlers: Array<(int: any) => unknown> = [options.base_executor];
@@ -134,7 +139,9 @@ export class ApplicationCommandStore {
         const cmdArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const autoArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const compileStrategy = this.#getHandleOptionType(options);
-        if (compileStrategy === HandleOptionsType.NORMAL) throw new Error("Not supported yet");
+
+        // TODO: Write specialized parser for options
+        if (compileStrategy === HandleOptionsType.NORMAL) return null;
 
         const temp: Array<string> = matchTo === "sub_command_group"
             ? []
@@ -154,7 +161,12 @@ export class ApplicationCommandStore {
                 const { options: subOpts, ...realCommand } = subCommand;
                 const realOptions = this.#compileCommand(<never>realCommand, subOpts, i > 0, `${name}_${subCommand.name}`, "sub_command_group");
 
-                if (!Array.isArray(command.options)) command.options = [];
+                if (realOptions === null) {
+                    (<CommandStructure><unknown>realCommand).options = subOpts;
+                    if (!Array.isArray(command.options)) command.options = [];
+                    command.options.push(realCommand);
+                    continue;
+                }
 
                 cmdArr.push(realOptions.body.command);
                 if (realOptions.body.autocomplete !== null) autoArr.push(realOptions.body.autocomplete);
@@ -165,6 +177,7 @@ export class ApplicationCommandStore {
                     fns.set(n, h);
                 }
 
+                if (!Array.isArray(command.options)) command.options = [];
                 command.options.push(realCommand);
             } else if (subCommand.type === ApplicationCommandOptionType.SUB_COMMAND) {
                 if (!("handle" in subCommand)) throw new Error("SubCommand requires 'handle' to exist");
@@ -172,7 +185,14 @@ export class ApplicationCommandStore {
                 const { handle, autocomplete, ...realCommand } = subCommand;
                 const cmd = this.#compileCommand(<never>realCommand, { base_executor: handle, auto_executor: autocomplete }, i > 0, `${name}_${subCommand.name}`, "sub_command");
 
-                if (!Array.isArray(command.options)) command.options = [];
+                if (cmd === null) {
+                    (<CommandStructure><unknown>realCommand).options = options;
+                    const cmd2 = this.#compileCommand(<never>realCommand, { base_executor: handle, auto_executor: autocomplete }, i > 0, `${name}_${subCommand.name}`, "sub_command");
+                    if (cmd2 === null) throw new Error("Uh Oh!");
+                    if (!Array.isArray(command.options)) command.options = [];
+                    command.options.push(realCommand);
+                    continue;
+                }
 
                 cmdArr.push(cmd.body.command);
                 if (cmd.body.autocomplete !== null) autoArr.push(cmd.body.autocomplete);
@@ -183,6 +203,7 @@ export class ApplicationCommandStore {
                     fns.set(n, h);
                 }
 
+                if (!Array.isArray(command.options)) command.options = [];
                 command.options.push(realCommand);
             }
         }
@@ -243,7 +264,6 @@ export class ApplicationCommandStore {
         const fNames = functions.keys();
         const fHandlers = functions.values();
         const compiledListener = arr.join("");
-        console.log(compiledListener, "\n", fNames, "\n", fHandlers);
         this.#emit?.(HandlerIdentifier.COMPILED, compiledListener);
 
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
