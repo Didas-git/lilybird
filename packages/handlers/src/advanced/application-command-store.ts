@@ -10,7 +10,7 @@ export type ApplicationAutocompleteHandler = (interaction: TransformedInteractio
 
 interface CompiledCommand {
     body: { command: string, autocomplete: string | null };
-    function: { names: Array<string>, handlers: Array<ApplicationCommandHandler> };
+    function: { names: Array<string>, handlers: Array<ApplicationCommandHandler | ApplicationAutocompleteHandler> };
     // eslint-disable-next-line @typescript-eslint/naming-convention
     json: ApplicationCommand.Create.ApplicationCommandJSONParams & { __meta?: { ids?: string } };
 }
@@ -74,7 +74,7 @@ export class ApplicationCommandStore {
     }
 
     public storeCommand(command: CommandStructure): void {
-        const { meta, options, handle, ...actualCommand } = command;
+        const { meta, options, handle, autocomplete, ...actualCommand } = command;
 
         if (meta?.guild_command === true && !Array.isArray(meta.ids)) throw new Error("Invalid guild command. Lacking 'ids'");
         const commands = meta?.guild_command === true ? this.#guildApplicationCommands : this.#globalApplicationCommands;
@@ -82,7 +82,7 @@ export class ApplicationCommandStore {
 
         if (!Array.isArray(options) || options.length === 0) {
             if (typeof handle === "undefined") return this.#emit?.(HandlerIdentifier.INVALID_COMMAND, actualCommand.name);
-            const cmd = this.#compileCommand(actualCommand, handle, isContinuingChain, actualCommand.name);
+            const cmd = this.#compileCommand(actualCommand, { base_executor: handle, auto_executor: autocomplete }, isContinuingChain, actualCommand.name);
 
             commands.set(actualCommand.name, cmd);
             return;
@@ -96,29 +96,41 @@ export class ApplicationCommandStore {
 
     #compileCommand(
         command: ApplicationCommand.Create.ApplicationCommandJSONParams,
-        options: Required<CommandStructure>["options"] | ApplicationCommandHandler,
+        options: Required<CommandStructure>["options"] | { base_executor: ApplicationCommandHandler, auto_executor?: ApplicationAutocompleteHandler },
         useElse: boolean,
         // Used to keep track of sub command function naming
         name: string,
         matchTo: "interaction_name" | "sub_command" | "sub_command_group" = "interaction_name"
     ): CompiledCommand {
-        if (typeof options === "function") {
+        if ("base_executor" in options) {
+            const names = [`handle_${name.replace("-", "_")}`];
+            const handlers: Array<(int: any) => unknown> = [options.base_executor];
+
+            if (typeof options.auto_executor !== "undefined") {
+                names.push(`auto_${name.replace("-", "_")}`);
+                handlers.push(options.auto_executor);
+            }
+
             return {
                 body: {
                     command: `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { handle_${name.replace("-", "_")}(${
                         matchTo === "interaction_name" ? "transformer(client, interaction)" : "int"
                     }); }`,
-                    autocomplete: null
+                    autocomplete: typeof options.auto_executor === "undefined"
+                        ? null
+                        : `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { auto_${name.replace("-", "_")}(${
+                            matchTo === "interaction_name" ? "transformer(client, interaction)" : "int"
+                        }); }`
                 },
                 function: {
-                    names: [`handle_${name.replace("-", "_")}`],
-                    handlers: [options]
+                    names,
+                    handlers
                 },
                 json: command
             };
         }
 
-        const fns = new Map<string, ApplicationCommandHandler>();
+        const fns = new Map<string, ApplicationCommandHandler | ApplicationAutocompleteHandler>();
         const cmdArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const autoArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const compileStrategy = this.#getHandleOptionType(options);
@@ -157,8 +169,8 @@ export class ApplicationCommandStore {
             } else if (subCommand.type === ApplicationCommandOptionType.SUB_COMMAND) {
                 if (!("handle" in subCommand)) throw new Error("SubCommand requires 'handle' to exist");
 
-                const { handle, ...realCommand } = subCommand;
-                const cmd = this.#compileCommand(<never>realCommand, handle, i > 0, `${name}_${subCommand.name}`, "sub_command");
+                const { handle, autocomplete, ...realCommand } = subCommand;
+                const cmd = this.#compileCommand(<never>realCommand, { base_executor: handle, auto_executor: autocomplete }, i > 0, `${name}_${subCommand.name}`, "sub_command");
 
                 if (!Array.isArray(command.options)) command.options = [];
 
@@ -196,7 +208,7 @@ export class ApplicationCommandStore {
 
     // TODO: public async scanDir(): Promise<void> {}
     public compile(): ((client: Client, interaction: Interaction.Structure) => Awaitable<unknown>) | null {
-        const functions = new Map<string, ApplicationCommandHandler>();
+        const functions = new Map<string, ApplicationCommandHandler | ApplicationAutocompleteHandler>();
         const cmdArr: Array<string> = [
             "const interaction_name = interaction.data.name;",
             `if (interaction.type === ${InteractionType.APPLICATION_COMMAND}) {`
@@ -222,6 +234,7 @@ export class ApplicationCommandStore {
         if (autoArr.length > 1) {
             if (arr.length === 0) autoArr[0] = autoArr[0].slice(5);
             arr.push(autoArr.join(""));
+            arr.push("}");
         }
 
         if (arr.length === 0) return null;
