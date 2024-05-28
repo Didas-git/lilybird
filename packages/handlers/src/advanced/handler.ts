@@ -182,7 +182,7 @@ export class Handler {
     }
 
     public async loadGlobalCommands(client: Client): Promise<void> {
-        const path = this.#cachePath ?? process.cwd();
+        const path = join(this.#cachePath ?? process.cwd(), "global.json");
         const file = Bun.file(path);
 
         const commands = this.#acs.getStoredGlobalCommands();
