@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { IApplicationCommandHandler } from "@lilybird/handlers/advanced";
-import { ApplicationCommandHandler } from "@lilybird/handlers/advanced";
+import { $applicationCommand } from "@lilybird/handlers/advanced";
+import { ApplicationCommandOptionType } from "lilybird";
 
 import type { ApplicationCommandData, AutocompleteData, Interaction } from "@lilybird/transformers";
 import type { Embed } from "lilybird";
-import { ApplicationCommandOptionType } from "lilybird";
 
 interface GoogleAPIResponse {
     kind: string;
@@ -56,44 +55,39 @@ interface Metatag {
     "og:url": string;
 }
 
-export default class Search extends ApplicationCommandHandler implements IApplicationCommandHandler {
-    readonly #cache = new Map<string, Metatag>();
+const localCache = new Map<string, Metatag>();
 
-    private constructor() {
-        super({
-            name: "search",
-            description: "search mdn",
-            options: [
-                {
-                    type: ApplicationCommandOptionType.STRING,
-                    name: "query",
-                    description: "the query",
-                    required: true,
-                    autocomplete: true
-                },
-                {
-                    type: ApplicationCommandOptionType.USER,
-                    name: "user",
-                    description: "the user to ping"
-                }
-            ]
-        });
+function populateCache(items: Array<GoogleAPIItem>): void {
+    for (let i = 0, { length } = items; i < length; i++) {
+        const item = items[i];
+        const meta = item.pagemap.metatags;
+
+        if (localCache.has(item.cacheId)) continue;
+
+        localCache.set(item.cacheId, meta[0]);
     }
+}
 
-    #populateCache(items: Array<GoogleAPIItem>): void {
-        for (let i = 0, { length } = items; i < length; i++) {
-            const item = items[i];
-            const meta = item.pagemap.metatags;
-
-            if (this.#cache.has(item.cacheId)) continue;
-
-            this.#cache.set(item.cacheId, meta[0]);
+$applicationCommand({
+    name: "search",
+    description: "search mdn",
+    options: [
+        {
+            type: ApplicationCommandOptionType.STRING,
+            name: "query",
+            description: "the query",
+            required: true,
+            autocomplete: true
+        },
+        {
+            type: ApplicationCommandOptionType.USER,
+            name: "user",
+            description: "the user to ping"
         }
-    }
-
-    public async execute(interaction: Interaction<ApplicationCommandData>): Promise<void> {
+    ],
+    handle: async (interaction: Interaction<ApplicationCommandData>): Promise<void> => {
         const cacheId = interaction.data.getString("query", true);
-        const tags = this.#cache.get(cacheId);
+        const tags = localCache.get(cacheId);
         if (!tags) throw new Error("WTF");
 
         const userId = interaction.data.getUser("user");
@@ -110,9 +104,8 @@ export default class Search extends ApplicationCommandHandler implements IApplic
             content: userId ? `<@${userId}> learn how to fucking google` : "",
             embeds: [embed]
         });
-    }
-
-    public async autocomplete(interaction: Interaction<AutocompleteData>): Promise<void> {
+    },
+    autocomplete: async (interaction: Interaction<AutocompleteData>): Promise<void> => {
         const query = interaction.data.getFocused<string>().value;
         if (query.length === 0) return;
 
@@ -121,8 +114,9 @@ export default class Search extends ApplicationCommandHandler implements IApplic
         const response = await fetch(url);
         const body: GoogleAPIResponse = await response.json() as never;
 
-        this.#populateCache(body.items);
+        populateCache(body.items);
 
         await interaction.showChoices(body.items.map((val) => ({ name: val.title, value: val.cacheId })));
     }
-}
+});
+

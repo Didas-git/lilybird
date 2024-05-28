@@ -1,10 +1,10 @@
 import { DebugIdentifier, Intents, createClient } from "lilybird";
-import { createHandler } from "@lilybird/handlers/advanced";
+import { handler } from "@lilybird/handlers/advanced";
 
-const handlers = await createHandler({
-    cachePath: `${import.meta.dir}/lily-cache/handler`,
-    directoryPaths: { applicationCommands: `${import.meta.dir}/commands-adv` }
-}, (identifier, payload) => { console.log(identifier, payload ?? ""); });
+handler.cachePath = `${import.meta.dir}/lily-cache/handler`;
+handler.addDebugListener((identifier, payload) => { console.log(identifier, payload ?? ""); });
+
+await handler.scanDir(`${import.meta.dir}/commands-adv`);
 
 await createClient({
     token: process.env.TOKEN,
@@ -14,5 +14,10 @@ await createClient({
         if (identifier === DebugIdentifier.Message) return;
         console.log(identifier, payload ?? "");
     },
-    ...handlers
+    setup: async (client) => {
+        await handler.loadGlobalCommands(client);
+    },
+    listeners: {
+        interactionCreate: handler.compile() ?? (() => undefined)
+    }
 });

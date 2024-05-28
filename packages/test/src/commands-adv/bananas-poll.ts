@@ -1,15 +1,12 @@
-import { ApplicationCommandHandler } from "@lilybird/handlers/advanced";
+import { $applicationCommand } from "@lilybird/handlers/advanced";
 import { Message } from "@lilybird/transformers";
 
-import type { IApplicationCommandHandler } from "@lilybird/handlers/advanced";
 import type { Interaction } from "@lilybird/transformers";
 
-export default class BananaPoll extends ApplicationCommandHandler implements IApplicationCommandHandler {
-    private constructor() {
-        super({ name: "bananas-poll", description: "create bananas poll" });
-    }
-
-    public async execute(interaction: Interaction): Promise<void> {
+$applicationCommand({
+    name: "bananas-poll",
+    description: "create bananas poll",
+    handle: async (interaction: Interaction): Promise<void> => {
         await interaction.reply({
             poll: {
                 question: {
@@ -39,4 +36,4 @@ export default class BananaPoll extends ApplicationCommandHandler implements IAp
             console.log(await msg.poll?.answers[0].fetchVoters({}));
         }, 3000);
     }
-}
+});
