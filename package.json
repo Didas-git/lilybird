@@ -18,11 +18,11 @@
     "check": "eslint ."
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^1.7.2",
-    "bun-types": "^1.1.4",
-    "eslint": "^9.1.1",
-    "eslint-plugin-jsdoc": "^48.2.3",
+    "@stylistic/eslint-plugin": "^2.1.0",
+    "bun-types": "^1.1.10",
+    "eslint": "^9.3.0",
+    "eslint-plugin-jsdoc": "^48.2.6",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.7.1"
+    "typescript-eslint": "^7.11.0"
   }
 }
