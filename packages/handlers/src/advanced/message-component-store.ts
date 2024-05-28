@@ -59,7 +59,7 @@ export class MessageComponentStore {
 
         const componentStack: Array<string> = [
             "const custom_id = interaction.data.custom_id;",
-            `if (interaction.type === "${InteractionType.MESSAGE_COMPONENT}") {`
+            `if (interaction.type === ${InteractionType.MESSAGE_COMPONENT}) {`
         ];
 
         const modalStack: Array<string> = [`else if (interaction.type === "${InteractionType.MODAL_SUBMIT}") {`];

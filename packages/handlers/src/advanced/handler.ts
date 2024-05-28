@@ -137,6 +137,7 @@ export class Handler {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
         if (componentsBody.length > 0 && componentsBody[0] === "c") {
             const trimLength = "const custom_id = interaction.data.custom_id;".length;
+            if (realStack.length < 1) realStack.push("else ");
             realStack.push(componentsBody.slice(trimLength));
         }
 
