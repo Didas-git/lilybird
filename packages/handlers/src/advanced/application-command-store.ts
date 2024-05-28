@@ -1,9 +1,16 @@
 
 import { ApplicationCommandOptionType, InteractionType } from "lilybird";
 import { defaultTransformers } from "@lilybird/transformers";
+import { HandlerIdentifier } from "./shared.js";
 
-import type { ApplicationCommandData, AutocompleteData, Interaction as TransformedInteraction } from "@lilybird/transformers";
 import type { Client, ApplicationCommand, Awaitable, Interaction } from "lilybird";
+import type { HandlerListener } from "./shared.js";
+
+import type {
+    Interaction as TransformedInteraction,
+    ApplicationCommandData,
+    AutocompleteData
+} from "@lilybird/transformers";
 
 export type ApplicationCommandHandler = (interaction: TransformedInteraction<ApplicationCommandData>) => Awaitable<unknown>;
 export type ApplicationAutocompleteHandler = (interaction: TransformedInteraction<AutocompleteData>) => Awaitable<unknown>;
@@ -15,17 +22,16 @@ interface CompiledCommand {
     json: ApplicationCommand.Create.ApplicationCommandJSONParams & { __meta?: { ids?: string } };
 }
 
-type CommandStructure = Omit<ApplicationCommand.Create.ApplicationCommandJSONParams, "options">
-    & {
-        options?: Array<CommandOption>,
-        meta?: CommandMeta,
-        handle?: ApplicationCommandHandler,
-        autocomplete?: ApplicationAutocompleteHandler
-    };
+export interface CommandStructure extends Omit<ApplicationCommand.Create.ApplicationCommandJSONParams, "options"> {
+    options?: Array<CommandOption>;
+    meta?: CommandMeta;
+    handle?: ApplicationCommandHandler;
+    autocomplete?: ApplicationAutocompleteHandler;
+}
 
-type CommandOption = BaseCommandOption | SubCommandOption | SubCommandGroupOption;
+export type CommandOption = BaseCommandOption | SubCommandOption | SubCommandGroupOption;
 
-type BaseCommandOption = Exclude<ApplicationCommand.Option.Structure, ApplicationCommand.Option.SubCommandStructure>;
+export type BaseCommandOption = Exclude<ApplicationCommand.Option.Structure, ApplicationCommand.Option.SubCommandStructure>;
 
 interface SubCommandOption extends ApplicationCommand.Option.Base {
     type: ApplicationCommandOptionType.SUB_COMMAND;
@@ -44,28 +50,14 @@ interface CommandMeta {
     ids?: Array<string>;
 }
 
-export const enum HandlerIdentifier {
-    FRESH = "FRESH",
-    CACHED = "CACHED",
-    CHANGES = "CHANGES",
-    LOADING = "LOADING",
-    INVALID_PATH = "INVALID",
-    INVALID_COMMAND = "INVALID_COMMAND",
-    SKIPPING_HANDLER = "SIPPING_HANDLER",
-    COMPILED = "COMPILED"
-}
-
 const enum HandleOptionsType {
     NORMAL,
     SUB
 }
 
-export type HandlerListener = (identifier: HandlerIdentifier, payload: unknown) => void;
-
 export class ApplicationCommandStore {
     readonly #globalApplicationCommands = new Map<string, CompiledCommand>();
     readonly #guildApplicationCommands = new Map<string, CompiledCommand>();
-    // readonly #globMatcher = new Bun.Glob("**/{!.d,*}.{ts,tsx,js,jsx}");
 
     readonly #emit?: HandlerListener;
 
@@ -227,8 +219,11 @@ export class ApplicationCommandStore {
         return HandleOptionsType.NORMAL;
     }
 
-    // TODO: public async scanDir(): Promise<void> {}
-    public compile(): ((client: Client, interaction: Interaction.Structure) => Awaitable<unknown>) | null {
+    public getCompilationStack(): {
+        functionNames: IterableIterator<string>,
+        handlers: IterableIterator<(...args: any) => any>,
+        stack: string
+    } | null {
         const functions = new Map<string, ApplicationCommandHandler | ApplicationAutocompleteHandler>();
         const cmdArr: Array<string> = [
             "const interaction_name = interaction.data.name;",
@@ -251,39 +246,48 @@ export class ApplicationCommandStore {
         }
 
         const arr: Array<string> = [];
-        if (cmdArr.length > 2) arr.push(cmdArr.join(""));
+        if (cmdArr.length > 2) arr.push(cmdArr.join(""), "}");
         if (autoArr.length > 1) {
             if (arr.length === 0) autoArr[0] = autoArr[0].slice(5);
-            arr.push(autoArr.join(""));
-            arr.push("}");
+            arr.push(autoArr.join(""), "}");
         }
 
         if (arr.length === 0) return null;
-        arr.push("}");
 
         const fNames = functions.keys();
         const fHandlers = functions.values();
         const compiledListener = arr.join("");
-        this.#emit?.(HandlerIdentifier.COMPILED, compiledListener);
+
+        return {
+            functionNames: fNames,
+            handlers: fHandlers,
+            stack: compiledListener
+        };
+    }
+
+    public compile(): ((client: Client, interaction: Interaction.Structure) => Awaitable<unknown>) | null {
+        const compiledResult = this.getCompilationStack();
+        if (compiledResult === null) return null;
+
+        const { stack, functionNames, handlers } = compiledResult;
+        this.#emit?.(HandlerIdentifier.COMPILED, stack);
 
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function(
             "transformer",
-            ...fNames,
-            `return async (client, interaction) => { ${compiledListener} }`
+            ...functionNames,
+            `return async (client, interaction) => { ${stack} }`
         )(
             defaultTransformers.interactionCreate.handler,
-            ...fHandlers
+            ...handlers
         ) as never;
     }
 
-    public getGlobalCommands(): Array<CompiledCommand> {
+    public getStoredGlobalCommands(): Array<CompiledCommand> {
         return [...this.#globalApplicationCommands.values()];
     }
 
-    public getGuildCommands(): Array<CompiledCommand> {
+    public getStoredGuildCommands(): Array<CompiledCommand> {
         return [...this.#guildApplicationCommands.values()];
     }
 }
-
-export const CommandStore = new ApplicationCommandStore();
