@@ -84,7 +84,7 @@ export class WebSocketManager {
             await this.connect();
         });
         this.#ws.addEventListener("message", (event) => {
-            this.#debug?.(DebugIdentifier.Message, event.data);
+            this.#debug?.(DebugIdentifier.WSMessage, event.data);
             const payload = <Payload>JSON.parse((event.data as Buffer).toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
 

@@ -9,20 +9,20 @@ export const enum TransformerReturnType {
 }
 
 export const enum DebugIdentifier {
-    Message = "WS_MESSAGE",
-    Heartbeat = "HEARTBEAT",
-    ACK = "ACK",
-    HeartbeatRequest = "NEED_HEARTBEAT",
-    Identify = "IDENTIFY",
-    Resume = "RESUME",
-    InvalidSession = "INVALID_SESSION",
-    Reconnect = "RECONNECT",
-    WSError = "ERROR",
-    MissingACK = "MISSING_ACK",
-    ZombieConnection = "ZOMBIE",
-    AttemptingResume = "ATTEMPTING_RESUME",
-    CloseCode = "CLOSE_CODE",
-    CompiledListeners = "LISTENERS",
-    RESTCall = "REST_IN",
-    RESTError = "REST_ERROR"
+    WSMessage,
+    Heartbeat,
+    ACK,
+    HeartbeatRequest,
+    Identify,
+    Resume,
+    InvalidSession,
+    Reconnect,
+    WSError,
+    MissingACK,
+    ZombieConnection,
+    AttemptingResume,
+    CloseCode,
+    CompiledListeners,
+    RESTCall,
+    RESTError
 }
