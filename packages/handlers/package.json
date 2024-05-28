@@ -1,17 +1,12 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.5.0",
+  "version": "0.6.0-beta.0",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
   "license": "Apache-2.0",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
-    },
     "./simple": {
       "types": "./dist/simple/index.d.ts",
       "require": "./dist/simple/index.js",
