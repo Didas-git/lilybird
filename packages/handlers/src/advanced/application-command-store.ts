@@ -249,6 +249,8 @@ export class ApplicationCommandStore {
         if (cmdArr.length > 2) arr.push(cmdArr.join(""), "}");
         if (autoArr.length > 1) {
             if (arr.length === 0) autoArr[0] = autoArr[0].slice(5);
+            // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
+            if (autoArr[1][0] === "e") autoArr[1] = autoArr[1].slice(5);
             arr.push(autoArr.join(""), "}");
         }
 
