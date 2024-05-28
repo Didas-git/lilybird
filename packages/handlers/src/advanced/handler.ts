@@ -195,7 +195,7 @@ export class Handler {
         });
 
         if (!await file.exists()) {
-            console.log("Publish all commands & creating cache");
+            this.#emit?.(HandlerIdentifier.FRESH, undefined);
             await Bun.write(file, JSON.stringify(commands));
             await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, commandsJSON);
             return;
@@ -220,11 +220,11 @@ export class Handler {
         }
 
         if (toPublish.length < 1) {
-            console.log("All commands were cached, nothing to update");
+            this.#emit?.(HandlerIdentifier.CACHED, undefined);
             return;
         }
 
-        console.log("Publishing changed commands", toPublish);
+        this.#emit?.(HandlerIdentifier.CHANGES, toPublish);
         // Using bulkOverwriteGlobalApplicationCommand with only a set of commands deletes the ones not included in that set
         // eslint-disable-next-line no-await-in-loop
         for (let i = 0, { length } = toPublish; i < length; i++) await client.rest.createGlobalApplicationCommand(client.user.id, toPublish[i]);
