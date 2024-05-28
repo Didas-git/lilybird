@@ -23,7 +23,11 @@ export class User {
     public readonly avatarDecoration: string | undefined | null;
     public readonly member: GuildMember | undefined;
 
+    public readonly client: Client;
+
     public constructor(client: Client, user: LilyUser.Structure) {
+        this.client = client;
+
         this.id = user.id;
         this.username = user.username;
         this.discriminator = user.discriminator;
