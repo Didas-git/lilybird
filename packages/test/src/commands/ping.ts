@@ -1,4 +1,4 @@
-import type { ApplicationCommand } from "@lilybird/handlers";
+import type { ApplicationCommand } from "@lilybird/handlers/simple";
 
 export default {
     post: "GLOBAL",

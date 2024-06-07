@@ -7,7 +7,7 @@ import {
     Embed,
 } from "@lilybird/jsx";
 
-import type { ApplicationCommand } from "@lilybird/handlers";
+import type { ApplicationCommand } from "@lilybird/handlers/simple";
 
 interface GoogleAPIResponse {
     kind: string;
