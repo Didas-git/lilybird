@@ -46,10 +46,10 @@ export class Handler {
     }
 
     public storeListener<
-        T extends keyof Transformers = keyof Transformers,
-        L extends Required<ClientListeners<Transformers>> = Required<ClientListeners<Transformers>>
-    >(data: { event: T, handle: L[T] }): void {
-        this.#listeners.set(data.event, data.handle);
+        T extends Transformers = Transformers,
+        K extends keyof T = keyof T
+    >(data: { event: K, handle: Required<ClientListeners<T>>[K] }): void {
+        this.#listeners.set(<never>data.event, <never>data.handle);
     }
 
     public clearStores(): void {
