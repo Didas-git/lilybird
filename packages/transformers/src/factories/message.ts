@@ -20,7 +20,7 @@ import type {
 import { Poll } from "./poll.js";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" ? K : never]: Message[K] };
+export type PartialMessage<T extends Message = Message> = Partial<T> & { [K in keyof Message as Message[K] extends Function ? K : K extends "id" | "channelId" | "client" ? K : never]: Message[K] };
 
 export interface MessageEditOptions extends LilyMessage.EditJSONParams {
     suppressEmbeds?: boolean;
