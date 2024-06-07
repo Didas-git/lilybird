@@ -8,8 +8,8 @@ export default tsEslint.config({
         "**/*.js",
         "**/*.d.ts",
         "**/*.json",
-        "dist/",
-        "templates/",
+        "dist/**/*",
+        "templates/**/*",
         "node_modules/**/*"
     ],
 }, {
