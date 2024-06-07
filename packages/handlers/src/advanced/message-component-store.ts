@@ -129,4 +129,8 @@ export class MessageComponentStore {
 
         return obj;
     }
+
+    public clear(): void {
+        this.#stacks.clear();
+    }
 }

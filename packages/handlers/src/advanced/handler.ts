@@ -5,16 +5,25 @@ import { ApplicationCommandOptionType } from "lilybird";
 import { HandlerIdentifier } from "./shared.js";
 import { join } from "node:path";
 
-import type { ApplicationCommand, Awaitable, Client, Interaction } from "lilybird";
 import type { CommandStructure } from "./application-command-store.js";
 import type { ComponentStructure } from "./message-component-store.js";
 import type { HandlerListener } from "./shared.js";
+import type {
+    CacheManagerStructure,
+    ApplicationCommand,
+    ClientListeners,
+    Transformers,
+    Interaction,
+    Awaitable,
+    Client
+} from "lilybird";
 
 type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommandJSONParams;
 
 export class Handler {
     readonly #acs = new ApplicationCommandStore();
     readonly #mcs = new MessageComponentStore();
+    readonly #listeners = new Map<string, (...args: Array<any>) => any>();
     readonly #globMatcher = new Bun.Glob("**/*.{!d,ts,js,tsx,jsx}");
 
     #emit?: HandlerListener;
@@ -29,11 +38,23 @@ export class Handler {
         for await (const fileName of files) await import(join(path, fileName));
     }
 
-    public store(data: CommandStructure & { components?: Array<ComponentStructure> }): void {
+    public storeCommand(data: CommandStructure & { components?: Array<ComponentStructure> }): void {
         const { components, ...command } = data;
         if (typeof components !== "undefined")
             for (let i = 0, { length } = components; i < length; i++) this.#mcs.storeComponent(components[i]);
         this.#acs.storeCommand(command);
+    }
+
+    public storeListener<
+        T extends keyof Transformers = keyof Transformers,
+        L extends Required<ClientListeners<Transformers>> = Required<ClientListeners<Transformers>>
+    >(data: { event: T, handle: L[T] }): void {
+        this.#listeners.set(data.event, data.handle);
+    }
+
+    public clearStores(): void {
+        this.#acs.clear();
+        this.#mcs.clear();
     }
 
     #differOption(
@@ -164,7 +185,7 @@ export class Handler {
         };
     }
 
-    public compile(): ((client: Client, interaction: Interaction.Structure) => Awaitable<unknown>) | null {
+    public compileCommands(): ((client: Client, interaction: Interaction.Structure) => Awaitable<unknown>) | null {
         const compiledResult = this.getCompilationStack();
         if (compiledResult === null) return null;
 
@@ -180,6 +201,29 @@ export class Handler {
             defaultTransformers.interactionCreate.handler,
             ...handlers
         ) as never;
+    }
+
+    public getListenersObject<T extends Transformers = Transformers>(includeCommands: boolean = true): ClientListeners<T> {
+        const obj: Record<string, unknown> = {};
+
+        for (let i = 0, entries = [...this.#listeners.entries()], { length } = entries; i < length; i++) {
+            const [key, value] = entries[i];
+            obj[key] = value;
+        }
+
+        if (includeCommands) {
+            const listener = this.compileCommands();
+            if (listener === null) return obj as never;
+            if ("interactionCreate" in obj) {
+                obj.interactionCreate = (client: Client<Transformers, CacheManagerStructure>, interaction: Interaction.Structure) => {
+                    // @ts-expect-error The obj constant is not typed
+                    obj.interactionCreate(client, interaction);
+                    listener(client, interaction);
+                };
+            } else obj.interactionCreate = listener;
+        }
+
+        return obj as never;
     }
 
     public async loadGlobalCommands(client: Client): Promise<void> {
@@ -236,14 +280,16 @@ export class Handler {
             global: ReturnType<ApplicationCommandStore["getStoredGlobalCommands"]>,
             guild: ReturnType<ApplicationCommandStore["getStoredGuildCommands"]>
         },
-        components: ReturnType<MessageComponentStore["getStoredComponents"]>
+        components: ReturnType<MessageComponentStore["getStoredComponents"]>,
+        listeners: Array<[name: string, handle: (...args: Array<any>) => any]>
     } {
         return {
             commands: {
                 global: this.#acs.getStoredGlobalCommands(),
                 guild: this.#acs.getStoredGuildCommands()
             },
-            components: this.#mcs.getStoredComponents()
+            components: this.#mcs.getStoredComponents(),
+            listeners: [...this.#listeners.entries()]
         };
     }
 
@@ -261,5 +307,6 @@ export class Handler {
 }
 
 export const handler = new Handler();
-export const $applicationCommand = handler.store.bind(handler);
+export const $applicationCommand = handler.storeCommand.bind(handler);
+export const $listener = handler.storeListener.bind(handler);
 

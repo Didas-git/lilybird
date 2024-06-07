@@ -292,4 +292,9 @@ export class ApplicationCommandStore {
     public getStoredGuildCommands(): Array<CompiledCommand> {
         return [...this.#guildApplicationCommands.values()];
     }
+
+    public clear(): void {
+        this.#globalApplicationCommands.clear();
+        this.#guildApplicationCommands.clear();
+    }
 }
