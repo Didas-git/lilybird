@@ -1,8 +1,8 @@
-import type { Event } from "@lilybird/handlers";
+import { $listener } from "@lilybird/handlers/advanced";
 
-export default {
+$listener({
     event: "ready",
-    run(client) {
+    handle(client) {
         console.log("Connected as", client.user.username);
     }
-} satisfies Event<"ready">;
+});

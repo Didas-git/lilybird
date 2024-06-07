@@ -1,14 +1,16 @@
-import { createHandler } from "@lilybird/handlers";
 import { Intents, createClient } from "lilybird";
+import { handler } from "@lilybird/handlers/advanced";
 
-const listeners = await createHandler({
-    dirs: {
-        listeners: `${import.meta.dir}/listeners`
-    }
-});
+handler.cachePath = `${import.meta.dir}/lily-cache/handler`;
+
+await handler.scanDir(`${import.meta.dir}/commands`);
+await handler.scanDir(`${import.meta.dir}/listeners`);
 
 await createClient({
     token: process.env.TOKEN,
     intents: [Intents.GUILDS],
-    ...listeners
+    setup: async (client) => {
+        await handler.loadGlobalCommands(client);
+    },
+    listeners: handler.getListenersObject()
 });
