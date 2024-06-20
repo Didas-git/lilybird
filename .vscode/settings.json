@@ -11,6 +11,7 @@
         "lilybird",
         "oembed",
         "REQUALIFIED",
+        "Tasai",
         "UPSELL"
     ],
     "typescript.tsdk": "node_modules/typescript/lib",

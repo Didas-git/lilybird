@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {
-    ApplicationCommand as JSXApplicationCommand,
-    StringOption,
-    UserOption,
-    EmbedImage,
-    Embed,
-} from "@lilybird/jsx";
+import { $applicationCommand } from "@lilybird/handlers/advanced";
+import { ApplicationCommandOptionType } from "lilybird";
 
-import type { ApplicationCommand } from "@lilybird/handlers/simple";
+import type { ApplicationCommandData, AutocompleteData, Interaction } from "@lilybird/transformers";
+import type { Embed } from "lilybird";
 
 interface GoogleAPIResponse {
     kind: string;
@@ -59,32 +55,57 @@ interface Metatag {
     "og:url": string;
 }
 
-// shit cache
 const localCache = new Map<string, Metatag>();
 
-export default {
-    data: (<JSXApplicationCommand name="search" description="search mdn">
-        <StringOption name="query" description="the query" required autocomplete />
-        <UserOption name="user" description="the user to ping" />
-    </JSXApplicationCommand>) as never,
-    post: "GLOBAL",
-    run: async (interaction) => {
+function populateCache(items: Array<GoogleAPIItem>): void {
+    for (let i = 0, { length } = items; i < length; i++) {
+        const item = items[i];
+        const meta = item.pagemap.metatags;
+
+        if (localCache.has(item.cacheId)) continue;
+
+        localCache.set(item.cacheId, meta[0]);
+    }
+}
+
+$applicationCommand({
+    name: "search",
+    description: "search mdn",
+    options: [
+        {
+            type: ApplicationCommandOptionType.STRING,
+            name: "query",
+            description: "the query",
+            required: true,
+            autocomplete: true
+        },
+        {
+            type: ApplicationCommandOptionType.USER,
+            name: "user",
+            description: "the user to ping"
+        }
+    ],
+    handle: async (interaction: Interaction<ApplicationCommandData>): Promise<void> => {
         const cacheId = interaction.data.getString("query", true);
         const tags = localCache.get(cacheId);
         if (!tags) throw new Error("WTF");
 
         const userId = interaction.data.getUser("user");
 
-        const embed = (<Embed title={tags["og:title"]} description={tags["og:description"]} url={tags["og:url"]}>
-            <EmbedImage url={tags["og:image"]} />
-        </Embed>) as never;
+        const embed: Embed.Structure = {
+            title: tags["og:title"],
+            description: tags["og:description"],
+            url: tags["og:url"],
+
+            image: { url: tags["og:image"] }
+        };
 
         await interaction.reply({
             content: userId ? `<@${userId}> learn how to fucking google` : "",
             embeds: [embed]
         });
     },
-    autocomplete: async (interaction) => {
+    autocomplete: async (interaction: Interaction<AutocompleteData>): Promise<void> => {
         const query = interaction.data.getFocused<string>().value;
         if (query.length === 0) return;
 
@@ -97,15 +118,5 @@ export default {
 
         await interaction.showChoices(body.items.map((val) => ({ name: val.title, value: val.cacheId })));
     }
-} satisfies ApplicationCommand;
+});
 
-function populateCache(items: Array<GoogleAPIItem>): void {
-    for (let i = 0, { length } = items; i < length; i++) {
-        const item = items[i];
-        const meta = item.pagemap.metatags;
-
-        if (localCache.has(item.cacheId)) continue;
-
-        localCache.set(item.cacheId, meta[0]);
-    }
-}

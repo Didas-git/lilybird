@@ -17,4 +17,4 @@ jobs:
         with:
           bun-version: latest
       - name: Run build script
-        run: sh ./build.sh
+        run: bun i --frozen-lockfile && bun run build

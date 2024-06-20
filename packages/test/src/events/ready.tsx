@@ -1,4 +1,4 @@
-import type { Event } from "@lilybird/handlers";
+import type { Event } from "@lilybird/handlers/simple";
 
 export default {
     event: "ready",

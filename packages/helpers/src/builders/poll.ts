@@ -3,7 +3,7 @@ import type { Poll, PollLayoutType } from "lilybird";
 export class PollBuilder {
     readonly #poll: Poll.CreateStructure = <never>{};
 
-    public setQuestion(question: Poll.MediaStructure): this {
+    public question(question: Poll.MediaStructure): this {
         this.#poll.question = question;
         return this;
     }
@@ -27,17 +27,17 @@ export class PollBuilder {
     /**
      * @param duration - in hours (1 - 168)
      */
-    public setDuration(duration: number): this {
+    public duration(duration: number): this {
         this.#poll.duration = duration;
         return this;
     }
 
-    public setAllowMultiselect(allowMultiselect: boolean): this {
+    public allowMultiselect(allowMultiselect: boolean): this {
         this.#poll.allow_multiselect = allowMultiselect;
         return this;
     }
 
-    public setLayoutType(layoutType: PollLayoutType): this {
+    public layoutType(layoutType: PollLayoutType): this {
         this.#poll.layout_type = layoutType;
         return this;
     }
@@ -50,12 +50,12 @@ export class PollBuilder {
 export class PollAnswerBuilder {
     readonly #answer: Poll.AnswerStructure = <never>{};
 
-    public setId(id: number): this {
+    public id(id: number): this {
         this.#answer.answer_id = id;
         return this;
     }
 
-    public setMedia(media: Poll.MediaStructure): this {
+    public media(media: Poll.MediaStructure): this {
         this.#answer.poll_media = media;
         return this;
     }

@@ -1,4 +1,3 @@
-import type { ReplyOptions } from "../typings/shared.js";
 import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
@@ -61,7 +60,7 @@ export function channelFactory(client: Client, channel: LilyChannel.Structure | 
     }
 }
 
-export interface MessageSendOptions extends ReplyOptions {
+export interface MessageSendOptions extends LilyMessage.CreateJSONParams {
     tts?: boolean;
     suppressEmbeds?: boolean;
     suppressNotifications?: boolean;
