@@ -26,11 +26,11 @@
     "build": "bun run build:core && bun run build:transformers && bun run build:handlers && bun run build:redis && bun run build:jsx && bun run build:helpers && bun run build:create && bun run check"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^2.1.0",
-    "bun-types": "^1.1.10",
-    "eslint": "^9.3.0",
-    "eslint-plugin-jsdoc": "^48.2.6",
+    "@stylistic/eslint-plugin": "^2.2.2",
+    "bun-types": "^1.1.15",
+    "eslint": "^9.5.0",
+    "eslint-plugin-jsdoc": "^48.2.12",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.11.0"
+    "typescript-eslint": "^7.13.1"
   }
 }
