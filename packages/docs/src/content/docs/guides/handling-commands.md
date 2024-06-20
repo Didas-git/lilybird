@@ -65,21 +65,52 @@ async function handleCommand(
 
 Now, everything left for us to do is put it all together.
 
-```ts showLineNumbers
+```ts showLineNumbers collapse={7-34, 37-38}
 import {
   InteractionType,
-  createClient
+  createClient,
+  Intents
 } from "lilybird";
 
+import type { 
+  ApplicationCommandInteractionStructure,
+  InteractionStructure,
+  Client,
+} from "lilybird";
+
+async function setup(client: Client): Promise<void> {
+  // Lets register a command called 'ping'
+  await client.rest.createGlobalApplicationCommand(client.user.id, {
+    name: "ping",
+    description: "pong"
+  });
+}
+
+async function handleCommand(
+  client: Client, 
+  interaction: ApplicationCommandInteractionStructure
+): Promise<void> {
+  if (interaction.data.name === "ping") {
+    const { ws, rest } = await client.ping();
+    await client.rest.createInteractionResponse(interaction.id, interaction.token, {
+      type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+      data: {
+          content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+      }
+    });
+  }
+}
+
 await createClient({
-  ...,
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
   // We pass the setup function we created above
   setup,
   listeners: {
     interactionCreate: async (client, payload) => {
       // We only want to handle guild interactions
       if (!("guild_id" in payload)) return;
-      // We only want to handle application interactions
+      // We only want to handle application commands
       if (payload.type !== InteractionType.APPLICATION_COMMAND) return;
 
       await handleCommand(client, payload);

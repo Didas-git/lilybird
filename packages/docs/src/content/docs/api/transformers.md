@@ -34,7 +34,7 @@ Using the api is straight forward, the transformers are named the same as the li
 
 ### Without Transformers
 
-```ts
+```js
 import { createClient, Intents } from "lilybird";
 
 await createClient({
@@ -51,7 +51,7 @@ await createClient({
 
 ### With Transformers
 
-```ts
+```js
 import { createClient, Intents, TransformerReturnType } from "lilybird";
 
 await createClient({

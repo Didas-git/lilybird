@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 import { defineConfig } from "astro/config";
@@ -22,7 +23,7 @@ export default defineConfig({
                 baseUrl: "https://github.com/Didas-git/lilybird/edit/main/packages/docs"
             },
             expressiveCode: {
-                plugins: [pluginLineNumbers()],
+                plugins: [pluginLineNumbers(), pluginCollapsibleSections()],
                 defaultProps: {
                     showLineNumbers: false
                 }
@@ -37,6 +38,7 @@ export default defineConfig({
                         collapsed: true
                     },
                     typeDoc: {
+                        sort: ["enum-value-ascending", "source-order"],
                         parametersFormat: "table",
                         enumMembersFormat: "table",
                         publicPath: "/documentation/"
@@ -51,6 +53,7 @@ export default defineConfig({
                         collapsed: true
                     },
                     typeDoc: {
+                        sort: ["enum-value-ascending", "source-order"],
                         excludeExternals: true,
                         parametersFormat: "table",
                         enumMembersFormat: "table",
@@ -87,11 +90,6 @@ export default defineConfig({
                 },
                 {
                     label: "API",
-                    badge: {
-                        text: "Beta",
-                        variant: "danger"
-
-                    },
                     autogenerate: {
                         directory: "/api",
                         collapsed: true
@@ -119,6 +117,11 @@ export default defineConfig({
                                 {
                                     label: "Simple",
                                     collapsed: true,
+                                    badge: {
+                                        text: "Deprecated",
+                                        variant: "danger"
+
+                                    },
                                     autogenerate: {
                                         directory: "/modules/handlers/simple"
                                     }
@@ -127,8 +130,8 @@ export default defineConfig({
                                     label: "Advanced",
                                     collapsed: true,
                                     badge: {
-                                        text: "Beta",
-                                        variant: "danger"
+                                        text: "New",
+                                        variant: "tip"
 
                                     },
                                     autogenerate: {
