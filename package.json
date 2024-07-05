@@ -23,7 +23,7 @@
     "build:jsx": "bun --filter @lilybird/jsx build",
     "build:helpers": "bun --filter @lilybird/helpers build",
     "build:create": "bun --filter @lilybird/create build",
-    "build": "bun run check && bun run build:core && bun run build:transformers && bun run build:handlers && bun run build:redis && bun run build:jsx && bun run build:helpers && bun run build:create"
+    "build": "bun run build:core && bun run build:transformers && bun run build:handlers && bun run build:redis && bun run build:jsx && bun run build:helpers && bun run build:create && bun run check"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^2.2.2",
