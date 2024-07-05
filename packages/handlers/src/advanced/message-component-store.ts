@@ -55,17 +55,17 @@ export class MessageComponentStore {
         const componentStack = this.#stacks.get(type);
 
         const obj: CompiledComponent = {
-            body: `if (custom_id === "${id}") { return ${fnName}(transformer(client, interaction)) }`,
+            body: `if (custom_id === "${id}") { return ${fnName}(t_int) }`,
             handler: [fnName, handle],
             matcher: undefined
         };
 
         if (typeof customMatcher === "function") {
             const matchFnName = `match_id_${id}`;
-            obj.body = `if (${matchFnName}) { return ${fnName}(transformer(client, interaction)) }`;
+            obj.body = `if (${matchFnName}(t_int)) { return ${fnName}(t_int) }`;
             obj.matcher = [matchFnName, customMatcher];
         } else if (typeof customMatcher === "string")
-            obj.body = `if (${customMatcher}) { return ${fnName}(transformer(client, interaction)) }`;
+            obj.body = `if (${customMatcher}) { return ${fnName}(t_int) }`;
 
         if (typeof componentStack === "undefined") {
             this.#stacks.set(type, new Map([[id, obj]]));
@@ -88,7 +88,8 @@ export class MessageComponentStore {
 
         const componentStack: Array<string> = [
             "const custom_id = interaction.data.custom_id;",
-            `if (interaction.type === ${InteractionType.MESSAGE_COMPONENT}) {`
+            `if (interaction.type === ${InteractionType.MESSAGE_COMPONENT}) {`,
+            "const t_int = transformer(client, interaction)"
         ];
 
         const modalStack: Array<string> = [`else if (interaction.type === "${InteractionType.MODAL_SUBMIT}") {`];
