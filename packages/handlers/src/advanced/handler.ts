@@ -6,7 +6,7 @@ import { HandlerIdentifier } from "./shared.js";
 import { join } from "node:path";
 
 import type { CommandStructure } from "./application-command-store.js";
-import type { ComponentStructure } from "./message-component-store.js";
+import type { ComponentStructure, DynamicComponentStructure } from "./message-component-store.js";
 import type { HandlerListener } from "./shared.js";
 import type {
     CacheManagerStructure,
@@ -27,15 +27,24 @@ export class Handler {
     readonly #globMatcher = new Bun.Glob("**/*.{!d,ts,js,tsx,jsx}");
 
     #emit?: HandlerListener;
-    #cachePath: string | null = null;
+    #cachePath?: string;
 
-    public constructor(handlerListener?: HandlerListener) {
-        this.#emit = handlerListener;
+    public constructor(options: {
+        cachePath?: string,
+        enableDynamicComponents?: boolean,
+        handlerListener?: HandlerListener
+    }) {
+        this.#cachePath = options.cachePath;
+        this.#emit = options.handlerListener;
     }
 
     public async scanDir(path: string): Promise<void> {
         const files = this.#globMatcher.scan(path);
         for await (const fileName of files) await import(join(path, fileName));
+    }
+
+    public buttonCollector(component: DynamicComponentStructure): void {
+        this.#mcs.addDynamicComponent(component);
     }
 
     public storeCommand(data: CommandStructure & { components?: Array<ComponentStructure> }): void {
@@ -158,7 +167,7 @@ export class Handler {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
         if (componentsBody.length > 0 && componentsBody[0] === "c") {
             const trimLength = "const custom_id = interaction.data.custom_id;".length;
-            if (realStack.length < 1) realStack.push("else ");
+            if (realStack.length > 2) realStack.push("else ");
             realStack.push(componentsBody.slice(trimLength));
         }
 
@@ -301,12 +310,20 @@ export class Handler {
         this.#cachePath = path;
     }
 
-    public get cachePath(): string | null {
+    public get cachePath(): string | undefined {
         return this.#cachePath;
+    }
+
+    public set enableDynamicComponents(bool: boolean) {
+        this.#mcs.attachDynamicComponentListener = bool;
+    }
+
+    public get enableDynamicComponents(): boolean {
+        return this.#mcs.attachDynamicComponentListener;
     }
 }
 
-export const handler = new Handler();
+export const handler = new Handler({});
 export const $applicationCommand = handler.storeCommand.bind(handler);
 export const $listener = handler.storeListener.bind(handler);
-
+export const $component = handler.buttonCollector.bind(handler);

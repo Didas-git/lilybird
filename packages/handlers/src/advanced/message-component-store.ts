@@ -19,18 +19,32 @@ interface CompiledComponent {
 
 export type MessageComponentHandler = (interaction: TransformedInteraction<MessageComponentData, TransformedMessage>) => Awaitable<unknown>;
 
-export type ComponentStructure = {
-    type: Exclude<ComponentType, ComponentType.ActionRow>,
-    id: string,
-    handle: MessageComponentHandler
-};
+export interface ComponentStructure {
+    type: Exclude<ComponentType, ComponentType.ActionRow>;
+    id: string;
+    handle: MessageComponentHandler;
+}
+
+export interface DynamicComponentStructure {
+    filter: (interaction: TransformedInteraction<MessageComponentData, TransformedMessage>) => Awaitable<boolean>;
+    handle: MessageComponentHandler;
+    timeout?: number;
+}
+
 export class MessageComponentStore {
     readonly #stacks = new Map<Exclude<ComponentType, ComponentType.ActionRow>, Map<string, CompiledComponent>>();
-
+    readonly #store = new Map<number, DynamicComponentStructure>();
     readonly #emit?: HandlerListener;
+
+    #attachDynamicComponentListener: boolean = false;
 
     public constructor(handlerListener?: HandlerListener) {
         this.#emit = handlerListener;
+    }
+
+    public addDynamicComponent(component: DynamicComponentStructure): void {
+        if (!this.#attachDynamicComponentListener) throw new Error("Dynamic Components are disabled, please enable them before using this feature.");
+        this.#store.set(Date.now(), component);
     }
 
     public storeComponent(component: ComponentStructure): void {
@@ -40,11 +54,11 @@ export class MessageComponentStore {
 
         const componentStack = this.#stacks.get(type);
         if (typeof componentStack === "undefined") {
-            this.#stacks.set(type, new Map([[id, { body: `if (custom_id === "${id}") {${fnName}(transformer(client, interaction))}`, handler: [fnName, handle] } ]]));
+            this.#stacks.set(type, new Map([[id, { body: `if (custom_id === "${id}") { return ${fnName}(transformer(client, interaction)) }`, handler: [fnName, handle] } ]]));
             return;
         }
 
-        componentStack.set(id, { body: `else if (custom_id === "${id}") {${fnName}(transformer(client, interaction))}`, handler: [fnName, handle] });
+        componentStack.set(id, { body: `else if (custom_id === "${id}") { return ${fnName}(transformer(client, interaction)) }`, handler: [fnName, handle] });
     }
 
     public getCompilationStack(): {
@@ -105,15 +119,35 @@ export class MessageComponentStore {
         if (compiledResult === null) return null;
 
         const { stack, functionNames, handlers } = compiledResult;
-        this.#emit?.(HandlerIdentifier.COMPILED, stack);
+        let extendedStack = stack;
 
+        if (this.#attachDynamicComponentListener) {
+            extendedStack += `\nfor (let i = 0, entries = [..._store.entries()], { length } = entries; i < length; i++) {
+    const [date, data] = entries[i];
+
+    const { timeout, filter, handle } = data;
+    if (typeof timeout === "number" && Date.now() - date <= timeout) {
+        this.#store.delete(date);
+        continue;
+    }
+
+    const _int = transformer(client, interaction);
+    if (!filter(_int)) continue;
+    await handle(int);
+}`;
+        }
+
+        this.#emit?.(HandlerIdentifier.COMPILED, extendedStack);
+
+        const init = this.#attachDynamicComponentListener ? ["_store", "transformers"] : ["transformers"];
+        const initArgs = this.#attachDynamicComponentListener ? [this.#store, defaultTransformers.interactionCreate.handler] : [defaultTransformers.interactionCreate.handler];
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function(
-            "transformer",
+            ...init,
             ...functionNames,
-            `return async (client, interaction) => { ${stack} }`
+            `return async (client, interaction) => { ${extendedStack} }`
         )(
-            defaultTransformers.interactionCreate.handler,
+            ...initArgs,
             ...handlers
         ) as never;
     }
@@ -132,5 +166,13 @@ export class MessageComponentStore {
 
     public clear(): void {
         this.#stacks.clear();
+    }
+
+    public set attachDynamicComponentListener(bool: boolean) {
+        this.#attachDynamicComponentListener = bool;
+    }
+
+    public get attachDynamicComponentListener(): boolean {
+        return this.#attachDynamicComponentListener;
     }
 }

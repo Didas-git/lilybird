@@ -110,12 +110,12 @@ export class ApplicationCommandStore {
 
             return {
                 body: {
-                    command: `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { handle_${name.replace("-", "_")}(${
+                    command: `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { return handle_${name.replace("-", "_")}(${
                         matchTo === "interaction_name" ? "transformer(client, interaction)" : "int"
                     }); }`,
                     autocomplete: typeof options.auto_executor === "undefined"
                         ? null
-                        : `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { auto_${name.replace("-", "_")}(${
+                        : `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { return auto_${name.replace("-", "_")}(${
                             matchTo === "interaction_name" ? "transformer(client, interaction)" : "int"
                         }); }`
                 },
