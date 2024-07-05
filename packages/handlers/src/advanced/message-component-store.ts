@@ -15,6 +15,7 @@ import type {
 interface CompiledComponent {
     body: string;
     handler: [name: string, fn: MessageComponentHandler];
+    matcher?: [name: string, fn: MessageComponentHandler];
 }
 
 export type MessageComponentHandler = (interaction: TransformedInteraction<MessageComponentData, TransformedMessage>) => Awaitable<unknown>;
@@ -22,6 +23,7 @@ export type MessageComponentHandler = (interaction: TransformedInteraction<Messa
 export interface ComponentStructure {
     type: Exclude<ComponentType, ComponentType.ActionRow>;
     id: string;
+    customMatcher?: string | MessageComponentHandler;
     handle: MessageComponentHandler;
 }
 
@@ -48,17 +50,30 @@ export class MessageComponentStore {
     }
 
     public storeComponent(component: ComponentStructure): void {
-        const { type, id, handle } = component;
-
+        const { type, id, customMatcher, handle } = component;
         const fnName = `component_${id.replace("-", "_")}`;
-
         const componentStack = this.#stacks.get(type);
+
+        const obj: CompiledComponent = {
+            body: `if (custom_id === "${id}") { return ${fnName}(transformer(client, interaction)) }`,
+            handler: [fnName, handle],
+            matcher: undefined
+        };
+
+        if (typeof customMatcher === "function") {
+            const matchFnName = `match_id_${id}`;
+            obj.body = `if (${matchFnName}) { return ${fnName}(transformer(client, interaction)) }`;
+            obj.matcher = [matchFnName, customMatcher];
+        } else if (typeof customMatcher === "string")
+            obj.body = `if (${customMatcher}) { return ${fnName}(transformer(client, interaction)) }`;
+
         if (typeof componentStack === "undefined") {
-            this.#stacks.set(type, new Map([[id, { body: `if (custom_id === "${id}") { return ${fnName}(transformer(client, interaction)) }`, handler: [fnName, handle] } ]]));
+            this.#stacks.set(type, new Map([[id, obj]]));
             return;
         }
 
-        componentStack.set(id, { body: `else if (custom_id === "${id}") { return ${fnName}(transformer(client, interaction)) }`, handler: [fnName, handle] });
+        obj.body = `else ${obj.body}`;
+        componentStack.set(id, obj);
     }
 
     public getCompilationStack(): {
@@ -87,6 +102,10 @@ export class MessageComponentStore {
                 const component = stackValues[j];
                 const [n, h] = component.handler;
                 functions.set(n, h);
+                if (typeof component.matcher !== "undefined") {
+                    const [nn, hh] = component.matcher;
+                    functions.set(nn, hh);
+                }
                 stackBody.push(component.body);
             }
 
