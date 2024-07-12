@@ -1,4 +1,3 @@
-
 import { ApplicationCommandOptionType, InteractionType } from "lilybird";
 import { defaultTransformers } from "@lilybird/transformers";
 import { HandlerIdentifier } from "./shared.js";
@@ -50,11 +49,6 @@ interface CommandMeta {
     ids?: Array<string>;
 }
 
-const enum HandleOptionsType {
-    NORMAL,
-    SUB
-}
-
 export class ApplicationCommandStore {
     readonly #globalApplicationCommands = new Map<string, CompiledCommand>();
     readonly #guildApplicationCommands = new Map<string, CompiledCommand>();
@@ -75,20 +69,13 @@ export class ApplicationCommandStore {
         if (!Array.isArray(options) || options.length === 0) {
             if (typeof handle === "undefined") return this.#emit?.(HandlerIdentifier.INVALID_COMMAND, actualCommand.name);
             const cmd = this.#compileCommand(actualCommand, { base_executor: handle, auto_executor: autocomplete }, isContinuingChain, actualCommand.name);
-            if (cmd === null) throw new Error("Uh Oh!");
             commands.set(actualCommand.name, cmd);
             return;
         }
 
-        this.#emit?.(HandlerIdentifier.SKIPPING_HANDLER, actualCommand.name);
+        if (typeof handle !== "undefined") this.#emit?.(HandlerIdentifier.SKIPPING_HANDLER, actualCommand.name);
         const cmd = this.#compileCommand(actualCommand, options, isContinuingChain, actualCommand.name);
-        if (cmd === null) {
-            if (typeof handle === "undefined") return this.#emit?.(HandlerIdentifier.INVALID_COMMAND, actualCommand.name);
-            (<CommandStructure>actualCommand).options = options;
-            const cmd2 = this.#compileCommand(actualCommand, { base_executor: handle, auto_executor: autocomplete }, isContinuingChain, actualCommand.name);
-            if (cmd2 === null) throw new Error("Uh Oh!");
-            commands.set(actualCommand.name, cmd2);
-        } else commands.set(actualCommand.name, cmd);
+        commands.set(actualCommand.name, cmd);
     }
 
     #compileCommand(
@@ -98,7 +85,7 @@ export class ApplicationCommandStore {
         // Used to keep track of sub command function naming
         name: string,
         matchTo: "interaction_name" | "sub_command" | "sub_command_group" = "interaction_name"
-    ): CompiledCommand | null {
+    ): CompiledCommand {
         if ("base_executor" in options) {
             const names = [`handle_${name.replace("-", "_")}`];
             const handlers: Array<(int: any) => unknown> = [options.base_executor];
@@ -130,10 +117,6 @@ export class ApplicationCommandStore {
         const fns = new Map<string, ApplicationCommandHandler | ApplicationAutocompleteHandler>();
         const cmdArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const autoArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
-        const compileStrategy = this.#getHandleOptionType(options);
-
-        // TODO: Write specialized parser for options
-        if (compileStrategy === HandleOptionsType.NORMAL) return null;
 
         const temp: Array<string> = matchTo === "sub_command_group"
             ? []
@@ -153,13 +136,6 @@ export class ApplicationCommandStore {
                 const { options: subOpts, ...realCommand } = subCommand;
                 const realOptions = this.#compileCommand(<never>realCommand, subOpts, i > 0, `${name}_${subCommand.name}`, "sub_command_group");
 
-                if (realOptions === null) {
-                    (<CommandStructure><unknown>realCommand).options = subOpts;
-                    if (!Array.isArray(command.options)) command.options = [];
-                    command.options.push(realCommand);
-                    continue;
-                }
-
                 cmdArr.push(realOptions.body.command);
                 if (realOptions.body.autocomplete !== null) autoArr.push(realOptions.body.autocomplete);
                 for (let j = 0, len = realOptions.function.names.length; j < len; j++) {
@@ -176,15 +152,6 @@ export class ApplicationCommandStore {
 
                 const { handle, autocomplete, ...realCommand } = subCommand;
                 const cmd = this.#compileCommand(<never>realCommand, { base_executor: handle, auto_executor: autocomplete }, i > 0, `${name}_${subCommand.name}`, "sub_command");
-
-                if (cmd === null) {
-                    (<CommandStructure><unknown>realCommand).options = options;
-                    const cmd2 = this.#compileCommand(<never>realCommand, { base_executor: handle, auto_executor: autocomplete }, i > 0, `${name}_${subCommand.name}`, "sub_command");
-                    if (cmd2 === null) throw new Error("Uh Oh!");
-                    if (!Array.isArray(command.options)) command.options = [];
-                    command.options.push(realCommand);
-                    continue;
-                }
 
                 cmdArr.push(cmd.body.command);
                 if (cmd.body.autocomplete !== null) autoArr.push(cmd.body.autocomplete);
@@ -207,16 +174,6 @@ export class ApplicationCommandStore {
             function: { names: [...fns.keys()], handlers: [...fns.values()] },
             json: command
         };
-    }
-
-    #getHandleOptionType(options: Required<CommandStructure>["options"]): HandleOptionsType {
-        for (let i = 0, { length } = options; i < length; i++) {
-            const { type } = options[i];
-            if (type === ApplicationCommandOptionType.SUB_COMMAND_GROUP
-                || type === ApplicationCommandOptionType.SUB_COMMAND) return HandleOptionsType.SUB;
-        }
-
-        return HandleOptionsType.NORMAL;
     }
 
     public getCompilationStack(): {
