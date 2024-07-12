@@ -1,32 +1,10 @@
-import { createClient } from "@redis/client";
 import { CacheElementType } from "lilybird";
-import RedisJSON from "@redis/json";
 
-import type { RedisClientType } from "@redis/client";
 import type { CacheManagerStructure, Channel, Guild, MapLike, Voice } from "lilybird";
+import type { RedisClientType } from "@redis/client";
+import type RedisJSON from "@redis/json";
 
 export type NodeRedisClient = RedisClientType<{ json: typeof RedisJSON.default }>;
-
-export class Redis {
-    /** @internal */
-    public connection: NodeRedisClient;
-
-    public constructor(urlOrClient: string | NodeRedisClient) {
-        if (typeof urlOrClient === "string")
-            this.connection = createClient({ url: urlOrClient, modules: { json: RedisJSON.default } });
-        else this.connection = urlOrClient;
-
-        if (typeof this.connection.json === "undefined") throw new Error("Lilybird's Redis caching module requires RedisJSON to work");
-    }
-
-    public async open(): Promise<void> {
-        await this.connection.connect();
-    }
-
-    public getCacheManager(): RedisCacheManager {
-        return new RedisCacheManager(this.connection);
-    }
-}
 
 export interface CacheField {
     key: string;

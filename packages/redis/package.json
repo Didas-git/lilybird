@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/redis",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A Redis module for caching with lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
