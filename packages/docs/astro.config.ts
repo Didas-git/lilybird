@@ -97,6 +97,7 @@ export default defineConfig({
                 },
                 {
                     label: "Modules",
+                    collapsed: true,
                     items: [
                         {
                             label: "JSX Components",

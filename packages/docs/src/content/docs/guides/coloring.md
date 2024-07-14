@@ -1,8 +1,6 @@
 ---
 title: Coloring
 description: Learn the ways you can color embeds and text in discord using lilybird.
-sidebar:
-  order: 4
 ---
 
 In discord, customization of colors and specific accents is allowed in a limited set of places: Embed accents and ANSI Blocks.
