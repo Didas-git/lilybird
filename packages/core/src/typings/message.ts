@@ -51,7 +51,6 @@ export declare namespace Message {
         flags?: number;
         referenced_message?: Structure | null;
         interaction_metadata?: InteractionMetadataStructure;
-        /** @deprecated Use {@link Structure.interaction_metadata} instead */
         interaction?: InteractionStructure;
         thread?: Channel.Structure;
         /** This does not exist without the intent */

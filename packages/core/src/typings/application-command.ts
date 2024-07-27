@@ -51,8 +51,6 @@ export declare namespace ApplicationCommand {
         description: string;
         options?: Array<Option.Structure>;
         default_member_permissions: string | null;
-        /** @deprecated Use {@link GlobalStructure.contexts} instead */
-        dm_permission: boolean;
         nsfw?: boolean;
         integration_types?: Array<ApplicationIntegrationType>;
         contexts?: Array<InteractionContextType>;
