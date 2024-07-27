@@ -1,6 +1,7 @@
 import type { ApplicationCommandOption } from "./application-command-options.js";
 import type { LilybirdAttachment, ResolvedDataStructure } from "./others.js";
 import type { ApplicationCommand } from "./application-command.js";
+import type { Application } from "./application.js";
 import type { Channel } from "./channel.js";
 import type { Message } from "./message.js";
 import type { Guild } from "./guild.js";
@@ -13,7 +14,8 @@ import type {
     EntitlementType,
     InteractionType,
     ComponentType,
-    Locale
+    Locale,
+    InteractionContextType
 } from "#enums";
 
 export declare namespace Interaction {
@@ -26,8 +28,11 @@ export declare namespace Interaction {
         data?: DataStructure;
         token: string;
         version: number;
+        app_permissions: string;
         locale: Locale;
         entitlements: Array<EntitlementStructure>;
+        authorizing_integration_owners: Application.IntegrationTypeMap;
+        context?: InteractionContextType;
     }
 
     export interface GuildStructure extends Base {
@@ -35,7 +40,6 @@ export declare namespace Interaction {
         channel: Partial<Channel.Structure>;
         channel_id: string;
         member: Guild.MemberStructure;
-        app_permissions: string;
         guild_locale: Locale;
     }
 
