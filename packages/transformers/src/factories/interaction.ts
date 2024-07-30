@@ -681,7 +681,7 @@ class NotFoundError extends Error {
     }
 }
 
-export class MessageComponentData<T extends Array<string> | undefined = undefined> {
+export class MessageComponentData<T extends Array<string> | undefined = Array<string> | undefined> {
     public readonly id: string;
     public readonly type: ComponentType;
     public readonly values: T;
