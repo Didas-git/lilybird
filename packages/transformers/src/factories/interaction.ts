@@ -119,7 +119,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -137,7 +138,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -182,7 +184,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -200,7 +203,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -260,7 +264,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -278,7 +283,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
