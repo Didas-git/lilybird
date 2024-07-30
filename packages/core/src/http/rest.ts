@@ -343,96 +343,6 @@ export class REST {
         return this.makeAPIRequest("DELETE", `channels/${channelId}`, { reason });
     }
 
-    public async getChannelMessages(
-        channelId: string,
-        params: {
-            around?: string,
-            before?: string,
-            after?: string,
-            /**
-             * 0-100
-             * @default 50
-             */
-            limit?: number
-        }
-    ): Promise<Array<Message.Structure>> {
-        let url = `channels/${channelId}/messages?`;
-        if (typeof params.around !== "undefined")
-            url += `around=${params.around}&`;
-
-        if (typeof params.before !== "undefined")
-            url += `before=${params.before}&`;
-
-        if (typeof params.after !== "undefined")
-            url += `after=${params.after}&`;
-
-        if (typeof params.limit !== "undefined")
-            url += `limit=${params.limit}`;
-
-        return this.makeAPIRequest("GET", url);
-    }
-
-    public async getChannelMessage(channelId: string, messageId: string): Promise<Message.Structure> {
-        return this.makeAPIRequest("GET", `channels/${channelId}/messages/${messageId}`);
-    }
-
-    public async createMessage(channelId: string, body: Message.CreateJSONParams, files?: Array<LilybirdAttachment>): Promise<Message.Structure> {
-        return this.makeAPIRequest("POST", `channels/${channelId}/messages`, body, files);
-    }
-
-    public async crosspostMessage(channelId: string, messageId: string): Promise<Message.Structure> {
-        return this.makeAPIRequest("POST", `channels/${channelId}/messages/${messageId}/crosspost`);
-    }
-
-    public async createReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.makeAPIRequest("PUT", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
-    }
-
-    public async deleteOwnReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
-    }
-
-    public async deleteUserReaction(channelId: string, messageId: string, userId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/${userId}`);
-    }
-
-    public async getReactions(channelId: string, messageId: string, emoji: string, isCustom = false, params: { after?: number, limit?: string } = {}): Promise<Array<User.Structure>> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
-
-        let url = `channels/${channelId}/messages/${messageId}/reactions/${emoji}?`;
-        if (typeof params.after !== "undefined")
-            url += `after=${params.after}&`;
-
-        if (typeof params.limit !== "undefined")
-            url += `limit=${params.limit}`;
-
-        return this.makeAPIRequest("GET", url);
-    }
-
-    public async deleteAllReactions(channelId: string, messageId: string): Promise<null> {
-        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions`);
-    }
-
-    public async deleteAllReactionsForEmoji(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
-        if (!isCustom) emoji = encodeURIComponent(emoji);
-        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
-    }
-
-    public async editMessage(channelId: string, messageId: string, body: Message.EditJSONParams, files?: Array<LilybirdAttachment>): Promise<Message.Structure> {
-        return this.makeAPIRequest("PATCH", `channels/${channelId}/messages/${messageId}`, body, files);
-    }
-
-    public async deleteMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
-        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}`, { reason });
-    }
-
-    public async bulkDeleteMessages(channelId: string, messageIds: Array<string>, reason?: string): Promise<null> {
-        return this.makeAPIRequest("POST", `channels/${channelId}/messages/bulk-delete`, { messages: messageIds, reason });
-    }
-
     public async editChannelPermissions(
         channelId: string,
         overwriteId: string,
@@ -998,6 +908,98 @@ export class REST {
     }
 
     //#endregion Invite
+    //#region Message
+    public async getChannelMessages(
+        channelId: string,
+        params: {
+            around?: string,
+            before?: string,
+            after?: string,
+            /**
+             * 0-100
+             * @default 50
+             */
+            limit?: number
+        }
+    ): Promise<Array<Message.Structure>> {
+        let url = `channels/${channelId}/messages?`;
+        if (typeof params.around !== "undefined")
+            url += `around=${params.around}&`;
+
+        if (typeof params.before !== "undefined")
+            url += `before=${params.before}&`;
+
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.makeAPIRequest("GET", url);
+    }
+
+    public async getChannelMessage(channelId: string, messageId: string): Promise<Message.Structure> {
+        return this.makeAPIRequest("GET", `channels/${channelId}/messages/${messageId}`);
+    }
+
+    public async createMessage(channelId: string, body: Message.CreateJSONParams, files?: Array<LilybirdAttachment>): Promise<Message.Structure> {
+        return this.makeAPIRequest("POST", `channels/${channelId}/messages`, body, files);
+    }
+
+    public async crosspostMessage(channelId: string, messageId: string): Promise<Message.Structure> {
+        return this.makeAPIRequest("POST", `channels/${channelId}/messages/${messageId}/crosspost`);
+    }
+
+    public async createReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) emoji = encodeURIComponent(emoji);
+        return this.makeAPIRequest("PUT", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
+    }
+
+    public async deleteOwnReaction(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) emoji = encodeURIComponent(emoji);
+        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/@me`);
+    }
+
+    public async deleteUserReaction(channelId: string, messageId: string, userId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) emoji = encodeURIComponent(emoji);
+        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}/${userId}`);
+    }
+
+    public async getReactions(channelId: string, messageId: string, emoji: string, isCustom = false, params: { after?: number, limit?: string } = {}): Promise<Array<User.Structure>> {
+        if (!isCustom) emoji = encodeURIComponent(emoji);
+
+        let url = `channels/${channelId}/messages/${messageId}/reactions/${emoji}?`;
+        if (typeof params.after !== "undefined")
+            url += `after=${params.after}&`;
+
+        if (typeof params.limit !== "undefined")
+            url += `limit=${params.limit}`;
+
+        return this.makeAPIRequest("GET", url);
+    }
+
+    public async deleteAllReactions(channelId: string, messageId: string): Promise<null> {
+        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions`);
+    }
+
+    public async deleteAllReactionsForEmoji(channelId: string, messageId: string, emoji: string, isCustom = false): Promise<null> {
+        if (!isCustom) emoji = encodeURIComponent(emoji);
+        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}/reactions/${emoji}`);
+    }
+
+    public async editMessage(channelId: string, messageId: string, body: Message.EditJSONParams, files?: Array<LilybirdAttachment>): Promise<Message.Structure> {
+        return this.makeAPIRequest("PATCH", `channels/${channelId}/messages/${messageId}`, body, files);
+    }
+
+    public async deleteMessage(channelId: string, messageId: string, reason?: string): Promise<null> {
+        return this.makeAPIRequest("DELETE", `channels/${channelId}/messages/${messageId}`, { reason });
+    }
+
+    public async bulkDeleteMessages(channelId: string, messageIds: Array<string>, reason?: string): Promise<null> {
+        return this.makeAPIRequest("POST", `channels/${channelId}/messages/bulk-delete`, { messages: messageIds, reason });
+    }
+
+    //#endregion Message
     //#region Poll
     public async getAnswerVoters(
         channelId: string,
