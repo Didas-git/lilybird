@@ -585,6 +585,26 @@ export class REST {
         return this.makeAPIRequest("DELETE", `guilds/${guildId}/emojis/${emojiId}`, { reason });
     }
 
+    public async listApplicationEmojis(applicationId: string): Promise<Array<Emoji.Structure>> {
+        return this.makeAPIRequest("GET", `applications/${applicationId}/emojis`);
+    }
+
+    public async getApplicationEmoji(applicationId: string, emojiId: string): Promise<Emoji.Structure> {
+        return this.makeAPIRequest("GET", `applications/${applicationId}/emojis/${emojiId}`);
+    }
+
+    public async createApplicationEmoji(applicationId: string, params: { name: string, image: ImageData }): Promise<Emoji.Structure> {
+        return this.makeAPIRequest("POST", `applications/${applicationId}/emojis`, params);
+    }
+
+    public async modifyApplicationEmoji(applicationId: string, emojiId: string, params: { name: string }): Promise<Emoji.Structure> {
+        return this.makeAPIRequest("PATCH", `applications/${applicationId}/emojis/${emojiId}`, params);
+    }
+
+    public async deleteApplicationEmoji(applicationId: string, emojiId: string): Promise<null> {
+        return this.makeAPIRequest("DELETE", `applications/${applicationId}/emojis/${emojiId}`);
+    }
+
     //#endregion Emoji
     //#region Guild
     public async createGuild(body: Guild.Create.GuildJSONParams): Promise<Guild.Structure> {
@@ -1145,7 +1165,8 @@ export class REST {
     public async modifyWebhookWithToken(webhookId: string, token: string, webhook: {
         name?: string,
         avatar?: ImageData | null,
-        channel_id?: string, reason?: string
+        channel_id?: string,
+        reason?: string
     }): Promise<Webhook.Structure> {
         return this.makeAPIRequest("PATCH", `webhooks/${webhookId}/${token}`, webhook);
     }
