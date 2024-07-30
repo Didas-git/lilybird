@@ -66,8 +66,10 @@ export class ApplicationCommandStore {
         const commands = meta?.guild_command === true ? this.#guildApplicationCommands : this.#globalApplicationCommands;
         const isContinuingChain = (meta?.guild_command === true ? this.#guildApplicationCommands.size : this.#globalApplicationCommands.size) > 0;
 
-        if (!Array.isArray(options) || options.length === 0) {
+        // eslint-disable-next-line @stylistic/no-extra-parens
+        if ((!Array.isArray(options) || options.length === 0) || (typeof options !== "undefined" && !this.#isCommandWrapper(options))) {
             if (typeof handle === "undefined") return this.#emit?.(HandlerIdentifier.INVALID_COMMAND, actualCommand.name);
+            (<CommandStructure>actualCommand).options = options;
             const cmd = this.#compileCommand(actualCommand, { base_executor: handle, auto_executor: autocomplete }, isContinuingChain, actualCommand.name);
             commands.set(actualCommand.name, cmd);
             return;
@@ -76,6 +78,7 @@ export class ApplicationCommandStore {
         if (typeof handle !== "undefined") this.#emit?.(HandlerIdentifier.SKIPPING_HANDLER, actualCommand.name);
         const cmd = this.#compileCommand(actualCommand, options, isContinuingChain, actualCommand.name);
         commands.set(actualCommand.name, cmd);
+        return;
     }
 
     #compileCommand(
@@ -122,8 +125,8 @@ export class ApplicationCommandStore {
             ? []
             : [
                 "const int = transformer(client, interaction);",
-                "const sub_command = int.subCommand;",
-                "const sub_command_group = int.subCommandGroup;"
+                "const sub_command = int.data.subCommand;",
+                "const sub_command_group = int.data.subCommandGroup;"
             ];
 
         cmdArr.push(temp.join(""));
@@ -174,6 +177,16 @@ export class ApplicationCommandStore {
             function: { names: [...fns.keys()], handlers: [...fns.values()] },
             json: command
         };
+    }
+
+    #isCommandWrapper(options: Required<CommandStructure>["options"]): boolean {
+        for (let i = 0, { length } = options; i < length; i++) {
+            const { type } = options[i];
+            if (type === ApplicationCommandOptionType.SUB_COMMAND_GROUP
+                || type === ApplicationCommandOptionType.SUB_COMMAND) return true;
+        }
+
+        return false;
     }
 
     public getCompilationStack(): {
