@@ -1,4 +1,4 @@
-import type { ApplicationCommand } from "@lilybird/handlers";
+import type { ApplicationCommand } from "@lilybird/handlers/simple";
 import { ApplicationIntegrationType, InteractionContextType } from "lilybird";
 
 export default {
@@ -14,7 +14,7 @@ export default {
             InteractionContextType.BOT_DM,
             InteractionContextType.GUILD,
             InteractionContextType.PRIVATE_CHANNEL
-        ],
+        ]
     },
     run: async (interaction) => {
         await interaction.deferReply();
