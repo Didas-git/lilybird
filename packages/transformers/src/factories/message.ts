@@ -1,9 +1,8 @@
 import { MentionChannel, channelFactory } from "./channel.js";
+import { MessageFlags, MessageReferenceType } from "lilybird";
 import { GuildMember } from "./guild-member.js";
-import { MessageFlags } from "lilybird";
+import { Channel } from "./channel.js";
 import { User } from "./user.js";
-
-import type { Channel } from "./channel.js";
 
 import type {
     Channel as LilyChannel,
@@ -127,10 +126,11 @@ export class Message {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, files: f, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
 
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+                flags |= fl ?? 0;
 
                 files = f;
                 data = {
@@ -139,7 +139,8 @@ export class Message {
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, files: f, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
@@ -160,6 +161,91 @@ export class Message {
         );
     }
 
+    public async sendInChannel(content: string, options?: MessageReplyOptions): Promise<Message>;
+    public async sendInChannel(options: MessageReplyOptions): Promise<Message>;
+    public async sendInChannel(content: string | MessageReplyOptions, options?: MessageReplyOptions): Promise<Message> {
+        let flags = 0;
+        let data: LilyMessage.CreateJSONParams;
+        let files: Array<LilybirdAttachment> | undefined;
+
+        if (typeof content === "string") {
+            if (typeof options !== "undefined") {
+                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
+
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+                if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+
+                files = f;
+                data = {
+                    ...obj,
+                    content
+                };
+            } else data = { content };
+        } else {
+            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
+
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+
+            files = f;
+            data = obj;
+        }
+
+        return new Message(
+            this.client,
+            await this.client.rest.createMessage(this.channelId, {
+                ...data,
+                flags
+            }, files)
+        );
+    }
+
+    public async forwardTo(channelId: string, options: MessageReplyOptions): Promise<Message>;
+    public async forwardTo(channelId: string, content: string | MessageReplyOptions, options?: MessageReplyOptions): Promise<Message> {
+        let flags = 0;
+        let data: LilyMessage.CreateJSONParams;
+        let files: Array<LilybirdAttachment> | undefined;
+
+        if (typeof content === "string") {
+            if (typeof options !== "undefined") {
+                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
+
+                if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+                if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+
+                files = f;
+                data = {
+                    ...obj,
+                    content
+                };
+            } else data = { content };
+        } else {
+            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
+
+            if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
+            if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
+
+            files = f;
+            data = obj;
+        }
+
+        return new Message(
+            this.client,
+            await this.client.rest.createMessage(this.channelId, {
+                ...data,
+                flags,
+                message_reference: {
+                    type: MessageReferenceType.FORWARD,
+                    channel_id: channelId
+                }
+            }, files)
+        );
+    }
+
     public async edit(content: string, options?: MessageEditOptions): Promise<Message>;
     public async edit(options: MessageEditOptions): Promise<Message>;
     public async edit(content: string | MessageEditOptions, options?: MessageEditOptions): Promise<Message> {
@@ -169,7 +255,8 @@ export class Message {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, files: f, ...obj } = options;
+                const { suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
@@ -182,7 +269,8 @@ export class Message {
             } else
                 data = { content, flags };
         } else {
-            const { suppressEmbeds, files: f, ...obj } = content;
+            const { suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
@@ -224,8 +312,11 @@ export class Message {
 
     public async fetchChannel(force: boolean = false): Promise<Channel> {
         if (!force) {
-            const cachedChannel = await this.client.cache.channels.get(this.channelId) as Channel;
-            if (typeof cachedChannel !== "undefined") return cachedChannel;
+            const cachedChannel: unknown = await this.client.cache.channels.get(this.channelId);
+            if (typeof cachedChannel !== "undefined") {
+                if (cachedChannel instanceof Channel) return cachedChannel;
+                return new Channel(this.client, <LilyChannel.Structure>cachedChannel, false);
+            }
         }
 
         const channel = channelFactory(this.client, await this.client.rest.getChannel(this.channelId));
