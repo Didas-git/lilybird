@@ -279,10 +279,10 @@ export declare namespace Channel {
      * @see {@link https://discord.com/developers/docs/resources/channel#allowed-mentions-object-allowed-mentions-structure}
      */
     export interface AllowedMentionsStructure {
-        parse: Array<AllowedMentionType>;
-        roles: Array<string>;
-        users: Array<string>;
-        replied_user: boolean;
+        parse?: Array<AllowedMentionType>;
+        roles?: Array<string>;
+        users?: Array<string>;
+        replied_user?: boolean;
     }
 
     export interface ForumThreadMessageJSONParams {

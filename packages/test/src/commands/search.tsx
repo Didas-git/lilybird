@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { ApplicationCommand, StringOption, UserOption, Embed, EmbedImage } from "@lilybird/jsx";
-import type { SlashCommand } from "@lilybird/handlers";
+import {
+    ApplicationCommand as JSXApplicationCommand,
+    StringOption,
+    UserOption,
+    EmbedImage,
+    Embed,
+} from "@lilybird/jsx";
+
+import type { ApplicationCommand } from "@lilybird/handlers/simple";
 
 interface GoogleAPIResponse {
     kind: string;
@@ -56,10 +63,10 @@ interface Metatag {
 const localCache = new Map<string, Metatag>();
 
 export default {
-    data: (<ApplicationCommand name="search" description="search mdn">
+    data: (<JSXApplicationCommand name="search" description="search mdn">
         <StringOption name="query" description="the query" required autocomplete />
         <UserOption name="user" description="the user to ping" />
-    </ApplicationCommand>) as never,
+    </JSXApplicationCommand>) as never,
     post: "GLOBAL",
     run: async (interaction) => {
         const cacheId = interaction.data.getString("query", true);
@@ -70,7 +77,7 @@ export default {
 
         const embed = (<Embed title={tags["og:title"]} description={tags["og:description"]} url={tags["og:url"]}>
             <EmbedImage url={tags["og:image"]} />
-        </Embed>) as never; //ffs jsx
+        </Embed>) as never;
 
         await interaction.reply({
             content: userId ? `<@${userId}> learn how to fucking google` : "",
@@ -90,7 +97,7 @@ export default {
 
         await interaction.showChoices(body.items.map((val) => ({ name: val.title, value: val.cacheId })));
     }
-} satisfies SlashCommand;
+} satisfies ApplicationCommand;
 
 function populateCache(items: Array<GoogleAPIItem>): void {
     for (let i = 0, { length } = items; i < length; i++) {

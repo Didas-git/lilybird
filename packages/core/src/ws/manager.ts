@@ -48,7 +48,7 @@ export class WebSocketManager {
     }
 
     public close(): void {
-        this.#ws.close(1000);
+        this.#ws.close(3000);
     }
 
     public async connect(url?: string): Promise<void> {
@@ -72,19 +72,24 @@ export class WebSocketManager {
             this.#debug?.(DebugIdentifier.WSError, err);
         });
         this.#ws.addEventListener("close", async ({ code }) => {
+            this.#debug?.(DebugIdentifier.CloseCode, code);
             this.#clearTimer();
-            if (code === 1000) return;
+            if (code === 3000) return;
+            if (code === 4010) throw new Error("Invalid Shard");
+            if (code === 4011) throw new Error("Sharding Required");
+            if (code === 4012) throw new Error("Invalid API Version");
+            if (code === 4013) throw new Error("Invalid intent(s)");
+            if (code === 4014) throw new Error("Disallowed intent(s)");
             if (typeof code === "undefined" || code === 1001 || closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
                 return;
             }
 
-            this.#debug?.(DebugIdentifier.UnknownCode, code);
             this.#isResuming = false;
             await this.connect();
         });
         this.#ws.addEventListener("message", (event) => {
-            this.#debug?.(DebugIdentifier.Message, event.data);
+            this.#debug?.(DebugIdentifier.WSMessage, event.data);
             const payload = <Payload>JSON.parse((event.data as Buffer).toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
 
@@ -115,7 +120,7 @@ export class WebSocketManager {
                 case GatewayOpCode.InvalidSession: {
                     this.#debug?.(DebugIdentifier.InvalidSession);
                     if (payload.d) this.#ws.close(1001);
-                    else this.#ws.close(3000);
+                    else this.#ws.close(1000);
                     break;
                 }
                 case GatewayOpCode.HeartbeatACK: {

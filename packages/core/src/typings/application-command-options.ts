@@ -24,10 +24,8 @@ export declare namespace ApplicationCommandOption {
 
     export type Structure =
         | ChannelStructure
-        | WithChoices<StringStructure>
-        | WithAutocomplete<StringStructure>
-        | WithChoices<NumericStructure>
-        | WithAutocomplete<NumericStructure>
+        | StringStructure
+        | NumericStructure
         | SubCommandStructure
         | Base;
 
@@ -51,13 +49,17 @@ export declare namespace ApplicationCommandOption {
         options?: Array<Structure>;
     }
 
-    export interface NumericStructure extends Base {
+    export type NumericStructure = WithChoices<BaseNumericStructure> | WithAutocomplete<BaseNumericStructure>;
+
+    export interface BaseNumericStructure extends Base {
         type: ApplicationCommandOptionType.NUMBER | ApplicationCommandOptionType.INTEGER;
         min_value?: number;
         max_value?: number;
     }
 
-    export interface StringStructure extends Base {
+    export type StringStructure = WithChoices<BaseStringStructure> | WithAutocomplete<BaseStringStructure>;
+
+    export interface BaseStringStructure extends Base {
         type: ApplicationCommandOptionType.STRING;
         min_length?: number;
         max_length?: number;

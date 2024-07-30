@@ -22,7 +22,7 @@ jobs:
           node-version: latest
           registry-url: https://registry.npmjs.org
       - name: Install Dependencies & Build
-        run: sh ./build.sh
+        run: bun run build:core && bun run build:transformers
       - name: Publish transformers
       # Bun doesnt have any publish methods yet
         run: cd packages/transformers && npm publish --provenance --no-git-checks --access public

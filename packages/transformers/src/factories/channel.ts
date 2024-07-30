@@ -1,4 +1,3 @@
-import type { ReplyOptions } from "../typings/shared.js";
 import { GuildMember } from "./guild-member.js";
 import { Message } from "./message.js";
 import { User } from "./user.js";
@@ -61,7 +60,7 @@ export function channelFactory(client: Client, channel: LilyChannel.Structure | 
     }
 }
 
-export interface MessageSendOptions extends ReplyOptions {
+export interface MessageSendOptions extends LilyMessage.CreateJSONParams {
     tts?: boolean;
     suppressEmbeds?: boolean;
     suppressNotifications?: boolean;
@@ -96,7 +95,8 @@ export class Channel {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, files: f, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
@@ -108,7 +108,8 @@ export class Channel {
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, files: f, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;

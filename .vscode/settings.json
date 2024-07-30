@@ -11,10 +11,10 @@
         "lilybird",
         "oembed",
         "REQUALIFIED",
+        "Tasai",
         "UPSELL"
     ],
     "typescript.tsdk": "node_modules/typescript/lib",
-    "eslint.experimental.useFlatConfig": true,
     "eslint.format.enable": true,
     "eslint.enable": true,
     "[typescript]": {
