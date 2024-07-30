@@ -57,6 +57,7 @@ export class Message {
     public readonly messageReference: LilyMessage.ReferenceStructure | undefined;
     public readonly flags: number;
     public readonly referencedMessage: Message | undefined;
+    public readonly interactionMetadata: LilyMessage.InteractionMetadataStructure | undefined;
     public readonly interaction: LilyMessage.InteractionStructure | undefined;
     public readonly thread: Channel | undefined;
     public readonly components: Array<LilyMessage.Component.Structure> | undefined;
@@ -94,6 +95,7 @@ export class Message {
         this.applicationId = message.application_id;
         this.messageReference = message.message_reference;
         this.flags = message.flags ?? 0;
+        this.interactionMetadata = message.interaction_metadata;
         this.interaction = message.interaction;
         this.components = message.components;
         this.stickerItems = message.sticker_items;

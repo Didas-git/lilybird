@@ -50,6 +50,7 @@ export declare namespace Message {
          */
         flags?: number;
         referenced_message?: Structure | null;
+        interaction_metadata?: InteractionMetadataStructure;
         interaction?: InteractionStructure;
         thread?: Channel.Structure;
         /** This does not exist without the intent */
@@ -74,6 +75,19 @@ export declare namespace Message {
         name: string;
         user: User.Structure;
         member?: Partial<Guild.MemberStructure>;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/resources/channel#message-interaction-metadata-object-message-interaction-metadata-structure}
+     */
+    export interface InteractionMetadataStructure {
+        id: string;
+        type: InteractionType;
+        user: User.Structure;
+        authorizing_integration_owners: Application.IntegrationTypeMap;
+        original_response_message_id?: string;
+        interacted_message_id?: string;
+        triggering_interaction_metadata?: InteractionMetadataStructure;
     }
 
     /**

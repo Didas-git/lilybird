@@ -6,6 +6,12 @@ export const enum InteractionType {
     MODAL_SUBMIT
 }
 
+export const enum InteractionContextType {
+    GUILD,
+    BOT_DM,
+    PRIVATE_CHANNEL
+}
+
 export const enum ApplicationCommandType {
     CHAT_INPUT = 1,
     USER,
