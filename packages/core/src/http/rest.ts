@@ -1138,6 +1138,14 @@ export class REST {
         return this.makeAPIRequest("GET", "voice/regions");
     }
 
+    public async getCurrentUserVoiceState(guildId: string): Promise<Voice.StateStructure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/voice-states/@me`);
+    }
+
+    public async getUserVoiceState(guildId: string, userId: string): Promise<Voice.StateStructure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/voice-states/${userId}`);
+    }
+
     //#endregion
     //#region Webhook
     public async createWebhook(channelId: string, webhook: { name: string, avatar?: ImageData | null }): Promise<Webhook.Structure> {
