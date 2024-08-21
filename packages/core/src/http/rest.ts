@@ -750,6 +750,10 @@ export class REST {
         return this.makeAPIRequest("GET", `guilds/${guildId}/roles`);
     }
 
+    public async getGuildRole(guildId: string, roleId: string): Promise<Role.Structure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/roles/${roleId}`);
+    }
+
     public async createGuildRole(guildId: string, body: Role.JSONParams): Promise<Role.Structure> {
         return this.makeAPIRequest("POST", `guilds/${guildId}/roles`, body);
     }
@@ -1032,6 +1036,10 @@ export class REST {
 
     public async listStickerPacks(): Promise<{ sticker_packs: Array<Sticker.PackStructure> }> {
         return this.makeAPIRequest("GET", "sticker-packs");
+    }
+
+    public async getStickerPack(packId: string): Promise<Sticker.PackStructure> {
+        return this.makeAPIRequest("GET", `sticker-packs/${packId}`);
     }
 
     public async listGuildStickers(guildId: string): Promise<Array<Sticker.Structure>> {
