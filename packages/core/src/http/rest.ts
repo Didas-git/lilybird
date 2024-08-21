@@ -1060,6 +1060,10 @@ export class REST {
         return this.makeAPIRequest("GET", "sticker-packs");
     }
 
+    public async getStickerPack(packId: string): Promise<Sticker.PackStructure> {
+        return this.makeAPIRequest("GET", `sticker-packs/${packId}`);
+    }
+
     public async listGuildStickers(guildId: string): Promise<Array<Sticker.Structure>> {
         return this.makeAPIRequest("GET", `guilds/${guildId}/stickers`);
     }
