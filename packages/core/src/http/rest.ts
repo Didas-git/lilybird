@@ -680,6 +680,10 @@ export class REST {
         return this.makeAPIRequest("GET", `guilds/${guildId}/roles`);
     }
 
+    public async getGuildRole(guildId: string, roleId: string): Promise<Role.Structure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/roles/${roleId}`);
+    }
+
     public async createGuildRole(guildId: string, body: Role.JSONParams): Promise<Role.Structure> {
         return this.makeAPIRequest("POST", `guilds/${guildId}/roles`, body);
     }
@@ -1056,6 +1060,10 @@ export class REST {
         return this.makeAPIRequest("GET", "sticker-packs");
     }
 
+    public async getStickerPack(packId: string): Promise<Sticker.PackStructure> {
+        return this.makeAPIRequest("GET", `sticker-packs/${packId}`);
+    }
+
     public async listGuildStickers(guildId: string): Promise<Array<Sticker.Structure>> {
         return this.makeAPIRequest("GET", `guilds/${guildId}/stickers`);
     }
@@ -1136,6 +1144,14 @@ export class REST {
     //#region Voice
     public async listVoiceRegions(): Promise<Array<Voice.RegionStructure>> {
         return this.makeAPIRequest("GET", "voice/regions");
+    }
+
+    public async getCurrentUserVoiceState(guildId: string): Promise<Voice.StateStructure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/voice-states/@me`);
+    }
+
+    public async getUserVoiceState(guildId: string, userId: string): Promise<Voice.StateStructure> {
+        return this.makeAPIRequest("GET", `guilds/${guildId}/voice-states/${userId}`);
     }
 
     //#endregion

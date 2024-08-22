@@ -41,6 +41,7 @@ export declare namespace Application {
          */
         flags?: number;
         approximate_guild_count?: number;
+        approximate_user_install_count?: number;
         redirect_uris?: Array<string>;
         interactions_endpoint_url?: string;
         role_connections_verification_url?: string;
