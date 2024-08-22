@@ -34,7 +34,8 @@ export const enum MessageType {
     GUILD_INCIDENT_ALERT_MODE_DISABLED,
     GUILD_INCIDENT_REPORT_RAID,
     GUILD_INCIDENT_REPORT_FALSE_ALARM,
-    PURCHASE_NOTIFICATION = 44
+    PURCHASE_NOTIFICATION = 44,
+    POLL_RESULT = 46
 }
 
 export const enum MessageFlags {
@@ -61,7 +62,8 @@ export const enum EmbedType {
     Video = "video",
     Gif = "gifv",
     Article = "article",
-    Link = "link"
+    Link = "link",
+    PollResult = "poll_result"
 }
 
 export const enum MessageActivityType {
