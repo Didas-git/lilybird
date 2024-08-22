@@ -29,7 +29,8 @@ export const enum MessageType {
     STAGE_END,
     STAGE_SPEAKER,
     STAGE_TOPIC = 31,
-    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION,
+    POLL_RESULT = 46
 }
 
 export const enum MessageFlags {
@@ -56,7 +57,8 @@ export const enum EmbedType {
     Video = "video",
     Gif = "gifv",
     Article = "article",
-    Link = "link"
+    Link = "link",
+    PollResult = "poll_result"
 }
 
 export const enum MessageActivityType {
