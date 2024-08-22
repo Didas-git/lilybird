@@ -27,7 +27,8 @@ const DeletableTypes = [
     MessageType.STAGE_START,
     MessageType.STAGE_END,
     MessageType.STAGE_SPEAKER,
-    MessageType.STAGE_TOPIC
+    MessageType.STAGE_TOPIC,
+    MessageType.POLL_RESULT
 ];
 
 export function isDeletableMessage(msgType: MessageType): boolean {
