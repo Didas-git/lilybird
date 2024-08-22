@@ -79,3 +79,8 @@ export const enum StickerFormatType {
     LOTTIE,
     GIF
 }
+
+export const enum MessageReferenceType {
+    DEFAULT,
+    FORWARD
+}

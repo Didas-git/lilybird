@@ -20,7 +20,7 @@ import type {
 
 type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommandJSONParams;
 
-export class Handler {
+export class Handler<T extends Transformers = Transformers> {
     readonly #acs = new ApplicationCommandStore();
     readonly #mcs = new MessageComponentStore();
     readonly #listeners = new Map<string, (...args: Array<any>) => any>();
@@ -55,9 +55,9 @@ export class Handler {
     }
 
     public storeListener<
-        T extends Transformers = Transformers,
-        K extends keyof T = keyof T
-    >(data: { event: K, handle: Required<ClientListeners<T>>[K] }): void {
+        TR extends Transformers = T,
+        K extends keyof TR = keyof TR
+    >(data: { event: K, handle: Required<ClientListeners<TR>>[K] }): void {
         this.#listeners.set(<never>data.event, <never>data.handle);
     }
 
@@ -212,7 +212,7 @@ export class Handler {
         ) as never;
     }
 
-    public getListenersObject<T extends Transformers = Transformers>(includeCommands: boolean = true): ClientListeners<T> {
+    public getListenersObject<TR extends Transformers = Transformers>(includeCommands: boolean = true): ClientListeners<TR> {
         const obj: Record<string, unknown> = {};
 
         for (let i = 0, entries = [...this.#listeners.entries()], { length } = entries; i < length; i++) {
@@ -249,7 +249,7 @@ export class Handler {
 
         if (!await file.exists()) {
             this.#emit?.(HandlerIdentifier.FRESH, undefined);
-            await Bun.write(file, JSON.stringify(commands));
+            await Bun.write(file, JSON.stringify(commandsJSON));
             await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, commandsJSON);
             return;
         }

@@ -75,6 +75,11 @@ export class WebSocketManager {
             this.#debug?.(DebugIdentifier.CloseCode, code);
             this.#clearTimer();
             if (code === 3000) return;
+            if (code === 4010) throw new Error("Invalid Shard");
+            if (code === 4011) throw new Error("Sharding Required");
+            if (code === 4012) throw new Error("Invalid API Version");
+            if (code === 4013) throw new Error("Invalid intent(s)");
+            if (code === 4014) throw new Error("Disallowed intent(s)");
             if (typeof code === "undefined" || code === 1001 || closeCodeAllowsReconnection(code)) {
                 await this.#attemptResume();
                 return;
