@@ -27,7 +27,13 @@ const DeletableTypes = [
     MessageType.STAGE_START,
     MessageType.STAGE_END,
     MessageType.STAGE_SPEAKER,
-    MessageType.STAGE_TOPIC
+    MessageType.STAGE_TOPIC,
+    MessageType.GUILD_APPLICATION_PREMIUM_SUBSCRIPTION,
+    MessageType.GUILD_INCIDENT_ALERT_MODE_ENABLED,
+    MessageType.GUILD_INCIDENT_ALERT_MODE_DISABLED,
+    MessageType.GUILD_INCIDENT_REPORT_RAID,
+    MessageType.GUILD_INCIDENT_REPORT_FALSE_ALARM,
+    MessageType.PURCHASE_NOTIFICATION
 ];
 
 export function isDeletableMessage(msgType: MessageType): boolean {
