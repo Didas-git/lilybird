@@ -5,7 +5,7 @@ import { ApplicationCommandOptionType } from "lilybird";
 import { HandlerIdentifier } from "./shared.js";
 import { join } from "node:path";
 
-import type { CommandStructure } from "./application-command-store.js";
+import type { BaseCommandOption, CommandOption, CommandStructure, SubCommandStructure } from "./application-command-store.js";
 import type { ComponentStructure, DynamicComponentStructure } from "./message-component-store.js";
 import type { HandlerListener } from "./shared.js";
 import type {
@@ -20,8 +20,8 @@ import type {
 
 type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommandJSONParams;
 
-export class Handler<T extends Transformers = Transformers> {
-    readonly #acs = new ApplicationCommandStore();
+export class Handler<T extends Transformers = Transformers, U extends boolean = false> {
+    readonly #acs = new ApplicationCommandStore<U>();
     readonly #mcs = new MessageComponentStore();
     readonly #listeners = new Map<string, (...args: Array<any>) => any>();
     readonly #globMatcher = new Bun.Glob("**/*.{!d,ts,js,tsx,jsx}");
@@ -32,10 +32,14 @@ export class Handler<T extends Transformers = Transformers> {
     public constructor(options: {
         cachePath?: string,
         enableDynamicComponents?: boolean,
+        transformers?: Transformers,
         handlerListener?: HandlerListener
     }) {
         this.#cachePath = options.cachePath;
         this.#emit = options.handlerListener;
+
+        if (options.enableDynamicComponents) this.#mcs = new MessageComponentStore(options.handlerListener, options.enableDynamicComponents);
+        if (typeof options.transformers !== "undefined") this.#acs = new ApplicationCommandStore<U>(options.handlerListener, <never>options.transformers.interactionCreate?.handler);
     }
 
     public async scanDir(path: string): Promise<void> {
@@ -47,12 +51,14 @@ export class Handler<T extends Transformers = Transformers> {
         this.#mcs.addDynamicComponent(component);
     }
 
-    public storeCommand(data: CommandStructure & { components?: Array<ComponentStructure> }): void {
+    public storeCommand<const O extends Array<CommandOption>>(data: CommandStructure<O, U> & { components?: Array<ComponentStructure> }): void {
         const { components, ...command } = data;
         if (typeof components !== "undefined")
             for (let i = 0, { length } = components; i < length; i++) this.#mcs.storeComponent(components[i]);
         this.#acs.storeCommand(command);
     }
+
+    public subCommandMock<const O extends Array<BaseCommandOption>>(data: SubCommandStructure<O, U>): SubCommandStructure<O, U> { return data; }
 
     public storeListener<
         TR extends Transformers = T,
@@ -286,8 +292,8 @@ export class Handler<T extends Transformers = Transformers> {
 
     public getStoredData(): {
         commands: {
-            global: ReturnType<ApplicationCommandStore["getStoredGlobalCommands"]>,
-            guild: ReturnType<ApplicationCommandStore["getStoredGuildCommands"]>
+            global: ReturnType<ApplicationCommandStore<U>["getStoredGlobalCommands"]>,
+            guild: ReturnType<ApplicationCommandStore<U>["getStoredGuildCommands"]>
         },
         components: ReturnType<MessageComponentStore["getStoredComponents"]>,
         listeners: Array<[name: string, handle: (...args: Array<any>) => any]>
@@ -325,5 +331,6 @@ export class Handler<T extends Transformers = Transformers> {
 
 export const handler = new Handler({});
 export const $applicationCommand = handler.storeCommand.bind(handler);
+export const $subCommand = handler.subCommandMock.bind(handler);
 export const $listener = handler.storeListener.bind(handler);
 export const $component = handler.buttonCollector.bind(handler);

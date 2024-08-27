@@ -1,4 +1,4 @@
-import { $applicationCommand } from "@lilybird/handlers/advanced";
+import { $applicationCommand } from "../handlers.js";
 import { Message } from "@lilybird/transformers";
 
 import type { Interaction } from "@lilybird/transformers";

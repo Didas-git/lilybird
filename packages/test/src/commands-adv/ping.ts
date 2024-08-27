@@ -1,11 +1,9 @@
-import { $applicationCommand } from "@lilybird/handlers/advanced";
-
-import type { Interaction } from "@lilybird/transformers";
+import { $applicationCommand } from "../handlers.js";
 
 $applicationCommand({
     name: "ping",
     description: "pong",
-    handle: async (interaction: Interaction): Promise<void> => {
+    handle: async (interaction) => {
         await interaction.deferReply();
         const { ws, rest } = await interaction.client.ping();
 

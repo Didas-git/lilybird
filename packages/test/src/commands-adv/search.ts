@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { $applicationCommand } from "@lilybird/handlers/advanced";
 import { ApplicationCommandOptionType } from "lilybird";
+import { $applicationCommand } from "../handlers.js";
 
 import type { ApplicationCommandData, AutocompleteData, Interaction } from "@lilybird/transformers";
 import type { Embed } from "lilybird";

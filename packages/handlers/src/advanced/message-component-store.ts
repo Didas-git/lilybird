@@ -40,8 +40,10 @@ export class MessageComponentStore {
 
     #attachDynamicComponentListener: boolean = false;
 
-    public constructor(handlerListener?: HandlerListener) {
+    public constructor(handlerListener?: HandlerListener, attachDynamicComponentListener?: boolean) {
         this.#emit = handlerListener;
+
+        if (attachDynamicComponentListener) this.#attachDynamicComponentListener = attachDynamicComponentListener;
     }
 
     public addDynamicComponent(component: DynamicComponentStructure): void {

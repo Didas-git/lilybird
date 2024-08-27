@@ -1,5 +1,5 @@
 import { Intents, createClient } from "lilybird";
-import { handler } from "@lilybird/handlers/advanced";
+import { handler } from "./handlers.js";
 
 handler.cachePath = `${import.meta.dir}/lily-cache/handler`;
 
