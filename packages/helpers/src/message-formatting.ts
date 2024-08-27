@@ -59,7 +59,7 @@ export const enum GuildNavigationType {
 export function formatGuildNavigation(type: GuildNavigationType): string;
 export function formatGuildNavigation(type: GuildNavigationType.LinkedRoles, roleId?: string): string;
 export function formatGuildNavigation(type: GuildNavigationType, roleId?: string): string {
-  if (type == GuildNavigationType.LinkedRoles && roleId)
+  if (type == GuildNavigationType.LinkedRoles && typeof roleId !== "undefined")
     return `<id:${type}:${roleId}`;
 
   return `<id:${type}>`;
