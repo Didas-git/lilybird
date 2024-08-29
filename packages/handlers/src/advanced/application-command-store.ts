@@ -113,9 +113,10 @@ export class ApplicationCommandStore<U extends boolean> {
 
         for (let i = 0, { length } = options; i < length; i++) {
             const option = options[i];
-            stack.push(`${option.name}: undefined`);
+            stack.push(`${option.name}: undefined`, ",");
         }
 
+        stack.pop();
         stack.push("};");
 
         if (appendSubCommandLogic) {
@@ -125,7 +126,7 @@ export class ApplicationCommandStore<U extends boolean> {
                 "sub_command_group = _opt.name;",
                 "for (let i = 0, { length } = _opt.options; i < length; i++) {",
                 "const _g_opt = _opt.options[i];",
-                "if (_g_opt.type === 1) {sub_command = _g_opt.name; parseOpts(_g_opt.options, _obj)}",
+                "if (_g_opt.type === 1) {sub_command = _g_opt.name; parseOpts(_g_opt.options, _obj);}",
                 "}",
                 "}",
                 "else if (_opt.type === 1) {sub_command = _opt.name; parseOpts(_opt.options, _obj)}"
@@ -154,18 +155,18 @@ export class ApplicationCommandStore<U extends boolean> {
         }
 
         let strArgs = useTransformer ? "transformer(client, interaction)" : "interaction";
-        if (hasOptions) strArgs += ", _obj";
+        if (hasOptions && !useTransformer) strArgs += ", _obj";
 
         return {
             body: {
                 command: `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {
-    ${hasOptions ? optionsBody : ""}
+    ${hasOptions && !useTransformer ? optionsBody : ""}
     return handle_${name.replace("-", "_")}(${strArgs}); }`,
                 autocomplete: typeof handler.auto_executor === "undefined"
                     ? null
                     : `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { 
-    ${hasOptions ? optionsBody : ""}
-    return auto_${name.replace("-", "_")}(${strArgs}}); }`
+    ${hasOptions && !useTransformer ? optionsBody : ""}
+    return auto_${name.replace("-", "_")}(${strArgs}); }`
             },
             function: {
                 names,
@@ -180,7 +181,7 @@ export class ApplicationCommandStore<U extends boolean> {
         options: Required<CommandStructure<Array<CommandOption>, U>>["options"],
         useElse: boolean,
         optionsBody: string,
-        matchTo: "sub_command" | "sub_command_group" = "sub_command",
+        matchTo: "interaction_name" | "sub_command" | "sub_command_group" = "interaction_name",
         name: string = command.name
     ): CompiledCommand {
         const useTransformer = typeof this.#transformer !== "undefined";
@@ -317,14 +318,6 @@ export class ApplicationCommandStore<U extends boolean> {
         const { stack, functionNames, handlers } = compiledResult;
         this.#emit?.(HandlerIdentifier.COMPILED, stack);
 
-        function optionParser(options: ApplicationCommand.DataStructure["options"], _obj: Record<string, unknown>): void {
-            if (!options) return;
-            for (let i = 0, { length } = options; i < length; i++) {
-                const opt = options[i];
-                _obj[opt.name] = opt.value;
-            }
-        }
-
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function(
             "transformer",
@@ -333,7 +326,7 @@ export class ApplicationCommandStore<U extends boolean> {
             `return async (client, interaction) => { ${stack} }`
         )(
             this.#transformer,
-            optionParser,
+            innerOptionParser,
             ...handlers
         ) as never;
     }
@@ -349,5 +342,13 @@ export class ApplicationCommandStore<U extends boolean> {
     public clear(): void {
         this.#globalApplicationCommands.clear();
         this.#guildApplicationCommands.clear();
+    }
+}
+
+export function innerOptionParser(options: ApplicationCommand.DataStructure["options"], _obj: Record<string, unknown>): void {
+    if (!options) return;
+    for (let i = 0, { length } = options; i < length; i++) {
+        const opt = options[i];
+        _obj[opt.name] = opt.value;
     }
 }

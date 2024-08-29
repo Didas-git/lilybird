@@ -1,6 +1,5 @@
-import { ApplicationCommandStore } from "./application-command-store.js";
+import { ApplicationCommandStore, innerOptionParser } from "./application-command-store.js";
 import { MessageComponentStore } from "./message-component-store.js";
-import { defaultTransformers } from "@lilybird/transformers";
 import { ApplicationCommandOptionType } from "lilybird";
 import { HandlerIdentifier } from "./shared.js";
 import { join } from "node:path";
@@ -27,6 +26,7 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
     readonly #globMatcher = new Bun.Glob("**/*.{!d,ts,js,tsx,jsx}");
 
     #emit?: HandlerListener;
+    readonly #transformer: unknown;
     #cachePath?: string;
 
     public constructor(options: {
@@ -39,7 +39,10 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
         this.#emit = options.handlerListener;
 
         if (options.enableDynamicComponents) this.#mcs = new MessageComponentStore(options.handlerListener, options.enableDynamicComponents);
-        if (typeof options.transformers !== "undefined") this.#acs = new ApplicationCommandStore<U>(options.handlerListener, <never>options.transformers.interactionCreate?.handler);
+        if (typeof options.transformers !== "undefined") {
+            this.#acs = new ApplicationCommandStore<U>(options.handlerListener, <never>options.transformers.interactionCreate?.handler);
+            this.#transformer = options.transformers.interactionCreate?.handler;
+        }
     }
 
     public async scanDir(path: string): Promise<void> {
@@ -210,10 +213,12 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function(
             "transformer",
+            "parseOpts",
             ...functionNames,
             `return async (client, interaction) => { ${stack} }`
         )(
-            defaultTransformers.interactionCreate.handler,
+            this.#transformer,
+            innerOptionParser,
             ...handlers
         ) as never;
     }
