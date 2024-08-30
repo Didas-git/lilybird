@@ -357,6 +357,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
         await this.client.rest.deleteFollowupMessage(this.client.application.id, this.token, messageId);
     }
 
+    public async fetchOriginalReply(): Promise<LilyMessage.Structure> {
+        return this.client.rest.getWebhookMessage(this.applicationId, this.token, "@original", {});
+    }
+
     public isPingInteraction(): this is Interaction<undefined> {
         return this.type === InteractionType.PING;
     }
