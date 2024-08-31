@@ -116,7 +116,7 @@ export declare namespace Message {
      * @see {@link https://discord.com/developers/docs/resources/message#message-snapshot-structure}
      */
     export interface SnapshotStructure {
-        message: Pick<Structure, "type" | "content" | "embeds" | "attachments" | "timestamp" | "edited_timestamp" | "flags" | "mentions" | "mention_roles" >;
+        message: Pick<Structure, "type" | "content" | "embeds" | "attachments" | "timestamp" | "edited_timestamp" | "flags" | "mentions" | "mention_roles" | "stickers" | "sticker_items" | "components">;
     }
 
     /**
