@@ -21,7 +21,9 @@ jobs:
         with:
           node-version: latest
           registry-url: https://registry.npmjs.org
-      - name: Install Dependencies & Build
+      - name: Install Dependencies
+        run: bun i --frozen-lockfile
+      - name: Build
         run: bun run build:core && bun run build:transformers
       - name: Publish transformers
       # Bun doesnt have any publish methods yet
