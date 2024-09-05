@@ -9,8 +9,14 @@ sidebar:
 Sending messages can be done with the `REST` helper, and if you wish to do the same as a `reply` in discord you can use `message_reference`
 
 ```ts showLineNumbers
+import {
+  createClient,
+  Intents
+} from "lilybird";
+
 await createClient({
-  ...,
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
   listeners: {
     messageCreate: async (client, message) => {
       await client.rest.createMessage(message.channel_id, { 

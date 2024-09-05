@@ -12,6 +12,11 @@
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./builders": {
+      "types": "./dist/builders/index.d.ts",
+      "require": "./dist/builders/index.js",
+      "default": "./dist/builders/index.js"
+    },
     "./formatters": {
       "types": "./dist/message-formatting.d.ts",
       "require": "./dist/message-formatting.js",
@@ -26,6 +31,11 @@
       "types": "./dist/markdown.d.ts",
       "require": "./dist/markdown.js",
       "default": "./dist/markdown.js"
+    },
+    "./util": {
+      "types": "./dist/util.d.ts",
+      "require": "./dist/util.js",
+      "default": "./dist/util.js"
     },
     "./package.json": "./package.json"
   },

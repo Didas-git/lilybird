@@ -1,6 +1,6 @@
 import { Component as _Component } from "./message-components.js";
 
-import type { InteractionType, MessageActivityType, MessageType } from "#enums";
+import type { InteractionType, MessageActivityType, MessageReferenceType, MessageType } from "#enums";
 import type { LilybirdAttachment, ResolvedDataStructure } from "./others.js";
 import type { Application } from "./application.js";
 import type { Channel } from "./channel.js";
@@ -15,7 +15,7 @@ import type { Poll } from "./poll.js";
 export declare namespace Message {
     export import Component = _Component;
     /**
-     * @see {@link https://discord.com/developers/docs/resources/channel#message-object-message-structure}
+     * @see {@link https://discord.com/developers/docs/resources/message#message-object-message-structure}
      */
     export interface Structure {
         id: string;
@@ -44,11 +44,12 @@ export declare namespace Message {
         activity?: ActivityStructure;
         application?: Partial<Application.Structure>;
         application_id?: string;
-        message_reference?: ReferenceStructure;
         /**
          * Bitfield of {@link MessageFlags}
          */
         flags?: number;
+        message_reference?: ReferenceStructure;
+        message_snapshots?: Array<SnapshotStructure>;
         referenced_message?: Structure | null;
         interaction_metadata?: InteractionMetadataStructure;
         interaction?: InteractionStructure;
@@ -61,6 +62,7 @@ export declare namespace Message {
         role_subscription_data?: Role.SubscriptionDataStructure;
         resolved?: ResolvedDataStructure;
         poll?: Poll.Structure;
+        call?: CallStructure;
     }
 
     export interface GuildStructure extends Structure {
@@ -78,7 +80,7 @@ export declare namespace Message {
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/resources/channel#message-interaction-metadata-object-message-interaction-metadata-structure}
+     * @see {@link https://discord.com/developers/docs/resources/message#message-interaction-metadata-object-message-interaction-metadata-structure}
      */
     export interface InteractionMetadataStructure {
         id: string;
@@ -91,9 +93,19 @@ export declare namespace Message {
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/resources/channel#message-reference-object-message-reference-structure}
+     * @see {@link https://discord.com/developers/docs/resources/message#message-call-object-message-call-object-structure}
+     */
+    export interface CallStructure {
+        participants: Array<string>;
+        /** ISO8601 Timestamp */
+        ended_timestamp?: string;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/resources/message#message-reference-object-message-reference-structure}
      */
     export interface ReferenceStructure {
+        type?: MessageReferenceType;
         message_id?: string;
         channel_id?: string;
         guild_id?: string;
@@ -101,7 +113,14 @@ export declare namespace Message {
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/resources/channel#reaction-object-reaction-structure}
+     * @see {@link https://discord.com/developers/docs/resources/message#message-snapshot-structure}
+     */
+    export interface SnapshotStructure {
+        message: Pick<Structure, "type" | "content" | "embeds" | "attachments" | "timestamp" | "edited_timestamp" | "flags" | "mentions" | "mention_roles" | "stickers" | "sticker_items" | "components">;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/resources/message#reaction-object-reaction-structure}
      */
     export interface ReactionStructure {
         count: number;
@@ -113,7 +132,7 @@ export declare namespace Message {
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/resources/channel#reaction-count-details-object-reaction-count-details-structure}
+     * @see {@link https://discord.com/developers/docs/resources/message#reaction-count-details-object-reaction-count-details-structure}
      */
     export interface ReactionCountDetailsStructure {
         burst: number;

@@ -1,16 +1,16 @@
-import { Message } from "./index.js";
 import { ThreadChannel, channelFactory } from "./factories/channel.js";
 import { interactionFactory } from "./factories/interaction.js";
 import { GuildMember } from "./factories/guild-member.js";
 import { guildFactory } from "./factories/guild.js";
-import { User } from "./factories/user.js";
 import { TransformerReturnType } from "lilybird";
+import { User } from "./factories/user.js";
+import { Message } from "./index.js";
 
-import type { Interaction, PartialMessage } from "./index.js";
-import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
-import type { Guild, NewGuild } from "./factories/guild.js";
 import type { Channel, ExtendedThreadChannel } from "./factories/channel.js";
+import type { GuildMemberWithGuildId } from "./factories/guild-member.js";
 import type { Transformers, Guild as LilyGuild } from "lilybird";
+import type { Interaction, PartialMessage } from "./index.js";
+import type { Guild, NewGuild } from "./factories/guild.js";
 
 export const transformers = {
     channelCreate: {

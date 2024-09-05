@@ -13,19 +13,19 @@ import {
     MessageFlags
 } from "lilybird";
 
-import type { ReplyOptions } from "../typings/shared.js";
 import type { PartialChannel } from "./channel.js";
 
 import type {
     Application as LilyApplication,
     Interaction as LilyInteraction,
+    InteractionContextType,
     Message as LilyMessage,
     ResolvedDataStructure,
     LilybirdAttachment,
-    Locale,
-    Client,
     ApplicationCommand,
-    InteractionContextType
+    Webhook,
+    Locale,
+    Client
 } from "lilybird";
 
 export function interactionFactory(client: Client, interaction: LilyInteraction.Structure): Interaction {
@@ -58,11 +58,10 @@ export type InteractionData = ApplicationCommandData | AutocompleteData | Messag
 
 export interface AutocompleteData extends ApplicationCommandData<FocusedOption> {}
 
-export interface InteractionReplyOptions extends ReplyOptions {
-    ephemeral?: boolean;
-    tts?: boolean;
-    suppressEmbeds?: boolean;
-}
+export type InteractionReplyOptions = LilyInteraction.MessageCallbackDataStructure & {
+    ephemeral?: boolean,
+    suppressEmbeds?: boolean
+};
 
 export interface InteractionShowModalOptions {
     title: string;
@@ -70,7 +69,9 @@ export interface InteractionShowModalOptions {
     components: Array<LilyMessage.Component.ActionRowStructure>;
 }
 
-export interface InteractionEditOptions extends ReplyOptions {}
+export interface InteractionEditOptions extends Webhook.EditWebhookJSONParams {
+    files?: Array<LilybirdAttachment>;
+}
 
 export class Interaction<T extends InteractionData = InteractionData, M extends undefined | Message = undefined | Message> {
     public readonly client: Client;
@@ -118,7 +119,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -136,7 +138,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -181,7 +184,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -199,7 +203,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -259,7 +264,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                flags |= fl ?? 0;
 
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -277,7 +283,8 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            flags |= fl ?? 0;
 
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
@@ -348,6 +355,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
     public async deleteFollowUp(messageId: string): Promise<void> {
         await this.client.rest.deleteFollowupMessage(this.client.application.id, this.token, messageId);
+    }
+
+    public async fetchOriginalReply(): Promise<LilyMessage.Structure> {
+        return this.client.rest.getWebhookMessage(this.applicationId, this.token, "@original", {});
     }
 
     public isPingInteraction(): this is Interaction<undefined> {
@@ -686,7 +697,7 @@ class NotFoundError extends Error {
     }
 }
 
-export class MessageComponentData<T extends Array<string> | undefined = undefined> {
+export class MessageComponentData<T extends Array<string> | undefined = Array<string> | undefined> {
     public readonly id: string;
     public readonly type: ComponentType;
     public readonly values: T;

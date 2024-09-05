@@ -25,7 +25,7 @@ jobs:
         run: bun i --frozen-lockfile
       # bun doesnt support methods like `-ws`, `-w or similar yet
       - name: Build
-        run: cd packages/core && bun run build
+        run: bun run build:core
       - name: Publish core
       # Bun doesnt have any publish methods yet
         run: cd packages/core && npm publish --provenance --no-git-checks --access public

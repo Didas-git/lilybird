@@ -1,20 +1,16 @@
-import { createHandler } from "@lilybird/handlers";
-import { DebugIdentifier, Intents, createClient } from "lilybird";
+import { Intents, createClient } from "lilybird";
+import { handler } from "./handlers.js";
 
-const listeners = await createHandler({
-    dirs: {
-        slashCommands: `${import.meta.dir}/commands`,
-        listeners: `${import.meta.dir}/events`
-    }
-});
+handler.cachePath = `${import.meta.dir}/lily-cache/handler`;
+
+await handler.scanDir(`${import.meta.dir}/commands-adv`);
+await handler.scanDir(`${import.meta.dir}/events-adv`);
 
 await createClient({
     token: process.env.TOKEN,
     intents: [Intents.GUILDS],
-    attachDebugListener: true,
-    debugListener(identifier, payload) {
-        if (identifier === DebugIdentifier.Message) return;
-        console.log(identifier, payload ?? "");
+    setup: async (client) => {
+        await handler.loadGlobalCommands(client);
     },
-    ...listeners
+    listeners: handler.getListenersObject()
 });

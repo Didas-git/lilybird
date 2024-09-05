@@ -34,29 +34,34 @@ You can also set an execution policy, in short, this tells the client whether to
 
 Here is a small example of how this can be used:
 
-```ts
-import { createClient, Intents, CachingDelegationType, CacheExecutionPolicy } from "lilybird";
+```js
+import { 
+  CachingDelegationType,
+  CacheExecutionPolicy,
+  createClient,
+  Intents
+} from "lilybird";
 
 await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
-    caching: {
-        delegate: CachingDelegationType.DEFAULT,
-        enabled: {
-            channel: {
-                create: CacheExecutionPolicy.FIRST,
-                update: CacheExecutionPolicy.LAST,
-                delete: CacheExecutionPolicy.FIRST
-            }
-        }
-    },
-    listeners: {
-        channelUpdate: async (client, newChannel) => {
-            // Because the update cache is only ran after our listener
-            // The current cached channel with this id is the old one
-            const oldChannel = await client.cache.channels.get(newChannel.id);
-            console.log(oldChannel, newChannel);
-        }
+  token: process.env.TOKEN,
+  intents: [Intents.GUILDS],
+  caching: {
+    delegate: CachingDelegationType.DEFAULT,
+    enabled: {
+      channel: {
+        create: CacheExecutionPolicy.FIRST,
+        update: CacheExecutionPolicy.LAST,
+        delete: CacheExecutionPolicy.FIRST
+      }
     }
+  },
+  listeners: {
+    channelUpdate: async (client, newChannel) => {
+      // Because the update cache is only ran after our listener
+      // The current cached channel with this id is the old one
+      const oldChannel = await client.cache.channels.get(newChannel.id);
+      console.log(oldChannel, newChannel);
+    }
+  }
 });
 ```

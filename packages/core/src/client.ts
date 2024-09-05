@@ -295,7 +295,7 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
 
                 temp.push(
                     `await client.cache.set(${CacheElementType.GUILD},`,
-                    `${caching.applyTransformers ? "td.id, td" : "data.d.id, {...data.d,channels: undefined,threads:undefined,voice_states:undefined}"}`,
+                    caching.applyTransformers ? "td.id, td" : "data.d.id, {...data.d,channels: undefined,threads:undefined,voice_states:undefined}",
                     ");"
                 );
 

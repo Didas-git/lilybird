@@ -157,7 +157,7 @@ if (dependencies.includes("@lilybird/handlers")) {
     await cp(new URL("./templates/handlers-template.ts", import.meta.url), `./index.${type}`);
     await mkdir("listeners");
     process.chdir(resolve("listeners"));
-    await cp(new URL(`./templates/listener-template.${type}`, import.meta.url), `./ready.${type}`);
+    await cp(new URL("./templates/listener-template.ts", import.meta.url), `./ready.${type}`);
 } else if (dependencies.includes("@lilybird/transformers")) await cp(new URL("./templates/transformers-template.ts", import.meta.url), `./index.${type}`);
 else await cp(new URL("./templates/basic-template.ts", import.meta.url), `./index.${type}`);
 

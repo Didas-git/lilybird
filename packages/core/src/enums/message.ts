@@ -29,7 +29,13 @@ export const enum MessageType {
     STAGE_END,
     STAGE_SPEAKER,
     STAGE_TOPIC = 31,
-    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION,
+    GUILD_INCIDENT_ALERT_MODE_ENABLED = 36,
+    GUILD_INCIDENT_ALERT_MODE_DISABLED,
+    GUILD_INCIDENT_REPORT_RAID,
+    GUILD_INCIDENT_REPORT_FALSE_ALARM,
+    PURCHASE_NOTIFICATION = 44,
+    POLL_RESULT = 46
 }
 
 export const enum MessageFlags {
@@ -56,7 +62,8 @@ export const enum EmbedType {
     Video = "video",
     Gif = "gifv",
     Article = "article",
-    Link = "link"
+    Link = "link",
+    PollResult = "poll_result"
 }
 
 export const enum MessageActivityType {
@@ -76,4 +83,9 @@ export const enum StickerFormatType {
     APNG,
     LOTTIE,
     GIF
+}
+
+export const enum MessageReferenceType {
+    DEFAULT,
+    FORWARD
 }

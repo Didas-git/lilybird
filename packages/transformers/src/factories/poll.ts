@@ -1,6 +1,12 @@
-import type { Client, PollLayoutType, Poll as LilyPoll, User as LilyUser } from "lilybird";
 import { Message } from "./message.js";
 import { User } from "./user.js";
+
+import type {
+    Poll as LilyPoll,
+    User as LilyUser,
+    PollLayoutType,
+    Client
+} from "lilybird";
 
 export class PollAnswer {
     public readonly channelId: string;

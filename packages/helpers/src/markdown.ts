@@ -22,6 +22,10 @@ export function spoiler(text: string): string {
     return `||${text}||`;
 }
 
+export function subText(text: string): string {
+    return `-# ${text}`;
+}
+
 export function quote(text: string, multiline: boolean = false): string {
     return multiline ? `>>> ${text}` : `> ${text}`;
 }
@@ -35,7 +39,7 @@ export function maskedURL(text: string, url: string): string {
     return `[${text}](${url})`;
 }
 
-type ListElements = Array<string | ListElements>;
+export type ListElements = Array<string | ListElements>;
 
 export function unorderedList(elements: ListElements, depth: number = 0): string {
     let str = "";

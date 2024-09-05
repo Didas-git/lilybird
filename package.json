@@ -15,14 +15,22 @@
     "packages/*"
   ],
   "scripts": {
-    "check": "eslint ."
+    "check": "eslint .",
+    "build:core": "bun --filter lilybird build",
+    "build:transformers": "bun --filter @lilybird/transformers build",
+    "build:handlers": "bun --filter @lilybird/handlers build",
+    "build:redis": "bun --filter @lilybird/redis build",
+    "build:jsx": "bun --filter @lilybird/jsx build",
+    "build:helpers": "bun --filter @lilybird/helpers build",
+    "build:create": "bun --filter @lilybird/create build",
+    "build": "bun run build:core && bun run build:transformers && bun run build:handlers && bun run build:redis && bun run build:jsx && bun run build:helpers && bun run build:create && bun run check"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^1.7.2",
-    "bun-types": "^1.1.4",
-    "eslint": "^9.1.1",
-    "eslint-plugin-jsdoc": "^48.2.3",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.7.1"
+    "@stylistic/eslint-plugin": "^2.7.2",
+    "bun-types": "^1.1.26",
+    "eslint": "^9.9.1",
+    "eslint-plugin-jsdoc": "^50.2.2",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.3.0"
   }
 }
