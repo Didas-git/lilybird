@@ -83,6 +83,10 @@ export default defineConfig({
                     link: "philosophy"
                 },
                 {
+                    label: "Community",
+                    link: "community"
+                },
+                {
                     label: "Guides",
                     autogenerate: {
                         directory: "/guides"

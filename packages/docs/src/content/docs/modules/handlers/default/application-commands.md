@@ -33,11 +33,13 @@ import { $applicationCommand } from "@lilybird/handlers/advanced";
 $applicationCommand({
   name: "ping",
   description: "pong",
-  handle: async (interaction) => {
-    const { ws, rest } = await interaction.client.ping();
-
-    await interaction.reply({
-      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+  handle: async (client, interaction) => {
+    const { ws, rest } = await client.ping();
+    await client.rest.createInteractionResponse(interaction.id, interaction.token, {
+      type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+      data: {
+        content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+      }
     });
   },
 });
@@ -59,11 +61,13 @@ $applicationCommand({
       type: ApplicationCommandOptionType.SUB_COMMAND,
       name: "ping",
       description: "pong",
-      handle: async (interaction) => {
-        const { ws, rest } = await interaction.client.ping();
-    
-        await interaction.reply({
-          content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+      handle: async (client, interaction) => {
+        const { ws, rest } = await client.ping();
+        await client.rest.createInteractionResponse(interaction.id, interaction.token, {
+          type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+          }
         });
       },
     }
