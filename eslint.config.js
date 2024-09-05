@@ -56,6 +56,7 @@ export default tsEslint.config({
         "no-import-assign": "error",
         "no-inner-declarations": "error",
         "no-invalid-regexp": "error",
+        "no-loss-of-precision": "error",
         "no-misleading-character-class": "error",
         "no-obj-calls": "error",
         "no-promise-executor-return": "error",
@@ -176,7 +177,6 @@ export default tsEslint.config({
         "@typescript-eslint/no-implied-eval": "error",
         "@typescript-eslint/no-import-type-side-effects": "error",
         "@typescript-eslint/no-loop-func": "error",
-        "@typescript-eslint/no-loss-of-precision": "error",
         "@typescript-eslint/no-meaningless-void-operator": "warn",
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-mixed-enums": "error",
@@ -188,9 +188,10 @@ export default tsEslint.config({
         "@typescript-eslint/no-restricted-imports": "error",
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-this-alias": "error",
-        "@typescript-eslint/no-throw-literal": "error",
+        "@typescript-eslint/only-throw-error": "error",
         "@typescript-eslint/no-unnecessary-boolean-literal-compare": "warn",
         "@typescript-eslint/no-unnecessary-qualifier": "warn",
+        "@typescript-eslint/no-unnecessary-template-expression": "warn",
         "@typescript-eslint/no-unnecessary-type-arguments": "warn",
         "@typescript-eslint/no-unnecessary-type-assertion": "warn",
         "@typescript-eslint/no-unnecessary-type-constraint": "error",
@@ -199,26 +200,25 @@ export default tsEslint.config({
         "@typescript-eslint/no-unsafe-call": "error",
         "@typescript-eslint/no-unsafe-declaration-merging": "error",
         "@typescript-eslint/no-unsafe-enum-comparison": "error",
+        "@typescript-eslint/no-unsafe-function-type": "warn",
         "@typescript-eslint/no-unsafe-member-access": "error",
         "@typescript-eslint/no-unsafe-return": "error",
         "@typescript-eslint/no-unsafe-unary-minus": "error",
         "@typescript-eslint/no-useless-constructor": "error",
         "@typescript-eslint/no-useless-empty-export": "warn",
-        "@typescript-eslint/no-var-requires": "error",
+        "@typescript-eslint/no-wrapper-object-types": "warn",
         "@typescript-eslint/non-nullable-type-assertion-style": "error",
         "@typescript-eslint/parameter-properties": "error",
         "@typescript-eslint/prefer-destructuring": "warn",
         "@typescript-eslint/prefer-function-type": "warn",
         "@typescript-eslint/prefer-includes": "warn",
         "@typescript-eslint/prefer-literal-enum-member": "error",
-        "@typescript-eslint/prefer-nullish-coalescing": "error",
         "@typescript-eslint/prefer-optional-chain": "error",
         "@typescript-eslint/prefer-readonly": "warn",
         "@typescript-eslint/prefer-reduce-type-parameter": "warn",
         "@typescript-eslint/prefer-regexp-exec": "warn",
         "@typescript-eslint/prefer-return-this-type": "warn",
         "@typescript-eslint/prefer-string-starts-ends-with": "warn",
-        "@typescript-eslint/prefer-ts-expect-error": "warn",
         "@typescript-eslint/promise-function-async": "warn",
         "@typescript-eslint/require-await": "error",
         "@typescript-eslint/restrict-plus-operands": "error",
@@ -227,6 +227,14 @@ export default tsEslint.config({
         "@typescript-eslint/switch-exhaustiveness-check": "error",
         "@typescript-eslint/triple-slash-reference": "error",
         "@typescript-eslint/unified-signatures": "error",
+        "@typescript-eslint/no-empty-object-type": [
+            "error",
+            { allowInterfaces: "with-single-extends" }
+        ],
+        "@typescript-eslint/prefer-nullish-coalescing": [
+            "error",
+            { ignoreConditionalTests: false }
+        ],
         "@typescript-eslint/no-namespace": [
             "error",
             { allowDeclarations: true }
@@ -235,14 +243,6 @@ export default tsEslint.config({
             "warn",
             {
                 "default": "generic"
-            }
-        ],
-        "@typescript-eslint/ban-types": [
-            "warn",
-            {
-                "types": {
-                    "{}": false
-                }
             }
         ],
         "@typescript-eslint/explicit-function-return-type": [
@@ -375,12 +375,6 @@ export default tsEslint.config({
                     "protected-constructors",
                     "decoratedFunctions"
                 ]
-            }
-        ],
-        "@typescript-eslint/no-empty-interface": [
-            "warn",
-            {
-                "allowSingleExtends": true
             }
         ],
         "@typescript-eslint/no-floating-promises": [

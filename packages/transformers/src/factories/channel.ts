@@ -13,8 +13,7 @@ import type {
     Client
 } from "lilybird";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type PartialChannel<T extends Channel = Channel> = Partial<T> & { [K in keyof Channel as Channel[K] extends Function ? K : never]: Channel[K] };
+export type PartialChannel<T extends Channel = Channel> = Partial<T> & { [K in keyof Channel as Channel[K] extends (...args: Array<any>) => any ? K : never]: Channel[K] };
 export interface ResolvedChannel extends Channel {
     permissions: string;
 }

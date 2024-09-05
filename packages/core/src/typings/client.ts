@@ -215,6 +215,7 @@ export interface DefaultCache extends BaseCachingStructure {
     delegate: CachingDelegationType.DEFAULT;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type ParseCachingManager<T extends ClientOptions<Transformers>> = T["caching"] extends {}
     ? T["caching"]["applyTransformers"] extends true
         ? T["caching"] extends { transformerTypes: (infer U extends CacheWithTransformers["transformerTypes"]) }

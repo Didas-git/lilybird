@@ -10,6 +10,7 @@ export const cacheKeys: Required<BaseCachingStructure>["customKeys"] = {
 };
 
 export type MergeTransformers<T extends Transformers> = T & {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     [K in keyof Transformers as T[K] extends {} ? never : K]: Transformers[K]
 };
 

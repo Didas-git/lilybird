@@ -198,8 +198,7 @@ export class Handler {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-type Expand<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+type Expand<T> = T extends (...args: Array<any>) => any ? T : { [K in keyof T]: T[K] };
 
 export async function createHandler({
     dirs,
