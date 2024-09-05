@@ -23,7 +23,6 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Install Dependencies
         run: bun i --frozen-lockfile
-      # bun doesnt support methods like `-ws`, `-w or similar yet
       - name: Build
         run: bun run build:core
       - name: Publish core
