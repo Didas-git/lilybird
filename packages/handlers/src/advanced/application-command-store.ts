@@ -26,11 +26,11 @@ type MapOptionType<T extends ApplicationCommandOptionType> = T extends Applicati
 
 export type ApplicationCommandHandler<O extends Array<CommandOption>, U extends boolean> = U extends true
     ? (interaction: TransformedInteraction<ApplicationCommandData>) => Awaitable<unknown>
-    : (interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>;
+    : (client: Client, interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>;
 
 export type ApplicationAutocompleteHandler<O extends Array<CommandOption>, U extends boolean> = U extends true
     ? (interaction: TransformedInteraction<AutocompleteData>) => Awaitable<unknown>
-    : (interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>;
+    : (client: Client, interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>;
 
 interface CompiledCommand {
     body: { command: string, autocomplete: string | null };
@@ -154,7 +154,7 @@ export class ApplicationCommandStore<U extends boolean> {
             handlers.push(handler.auto_executor);
         }
 
-        let strArgs = useTransformer ? "transformer(client, interaction)" : "interaction";
+        let strArgs = useTransformer ? "transformer(client, interaction)" : "client, interaction";
         if (hasOptions && !useTransformer) strArgs += ", _obj";
 
         return {
