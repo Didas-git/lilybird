@@ -52,9 +52,15 @@ export function formatTimestamp(timestamp: string | Date | number, style: Timest
 export const enum GuildNavigationType {
     Customize = "customize",
     Browse = "browse",
-    Guide = "guide"
+    Guide = "guide",
+    LinkedRoles = "linked-roles"
 }
 
-export function formatGuildNavigation(type: GuildNavigationType): string {
+export function formatGuildNavigation(type: GuildNavigationType): string;
+export function formatGuildNavigation(type: GuildNavigationType.LinkedRoles, roleId?: string): string;
+export function formatGuildNavigation(type: GuildNavigationType, roleId?: string): string {
+    if (type === GuildNavigationType.LinkedRoles && typeof roleId !== "undefined")
+        return `<id:${type}:${roleId}`;
+
     return `<id:${type}>`;
 }
