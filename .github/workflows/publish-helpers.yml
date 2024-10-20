@@ -1,0 +1,32 @@
+name: Publish Helpers
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      # This is needed to be able to properly publish to npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          registry-url: https://registry.npmjs.org
+      - name: Install Dependencies
+        run: bun i --frozen-lockfile
+      - name: Build
+        run: bun run build:core && bun run build:transformers && bun run build:helpers
+      - name: Publish helpers
+      # Bun doesnt have any publish methods yet
+        run: cd packages/helpers && npm publish --provenance --no-git-checks --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM}}
