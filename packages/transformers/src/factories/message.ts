@@ -342,7 +342,7 @@ export class Message {
         return typeof this.components !== "undefined" && this.components.length > 0;
     }
 
-    public hasStickers(): this is this & { stickers: Array<Sticker.Structure> } {
-        return typeof this.stickers !== "undefined" && this.stickers.length > 0;
+    public hasStickers(): this is this & { stickerItems: Array<Sticker.ItemStructure> } {
+        return typeof this.stickerItems !== "undefined" && this.stickerItems.length > 0;
     }
 }
