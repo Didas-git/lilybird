@@ -34,6 +34,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
 
         // We want to guarantee the raw listener will always be the first thing on the stack even if its not included
         this.#stack.set("raw", "");
+        this.#stack.set("ready", "");
     }
 
     #createListener(
@@ -133,7 +134,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
     }
 
     //! TODO: Support a once listener and always listener simultaneously
-    #addReadyListener(once: boolean, listener?: (client: C, payload: Ready["d"]) => Awaitable<any>): void {
+    #addReadyListener(once: boolean = false, listener?: (client: C, payload: Ready["d"]) => Awaitable<any>): void {
         const readyArr = [];
         readyArr.push(
             "if(payload.t === \"READY\"){",
@@ -385,6 +386,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         return this;
     }
 
+    //? Raw listener should probably be completely removed now that dispatch is exposed
     public addRawListener(listener: (payload: ReceiveDispatchEvent) => Awaitable<any>): this {
         this.#stack.set("raw", "await raw(payload)");
         this.#callbacks.set("raw", listener);
@@ -432,6 +434,9 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         },
         stack: string
     } {
+        const hasReadyListener = !(this.#stack.get("ready") === "");
+        if (!hasReadyListener) this.#addReadyListener();
+
         const names = [...this.#callbacks.keys()];
         const handlers = [...this.#callbacks.values()];
         const compiledListeners = [...this.#stack.values()].join("");
@@ -449,6 +454,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         this.#stack.clear();
         this.#callbacks.clear();
         this.#stack.set("raw", "");
+        this.#stack.set("ready", "");
     }
 
     public getDispatchFunction(clientPointer: C, resumeInfoPointer: { url: string, id: string }): DispatchFunction {
