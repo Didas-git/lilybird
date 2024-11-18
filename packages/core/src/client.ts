@@ -38,6 +38,7 @@ export class Client {
                 intents: options.intents,
                 presence: options.presence
             },
+            undefined,
             debug
         );
 

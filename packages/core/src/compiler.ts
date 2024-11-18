@@ -26,7 +26,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
     readonly #transformers: T;
     readonly #shouldTransformClientUser: boolean;
 
-    public constructor(options: { transformers?: T, transformClient?: boolean }) {
+    public constructor(options: { transformers?: T, transformClient?: boolean } = {}) {
         this.#stack = new Map();
         this.#callbacks = new Map();
         this.#transformers = options.transformers ?? <T>{};
