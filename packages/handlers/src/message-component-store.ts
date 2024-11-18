@@ -1,5 +1,5 @@
 
-import { defaultTransformers } from "@lilybird/transformers";
+import { makeTransformersObject } from "@lilybird/transformers";
 import { ComponentType, InteractionType } from "lilybird";
 import { HandlerIdentifier } from "./shared.js";
 
@@ -11,6 +11,9 @@ import type {
     Message as TransformedMessage,
     MessageComponentData
 } from "@lilybird/transformers";
+
+//!TODO REWORK THIS ENTIRE THING
+const defaultTransformers = makeTransformersObject();
 
 interface CompiledComponent {
     body: string;

@@ -2,12 +2,13 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "outDir": "dist",
-        "baseUrl": "."
+        "baseUrl": ".",
+        "types": [
+            "bun-types",
+            "./globals"
+        ],
     },
     "include": [
         "src/**/*"
-    ],
-    "exclude": [
-        "src/templates/**/*.ts"
     ]
 }

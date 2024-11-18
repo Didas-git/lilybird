@@ -1,21 +1,16 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
   "license": "Apache-2.0",
   "type": "module",
   "exports": {
-    "./simple": {
-      "types": "./dist/simple/index.d.ts",
-      "require": "./dist/simple/index.js",
-      "default": "./dist/simple/index.js"
-    },
-    "./advanced": {
-      "types": "./dist/advanced/index.d.ts",
-      "require": "./dist/advanced/index.js",
-      "default": "./dist/advanced/index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -52,7 +47,7 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.8.0",
+    "lilybird": "^0.9.0",
     "@lilybird/transformers": "^0.4.0"
   }
 }

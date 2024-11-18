@@ -58,12 +58,12 @@ export function generateTSConfig(type: string, pm: string): string {
 export function generateGlobalTypes(pm: string): string {
     return pm === "bun" ? `declare module "bun" {
     interface Env {
-        TOKEN: string
+        readonly TOKEN: string
     }
 }`
         : `declare namespace NodeJS {
     interface ProcessEnv {
-        TOKEN: string
+        readonly TOKEN: string
     }
 }`;
 }

@@ -1,13 +1,21 @@
-import { defaultTransformers } from "@lilybird/transformers";
-import { createClient, Intents } from "lilybird";
+import { makeTransformersObject } from "@lilybird/transformers";
+import { Intents, Client, ListenerCompiler } from "lilybird";
 
-await createClient({
-    token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
-    transformers: defaultTransformers,
-    listeners: {
-        ready(client) {
-            console.log(`Logged in as ${client.user.username}`);
-        }
-    }
+import type { MergeTransformers } from "@lilybird/transformers";
+
+const transformers = makeTransformersObject<Client>();
+
+const compiler = new ListenerCompiler<Client, MergeTransformers<Client, typeof transformers>>({
+    transformClient: true,
+    transformers
 });
+
+compiler.addListener("ready", (client) => {
+    console.log(`Logged in as ${client.user.username}`);
+}, true);
+
+const client = new Client({
+    intents: Intents.GUILDS
+});
+
+await client.login(process.env.TOKEN, compiler.getDispatchFunction(client, client.ws.resumeInfo));

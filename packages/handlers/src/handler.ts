@@ -8,18 +8,17 @@ import type { BaseCommandOption, CommandOption, CommandStructure, SubCommandStru
 import type { ComponentStructure, DynamicComponentStructure } from "./message-component-store.js";
 import type { HandlerListener } from "./shared.js";
 import type {
-    CacheManagerStructure,
     ApplicationCommand,
-    ClientListeners,
     Transformers,
     Interaction,
     Awaitable,
+    Listeners,
     Client
 } from "lilybird";
 
 type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommandJSONParams;
 
-export class Handler<T extends Transformers = Transformers, U extends boolean = false> {
+export class Handler<T extends Transformers<Client> = Transformers<Client>, U extends boolean = false> {
     readonly #acs = new ApplicationCommandStore<U>();
     readonly #mcs = new MessageComponentStore();
     readonly #listeners = new Map<string, (...args: Array<any>) => any>();
@@ -32,7 +31,7 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
     public constructor(options: {
         cachePath?: string,
         enableDynamicComponents?: boolean,
-        transformers?: Transformers,
+        transformers?: T,
         handlerListener?: HandlerListener
     }) {
         this.#cachePath = options.cachePath;
@@ -64,9 +63,9 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
     public subCommandMock<const O extends Array<BaseCommandOption>>(data: SubCommandStructure<O, U>): SubCommandStructure<O, U> { return data; }
 
     public storeListener<
-        TR extends Transformers = T,
+        TR extends Transformers<Client> = T,
         K extends keyof TR = keyof TR
-    >(data: { event: K, handle: Required<ClientListeners<TR>>[K] }): void {
+    >(data: { event: K, handle: Required<Listeners<Client, TR>>[K] }): void {
         this.#listeners.set(<never>data.event, <never>data.handle);
     }
 
@@ -223,7 +222,7 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
         ) as never;
     }
 
-    public getListenersObject<TR extends Transformers = Transformers>(includeCommands: boolean = true): ClientListeners<TR> {
+    public getListenersObject(includeCommands: boolean = true): Listeners<Client, T> {
         const obj: Record<string, unknown> = {};
 
         for (let i = 0, entries = [...this.#listeners.entries()], { length } = entries; i < length; i++) {
@@ -235,7 +234,7 @@ export class Handler<T extends Transformers = Transformers, U extends boolean = 
             const listener = this.compileCommands();
             if (listener === null) return obj as never;
             if ("interactionCreate" in obj) {
-                obj.interactionCreate = (client: Client<Transformers, CacheManagerStructure>, interaction: Interaction.Structure) => {
+                obj.interactionCreate = (client: Client, interaction: Interaction.Structure) => {
                     // @ts-expect-error The obj constant is not typed
                     obj.interactionCreate(client, interaction);
                     listener(client, interaction);

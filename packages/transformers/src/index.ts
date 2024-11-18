@@ -1,17 +1,15 @@
 import type { BaseCachingStructure } from "lilybird";
-import { transformers } from "./transformers.js";
 import type { Transformers } from "lilybird";
 
-export type DefaultTransformers = MergeTransformers<typeof transformers>;
-export const defaultTransformers: DefaultTransformers = transformers;
+export { makeTransformersObject } from "./transformers.js";
 
 export const cacheKeys: Required<BaseCachingStructure>["customKeys"] = {
     guild_voice_states: "voiceStates"
 };
 
-export type MergeTransformers<T extends Transformers> = T & {
+export type MergeTransformers<C, T extends Transformers<C>> = T & {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-    [K in keyof Transformers as T[K] extends {} ? never : K]: Transformers[K]
+    [K in keyof Transformers<C> as T[K] extends {} ? never : K]: Transformers<C>[K]
 };
 
 export type {
