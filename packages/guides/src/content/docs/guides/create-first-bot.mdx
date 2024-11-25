@@ -1,0 +1,96 @@
+---
+title: Creating your first bot
+description: Configure Lilybird however you would like.
+sidebar:
+  order: 1
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+In this guide you will learn how to create a simple ticket bot using lilybird **without** any modules.
+
+## Setup
+
+To setup your bot follow the instructions in the [getting started page](../getting-started/), this will be the foundation throughout this guide.
+
+:::tip
+It is highly recommended that you use discord's web version to test your bot, the discord app (both mobile and desktop) cache commands and when you edit/add commands you are pretty much required to restart the apps to see the changes, using the web version you can simply hit `F5` to see your changes.
+:::
+
+## Handling your first interaction
+
+Interactions are hte most fundamental building blocks in modern discord bots as they allow us to use buttons, modals and other features.
+
+Lets start by creating our first command, we will call it `ping`.
+
+```ts title="index.ts" showLineNumbers {"1. Make the function async":7-8} ins={9-13} collapse={4-6}
+import { createClient, Intents } from "lilybird";
+
+await createClient({
+  token: process.env.TOKEN,
+  intents: Intents.GUILDS,
+  listeners: {
+
+    setup: async (client, payload) => {
+      await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, [
+        {
+          name: "ping"
+        }
+      ]);
+
+      console.log(`Logged in as ${payload.user.username}`);
+    }
+  }
+});
+
+```
+
+Lets create a simple listener that will listen for an interaction called `ping` and reply with some message.
+
+```ts title="index.ts" showLineNumbers del={1} ins={2-5} collapse={11-22} ins={"1. Define the listener":23-24} ins={"2. Narrow down the interaction type so only interactions in guilds will be handled": 25-26} ins={"3. Only chat input interactions should be handled in this case":27-31} ins={"4. Handle the ping command":32-43}
+import { createClient, Intents } from "lilybird";
+import {
+  InteractionCallbackType,
+  ApplicationCommandType,
+  InteractionType,
+  createClient,
+  Intents
+} from "lilybird";
+
+await createClient({
+  token: process.env.TOKEN,
+  intents: Intents.GUILDS,
+  listeners: {
+    setup: async (client, payload) => {
+      await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, [
+        {
+          name: "ping"
+        }
+      ]);
+
+      console.log(`Logged in as ${payload.user.username}`);
+    }
+
+    interactionCreate: async (client, payload) => {
+
+      if (!("guild_id" in payload)) return;
+
+      if (
+        payload.type === InteractionType.APPLICATION_COMMAND
+        && payload.data.type === ApplicationCommandType.CHAT_INPUT
+      ) {
+
+        if (payload.data.name === "ping") {
+          await client.rest.createInteractionResponse(payload.id, payload.token, {
+            type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+            data: {
+              content: "Pong!"
+            }
+          });
+          return;
+        }
+      }
+    }
+  }
+});
+```

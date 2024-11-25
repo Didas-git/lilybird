@@ -8,7 +8,6 @@ import {
 
 import type { DispatchFunction } from "#ws";
 import type {
-    ReceiveDispatchEvent,
     SelectiveCache,
     CachingOptions,
     Transformers,
@@ -37,8 +36,6 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         this.#transformers = options.transformers ?? <T>{};
         this.#shouldTransformClientUser = options.transformClient ?? false;
 
-        // We want to guarantee the raw listener will always be the first thing on the stack even if its not included
-        this.#stack.set("raw", "");
         this.#stack.set("ready", "");
     }
 
@@ -411,13 +408,6 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         return this;
     }
 
-    //? Raw listener should probably be completely removed now that dispatch is exposed
-    public addRawListener(listener: (payload: ReceiveDispatchEvent) => Awaitable<any>): this {
-        this.#stack.set("raw", "await raw(payload)");
-        this.#callbacks.set("raw", listener);
-        return this;
-    }
-
     /**
      * @param name - The name of the event you are listening to
      * @param handler - The handler that will be executed when the event is received
@@ -429,11 +419,6 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         handler: L[K] & {},
         once: boolean = false
     ): this {
-        if (name === "raw") {
-            this.addRawListener(handler);
-            return this;
-        }
-
         if (name === "setup") {
             this.#callbacks.set("once_ready", handler);
             return this;
@@ -481,7 +466,6 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
     public clearStack(): void {
         this.#stack.clear();
         this.#callbacks.clear();
-        this.#stack.set("raw", "");
         this.#stack.set("ready", "");
     }
 

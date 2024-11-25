@@ -29,7 +29,6 @@ import type {
     GuildIntegrationsUpdate,
     MessageReactionRemove,
     MessagePollVoteRemove,
-    ReceiveDispatchEvent,
     GuildStickersUpdate,
     StageInstanceCreate,
     StageInstanceUpdate,
@@ -93,10 +92,6 @@ export type Transformer<C, T> = {
 };
 
 export interface Transformers<C> {
-    raw?: {
-        return: TransformerReturnType,
-        handler: (payload: ReceiveDispatchEvent) => unknown
-    };
     /**
      * Special case, its a `ready` handler that only fires once
      */
