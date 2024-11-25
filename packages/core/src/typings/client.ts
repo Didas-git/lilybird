@@ -97,6 +97,10 @@ export interface Transformers<C> {
         return: TransformerReturnType,
         handler: (payload: ReceiveDispatchEvent) => unknown
     };
+    /**
+     * Special case, its a `ready` handler that only fires once
+     */
+    setup?: Transformer<C, Ready["d"]>;
     ready?: Transformer<C, Ready["d"]>;
     resumed?: Transformer<C, undefined>;
     applicationCommandPermissionsUpdate?: Transformer<C, ApplicationCommandPermissionsUpdate["d"]>;
@@ -239,7 +243,7 @@ export type CachingOptions = (DefaultCache | ExternalCache | TransformersCache) 
 
 export interface MockClient {
     /** By default this is a UserStructure, but can change according to your transformers*/
-    readonly user: unknown;
+    readonly user: any;
     readonly sessionId: string;
     readonly application: Application.Structure;
     readonly cache: CacheManagerStructure;

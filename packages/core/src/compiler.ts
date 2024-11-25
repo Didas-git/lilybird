@@ -19,6 +19,11 @@ import type {
     Ready
 } from "./typings/index.js";
 
+export interface CompilerOptions<T extends Transformers<any>> {
+    transformers?: T;
+    transformClient?: boolean;
+}
+
 export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
     readonly #stack: Map<string, string>;
     readonly #callbacks: Map<string, (...args: any) => any>;
@@ -26,7 +31,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
     readonly #transformers: T;
     readonly #shouldTransformClientUser: boolean;
 
-    public constructor(options: { transformers?: T, transformClient?: boolean } = {}) {
+    public constructor(options: CompilerOptions<T> = {}) {
         this.#stack = new Map();
         this.#callbacks = new Map();
         this.#transformers = options.transformers ?? <T>{};
@@ -135,6 +140,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
 
     //! TODO: Support a once listener and always listener simultaneously
     #addReadyListener(once: boolean = false, listener?: (client: C, payload: Ready["d"]) => Awaitable<any>): void {
+        const onceListener = this.#callbacks.get("once_ready");
         const readyArr = [];
         readyArr.push(
             "if(payload.t === \"READY\"){",
@@ -152,12 +158,32 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
             "Object.assign(resume_info_ptr{url:payload.d.resume_gateway_url,id:payload.d.session_id});"
         );
 
-        if (typeof listener !== "undefined") {
-            if (once) readyArr.push("if(!client_ptr.ready){client_ptr.ready=true;");
-            this.#callbacks.set("ready", listener);
+        if (typeof listener !== "undefined") this.#callbacks.set("ready", listener);
+        if (once || onceListener) readyArr.push("if(!client_ptr.ready){client_ptr.ready=true;");
 
+        if (typeof this.#transformers.ready !== "undefined") {
+            this.#callbacks.set("t_ready", this.#transformers.ready.handler);
+            switch (this.#transformers.ready.return) {
+                case TransformerReturnType.SINGLE: {
+                    if (onceListener) readyArr.push("await once_ready(t_ready(client_ptr, payload.d));");
+                    if (once && typeof listener !== "undefined") readyArr.push("await ready(t_ready(client_ptr, payload.d));");
+                    break;
+                }
+                case TransformerReturnType.MULTIPLE: {
+                    if (onceListener) readyArr.push("await once_ready(...t_ready(client_ptr, payload.d));");
+                    if (once && typeof listener !== "undefined") readyArr.push("await ready(...t_ready(client_ptr, payload.d));");
+                    break;
+                }
+            }
+        } else {
+            if (onceListener) readyArr.push("await once_ready(client_ptr, payload.d);");
+            if (once && typeof listener !== "undefined") readyArr.push("await ready(client_ptr, payload.d);");
+        }
+
+        if (once || onceListener) readyArr.push("}");
+
+        if (!once && typeof listener !== "undefined") {
             if (typeof this.#transformers.ready !== "undefined") {
-                this.#callbacks.set("t_ready", this.#transformers.ready.handler);
                 switch (this.#transformers.ready.return) {
                     case TransformerReturnType.SINGLE: {
                         readyArr.push("await ready(t_ready(client_ptr, payload.d));");
@@ -169,7 +195,6 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
                     }
                 }
             } else readyArr.push("await ready(client_ptr, payload.d);");
-            if (once) readyArr.push("}");
         }
 
         readyArr.push("}");
@@ -405,12 +430,15 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         once: boolean = false
     ): this {
         if (name === "raw") {
-            this.addRawListener(<never>handler);
+            this.addRawListener(handler);
             return this;
         }
 
-        if (name === "ready") {
-            this.#addReadyListener(once, <never>handler);
+        if (name === "setup") {
+            this.#callbacks.set("once_ready", handler);
+            return this;
+        } else if (name === "ready") {
+            this.#addReadyListener(once, handler);
             return this;
         }
 

@@ -1,10 +1,11 @@
-import { Client, GatewayEvent, Intents } from "lilybird";
+import { createClient, Intents } from "lilybird";
 
-const client = new Client({
+await createClient({
+    token: process.env.TOKEN,
     intents: Intents.GUILDS,
-    dispatch: (payload) => {
-        if (payload.t === GatewayEvent.Ready) console.log(`Logged in as ${client.user.username}`);
+    listeners: {
+        setup: (_, payload) => {
+            console.log(`Logged in as ${payload.user.username}`);
+        }
     }
 });
-
-await client.login(process.env.TOKEN);
