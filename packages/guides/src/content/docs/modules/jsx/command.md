@@ -13,7 +13,7 @@ Creating slash commands with Lilybird's JSX components is a trivial task. You ca
 import { ApplicationCommand, StringOption, UserOption } from "@lilybird/jsx";
 
 const command = (
-  <ApplicationCommand name="docs" description="Search at docs">
+  <ApplicationCommand name="docs" description="Search the docs">
     <StringOption name="query" description="Select query" required />
     <UserOption name="target" description="User to mention" />
   </ApplicationCommand>

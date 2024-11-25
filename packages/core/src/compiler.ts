@@ -135,7 +135,6 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         this.#stack.set(event, temp.join(""));
     }
 
-    //! TODO: Support a once listener and always listener simultaneously
     #addReadyListener(once: boolean = false, listener?: (client: C, payload: Ready["d"]) => Awaitable<any>): void {
         const onceListener = this.#callbacks.get("once_ready");
         const readyArr = [];
@@ -447,7 +446,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         },
         stack: string
     } {
-        const hasReadyListener = !(this.#stack.get("ready") === "");
+        const hasReadyListener = this.#stack.get("ready") !== "";
         if (!hasReadyListener) this.#addReadyListener();
 
         const names = [...this.#callbacks.keys()];

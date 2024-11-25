@@ -63,7 +63,11 @@ export class Client implements MockClient {
         this.ws.close();
     }
 
-    /** Both numbers are represented in `ms` */
+    /**
+     * Both numbers are represented in `ms`.
+     *
+     * This function requires Bun to work.
+     */
     public async ping(): Promise<{ ws: number, rest: number }> {
         const start = performance.now();
         await this.rest.getGateway();
