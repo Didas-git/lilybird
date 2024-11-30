@@ -8,5 +8,5 @@ coverage/
 .dccache
 
 packages/guides/diagrams/*.svg
-packages/guides/src/content/docs/**/documentation/
+packages/guides/src/content/docs/temp/
 packages/test/**/lily-cache/

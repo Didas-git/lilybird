@@ -1,22 +1,41 @@
-import { Intents, Client, ListenerCompiler } from "lilybird";
-import { handler } from "./handlers.js";
+import {
+    InteractionCallbackType,
+    ApplicationCommandType,
+    InteractionType,
+    createClient,
+    Intents
+} from "lilybird";
 
-import type { MergeTransformers } from "@lilybird/transformers";
-import type { defaultTransformers } from "./handlers.js";
+await createClient({
+    token: process.env.TOKEN,
+    intents: Intents.GUILDS,
+    listeners: {
+        setup: async (client, payload) => {
+            await client.rest.bulkOverwriteGlobalApplicationCommand(client.user.id, [
+                {
+                    name: "ping"
+                }
+            ]);
 
-handler.cachePath = `${import.meta.dir}/lily-cache/handler`;
-
-await handler.scanDir(`${import.meta.dir}/commands`);
-await handler.scanDir(`${import.meta.dir}/events`);
-
-const compiler = new ListenerCompiler<Client, MergeTransformers<Client, typeof defaultTransformers>>({})
-    .addListener("ready", async (client) => {
-        await handler.loadGlobalCommands(client);
-    }, true)
-    .addListenersFromObject(<never>handler.getListenersObject());
-
-const client = new Client({
-    intents: Intents.GUILDS
+            console.log(`Logged in as ${payload.user.username}`);
+        },
+        interactionCreate: async (client, payload) => {
+            // We will only be handling Guild interactions
+            // so we do this properly narrow down the type
+            if (!("guild_id" in payload)) return;
+            // In this block we only want to handle chat input commands
+            if (payload.type === InteractionType.APPLICATION_COMMAND && payload.data.type === ApplicationCommandType.CHAT_INPUT) {
+                // Inside this block we can handle our ping command
+                if (payload.data.name === "ping") {
+                    await client.rest.createInteractionResponse(payload.id, payload.token, {
+                        type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
+                        data: {
+                            content: "Pong!"
+                        }
+                    });
+                    return;
+                }
+            }
+        }
+    }
 });
-
-await client.login(process.env.TOKEN, compiler.getDispatchFunction(client, client.ws.resumeInfo));

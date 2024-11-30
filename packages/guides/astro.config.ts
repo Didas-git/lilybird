@@ -7,7 +7,7 @@ export default defineConfig({
     integrations: [
         starlight({
             title: "Lilybird",
-            description: "Lightweight and performant Discord API Wrapper built by the community for the community.",
+            description: "The most performant and lightweight Discord API Wrapper for JavaScript built by developers for developers.",
             customCss: ["./src/styles/index.css"],
             lastUpdated: true,
             social: {

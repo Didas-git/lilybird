@@ -1,21 +1,23 @@
 ---
 title: Getting Started
-description: Learn how to setup Lilybird.
+description: Get started fast with Lilybird.
 sidebar:
   order: 0
 ---
 
 import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
 
-:::danger[Important]
-Lilybird <u>does not</u> officially support <u>**deno**</u>. While the core should work, there's no guarantee that the modules or, for that matter the examples will.
-:::
+## Before you start
+
+Lilybird is a thing wrapper on top of the Discord API, if you are not using transformers the best documentation you can read is the official one that can be found [here](https://discord.com/developers/docs/).
+
+All the `interfaces`, `types` and `REST` methods in lilybird follow the naming scheme found in the official documentation, if you ever find something that doesn't match feel free to open a pull request. 
 
 ## Installation
 
 The fastest way to get started with Lilybird is by using our template generator.
 
-<Tabs>
+<Tabs syncKey="package-managers">
   <TabItem label="bun" icon="bun">
     ```bash frame="none"
     bun create @lilybird
@@ -42,10 +44,6 @@ The fastest way to get started with Lilybird is by using our template generator.
 
 After running the command you should see a file structure somewhat like this:
 
-:::note
-Depending on the selected language for the template the structure may differ: The JavaScript template will not contain type or config files (`globals.d.ts` and `tsconfig.json`)
-:::
-
 <FileTree>
 
 - globals.d.ts
@@ -57,38 +55,68 @@ Depending on the selected language for the template the structure may differ: Th
 
 </FileTree>
 
-### Adding your token
+Don't forget to add your token as mentioned above.
 
-To add your bot token open your `.env` file and add the token after `TOKEN=`.
+:::note
+Depending on the selected language for the template the structure may differ: The JavaScript template will not contain type or config files (`globals.d.ts` and `tsconfig.json`)
+:::
 
 ### Starting your bot
 
-:::tip
-If you are using Bun you can run `bun start` no matter what language you are using.
-:::
+To start your first bot all you need to do is run the `dev` script found in your `package.json`.
 
-<Tabs>
-  <TabItem label="TypeScript">
+<Tabs syncKey="package-managers">
+  <TabItem label="bun" icon="bun">
+    ```bash frame="none"
+    bun dev
+    ```
+  </TabItem>
+  <TabItem label="npm" icon="seti:npm">
     ```bash frame="none"
     npm run dev
     ```
   </TabItem>
-  <TabItem label="JavaScript">
+  <TabItem label="pnpm" icon="pnpm">
     ```bash frame="none"
-    npm run start
+    pnpm run dev
+    ```
+  </TabItem>
+  <TabItem label="yarn" icon="seti:yarn">
+    ```bash frame="none"
+    yarn run dev
     ```
   </TabItem>
 </Tabs>
 
 ### Ready for production
 
-If you are using TypeScript we highly recommend adding `NODE_ENV="production"` to your `.env` file and if you are using Node, do the following.
+Running your bot is rather simple, however we have a few recommendations that can help improve performance in some cases:
+- If you are using Bun or Node, add `NODE_ENV="production"` to your `.env` file.
+- If you are using Bun, change or add a script to run production using `bun --smol`.
 
-:::note
-If you are using <u>**Bun**</u> we highly encourage changing or adding a script to run production using `bun --smol`.
-:::
-
-```bash frame="none"
-npm run build
-npm run start
-```
+<Tabs syncKey="package-managers">
+  <TabItem label="bun" icon="bun">
+    ```bash frame="none"
+    bun run build
+    bun start
+    ```
+  </TabItem>
+  <TabItem label="npm" icon="seti:npm">
+    ```bash frame="none"
+    npm run build
+    npm run start
+    ```
+  </TabItem>
+  <TabItem label="pnpm" icon="pnpm">
+    ```bash frame="none"
+    pnpm run build
+    pnpm run start
+    ```
+  </TabItem>
+  <TabItem label="yarn" icon="seti:yarn">
+    ```bash frame="none"
+    yarn run build
+    yarn run start
+    ```
+  </TabItem>
+</Tabs>
