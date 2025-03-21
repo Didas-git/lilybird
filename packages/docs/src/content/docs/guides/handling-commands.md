@@ -29,7 +29,7 @@ async function setup(client: Client): Promise<void> {
   // Lets register a command called 'ping'
   await client.rest.createGlobalApplicationCommand(client.user.id, {
     name: "ping",
-    description: "pong"
+    description: "pong",
   });
 }
 ```
@@ -39,23 +39,19 @@ async function setup(client: Client): Promise<void> {
 Above we created a command called `ping` and now we want to handle it, lets create a simple handler to do this.
 
 ```ts showLineNumbers
-import type { 
-  ApplicationCommandInteractionStructure,
-  InteractionStructure,
-  Client,
-} from "lilybird";
+import { type Client, Interaction, InteractionCallbackType } from "lilybird";
 
 async function handleCommand(
-  client: Client, 
-  interaction: ApplicationCommandInteractionStructure
+  client: Client,
+  interaction: Interaction.ApplicationCommandInteractionStructure
 ): Promise<void> {
   if (interaction.data.name === "ping") {
     const { ws, rest } = await client.ping();
     await client.rest.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
-          content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
-      }
+        content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``,
+      },
     });
   }
 }
@@ -65,38 +61,35 @@ async function handleCommand(
 
 Now, everything left for us to do is put it all together.
 
-```ts showLineNumbers collapse={7-34, 37-38}
+```ts showLineNumbers collapse={10-31, 34-35}
 import {
+  type Client,
   InteractionType,
   createClient,
-  Intents
-} from "lilybird";
-
-import type { 
-  ApplicationCommandInteractionStructure,
-  InteractionStructure,
-  Client,
+  Interaction,
+  InteractionCallbackType,
+  Intents,
 } from "lilybird";
 
 async function setup(client: Client): Promise<void> {
   // Lets register a command called 'ping'
   await client.rest.createGlobalApplicationCommand(client.user.id, {
     name: "ping",
-    description: "pong"
+    description: "pong",
   });
 }
 
 async function handleCommand(
-  client: Client, 
-  interaction: ApplicationCommandInteractionStructure
+  client: Client,
+  interaction: Interaction.ApplicationCommandInteractionStructure
 ): Promise<void> {
   if (interaction.data.name === "ping") {
     const { ws, rest } = await client.ping();
     await client.rest.createInteractionResponse(interaction.id, interaction.token, {
       type: InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE,
       data: {
-          content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
-      }
+        content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``,
+      },
     });
   }
 }
@@ -114,7 +107,7 @@ await createClient({
       if (payload.type !== InteractionType.APPLICATION_COMMAND) return;
 
       await handleCommand(client, payload);
-    }
-  }
+    },
+  },
 });
 ```

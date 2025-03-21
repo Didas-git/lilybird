@@ -1,6 +1,6 @@
 ---
 title: Handling Message Commands
-description: How to use lilybird's handlers for application commands.
+description: How to use lilybird's simple handlers for application commands.
 sidebar:
   order: 2
 ---
@@ -17,13 +17,13 @@ import { createClient, Intents } from "lilybird";
 
 +const listeners = await createHandler({
 +    dirs: {
-+        messageCommands: `${import.meta.dir}/commands`,
++        messageCommands: `${import.meta.dir}/message-commands`,
 +    }
 +})
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
+  intents: [Intents.GUILD_MESSAGES, Intents.MESSAGE_CONTENT],
 -  listeners: {/* your listeners */}
 +  ...listeners
 })
@@ -31,15 +31,17 @@ await createClient({
 
 :::note
 The second argument, `args`, is the result of running the following code:
+
 ```ts
 message.content.slice(this.prefix.length)
   .trim()
   .split(/\s+/g)
-  .shift()
+  .shift();
 ```
+
 :::
 
-```ts title="commands/ping.ts"
+```ts title="message-commands/ping.ts"
 import { MessageCommand } from "@lilybird/handlers/simple";
 
 export default {
@@ -48,10 +50,10 @@ export default {
     const { ws, rest } = await message.client.ping();
 
     await message.reply({
-      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``,
     });
   },
-} satisfies MessageCommand
+} satisfies MessageCommand;
 ```
 
 :::note

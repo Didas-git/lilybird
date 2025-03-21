@@ -9,7 +9,7 @@ sidebar:
 
 Creating slash commands with Lilybird's JSX components is a trivial task. You can create one with the parent element `ApplicationCommand` and add options by importing the respective `<type>Option`.
 
-```tsx title="doc-command.tsx"
+```tsx
 import { ApplicationCommand, StringOption, UserOption } from "@lilybird/jsx";
 
 const command = (

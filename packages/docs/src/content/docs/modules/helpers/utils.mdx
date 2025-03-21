@@ -1,0 +1,57 @@
+---
+title: Utils
+description: How to use utils from helpers
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+Module `@lilybird/helpers` provides a set of utils.
+
+## Hex Color to Number
+
+This is the function that we looked at as an example in the [Guides - Coloring](../../../guides/coloring) section.
+
+```ts
+import { hexColorToNumber } from "@lilybird/helpers/util";
+
+const color = hexColorToNumber("#ad9ee7"); // 11378407
+```
+
+## Make Attachment url
+
+Easily convert an existing Attachment to an attachment url
+
+<Tabs>
+  <TabItem label="bun" icon="bun">
+    ```ts showLineNumbers
+    import type { LilybirdAttachment } from "lilybird";
+    import { makeAttachmentURL } from "@lilybird/helpers";
+
+    const att: LilybirdAttachment = {
+      file: Bun.file("/path/to/file.png"),
+      name: "pet.png",
+    };
+
+    // attachment://pet.png
+    const attUrl = makeAttachmentURL(att);
+    ```
+
+  </TabItem>
+  <TabItem label="node" icon="node">
+    ```ts showLineNumbers
+    import { readFile } from "node:fs/promises";
+
+    import type { LilybirdAttachment } from "lilybird";
+    import { makeAttachmentURL } from "@lilybird/helpers";
+
+    const att: LilybirdAttachment = {
+      file: new Blob([await readFile("/path/to/file.png")]),
+      name: "pet.png",
+    };
+
+    // attachment://pet.png
+    const attUrl = makeAttachmentURL(att);
+    ```
+
+  </TabItem>
+</Tabs>

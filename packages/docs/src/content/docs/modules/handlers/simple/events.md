@@ -1,11 +1,11 @@
 ---
 title: Handling Events
-description: How to use lilybird's handlers for events.
+description: How to use lilybird's simple handlers for events.
 sidebar:
   order: 1
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling events, however, I can assure you there are more to come.
+The `@lilybird/handlers` package includes the Simple handler for handling events, but more advanced methods are now available.
 
 ## Creating a listener
 
@@ -15,7 +15,7 @@ import { createClient, Intents } from "lilybird";
 
 +const listeners = await createHandler({
 +    dirs: {
-+        events: `${import.meta.dir}/events`,
++        listeners: `${import.meta.dir}/listeners`,
 +    }
 +})
 
@@ -27,7 +27,7 @@ await createClient({
 })
 ```
 
-```ts title="events/ping.ts"
+```ts title="listeners/ready.ts"
 import { Event } from "@lilybird/handlers/simple";
 
 export default {
@@ -35,7 +35,7 @@ export default {
   run: (client) => {
     console.log(`Logged in as ${client.user.username}`);
   },
-// This duplication is needed for TypeScript types to work properly
-// This is also why this API isn't the best
-} satisfies Event<"ready">
+  // This duplication is needed for TypeScript types to work properly
+  // This is also why this API isn't the best
+} satisfies Event<"ready">;
 ```
