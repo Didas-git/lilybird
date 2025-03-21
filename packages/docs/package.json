@@ -11,14 +11,14 @@
     "check": "eslint \"src/**/*.ts\""
   },
   "devDependencies": {
-    "@expressive-code/plugin-line-numbers": "^0.36.1",
-    "@expressive-code/plugin-collapsible-sections": "^0.36.1",
-    "@astrojs/check": "^0.9.3",
-    "@astrojs/starlight": "^0.26.3",
-    "starlight-typedoc": "^0.16.0",
-    "typedoc": "^0.26.6",
-    "typedoc-plugin-markdown": "^4.2.6",
-    "astro": "^4.15.3",
+    "@expressive-code/plugin-line-numbers": "^0.40.2",
+    "@expressive-code/plugin-collapsible-sections": "^0.40.2",
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/starlight": "^0.32.4",
+    "starlight-typedoc": "^0.20.0",
+    "typedoc": "0.27.9",
+    "typedoc-plugin-markdown": "4.4.2",
+    "astro": "^5.5.4",
     "sharp": "^0.33.5"
   }
 }
