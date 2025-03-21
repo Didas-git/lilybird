@@ -5,7 +5,15 @@ import type { Interaction } from "@lilybird/transformers";
 
 $applicationCommand({
     name: "bananas-poll",
+	name_localizations: {
+		ru: "банановый-опрос",
+		de: "bananenumfrage",
+	},
     description: "create bananas poll",
+    description_localizations: {
+        ru: "создать опрос о бананах",
+        de: "bananen-Umfrage erstellen",
+    },
     handle: async (interaction: Interaction): Promise<void> => {
         await interaction.reply({
             poll: {

@@ -4,8 +4,8 @@ export declare namespace Localizations {
     export type LocalizeType<T> = T & Base;
 
     export interface Base {
-        name_localizations?: Record<Locale, string> | null;
-        description_localizations?: Record<Locale, string> | null;
+        name_localizations?: Partial<Record<Locale, string>> | null;
+        description_localizations?: Partial<Record<Locale, string>> | null;
     }
 
     export interface Localized {
