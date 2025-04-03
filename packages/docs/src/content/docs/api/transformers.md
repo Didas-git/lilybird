@@ -39,7 +39,7 @@ import { createClient, Intents } from "lilybird";
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
+  intents: Intents.GUILDS,
   listeners: {
     // We get the client and payload, so we can do what we want with them
     ready: (client, payload) => {
@@ -56,7 +56,7 @@ import { createClient, Intents, TransformerReturnType } from "lilybird";
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
+  intents: Intents.GUILDS,
   transformers: {
     ready: {
       return: TransformerReturnType.SINGLE,

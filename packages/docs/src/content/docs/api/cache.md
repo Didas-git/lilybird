@@ -44,7 +44,7 @@ import {
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
+  intents: Intents.GUILDS,
   caching: {
     delegate: CachingDelegationType.DEFAULT,
     enabled: {

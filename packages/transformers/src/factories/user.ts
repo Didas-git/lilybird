@@ -1,4 +1,3 @@
-import { GuildMember } from "./guild-member.js";
 import { PremiumType, CDN } from "lilybird";
 
 import type { User as LilyUser, Client, CDNOptions } from "lilybird";
