@@ -5,9 +5,9 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from "lilybird";
 import type {
     ApplicationCommand as LilyApplicationCommand,
     PermissionFlags,
-    Locale,
     ApplicationIntegrationType,
-    InteractionContextType
+    InteractionContextType,
+    Localizations
 } from "lilybird";
 
 export function ApplicationCommand({
@@ -29,8 +29,8 @@ export function ApplicationCommand({
     integrationTypes?: Array<ApplicationIntegrationType> | null,
     contexts?: Array<InteractionContextType> | null,
     nsfw?: boolean,
-    name_localizations?: Record<Locale, string> | null,
-    description_localizations?: Record<Locale, string> | null,
+    name_localizations?: Localizations.Base["name_localizations"],
+    description_localizations?: Localizations.Base["description_localizations"],
     children?: Array<LilyApplicationCommand.Option.Structure>
 }): LilyApplicationCommand.Create.ApplicationCommandJSONParams {
     if (children != null && !Array.isArray(children)) children = [children];
@@ -50,7 +50,7 @@ export function ApplicationCommand({
     };
 }
 
-type CommandWithChildren<T> = T & { children?: Array<LilyApplicationCommand.Option.ChoiceStructure> };
+type CommandWithChildren<T> = T & { children?: Array<LilyApplicationCommand.Option.Localizations.ChoiceStructure> };
 
 function commandComponent(type: ApplicationCommandOptionType, data: Partial<LilyApplicationCommand.Option.Structure>): LilyApplicationCommand.Option.Structure {
     return <never>{
@@ -59,7 +59,7 @@ function commandComponent(type: ApplicationCommandOptionType, data: Partial<Lily
     };
 }
 
-export function CommandOptions(props: LilyApplicationCommand.Option.ChoiceStructure): LilyApplicationCommand.Option.ChoiceStructure {
+export function CommandOptions(props: LilyApplicationCommand.Option.Localizations.ChoiceStructure): LilyApplicationCommand.Option.Localizations.ChoiceStructure {
     return props;
 }
 

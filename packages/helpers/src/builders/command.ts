@@ -237,7 +237,7 @@ export class StringOptionBuilder extends BaseOptionBuilder {
     #min?: number;
     #max?: number;
     #autocomplete?: boolean;
-    #choices?: Array<ApplicationCommand.Option.ChoiceStructure>;
+    #choices?: Array<ApplicationCommand.Option.Localizations.ChoiceStructure>;
 
     public constructor() {
         super(ApplicationCommandOptionType.STRING);
@@ -258,12 +258,12 @@ export class StringOptionBuilder extends BaseOptionBuilder {
         return this;
     }
 
-    public setChoices(choices: Array<ApplicationCommand.Option.ChoiceStructure>): this {
+    public setChoices(choices: Array<ApplicationCommand.Option.Localizations.ChoiceStructure>): this {
         this.#choices = choices;
         return this;
     }
 
-    public addChoice(choice: ApplicationCommand.Option.ChoiceStructure): this {
+    public addChoice(choice: ApplicationCommand.Option.Localizations.ChoiceStructure): this {
         if (!Array.isArray(this.#choices)) this.#choices = [];
         this.#choices.push(choice);
         return this;
@@ -286,7 +286,7 @@ export class NumericOptionBuilder extends BaseOptionBuilder {
     #min?: number;
     #max?: number;
     #autocomplete?: boolean;
-    #choices?: Array<ApplicationCommand.Option.ChoiceStructure>;
+    #choices?: Array<ApplicationCommand.Option.Localizations.ChoiceStructure>;
 
     public constructor(type: ApplicationCommandOptionType.NUMBER | ApplicationCommandOptionType.INTEGER) {
         super(type);
@@ -307,12 +307,12 @@ export class NumericOptionBuilder extends BaseOptionBuilder {
         return this;
     }
 
-    public setChoices(choices: Array<ApplicationCommand.Option.ChoiceStructure>): this {
+    public setChoices(choices: Array<ApplicationCommand.Option.Localizations.ChoiceStructure>): this {
         this.#choices = choices;
         return this;
     }
 
-    public addChoice(choice: ApplicationCommand.Option.ChoiceStructure): this {
+    public addChoice(choice: ApplicationCommand.Option.Localizations.ChoiceStructure): this {
         if (!Array.isArray(this.#choices)) this.#choices = [];
         this.#choices.push(choice);
         return this;

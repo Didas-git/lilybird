@@ -1260,13 +1260,13 @@ export class DebugREST extends REST {
         this.#debug = debug ?? (() => {});
     }
 
-    public override async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data: FormData, reason?: string | undefined): Promise<T>;
-    public override async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any> | undefined, files?: Array<LilybirdAttachment> | undefined): Promise<T>;
+    public override async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data: FormData, reason?: string): Promise<T>;
+    public override async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data?: Record<string, any>, files?: Array<LilybirdAttachment>): Promise<T>;
     public override async makeAPIRequest<T>(
         method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT",
         path: string,
-        data?: FormData | Record<string, any> | undefined,
-        filesOrReason?: string | Array<LilybirdAttachment> | undefined
+        data?: FormData | Record<string, any>,
+        filesOrReason?: string | Array<LilybirdAttachment>
     ): Promise<T> {
         this.#debug(DebugIdentifier.RESTCall, { method, path, data, filesOrReason });
         try {

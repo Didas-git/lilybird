@@ -7,7 +7,7 @@ declare namespace LocalizedApplicationCommandOption {
         choices?: Array<ChoiceStructure>;
         options?: Array<Structure>;
     }
-    export interface ChoiceStructure extends ApplicationCommand.Option.ChoiceStructure, _Localizations.Localized {}
+    export interface ChoiceStructure extends ApplicationCommand.Option.ChoiceStructure, Pick<_Localizations.Localized, "name_localized"> {}
 }
 
 declare namespace LocalizationsApplicationCommandOption {
@@ -15,7 +15,7 @@ declare namespace LocalizationsApplicationCommandOption {
         choices?: Array<ChoiceStructure>;
         options?: Array<Structure>;
     }
-    export interface ChoiceStructure extends ApplicationCommand.Option.ChoiceStructure, _Localizations.Base {}
+    export interface ChoiceStructure extends ApplicationCommand.Option.ChoiceStructure, Pick<_Localizations.Base, "name_localizations"> {}
 }
 
 export declare namespace ApplicationCommandOption {

@@ -318,7 +318,7 @@ export class ApplicationCommandStore<U extends boolean> {
         const { stack, functionNames, handlers } = compiledResult;
         this.#emit?.(HandlerIdentifier.COMPILED, stack);
 
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
         return new Function(
             "transformer",
             "parseOpts",

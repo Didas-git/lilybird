@@ -16,7 +16,7 @@ Passing in `path` instead of `file` will make it so Lilybird will try to use `Bu
 :::
 
 <Tabs>
-  <TabItem label="bun">
+  <TabItem label="bun" icon="bun">
     ```tsx
     import { Attachment } from "@lilybird/jsx";
     import { join } from "node:path"
@@ -26,17 +26,19 @@ Passing in `path` instead of `file` will make it so Lilybird will try to use `Bu
       name="lilybird"
     />;
     ```
+
   </TabItem>
-  <TabItem label="node">
+  <TabItem label="node" icon="node">
     ```tsx
     import { Attachment } from "@lilybird/jsx";
     import { readFile } from "node:fs/promises";
 
-    const att = <Attachment 
+    const att = <Attachment
       file={new Blob([await readFile(new URL("./lilybird.png", import.meta.url))])}
       name="lilybird"
     />;
     ```
+
   </TabItem>
 </Tabs>
 
@@ -48,12 +50,9 @@ An example would be:
 
 ```tsx ins="att.uri"
 import { Attachment, Embed, EmbedImage } from "@lilybird/jsx";
-import { join } from "node:path"
+import { join } from "node:path";
 
-const att = <Attachment
-  path={join(import.meta.dir, "./lilybird.png")}
-  name="lilybird"
-/>;
+const att = <Attachment path={join(import.meta.dir, "./lilybird.png")} name="lilybird" />;
 
 const embed = (
   <Embed title="Lilybird" description="For bun, with bun">

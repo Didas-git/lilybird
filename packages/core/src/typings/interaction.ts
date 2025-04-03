@@ -131,7 +131,7 @@ export declare namespace Interaction {
     export type CallbackData = MessageCallbackDataStructure | AutocompleteCallbackDataStructure | ModalCallbackDataStructure;
 
     export interface AutocompleteCallbackDataStructure {
-        choices: Array<ApplicationCommandOption.ChoiceStructure>;
+        choices: Array<ApplicationCommandOption.Localizations.ChoiceStructure>;
     }
 
     export interface MessageCallbackDataStructure {

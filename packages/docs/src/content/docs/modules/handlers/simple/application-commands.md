@@ -1,13 +1,13 @@
 ---
 title: Handling Application Commands
-description: How to use Lilybird's handlers for application commands.
+description: How to use Lilybird's simple handlers for application commands.
 sidebar:
   order: 0
 ---
 
-Currently the `@lilybird/handlers` package provides only one way of handling application commands, however, I can assure you there are more to come.
+The `@lilybird/handlers` package includes a Simple handler for handling application commands, but more advanced options are now available.
 
-To be completely honest, the current API is not the greatest but was the fastest one for a demo.
+To be completely honest, this API is not the greatest, but was the fastest one for a demo.
 
 ## Creating a simple command
 
@@ -32,22 +32,22 @@ await createClient({
 ```
 
 ```tsx title="commands/ping.tsx"
-import { SlashCommand } from "@lilybird/handlers/simple";
+import { GlobalApplicationCommand } from "@lilybird/handlers/simple";
 
 export default {
   post: "GLOBAL",
   data: {
     name: "ping",
-    description: "pong"
+    description: "pong",
   },
   run: async (interaction) => {
     const { ws, rest } = await interaction.client.ping();
 
     await interaction.reply({
-      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``
+      content: `🏓 WebSocket: \`${ws}ms\` | Rest: \`${rest}ms\``,
     });
   },
-} satisfies SlashCommand
+} satisfies GlobalApplicationCommand;
 ```
 
 :::note

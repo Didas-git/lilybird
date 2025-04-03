@@ -3,7 +3,18 @@ import { Message } from "@lilybird/transformers";
 
 export default {
     post: "GLOBAL",
-    data: { name: "bananas-poll", description: "create bananas poll" },
+    data: {
+        name: "bananas-poll",
+        name_localizations: {
+            ru: "банановый-опрос",
+            de: "bananenumfrage"
+        },
+        description: "create bananas poll",
+        description_localizations: {
+            ru: "создать опрос о бананах",
+            de: "bananen-Umfrage erstellen"
+        }
+    },
     run: async (interaction) => {
         await interaction.reply({
             poll: {
@@ -28,7 +39,10 @@ export default {
         setTimeout(async () => {
             const msg = new Message(
                 interaction.client,
-                await interaction.client.rest.getOriginalInteractionResponse(interaction.client.application.id, interaction.token)
+                await interaction.client.rest.getOriginalInteractionResponse(
+                    interaction.client.application.id,
+                    interaction.token
+                )
             );
 
             console.log(await msg.poll?.answers[0].fetchVoters({}));

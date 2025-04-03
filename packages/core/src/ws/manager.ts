@@ -93,6 +93,7 @@ export class WebSocketManager {
             const payload = <Payload>JSON.parse((event.data as Buffer).toString());
             if (typeof payload.s === "number") this.#sequenceNumber = payload.s;
 
+            // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
             switch (payload.op) {
                 case GatewayOpCode.Dispatch: {
                     this.#dispatch(payload);

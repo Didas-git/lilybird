@@ -1,0 +1,72 @@
+---
+title: Intro
+description: Introduction to @lilybird/jsx module
+sidebar:
+  order: 0
+---
+
+import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
+
+This module adds JSX components to Lilybird. You can use them instead of some of the regular objects.
+
+### Installation
+
+<Tabs>
+  <TabItem label="bun" icon="bun">
+    ```bash frame="none"
+    bun create @lilybird/jsx
+    ```
+  </TabItem>
+  <TabItem label="npm" icon="seti:npm">
+    ```bash frame="none"
+    npm create @lilybird/jsx
+    ```
+  </TabItem>
+  <TabItem label="pnpm" icon="pnpm">
+    ```bash frame="none"
+    pnpm create @lilybird/jsx
+    ```
+  </TabItem>
+  <TabItem label="yarn" icon="seti:yarn">
+    ```bash frame="none"
+    yarn create @lilybird/jsx
+    ```
+  </TabItem>
+</Tabs>
+
+## Configuring JSX
+
+To use `@lilybird/jsx` you need to enable `react-jsx`. This can be done in a few ways.
+
+<Tabs>
+  <TabItem label="tsconfig.json">
+    ```json
+    {
+      "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "@lilybird/jsx"
+      }
+    }
+    ```
+</TabItem>
+<TabItem label="bunfig.toml">
+    ```toml
+    jsx = "react-jsx"
+    jsxImportSource = "@lilybird/jsx"
+    ```
+</TabItem>
+<TabItem label="jsconfig.json">
+    ```json
+    {
+      "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "@lilybird/jsx"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+:::caution[Warning]
+If you are using <u>**Bun**</u>, add `NODE_ENV=production` to the `.env` file. This is necessary because Bun does not use "jsx-runtime-dev`
+:::

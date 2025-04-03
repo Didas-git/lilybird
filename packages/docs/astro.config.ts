@@ -113,19 +113,28 @@ export default defineConfig({
                         {
                             label: "Transformers",
                             collapsed: true,
-                            items: [transformersDocumentationSidebar]
+                            items: [
+                                {
+                                    label: "Intro",
+                                    link: "/modules/transformers/intro"
+                                },
+                                transformersDocumentationSidebar
+                            ]
                         },
                         {
                             label: "Handlers",
                             collapsed: true,
                             items: [
                                 {
+                                    label: "Intro",
+                                    link: "/modules/handlers/intro"
+                                },
+                                {
                                     label: "Simple",
                                     collapsed: true,
                                     badge: {
                                         text: "Deprecated",
                                         variant: "danger"
-
                                     },
                                     autogenerate: {
                                         directory: "/modules/handlers/simple"
@@ -137,13 +146,19 @@ export default defineConfig({
                                     badge: {
                                         text: "New",
                                         variant: "tip"
-
                                     },
                                     autogenerate: {
                                         directory: "/modules/handlers/default"
                                     }
                                 }
                             ]
+                        },
+                        {
+                            label: "Helpers",
+                            collapsed: true,
+                            autogenerate: {
+                                directory: "/modules/helpers"
+                            }
                         }
                     ]
                 },
