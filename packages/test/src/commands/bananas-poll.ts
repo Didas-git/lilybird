@@ -1,10 +1,12 @@
-import type { ApplicationCommand } from "@lilybird/handlers/simple";
+import { $applicationCommand } from "../handlers.js";
 import { Message } from "@lilybird/transformers";
 
-export default {
-    post: "GLOBAL",
-    data: { name: "bananas-poll", description: "create bananas poll" },
-    run: async (interaction) => {
+import type { Interaction } from "@lilybird/transformers";
+
+$applicationCommand({
+    name: "bananas-poll",
+    description: "create bananas poll",
+    handle: async (interaction: Interaction): Promise<void> => {
         await interaction.reply({
             poll: {
                 question: {
@@ -34,4 +36,4 @@ export default {
             console.log(await msg.poll?.answers[0].fetchVoters({}));
         }, 3000);
     }
-} satisfies ApplicationCommand;
+});

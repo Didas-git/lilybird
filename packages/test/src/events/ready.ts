@@ -1,4 +1,4 @@
-import { $listener } from "@lilybird/handlers/advanced";
+import { $listener } from "../handlers.js";
 
 $listener({
     event: "ready",

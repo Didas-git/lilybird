@@ -1,71 +1,87 @@
 ---
 title: Manual Setup
-description: Configure Lilybird however you would like.
+description: Learn how to setup Lilybird all by yourself.
 sidebar:
   order: 1
 ---
 
-import { Tabs, TabItem } from "@astrojs/starlight/components";
+import { Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
 
-## Creating the bot
+## Initial setup
 
-Creating the bot with Lilybird is a trivial task.
+To start with lilybird you firstly need to create a new project, in this guide we will be using the template provided by `@lilybird/create` but you can always use another template generator or make it from scratch.
 
-```ts title="index.ts"
+### Installing lilybird
+
+Lilybird is available on the npm registry, therefor it can be downloaded with the package manager of your choice.
+
+<Tabs syncKey="package-managers">
+  <TabItem label="bun" icon="bun">
+    ```bash frame="none"
+    bun add lilybird
+    ```
+  </TabItem>
+  <TabItem label="npm" icon="seti:npm">
+    ```bash frame="none"
+    npm i lilybird
+    ```
+  </TabItem>
+  <TabItem label="pnpm" icon="pnpm">
+    ```bash frame="none"
+    pnpm i lilybird
+    ```
+  </TabItem>
+  <TabItem label="yarn" icon="seti:yarn">
+    ```bash frame="none"
+    yarn add lilybird
+    ```
+  </TabItem>
+</Tabs>
+
+## Fast Setup
+
+The `createClient` function is a helper provided by lilybird that allows you to spin up a client fast without having to worry about managing the compiler yourself.
+If all you want is to spin up a bot and do your stuff this is the way to go, however, if you want full control over your bot skip this section.
+
+Using this helper function will still allow you to use transformers, handlers and other things but it requires every listener to be its own function.
+
+### Making your first bot
+
+Making your first bot is extremely simple, however it lacks functionality. All the bot functionality is up to you to implement using the tools provided, we have other guides that can help you with specific problems but we highly recommend that you read the official Discord documentation.
+
+```ts showLineNumbers {"The setup listener is a ready listener that is only ever called once":7-8}
 import { createClient, Intents } from "lilybird";
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
-  listeners: {/* your listeners */}
+  intents: Intents.GUILDS,
+  listeners: {
+
+    setup: (client) => {
+      console.log(`Logged in as: ${client.user.username} (${client.user.id})`)
+    }
+  }
 })
 ```
 
-## Adding types to `process.env`
+## In-depth setup
 
-In case you are using TypeScript we highly encourage adding proper types to your process.env.
-
-This can be done by creating a `globals.d.ts` file on the root of your project.
-
-<Tabs>
-  <TabItem label="bun" icon="bun">
-      ```ts title="globals.d.ts"
-      declare module "bun" {
-        interface Env {
-          TOKEN: string;
-          // Other env variables
-        }
-      }
-      ```
-  </TabItem>
-  <TabItem label="node" icon="node">
-      ```ts title="globals.d.ts"
-      declare global {
-        namespace NodeJS {
-          interface ProcessEnv {
-            TOKEN: string;
-            // Other env variables
-          }
-        }
-      }
-      ```
-    </TabItem>
-</Tabs>
-
-And then adding the following to your `tsconfig.json`.
-
-:::caution
-Setting `types` on the compiler options will make it so TypeScript won't search for `@types` packages.
-
-You can read more about it on the [TypeScript handbook](https://www.typescriptlang.org/tsconfig#types)
+:::danger[Be aware]
+This is a work in progress that hopes to give a more advanced guide that is intended for people who are writing frameworks for lilybird, if you are having trouble understanding it feel free to join our discord and ask questions.
 :::
 
-```json title="tsconfig.json"
-{
-  "compilerOptions": {
-    "types": [
-      "./globals"
-    ]
-  }
-}
-```
+### The "client"
+
+In lilybird there is no strong concept of what the client is, the provided `Client` class is just a convenient wrapper that gets passed around each listener that includes an instance of the `REST` helpers and the active `ws` connection, however this is not the strict definition of a `Client`.
+
+#### Definition
+
+The `Client` in lilybird is defined as an object that includes the fields returned by the `READY` event.
+
+The current interface all client representations should respect is called `MockClient` (name pending change).
+
+### The AOT Compiler
+
+The AOT Compiler in lilybird is one of the things that allows lilybird to provide apis like the transformers without having any impact on performance. Its job its to compile down your listeners and transformers into a simple linear dispatch function that has no useless/redundant checks.
+
+While this is an important piece, the AOT Compiler is **not** required for lilybird to work, you can always make your own dispatch functions manually.

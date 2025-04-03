@@ -21,14 +21,14 @@ interface ManagerOptions {
 export type DispatchFunction = (data: ReceiveDispatchEvent) => any;
 
 export class WebSocketManager {
-    readonly #dispatch: DispatchFunction;
     readonly #debug: DebugFunction | undefined;
+    readonly #options: Required<ManagerOptions>;
 
+    #dispatch: DispatchFunction | undefined;
     #sequenceNumber: number | null = null;
     #isResuming = false;
     #ws!: WebSocket;
     #gatewayInfo!: GetGatewayBotResponse;
-    #options: Required<ManagerOptions>;
     #timer?: Timer;
     // eslint-disable-next-line @typescript-eslint/naming-convention
     #gotACK: boolean = true;
@@ -39,7 +39,7 @@ export class WebSocketManager {
         id: string
     } = <never>{};
 
-    public constructor(options: ManagerOptions, dispatch: DispatchFunction, debug?: DebugFunction) {
+    public constructor(options: ManagerOptions, dispatch?: DispatchFunction, debug?: DebugFunction) {
         if (typeof options.intents !== "number" && Number.isNaN(options.intents)) throw new Error("Invalid intents");
 
         this.#dispatch = dispatch;
@@ -47,11 +47,17 @@ export class WebSocketManager {
         this.#options = <never>options;
     }
 
+    public init(token: string, dispatch: DispatchFunction): void {
+        this.#options.token = token;
+        this.#dispatch = dispatch;
+    }
+
     public close(): void {
         this.#ws.close(3000);
     }
 
     public async connect(url?: string): Promise<void> {
+        if (typeof this.#dispatch === "undefined") throw new Error("You need to pass the dispatch function via 'init' before connecting.");
         if (typeof this.#gatewayInfo === "undefined") {
             const response = await fetch("https://discord.com/api/v10/gateway/bot", {
                 headers: {
@@ -95,7 +101,8 @@ export class WebSocketManager {
 
             switch (payload.op) {
                 case GatewayOpCode.Dispatch: {
-                    this.#dispatch(payload);
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    this.#dispatch!(payload);
                     break;
                 }
                 case GatewayOpCode.Hello: {
@@ -249,10 +256,6 @@ export class WebSocketManager {
         };
 
         this.#ws.send(JSON.stringify(options));
-    }
-
-    public set options(options: Partial<ManagerOptions>) {
-        this.#options = { ...this.#options, ...options };
     }
 
     public get options(): ManagerOptions {

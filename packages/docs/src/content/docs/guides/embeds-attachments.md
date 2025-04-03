@@ -21,10 +21,10 @@ import {
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
-  // We pass the setup function we created above
-  setup,
+  intents: Intents.GUILDS,
   listeners: {
+    // We pass the setup function we created above
+    setup,
     interactionCreate: async (client, payload) => {
       // We only want to handle guild interactions
       if (!("guild_id" in payload)) return;
@@ -63,10 +63,10 @@ import {
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
-  // We pass the setup function we created above
-  setup,
+  intents: Intents.GUILDS,
   listeners: {
+    // We pass the setup function we created above
+    setup,
     interactionCreate: async (client, payload) => {
       // We only want to handle guild interactions
       if (!("guild_id" in payload)) return;
@@ -98,10 +98,10 @@ import {
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
-  // We pass the setup function we created above
-  setup,
+  intents: Intents.GUILDS,
   listeners: {
+    // We pass the setup function we created above
+    setup,
     interactionCreate: async (client, payload) => {
       // We only want to handle guild interactions
       if (!("guild_id" in payload)) return;

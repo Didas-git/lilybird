@@ -2,10 +2,10 @@ import { createClient, Intents } from "lilybird";
 
 await createClient({
     token: process.env.TOKEN,
-    intents: [Intents.GUILDS],
+    intents: Intents.GUILDS,
     listeners: {
-        ready(client) {
-            console.log(`Logged in as ${client.user.username}`);
+        setup: (_, payload) => {
+            console.log(`Logged in as ${payload.user.username}`);
         }
     }
 });

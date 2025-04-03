@@ -48,15 +48,18 @@ export class RestError extends Error {
 
 // I ran out of ideas for naming this thing
 type ExtractedData = ({ data: { attachments: Array<unknown> | undefined } } | { attachments: Array<unknown> | undefined }) & { reason?: string };
+export type TokenType = "Bearer" | "Bot";
 
 export class REST {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly BaseURL = "https://discord.com/api/v10/";
 
     #token?: string | undefined;
+    #tokenType: TokenType;
 
-    public constructor(token?: string) {
+    public constructor(token?: string, tokenType: TokenType = "Bot") {
         this.#token = token;
+        this.#tokenType = tokenType;
     }
 
     public async makeAPIRequest<T>(method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", path: string, data: FormData, reason?: string): Promise<T>;
@@ -65,7 +68,7 @@ export class REST {
         const opts: RequestInit = {
             method,
             headers: {
-                Authorization: `Bot ${this.#token}`,
+                Authorization: `${this.#tokenType} ${this.#token}`,
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 "User-Agent": `DiscordBot/LilyBird/${(<{ version: string }>packageJson).version}`
             }
@@ -128,8 +131,9 @@ export class REST {
         return <T> await response.json();
     }
 
-    public setToken(token: string | undefined): void {
+    public setToken(token: string | undefined, tokenType: TokenType = "Bot"): void {
         this.#token = token;
+        this.#tokenType = tokenType;
     }
 
     //#region Gateway

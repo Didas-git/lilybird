@@ -47,7 +47,7 @@ import {
 
 await createClient({
   token: process.env.TOKEN,
-  intents: [Intents.GUILDS],
+  intents: Intents.GUILDS,
   listeners: {
     messageCreate: async (client, message) => {
       await client.rest.createMessage(message.channel_id, { 

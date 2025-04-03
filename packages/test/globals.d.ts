@@ -1,9 +1,9 @@
 declare module "bun" {
     interface Env {
-        TOKEN: string;
-        TEST_CHANNEL_ID: string;
-        TEST_GUILD_ID: string;
-        SEARCH_KEY: string;
-        CX: string;
+        readonly TOKEN: string;
+        readonly TEST_CHANNEL_ID: string;
+        readonly TEST_GUILD_ID: string;
+        readonly SEARCH_KEY: string;
+        readonly CX: string;
     }
 }
