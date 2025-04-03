@@ -21,7 +21,6 @@ export class User {
     public readonly premiumType: PremiumType;
     public readonly publicFlags: number;
     public readonly avatarDecoration: string | undefined | null;
-    public readonly member: GuildMember | undefined;
 
     public readonly client: Client;
 
@@ -45,8 +44,6 @@ export class User {
         this.premiumType = user.premium_type ?? PremiumType.None;
         this.publicFlags = user.public_flags ?? 0;
         this.avatarDecoration = user.avatar_decoration;
-
-        if ("member" in user) this.member = new GuildMember(client, <never>user.member);
     }
 
     public avatarURL(options?: CDNOptions): string {
