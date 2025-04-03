@@ -29,7 +29,7 @@ type GetUserType<T extends Transformers> = (T["userUpdate"] & {}) extends { hand
     ? unknown extends R
         ? U[1]
         : R
-    : never ;
+    : never;
 
 export interface Client<T extends Transformers> {
     readonly user: GetUserType<T>;
@@ -450,7 +450,7 @@ export class Client<T extends Transformers = Transformers, C extends CacheManage
         const handlers = functions.values();
         const compiledListeners = [...builder.values()].join("");
         this.#debug(DebugIdentifier.CompiledListeners, compiledListeners);
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
         return new Function("client", ...names, `return async (data) => { ${compiledListeners} }`)(this, ...handlers) as never;
     }
 

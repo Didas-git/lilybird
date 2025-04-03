@@ -163,7 +163,7 @@ export class MessageComponentStore {
 
         const init = this.#attachDynamicComponentListener ? ["_store", "transformers"] : ["transformers"];
         const initArgs = this.#attachDynamicComponentListener ? [this.#store, defaultTransformers.interactionCreate.handler] : [defaultTransformers.interactionCreate.handler];
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-call
         return new Function(
             ...init,
             ...functionNames,

@@ -41,7 +41,7 @@ export default defineConfig({
                         sort: ["enum-value-ascending", "source-order"],
                         parametersFormat: "table",
                         enumMembersFormat: "table",
-                        publicPath: "/documentation/",
+                        publicPath: "/documentation/"
                     }
                 }),
                 createTransformersDocumentation({
@@ -116,7 +116,7 @@ export default defineConfig({
                             items: [
                                 {
                                     label: "Intro",
-                                    link: "/modules/transformers/intro",
+                                    link: "/modules/transformers/intro"
                                 },
                                 transformersDocumentationSidebar
                             ]
@@ -127,7 +127,7 @@ export default defineConfig({
                             items: [
                                 {
                                     label: "Intro",
-                                    link: "/modules/handlers/intro",
+                                    link: "/modules/handlers/intro"
                                 },
                                 {
                                     label: "Simple",
@@ -159,7 +159,7 @@ export default defineConfig({
                             autogenerate: {
                                 directory: "/modules/helpers"
                             }
-                        },
+                        }
                     ]
                 },
                 coreDocumentationSidebar

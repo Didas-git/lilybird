@@ -40,6 +40,7 @@ export class Handler {
     }
 
     public async registerGuildCommands(client: Client): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/await-thenable
         for await (const command of this.guildApplicationCommands.values()) {
             if (Array.isArray(command.post)) {
                 const temp: Array<Promise<unknown>> = [];
