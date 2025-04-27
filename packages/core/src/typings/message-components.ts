@@ -5,7 +5,18 @@ export declare namespace Component {
     export type Structure = ActionRowStructure
         | ButtonStructure
         | StringSelectStructure
-        | TextInputStructure;
+        | TextInputStructure
+        | UserSelectStructure
+        | RoleSelectStructure
+        | MentionableSelectStructure
+        | ChannelSelectStructure
+        | SectionStructure
+        | TextDisplayStructure
+        | ThumbnailStructure
+        | MediaGalleryStructure
+        | FileStructure
+        | SeparatorStructure
+        | ContainerStructure;
 
     /**
      * @see {@link https://discord.com/developers/docs/components/reference#anatomy-of-a-component}
