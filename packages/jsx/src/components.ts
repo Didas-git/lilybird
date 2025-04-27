@@ -93,7 +93,7 @@ export function StringSelectMenu({
     children
 }: BaseSelectMenuOptions & {
     children: Array<Message.Component.SelectOptionStructure> | Message.Component.SelectOptionStructure
-}): Message.Component.SelectMenuStructure {
+}): Message.Component.StringSelectStructure {
     if (!Array.isArray(children)) children = [children];
 
     return {
@@ -116,7 +116,7 @@ export function UserSelectMenu({
     children
 }: BaseSelectMenuOptions & {
     children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
-}): Message.Component.SelectMenuStructure {
+}): Message.Component.UserSelectStructure {
     if (children != null && !Array.isArray(children)) children = [children];
 
     return {
@@ -139,7 +139,7 @@ export function RoleSelectMenu({
     children
 }: BaseSelectMenuOptions & {
     children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
-}): Message.Component.SelectMenuStructure {
+}): Message.Component.RoleSelectStructure {
     if (children != null && !Array.isArray(children))
         children = [children];
 
@@ -163,7 +163,7 @@ export function MentionableSelectMenu({
     children
 }: BaseSelectMenuOptions & {
     children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
-}): Message.Component.SelectMenuStructure {
+}): Message.Component.MentionableSelectStructure {
     if (children != null && !Array.isArray(children)) children = [children];
 
     return {
@@ -188,11 +188,11 @@ export function ChannelSelectMenu({
 }: BaseSelectMenuOptions & {
     channel_types?: Array<ChannelType>,
     children?: Array<Message.Component.SelectDefaultValueStructure> | Message.Component.SelectDefaultValueStructure
-}): Message.Component.SelectMenuStructure {
+}): Message.Component.ChannelSelectStructure {
     if (children != null && !Array.isArray(children)) children = [children];
 
     return {
-        type: ComponentType.RoleSelect,
+        type: ComponentType.ChannelSelect,
         custom_id: id,
         placeholder,
         min_values,
