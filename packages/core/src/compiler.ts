@@ -51,85 +51,31 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
 
         if (typeof transformer !== "undefined") {
             this.#callbacks.set(transf, transformer.handler);
+            const spread = transformer.return === TransformerReturnType.MULTIPLE ? "..." : "";
 
-            switch (transformer.return) {
-                case TransformerReturnType.SINGLE: {
-                    if (typeof extra !== "undefined") {
-                        if (extra.when === CacheExecutionPolicy.FIRST) {
-                            temp.push(
-                                `const td = await ${transf}(client_ptr, payload.d);`,
-                                extra.content,
-                                typeof handler !== "undefined" ? `await ${name}(td)` : ""
-                            );
-                        } else {
-                            temp.push(
-                                `const td = await ${transf}(client_ptr, payload.d);`,
-                                typeof handler !== "undefined" ? `await ${name}(td)` : "",
-                                extra.content
-                            );
-                        }
-                    } else if (typeof handler !== "undefined") temp.push(`await ${name}(await ${transf}(client_ptr, payload.d));`);
-                    break;
+            if (typeof extra !== "undefined") {
+                if (extra.content.includes("td.") || typeof handler !== "undefined") temp.push(`const td = await ${transf}(client_ptr, payload.d);`);
+                if (extra.when === CacheExecutionPolicy.FIRST) {
+                    temp.push(
+                        extra.content,
+                        typeof handler !== "undefined" ? `await ${name}(${spread}td)` : ""
+                    );
+                } else {
+                    temp.push(
+                        typeof handler !== "undefined" ? `await ${name}(${spread}td)` : "",
+                        extra.content
+                    );
                 }
-                case TransformerReturnType.MULTIPLE: {
-                    if (typeof extra !== "undefined") {
-                        if (extra.when === CacheExecutionPolicy.FIRST) {
-                            temp.push(
-                                `const td = await ${transf}(client_ptr, payload.d);`,
-                                extra.content,
-                                typeof handler !== "undefined" ? `await ${name}(...td);` : ""
-                            );
-                        } else {
-                            temp.push(
-                                `const td = await ${transf}(client_ptr, payload.d);`,
-                                typeof handler !== "undefined" ? `await ${name}(...td);` : "",
-                                extra.content
-                            );
-                        }
-                    } else if (typeof handler !== "undefined") temp.push(`await ${name}(...(await ${transf}(client_ptr, payload.d)));`);
-                    break;
-                }
-            }
+            } else if (typeof handler !== "undefined") temp.push(`await ${name}(${spread}(await ${transf}(client_ptr, payload.d)));`);
         } else if (typeof extra !== "undefined") {
+            if (extra.content.includes("td.")) throw new Error(`No transformer found to apply to the caching handler '${event}'`);
             if (extra.when === CacheExecutionPolicy.FIRST)
-                temp.push("const td = payload.d;", extra.content, typeof handler !== "undefined" ? `await ${name}(client_ptr, td);` : "");
+                temp.push(extra.content, typeof handler !== "undefined" ? `await ${name}(client_ptr, td);` : "");
             else
-                temp.push("const td = payload.d;", typeof handler !== "undefined" ? `await ${name}(client_ptr, td);` : "", extra.content);
+                temp.push(typeof handler !== "undefined" ? `await ${name}(client_ptr, td);` : "", extra.content);
         } else if (typeof handler !== "undefined") temp.push(`await ${name}(client_ptr, payload.d);`);
 
         if (temp.length === 1) return;
-
-        // Dead code elimination
-        // transformed data sometimes might not be needed and its easier to do it this way
-        // than adding more complexity to all the branches that add listeners
-        if (temp.length === 4) {
-            if (temp[2] === "") {
-                // eslint-disable-next-line @typescript-eslint/prefer-destructuring
-                temp[2] = temp[3];
-                temp.pop();
-            } else if (temp[3] === "")
-                temp.pop();
-
-            if (!temp[1].startsWith("const td ="))
-                throw new Error("There was something wrong internally with the compiler");
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            if (temp.length === 4 && !temp[3].includes("td")) {
-                if (!temp[2].includes("td")) {
-                    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
-                    temp[1] = temp[2];
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    temp[2] = temp.pop()!;
-                    this.#callbacks.delete(transf);
-                }
-            //@ts-expect-error We are rechecking because we modify the length inside this case
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-            } else if (temp.length === 3 && !temp[2].includes("td")) {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                temp[1] = temp.pop()!;
-                this.#callbacks.delete(transf);
-            }
-        }
-
         temp.push("}");
 
         this.#stack.set(event, temp.join(""));
