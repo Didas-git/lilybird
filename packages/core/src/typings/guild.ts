@@ -367,26 +367,6 @@ export declare namespace Guild {
 
     export namespace Create {
         /**
-         * @see {@link https://discord.com/developers/docs/resources/guild#create-guild-json-params}
-         */
-        export interface GuildJSONParams {
-            name: string;
-            icon?: DiscordImageData;
-            verification_level?: VerificationLevel;
-            default_message_notifications?: DefaultMessageNotificationLevel;
-            explicit_content_filter?: ExplicitContentFilterLevel;
-            roles?: Array<Role.Structure>;
-            channels?: Partial<Channel.Structure>;
-            afk_channel_id?: string;
-            afk_timeout?: number;
-            system_channel_id?: string;
-            /**
-             * Bitfield of {@link SystemChannelFlags}
-             */
-            system_channel_flags?: number;
-        }
-
-        /**
          * @see {@link https://discord.com/developers/docs/resources/guild#create-guild-channel-json-params}
          */
         export interface GuildChannelJSONParams {

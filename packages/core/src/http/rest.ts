@@ -521,10 +521,6 @@ export class REST {
 
     //#endregion Emoji
     //#region Guild
-    public async createGuild(body: Guild.Create.GuildJSONParams): Promise<Guild.Structure> {
-        return this.makeAPIRequest("POST", "guilds", body);
-    }
-
     public async getGuild(guildId: string, withCounts = false): Promise<Guild.Structure> {
         return this.makeAPIRequest("GET", `guilds/${guildId}?with_counts=${withCounts}`);
     }
