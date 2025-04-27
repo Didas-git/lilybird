@@ -46,7 +46,14 @@ export const enum ComponentType {
     UserSelect,
     RoleSelect,
     MentionableSelect,
-    ChannelSelect
+    ChannelSelect,
+    Section,
+    TextDisplay,
+    Thumbnail,
+    MediaGallery,
+    File,
+    Separator,
+    Container = 17
 }
 
 export const enum ButtonStyle {
@@ -54,7 +61,8 @@ export const enum ButtonStyle {
     Secondary,
     Success,
     Danger,
-    Link
+    Link,
+    Premium
 }
 
 export const enum TextInputStyle {

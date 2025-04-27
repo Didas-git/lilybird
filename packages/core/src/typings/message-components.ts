@@ -2,14 +2,21 @@ import type { ButtonStyle, ChannelType, ComponentType, TextInputStyle } from "#e
 import type { Emoji } from "./emoji.js";
 
 export declare namespace Component {
-    export type Structure = ActionRowStructure | ButtonStructure | SelectMenuStructure | TextInputStructure;
+    export type Structure = ActionRowStructure
+        | ButtonStructure
+        | StringSelectStructure
+        | TextInputStructure;
 
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#anatomy-of-a-component}
+     */
     export interface Base {
         type: ComponentType;
+        id?: number;
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/interactions/message-components#action-rows}
+     * @see {@link https://discord.com/developers/docs/components/reference#action-row}
      */
     export interface ActionRowStructure extends Base {
         type: ComponentType.ActionRow;
@@ -17,7 +24,7 @@ export declare namespace Component {
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/interactions/message-components#button-object-button-structure}
+     * @see {@link https://discord.com/developers/docs/components/reference#button}
      */
     export interface ButtonStructure extends Base {
         type: ComponentType.Button;
@@ -25,27 +32,26 @@ export declare namespace Component {
         label?: string;
         emoji?: Pick<Emoji.Structure, "name" | "id" | "animated">;
         custom_id?: string;
+        sku_id?: string;
         url?: string;
         disabled?: boolean;
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure}
+     * @see {@link https://discord.com/developers/docs/components/reference#string-select}
      */
-    export interface SelectMenuStructure extends Base {
-        type: ComponentType.StringSelect | ComponentType.UserSelect | ComponentType.RoleSelect | ComponentType.MentionableSelect | ComponentType.ChannelSelect;
+    export interface StringSelectStructure extends Base {
+        type: ComponentType.StringSelect;
         custom_id: string;
         options?: Array<SelectOptionStructure>;
-        channel_types?: Array<ChannelType>;
         placeholder?: string;
-        default_values?: Array<SelectDefaultValueStructure>;
         min_values?: number;
         max_values?: number;
         disabled?: boolean;
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-option-structure}
+     * @see {@link https://discord.com/developers/docs/components/reference#string-select-select-option-structure}
      */
     export interface SelectOptionStructure {
         label: string;
@@ -56,15 +62,7 @@ export declare namespace Component {
     }
 
     /**
-     * @see {@link https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-default-value-structure}
-     */
-    export interface SelectDefaultValueStructure {
-        id: string;
-        type: "user" | "role" | "channel";
-    }
-
-    /**
-     * @see {@link https://discord.com/developers/docs/interactions/message-components#text-input-object-text-input-structure}
+     * @see {@link https://discord.com/developers/docs/components/reference#text-input}
      */
     export interface TextInputStructure {
         type: ComponentType.TextInput;
@@ -76,5 +74,149 @@ export declare namespace Component {
         required?: boolean;
         value?: string;
         placeholder?: string;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#user-select}
+     */
+    export interface UserSelectStructure extends Base {
+        type: ComponentType.UserSelect;
+        custom_id: string;
+        placeholder?: string;
+        default_values?: Array<SelectDefaultValueStructure>;
+        min_values?: number;
+        max_values?: number;
+        disabled?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#user-select-select-default-value-structure}
+     */
+    export interface SelectDefaultValueStructure {
+        id: string;
+        type: "user" | "role" | "channel";
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#role-select}
+     */
+    export interface RoleSelectStructure extends Base {
+        type: ComponentType.RoleSelect;
+        custom_id: string;
+        placeholder?: string;
+        default_values?: Array<SelectDefaultValueStructure>;
+        min_values?: number;
+        max_values?: number;
+        disabled?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#mentionable-select}
+     */
+    export interface MentionableSelectStructure extends Base {
+        type: ComponentType.MentionableSelect;
+        custom_id: string;
+        placeholder?: string;
+        default_values?: Array<SelectDefaultValueStructure>;
+        min_values?: number;
+        max_values?: number;
+        disabled?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#channel-select}
+     */
+    export interface ChannelSelectStructure extends Base {
+        type: ComponentType.ChannelSelect;
+        custom_id: string;
+        channel_types?: Array<ChannelType>;
+        placeholder?: string;
+        default_values?: Array<SelectDefaultValueStructure>;
+        min_values?: number;
+        max_values?: number;
+        disabled?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#section}
+     */
+    export interface SectionStructure extends Base {
+        type: ComponentType.Section;
+        components: Array<TextDisplayStructure>;
+        accessory: ThumbnailStructure | ButtonStructure;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#text-display}
+     */
+    export interface TextDisplayStructure extends Base {
+        type: ComponentType.TextDisplay;
+        content: string;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#thumbnail}
+     */
+    export interface ThumbnailStructure extends Base {
+        type: ComponentType.Thumbnail;
+        media: UnfurledMediaItemStructure;
+        description?: string;
+        spoiler?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#unfurled-media-item-structure}
+     */
+    export interface UnfurledMediaItemStructure {
+        url: string;
+        proxy_url?: string;
+        height?: number | null;
+        width?: number | null;
+        content_type?: string;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#media-gallery}
+     */
+    export interface MediaGalleryStructure extends Base {
+        type: ComponentType.MediaGallery;
+        items: Array<MediaGalleryItemStructure>;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#media-gallery-media-gallery-item-structure}
+     */
+    export interface MediaGalleryItemStructure extends Base {
+        media: UnfurledMediaItemStructure;
+        description?: string;
+        spoiler?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#file}
+     */
+    export interface FileStructure extends Base {
+        type: ComponentType.File;
+        file: UnfurledMediaItemStructure;
+        spoiler?: boolean;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#separator}
+     */
+    export interface SeparatorStructure extends Base {
+        type: ComponentType.Separator;
+        divider?: boolean;
+        spacing?: number;
+    }
+
+    /**
+     * @see {@link https://discord.com/developers/docs/components/reference#container}
+     */
+    export interface ContainerStructure extends Base {
+        type: ComponentType.Container;
+        components: Array<ActionRowStructure | TextDisplayStructure | SectionStructure | MediaGalleryStructure | SeparatorStructure | FileStructure>;
+        accent_color?: number | null;
+        spoiler?: boolean;
     }
 }

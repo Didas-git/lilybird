@@ -49,7 +49,9 @@ export const enum MessageFlags {
     LOADING = 128,
     FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 256,
     SUPPRESS_NOTIFICATIONS = 4096,
-    IS_VOICE_MESSAGE = 8192
+    IS_VOICE_MESSAGE = 8192,
+    HAS_SNAPSHOT = 16384,
+    IS_COMPONENTS_V2 = 32768
 }
 
 export const enum AttachmentFlags {

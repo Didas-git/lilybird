@@ -156,6 +156,9 @@ export declare namespace Message {
         files?: Array<LilybirdAttachment>;
         payload_json?: string;
         attachments?: Array<Partial<Channel.AttachmentStructure>>;
+        /**
+         * Bitfield of {@link MessageFlags}
+         */
         flags?: number;
         enforce_nonce?: boolean;
         poll?: Poll.CreateStructure;
@@ -164,6 +167,9 @@ export declare namespace Message {
     export interface EditJSONParams {
         content?: string;
         embeds?: Array<Embed.Structure>;
+        /**
+         * Bitfield of {@link MessageFlags}
+         */
         flags?: number;
         allowed_mentions?: Channel.AllowedMentionsStructure;
         components?: Array<Component.Structure>;
