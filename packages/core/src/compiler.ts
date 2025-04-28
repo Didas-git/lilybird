@@ -105,18 +105,9 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
 
         if (typeof this.#transformers.ready !== "undefined") {
             this.#callbacks.set("t_ready", this.#transformers.ready.handler);
-            switch (this.#transformers.ready.return) {
-                case TransformerReturnType.SINGLE: {
-                    if (onceListener) readyArr.push("await once_ready(t_ready(client_ptr, payload.d));");
-                    if (once && typeof listener !== "undefined") readyArr.push("await ready(t_ready(client_ptr, payload.d));");
-                    break;
-                }
-                case TransformerReturnType.MULTIPLE: {
-                    if (onceListener) readyArr.push("await once_ready(...t_ready(client_ptr, payload.d));");
-                    if (once && typeof listener !== "undefined") readyArr.push("await ready(...t_ready(client_ptr, payload.d));");
-                    break;
-                }
-            }
+            const spread = this.#transformers.ready.return === TransformerReturnType.MULTIPLE ? "..." : "";
+            if (onceListener) readyArr.push(`await once_ready(${spread}t_ready(client_ptr, payload.d));`);
+            if (once && typeof listener !== "undefined") readyArr.push(`await ready(${spread}t_ready(client_ptr, payload.d));`);
         } else {
             if (onceListener) readyArr.push("await once_ready(client_ptr, payload.d);");
             if (once && typeof listener !== "undefined") readyArr.push("await ready(client_ptr, payload.d);");
@@ -126,16 +117,8 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
 
         if (!once && typeof listener !== "undefined") {
             if (typeof this.#transformers.ready !== "undefined") {
-                switch (this.#transformers.ready.return) {
-                    case TransformerReturnType.SINGLE: {
-                        readyArr.push("await ready(t_ready(client_ptr, payload.d));");
-                        break;
-                    }
-                    case TransformerReturnType.MULTIPLE: {
-                        readyArr.push("await ready(...t_ready(client_ptr, payload.d));");
-                        break;
-                    }
-                }
+                const spread = this.#transformers.ready.return === TransformerReturnType.MULTIPLE ? "..." : "";
+                readyArr.push(`await ready(${spread}t_ready(client_ptr, payload.d));`);
             } else readyArr.push("await ready(client_ptr, payload.d);");
         }
 
