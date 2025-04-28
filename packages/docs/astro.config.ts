@@ -4,7 +4,9 @@ import { createStarlightTypeDocPlugin } from "starlight-typedoc";
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const [createCoreDocumentation, coreDocumentationSidebar] = createStarlightTypeDocPlugin();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const [createTransformersDocumentation, transformersDocumentationSidebar] = createStarlightTypeDocPlugin();
 
 export default defineConfig({

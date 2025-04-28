@@ -1,6 +1,6 @@
 {
   "name": "@lilybird/handlers",
-  "version": "0.7.0-beta.0",
+  "version": "0.7.0-beta.1",
   "description": "Command handlers and more for lilybird",
   "main": "./dist/index.js",
   "author": "DidaS",
@@ -47,7 +47,7 @@
     "bun-first"
   ],
   "peerDependencies": {
-    "lilybird": "^0.9.0-beta.0",
-    "@lilybird/transformers": "^0.5.0-beta.0"
+    "lilybird": "^0.9.0-beta.2",
+    "@lilybird/transformers": "^0.5.0-beta.1"
   }
 }
