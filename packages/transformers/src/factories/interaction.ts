@@ -59,6 +59,7 @@ export type InteractionData = ApplicationCommandData | AutocompleteData | Messag
 export interface AutocompleteData extends ApplicationCommandData<FocusedOption> {}
 
 export type InteractionReplyOptions = LilyInteraction.MessageCallbackDataStructure & {
+    componentsV2?: boolean,
     ephemeral?: boolean,
     suppressEmbeds?: boolean
 };
@@ -119,9 +120,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = options;
                 flags |= fl ?? 0;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
@@ -138,9 +140,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
@@ -184,9 +187,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = options;
                 flags |= fl ?? 0;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
@@ -203,9 +207,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
@@ -264,9 +269,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                const { ephemeral, suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = options;
                 flags |= fl ?? 0;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (ephemeral) flags |= MessageFlags.EPHEMERAL;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
@@ -283,9 +289,10 @@ export class Interaction<T extends InteractionData = InteractionData, M extends 
                 };
             }
         } else {
-            const { ephemeral, suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            const { ephemeral, suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (ephemeral) flags |= MessageFlags.EPHEMERAL;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
 
@@ -715,7 +722,8 @@ export class MessageComponentData<T extends Array<string> | undefined = Array<st
     }
 
     public isSelectMenu(): this is MessageComponentData<Array<string>> {
-        return this.type === ComponentType.StringSelect || this.type >= ComponentType.UserSelect;
+        // eslint-disable-next-line @stylistic/no-extra-parens
+        return this.type === ComponentType.StringSelect || (this.type >= ComponentType.UserSelect && this.type <= ComponentType.ChannelSelect);
     }
 }
 

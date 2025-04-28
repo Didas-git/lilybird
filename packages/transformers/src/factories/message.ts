@@ -23,11 +23,13 @@ export type PartialMessage<T extends Message = Message> = Partial<T> & {
 };
 
 export interface MessageEditOptions extends LilyMessage.EditJSONParams {
+    componentsV2?: boolean;
     suppressEmbeds?: boolean;
 }
 
 export interface MessageReplyOptions extends LilyMessage.CreateJSONParams {
     tts?: boolean;
+    componentsV2?: boolean;
     suppressEmbeds?: boolean;
     suppressNotifications?: boolean;
 }
@@ -127,8 +129,9 @@ export class Message {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, componentsV2, flags: fl, files: f, ...obj } = options;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
                 flags |= fl ?? 0;
@@ -140,9 +143,10 @@ export class Message {
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
@@ -171,9 +175,10 @@ export class Message {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, componentsV2, flags: fl, files: f, ...obj } = options;
                 flags |= fl ?? 0;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
@@ -184,9 +189,10 @@ export class Message {
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
@@ -211,9 +217,10 @@ export class Message {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = options;
+                const { suppressEmbeds, suppressNotifications, componentsV2, flags: fl, files: f, ...obj } = options;
                 flags |= fl ?? 0;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
                 if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
@@ -224,9 +231,10 @@ export class Message {
                 };
             } else data = { content };
         } else {
-            const { suppressEmbeds, suppressNotifications, flags: fl, files: f, ...obj } = content;
+            const { suppressEmbeds, suppressNotifications, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (suppressEmbeds) flags |= MessageFlags.SUPPRESS_EMBEDS;
             if (suppressNotifications) flags |= MessageFlags.SUPPRESS_NOTIFICATIONS;
 
@@ -256,9 +264,10 @@ export class Message {
 
         if (typeof content === "string") {
             if (typeof options !== "undefined") {
-                const { suppressEmbeds, flags: fl, files: f, ...obj } = options;
+                const { suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = options;
                 flags |= fl ?? 0;
 
+                if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
                 if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
                 files = f;
@@ -270,9 +279,10 @@ export class Message {
             } else
                 data = { content, flags };
         } else {
-            const { suppressEmbeds, flags: fl, files: f, ...obj } = content;
+            const { suppressEmbeds, componentsV2, flags: fl, files: f, ...obj } = content;
             flags |= fl ?? 0;
 
+            if (componentsV2) flags |= MessageFlags.IS_COMPONENTS_V2;
             if (suppressEmbeds) flags = MessageFlags.SUPPRESS_EMBEDS;
 
             files = f;
