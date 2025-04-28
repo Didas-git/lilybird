@@ -70,9 +70,9 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
         } else if (typeof extra !== "undefined") {
             if (extra.content.includes("td.")) throw new Error(`No transformer found to apply to the caching handler '${event}'`);
             if (extra.when === CacheExecutionPolicy.FIRST)
-                temp.push(extra.content, typeof handler !== "undefined" ? `await ${name}(client_ptr, td);` : "");
+                temp.push(extra.content, typeof handler !== "undefined" ? `await ${name}(client_ptr, payload.d);` : "");
             else
-                temp.push(typeof handler !== "undefined" ? `await ${name}(client_ptr, td);` : "", extra.content);
+                temp.push(typeof handler !== "undefined" ? `await ${name}(client_ptr, payload.d);` : "", extra.content);
         } else if (typeof handler !== "undefined") temp.push(`await ${name}(client_ptr, payload.d);`);
 
         if (temp.length === 1) return;
