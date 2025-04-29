@@ -28,7 +28,7 @@ type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommand
 
 // TODO: Publish guild commands
 export class Handler<T extends Transformers<Client> = Transformers<Client>, U extends boolean = false> {
-    readonly #acs = new ApplicationCommandStore<U>();
+    readonly #acs = new ApplicationCommandStore<T, U>();
     readonly #mcs = new MessageComponentStore();
     readonly #listeners = new Map<string, (...args: Array<any>) => any>();
     readonly #customKeys?: ApplicationCommandStoreCustomKeys;
@@ -39,7 +39,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
     public constructor(options: {
         cachePath?: string,
         enableDynamicComponents?: boolean,
-        acsOptions?: ApplicationCommandStoreOptions,
+        acsOptions?: ApplicationCommandStoreOptions<U>,
         handlerListener?: HandlerListener
     }) {
         this.#cachePath = options.cachePath;
@@ -48,7 +48,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         if (options.enableDynamicComponents) this.#mcs = new MessageComponentStore(options.handlerListener, options.enableDynamicComponents);
         if (typeof options.acsOptions !== "undefined") {
             this.#customKeys = options.acsOptions.customKeys;
-            this.#acs = new ApplicationCommandStore<U>(options.handlerListener, options.acsOptions);
+            this.#acs = new ApplicationCommandStore<T, U>(options.handlerListener, options.acsOptions);
         }
     }
 
@@ -56,14 +56,14 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         this.#mcs.addDynamicComponent(component);
     }
 
-    public storeCommand<const O extends Array<CommandOption>>(data: CommandStructure<O, U> & { components?: Array<ComponentStructure> }): void {
+    public storeCommand<const O extends Array<CommandOption>>(data: CommandStructure<O, T, U> & { components?: Array<ComponentStructure> }): void {
         const { components, ...command } = data;
         if (typeof components !== "undefined")
             for (let i = 0, { length } = components; i < length; i++) this.#mcs.storeComponent(components[i]);
         this.#acs.storeCommand(command);
     }
 
-    public subCommandMock<const O extends Array<BaseCommandOption>>(data: SubCommandStructure<O, U>): SubCommandStructure<O, U> { return data; }
+    public subCommandMock<const O extends Array<BaseCommandOption>>(data: SubCommandStructure<O, T, U>): SubCommandStructure<O, T, U> { return data; }
 
     public storeListener<
         TR extends Transformers<Client> = T,
@@ -307,8 +307,8 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
 
     public getStoredData(): {
         commands: {
-            global: ReturnType<ApplicationCommandStore<U>["getStoredGlobalCommands"]>,
-            guild: ReturnType<ApplicationCommandStore<U>["getStoredGuildCommands"]>
+            global: ReturnType<ApplicationCommandStore<T, U>["getStoredGlobalCommands"]>,
+            guild: ReturnType<ApplicationCommandStore<T, U>["getStoredGuildCommands"]>
         },
         components: ReturnType<MessageComponentStore["getStoredComponents"]>,
         listeners: Array<[name: string, handle: (...args: Array<any>) => any]>

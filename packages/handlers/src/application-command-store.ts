@@ -1,14 +1,8 @@
 import { ApplicationCommandOptionType, InteractionType } from "lilybird";
 import { HandlerIdentifier } from "./shared.js";
 
-import type { Client, ApplicationCommand, Awaitable, Interaction } from "lilybird";
+import type { Client, ApplicationCommand, Awaitable, Interaction, Transformers } from "lilybird";
 import type { HandlerListener } from "./shared.js";
-
-import type {
-    Interaction as TransformedInteraction,
-    ApplicationCommandData,
-    AutocompleteData
-} from "@lilybird/transformers";
 
 type Expand<T> = T extends T ? { [K in keyof T]: T[K] } : never;
 type U2I<U> = (U extends U ? (u: U) => 0 : never) extends (i: infer I) => 0 ? Extract<I, U> : never;
@@ -24,42 +18,40 @@ type ParseOptions<O extends Array<CommandOption>> = U2I<{
 type MapOptionType<T extends ApplicationCommandOptionType> = T extends ApplicationCommandOptionType.INTEGER | ApplicationCommandOptionType.NUMBER ? number
     : T extends ApplicationCommandOptionType.BOOLEAN ? boolean : string;
 
-export type ApplicationCommandHandler<O extends Array<CommandOption>, U extends boolean> = U extends true
-    ? (interaction: TransformedInteraction<ApplicationCommandData>) => Awaitable<unknown>
-    : (client: Client, interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>;
-
-export type ApplicationAutocompleteHandler<O extends Array<CommandOption>, U extends boolean> = U extends true
-    ? (interaction: TransformedInteraction<AutocompleteData>) => Awaitable<unknown>
-    : (client: Client, interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>;
+export type ApplicationCommandHandler<O extends Array<CommandOption>, T extends Transformers<Client>, U extends boolean> = U extends false
+    ? (client: Client, interaction: Interaction.ApplicationCommandInteractionStructure, options: Expand<ParseOptions<O>>) => Awaitable<unknown>
+    : T["interactionCreate"] extends { handler: (...args: any) => infer P }
+        ? P extends [] ? (...args: P) => Awaitable<unknown> : (interaction: P) => Awaitable<unknown>
+        : never;
 
 interface CompiledCommand {
     body: { command: string, autocomplete: string | null };
-    function: { names: Array<string>, handlers: Array<ApplicationCommandHandler<Array<CommandOption>, boolean> | ApplicationAutocompleteHandler<Array<CommandOption>, boolean>> };
+    function: { names: Array<string>, handlers: Array<ApplicationCommandHandler<Array<CommandOption>, any, boolean>> };
     // eslint-disable-next-line @typescript-eslint/naming-convention
     json: ApplicationCommand.Create.ApplicationCommandJSONParams & { __meta?: { ids?: string } };
 }
 
-export interface CommandStructure<O extends Array<CommandOption>, U extends boolean> extends Omit<ApplicationCommand.Create.ApplicationCommandJSONParams, "options"> {
+export interface CommandStructure<O extends Array<CommandOption>, T extends Transformers<Client>, U extends boolean> extends Omit<ApplicationCommand.Create.ApplicationCommandJSONParams, "options"> {
     options?: O;
     meta?: CommandMeta;
-    handle?: ApplicationCommandHandler<O, U>;
-    autocomplete?: ApplicationAutocompleteHandler<O, U>;
+    handle?: ApplicationCommandHandler<O, T, U>;
+    autocomplete?: ApplicationCommandHandler<O, T, U>;
 }
 
-export type CommandOption = BaseCommandOption | SubCommandStructure<Array<BaseCommandOption>, boolean> | SubCommandGroupOption;
+export type CommandOption = BaseCommandOption | SubCommandStructure<Array<BaseCommandOption>, any, boolean> | SubCommandGroupOption;
 
 export type BaseCommandOption = Exclude<ApplicationCommand.Option.Structure, ApplicationCommand.Option.SubCommandStructure>;
 
-export interface SubCommandStructure<O extends Array<BaseCommandOption>, U extends boolean> extends ApplicationCommand.Option.Base {
+export interface SubCommandStructure<O extends Array<BaseCommandOption>, T extends Transformers<Client>, U extends boolean> extends ApplicationCommand.Option.Base {
     type: ApplicationCommandOptionType.SUB_COMMAND;
     options?: O;
-    handle: ApplicationCommandHandler<O, U>;
-    autocomplete?: ApplicationAutocompleteHandler<O, U>;
+    handle: ApplicationCommandHandler<O, T, U>;
+    autocomplete?: ApplicationCommandHandler<O, T, U>;
 }
 
 interface SubCommandGroupOption extends ApplicationCommand.Option.Base {
     type: ApplicationCommandOptionType.SUB_COMMAND_GROUP;
-    options: Array<SubCommandStructure<Array<BaseCommandOption>, boolean>>;
+    options: Array<SubCommandStructure<Array<BaseCommandOption>, any, boolean>>;
 }
 
 interface CommandMeta {
@@ -68,11 +60,11 @@ interface CommandMeta {
 }
 
 export type ApplicationCommandStoreCustomKeys = { sub_command: string, sub_command_group: string, name: string };
-export type ApplicationCommandStoreOptions = { transformed: false, customKeys?: undefined } | { transformed: true, customKeys: ApplicationCommandStoreCustomKeys };
+export type ApplicationCommandStoreOptions<O extends boolean> = { transformed: O, customKeys?: ApplicationCommandStoreCustomKeys };
 
 // TODO: Remove `U` and accept Transformers<C> instead
 // TODO: Accept a transformer and do checks on the return type (Single or Multiple)
-export class ApplicationCommandStore<U extends boolean> {
+export class ApplicationCommandStore<T extends Transformers<Client>, U extends boolean> {
     readonly #globalApplicationCommands = new Map<string, CompiledCommand>();
     readonly #guildApplicationCommands = new Map<string, CompiledCommand>();
 
@@ -81,13 +73,13 @@ export class ApplicationCommandStore<U extends boolean> {
     readonly #assumeTransformed: boolean;
     readonly #customKeys?: ApplicationCommandStoreCustomKeys;
 
-    public constructor(handlerListener?: HandlerListener, options: ApplicationCommandStoreOptions = { transformed: false }) {
+    public constructor(handlerListener?: HandlerListener, options: ApplicationCommandStoreOptions<U> = { transformed: <U>false }) {
         this.#emit = handlerListener;
         this.#assumeTransformed = options.transformed;
         this.#customKeys = options.customKeys;
     }
 
-    public storeCommand<const O extends Array<CommandOption>>(command: CommandStructure<O, U>): void {
+    public storeCommand<const O extends Array<CommandOption>>(command: CommandStructure<O, T, U>): void {
         const { meta, options, handle, autocomplete, ...actualCommand } = command;
 
         if (meta?.guild_command === true && !Array.isArray(meta.ids)) throw new Error("Invalid guild command. Lacking 'ids'");
@@ -147,7 +139,7 @@ export class ApplicationCommandStore<U extends boolean> {
 
     #makeCommandBase(
         command: ApplicationCommand.Create.ApplicationCommandJSONParams,
-        handler: { base_executor: ApplicationCommandHandler<Array<CommandOption>, U>, auto_executor?: ApplicationAutocompleteHandler<Array<CommandOption>, boolean> },
+        handler: { base_executor: ApplicationCommandHandler<Array<CommandOption>, T, U>, auto_executor?: ApplicationCommandHandler<Array<CommandOption>, T, U> },
         useElse: boolean,
         optionsBody: string | undefined = undefined,
         matchTo: "interaction_name" | "sub_command" = "interaction_name",
@@ -186,13 +178,13 @@ export class ApplicationCommandStore<U extends boolean> {
 
     #compileCommand(
         command: ApplicationCommand.Create.ApplicationCommandJSONParams,
-        options: Required<CommandStructure<Array<CommandOption>, U>>["options"],
+        options: Required<CommandStructure<Array<CommandOption>, T, U>>["options"],
         useElse: boolean,
         optionsBody: string,
         matchTo: "interaction_name" | "sub_command" | "sub_command_group" = "interaction_name",
         name: string = command.name
     ): CompiledCommand {
-        const fns = new Map<string, ApplicationCommandHandler<Array<CommandOption>, U> | ApplicationAutocompleteHandler<Array<CommandOption>, U>>();
+        const fns = new Map<string, ApplicationCommandHandler<Array<CommandOption>, T, U>>();
         const cmdArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const autoArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
 
@@ -233,7 +225,7 @@ export class ApplicationCommandStore<U extends boolean> {
             } else if (subCommand.type === ApplicationCommandOptionType.SUB_COMMAND) {
                 if (!("handle" in subCommand)) throw new Error("SubCommand requires 'handle' to exist");
 
-                const { handle, autocomplete, ...realCommand } = <SubCommandStructure<Array<CommandOption>, U>>subCommand;
+                const { handle, autocomplete, ...realCommand } = <SubCommandStructure<Array<CommandOption>, T, U>>subCommand;
                 const cmd = this.#makeCommandBase(<never>realCommand, { base_executor: handle, auto_executor: autocomplete }, i > 0, "", "sub_command", `${name}_${subCommand.name}`);
 
                 cmdArr.push(cmd.body.command);
@@ -259,7 +251,7 @@ export class ApplicationCommandStore<U extends boolean> {
         };
     }
 
-    #isCommandWrapper(options: Required<CommandStructure<Array<CommandOption>, U>>["options"]): boolean {
+    #isCommandWrapper(options: Required<CommandStructure<Array<CommandOption>, T, U>>["options"]): boolean {
         for (let i = 0, { length } = options; i < length; i++) {
             const { type } = options[i];
             if (type === ApplicationCommandOptionType.SUB_COMMAND_GROUP
@@ -274,7 +266,7 @@ export class ApplicationCommandStore<U extends boolean> {
         handlers: IterableIterator<(...args: any) => any>,
         stack: string
     } | null {
-        const functions = new Map<string, ApplicationCommandHandler<Array<CommandOption>, U> | ApplicationAutocompleteHandler<Array<CommandOption>, U>>();
+        const functions = new Map<string, ApplicationCommandHandler<Array<CommandOption>, T, U>>();
         const cmdArr: Array<string> = [
             this.#assumeTransformed ? `const interaction_name = interaction.${this.#customKeys?.name};` : "const interaction_name = interaction.data.name;",
             `if (interaction.type === ${InteractionType.APPLICATION_COMMAND}) {`
