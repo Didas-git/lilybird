@@ -27,8 +27,8 @@ import type {
 type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommandJSONParams;
 
 // TODO: Publish guild commands
-export class Handler<T extends Transformers<Client> = Transformers<Client>, U extends boolean = false> {
-    readonly #acs = new ApplicationCommandStore<T, U>();
+export class Handler<T extends Transformers<Client> = Transformers<Client>, HO extends (...args: any) => any = never, AO extends (...args: any) => any = never> {
+    readonly #acs = new ApplicationCommandStore<HO, AO>();
     readonly #mcs = new MessageComponentStore();
     readonly #listeners = new Map<string, (...args: Array<any>) => any>();
     readonly #customKeys?: ApplicationCommandStoreCustomKeys;
@@ -39,7 +39,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
     public constructor(options: {
         cachePath?: string,
         enableDynamicComponents?: boolean,
-        acsOptions?: ApplicationCommandStoreOptions<U>,
+        acsOptions?: ApplicationCommandStoreOptions,
         handlerListener?: HandlerListener
     }) {
         this.#cachePath = options.cachePath;
@@ -48,7 +48,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         if (options.enableDynamicComponents) this.#mcs = new MessageComponentStore(options.handlerListener, options.enableDynamicComponents);
         if (typeof options.acsOptions !== "undefined") {
             this.#customKeys = options.acsOptions.customKeys;
-            this.#acs = new ApplicationCommandStore<T, U>(options.handlerListener, options.acsOptions);
+            this.#acs = new ApplicationCommandStore<HO, AO>(options.handlerListener, options.acsOptions);
         }
     }
 
@@ -56,14 +56,14 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         this.#mcs.addDynamicComponent(component);
     }
 
-    public storeCommand<const O extends Array<CommandOption>>(data: CommandStructure<O, T, U> & { components?: Array<ComponentStructure> }): void {
+    public storeCommand<const O extends Array<CommandOption>>(data: CommandStructure<O, HO, AO> & { components?: Array<ComponentStructure> }): void {
         const { components, ...command } = data;
         if (typeof components !== "undefined")
             for (let i = 0, { length } = components; i < length; i++) this.#mcs.storeComponent(components[i]);
         this.#acs.storeCommand(command);
     }
 
-    public subCommandMock<const O extends Array<BaseCommandOption>>(data: SubCommandStructure<O, T, U>): SubCommandStructure<O, T, U> { return data; }
+    public subCommandMock<const O extends Array<BaseCommandOption>>(data: SubCommandStructure<O, HO, AO>): SubCommandStructure<O, HO, AO> { return data; }
 
     public storeListener<
         TR extends Transformers<Client> = T,
@@ -206,7 +206,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         };
     }
 
-    public compileCommands(): ((...args: T["interactionCreate"] extends Transformer ? Parameters<T["interactionCreate"]["handler"]> : never) => Awaitable<unknown>) | null {
+    public compileCommands(): ((...args: any) => Awaitable<unknown>) | null {
         const compiledResult = this.getCompilationStack();
         if (compiledResult === null) return null;
 
@@ -240,14 +240,11 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
                     ? (interaction: any) => {
                     // @ts-expect-error The obj constant is not typed
                         obj.interactionCreate(interaction);
-                        // @ts-expect-error This is intended behavior due to the dynamic nature of this function
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         listener(interaction);
                     }
                     : (client: Client, interaction: Interaction.Structure) => {
                     // @ts-expect-error The obj constant is not typed
                         obj.interactionCreate(client, interaction);
-                        // @ts-expect-error This is intended behavior due to the dynamic nature of this function
                         listener(client, interaction);
                     };
             } else obj.interactionCreate = listener;
@@ -307,8 +304,8 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
 
     public getStoredData(): {
         commands: {
-            global: ReturnType<ApplicationCommandStore<T, U>["getStoredGlobalCommands"]>,
-            guild: ReturnType<ApplicationCommandStore<T, U>["getStoredGuildCommands"]>
+            global: ReturnType<ApplicationCommandStore<HO, AO>["getStoredGlobalCommands"]>,
+            guild: ReturnType<ApplicationCommandStore<HO, AO>["getStoredGuildCommands"]>
         },
         components: ReturnType<MessageComponentStore["getStoredComponents"]>,
         listeners: Array<[name: string, handle: (...args: Array<any>) => any]>

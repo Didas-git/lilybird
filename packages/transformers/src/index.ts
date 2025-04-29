@@ -1,4 +1,5 @@
-import type { BaseCachingStructure } from "lilybird";
+import type { ApplicationCommandData, AutocompleteData, Interaction } from "./factories/interaction.js";
+import type { Awaitable, BaseCachingStructure } from "lilybird";
 import type { Transformers } from "lilybird";
 
 export { makeTransformersObject } from "./transformers.js";
@@ -6,6 +7,11 @@ export { makeTransformersObject } from "./transformers.js";
 export const cacheKeys: Required<BaseCachingStructure>["customKeys"] = {
     guild_voice_states: "voiceStates"
 };
+
+export declare namespace ApplicationCommandStore {
+    export type HO = (interaction: Interaction<ApplicationCommandData, undefined>) => Awaitable<unknown>;
+    export type AO = (interaction: Interaction<AutocompleteData, undefined>) => Awaitable<unknown>;
+}
 
 export const acsKeys = {
     sub_command: "data.subCommand",
