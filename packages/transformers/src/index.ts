@@ -7,6 +7,12 @@ export const cacheKeys: Required<BaseCachingStructure>["customKeys"] = {
     guild_voice_states: "voiceStates"
 };
 
+export const acsKeys = {
+    sub_command: "data.subCommand",
+    sub_command_group: "data.subCommandGroup",
+    name: "data.name"
+};
+
 export type MergeTransformers<C, T extends Transformers<C>> = T & {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     [K in keyof Transformers<C> as T[K] extends {} ? never : K]: Transformers<C>[K]

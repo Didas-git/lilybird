@@ -4,9 +4,17 @@ import { ApplicationCommandOptionType } from "lilybird";
 import { HandlerIdentifier } from "./shared.js";
 import { join } from "node:path";
 
-import type { BaseCommandOption, CommandOption, CommandStructure, SubCommandStructure } from "./application-command-store.js";
 import type { ComponentStructure, DynamicComponentStructure } from "./message-component-store.js";
 import type { HandlerListener } from "./shared.js";
+import type {
+    ApplicationCommandStoreCustomKeys,
+    ApplicationCommandStoreOptions,
+    SubCommandStructure,
+    BaseCommandOption,
+    CommandStructure,
+    CommandOption
+} from "./application-command-store.js";
+
 import type {
     ApplicationCommand,
     Transformers,
@@ -18,35 +26,30 @@ import type {
 
 type ApplicationCommandJSONParams = ApplicationCommand.Create.ApplicationCommandJSONParams;
 
+// TODO: Publish guild commands
 export class Handler<T extends Transformers<Client> = Transformers<Client>, U extends boolean = false> {
     readonly #acs = new ApplicationCommandStore<U>();
     readonly #mcs = new MessageComponentStore();
     readonly #listeners = new Map<string, (...args: Array<any>) => any>();
-    readonly #globMatcher = new Bun.Glob("**/*.{!d,ts,js,tsx,jsx}");
+    readonly #customKeys?: ApplicationCommandStoreCustomKeys;
 
     #emit?: HandlerListener;
-    readonly #transformer: unknown;
     #cachePath?: string;
 
     public constructor(options: {
         cachePath?: string,
         enableDynamicComponents?: boolean,
-        transformers?: T,
+        acsOptions?: ApplicationCommandStoreOptions,
         handlerListener?: HandlerListener
     }) {
         this.#cachePath = options.cachePath;
         this.#emit = options.handlerListener;
 
         if (options.enableDynamicComponents) this.#mcs = new MessageComponentStore(options.handlerListener, options.enableDynamicComponents);
-        if (typeof options.transformers !== "undefined") {
-            this.#acs = new ApplicationCommandStore<U>(options.handlerListener, <never>options.transformers.interactionCreate?.handler);
-            this.#transformer = options.transformers.interactionCreate?.handler;
+        if (typeof options.acsOptions !== "undefined") {
+            this.#customKeys = options.acsOptions.customKeys;
+            this.#acs = new ApplicationCommandStore<U>(options.handlerListener, options.acsOptions);
         }
-    }
-
-    public async scanDir(path: string): Promise<void> {
-        const files = this.#globMatcher.scan(path);
-        for await (const fileName of files) await import(join(path, fileName));
     }
 
     public buttonCollector(component: DynamicComponentStructure): void {
@@ -162,6 +165,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         || differentDefaultPermissions;
     }
 
+    // TODO: Account for custom keys
     #getStackBody(commandsBody: string, componentsBody: string): string {
         const realStack: Array<string> = [];
         if (commandsBody.length > 0) realStack.push("const interaction_name = interaction.data.name;");
@@ -202,7 +206,7 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
         };
     }
 
-    public compileCommands(): ((client: Client, interaction: Interaction.Structure) => Awaitable<unknown>) | null {
+    public compileCommands(): ((...args: T["interactionCreate"] extends Transformer ? Parameters<T["interactionCreate"]["handler"]> : never) => Awaitable<unknown>) | null {
         const compiledResult = this.getCompilationStack();
         if (compiledResult === null) return null;
 
@@ -211,12 +215,10 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
 
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function(
-            "transformer",
             "parseOpts",
             ...functionNames,
-            `return async (client, interaction) => { ${stack} }`
+            typeof this.#customKeys !== "undefined" ? `return async (interaction) => { ${stack} }` : `return async (client, interaction) => { ${stack} }`
         )(
-            this.#transformer,
             innerOptionParser,
             ...handlers
         ) as never;
@@ -234,11 +236,20 @@ export class Handler<T extends Transformers<Client> = Transformers<Client>, U ex
             const listener = this.compileCommands();
             if (listener === null) return obj as never;
             if ("interactionCreate" in obj) {
-                obj.interactionCreate = (client: Client, interaction: Interaction.Structure) => {
+                obj.interactionCreate = typeof this.#customKeys !== "undefined"
+                    ? (interaction: any) => {
                     // @ts-expect-error The obj constant is not typed
-                    obj.interactionCreate(client, interaction);
-                    listener(client, interaction);
-                };
+                        obj.interactionCreate(interaction);
+                        // @ts-expect-error This is intended behavior due to the dynamic nature of this function
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                        listener(interaction);
+                    }
+                    : (client: Client, interaction: Interaction.Structure) => {
+                    // @ts-expect-error The obj constant is not typed
+                        obj.interactionCreate(client, interaction);
+                        // @ts-expect-error This is intended behavior due to the dynamic nature of this function
+                        listener(client, interaction);
+                    };
             } else obj.interactionCreate = listener;
         }
 

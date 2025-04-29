@@ -67,17 +67,24 @@ interface CommandMeta {
     ids?: Array<string>;
 }
 
+export type ApplicationCommandStoreCustomKeys = { sub_command: string, sub_command_group: string, name: string };
+export type ApplicationCommandStoreOptions = { transformed: false, customKeys?: undefined } | { transformed: true, customKeys: ApplicationCommandStoreCustomKeys };
+
+// TODO: Remove `U` and accept Transformers<C> instead
+// TODO: Accept a transformer and do checks on the return type (Single or Multiple)
 export class ApplicationCommandStore<U extends boolean> {
     readonly #globalApplicationCommands = new Map<string, CompiledCommand>();
     readonly #guildApplicationCommands = new Map<string, CompiledCommand>();
 
     readonly #emit?: HandlerListener;
 
-    readonly #transformer: ((interaction: Interaction.Structure) => Awaitable<unknown>) | undefined;
+    readonly #assumeTransformed: boolean;
+    readonly #customKeys?: ApplicationCommandStoreCustomKeys;
 
-    public constructor(handlerListener?: HandlerListener, transformer?: (interaction: Interaction.Structure) => Awaitable<unknown>) {
+    public constructor(handlerListener?: HandlerListener, options: ApplicationCommandStoreOptions = { transformed: false }) {
         this.#emit = handlerListener;
-        this.#transformer = transformer;
+        this.#assumeTransformed = options.transformed;
+        this.#customKeys = options.customKeys;
     }
 
     public storeCommand<const O extends Array<CommandOption>>(command: CommandStructure<O, U>): void {
@@ -108,6 +115,8 @@ export class ApplicationCommandStore<U extends boolean> {
     }
 
     #parseOptions(options: Array<CommandOption> | undefined, appendSubCommandLogic: boolean = false): string | undefined {
+        // Parsing options should be the transformer responsibility
+        if (this.#assumeTransformed) return undefined;
         if (typeof options === "undefined") return undefined;
         const stack: Array<string> = ["const _obj = {"];
 
@@ -144,7 +153,6 @@ export class ApplicationCommandStore<U extends boolean> {
         matchTo: "interaction_name" | "sub_command" = "interaction_name",
         name: string = command.name
     ): CompiledCommand {
-        const useTransformer = typeof this.#transformer !== "undefined";
         const hasOptions = typeof optionsBody !== "undefined";
         const names = [`handle_${name.replace("-", "_")}`];
         const handlers: Array<(...args: any) => any> = [handler.base_executor];
@@ -154,18 +162,18 @@ export class ApplicationCommandStore<U extends boolean> {
             handlers.push(handler.auto_executor);
         }
 
-        let strArgs = useTransformer ? "transformer(client, interaction)" : "client, interaction";
-        if (hasOptions && !useTransformer) strArgs += ", _obj";
+        let strArgs = this.#assumeTransformed ? "interaction" : "client, interaction";
+        if (hasOptions && !this.#assumeTransformed) strArgs += ", _obj";
 
         return {
             body: {
                 command: `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {
-    ${hasOptions && !useTransformer ? optionsBody : ""}
+    ${hasOptions && !this.#assumeTransformed ? optionsBody : ""}
     return handle_${name.replace("-", "_")}(${strArgs}); }`,
                 autocomplete: typeof handler.auto_executor === "undefined"
                     ? null
                     : `${useElse ? "else " : ""}if (${matchTo} === "${command.name}") { 
-    ${hasOptions && !useTransformer ? optionsBody : ""}
+    ${hasOptions && !this.#assumeTransformed ? optionsBody : ""}
     return auto_${name.replace("-", "_")}(${strArgs}); }`
             },
             function: {
@@ -184,18 +192,16 @@ export class ApplicationCommandStore<U extends boolean> {
         matchTo: "interaction_name" | "sub_command" | "sub_command_group" = "interaction_name",
         name: string = command.name
     ): CompiledCommand {
-        const useTransformer = typeof this.#transformer !== "undefined";
         const fns = new Map<string, ApplicationCommandHandler<Array<CommandOption>, U> | ApplicationAutocompleteHandler<Array<CommandOption>, U>>();
         const cmdArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
         const autoArr: Array<string> = [`${useElse ? "else " : ""}if (${matchTo} === "${command.name}") {`];
 
         const temp: Array<string> = matchTo === "sub_command_group"
             ? []
-            : useTransformer
+            : this.#assumeTransformed
                 ? [
-                    "const int = transformer(client, interaction);",
-                    "const sub_command = int.data.subCommand;",
-                    "const sub_command_group = int.data.subCommandGroup;"
+                    `const sub_command = interaction.${this.#customKeys?.sub_command};`,
+                    `const sub_command_group = interaction.${this.#customKeys?.sub_command_group}`
                 ]
                 : [
                     "let sub_command = undefined;",
@@ -270,7 +276,7 @@ export class ApplicationCommandStore<U extends boolean> {
     } | null {
         const functions = new Map<string, ApplicationCommandHandler<Array<CommandOption>, U> | ApplicationAutocompleteHandler<Array<CommandOption>, U>>();
         const cmdArr: Array<string> = [
-            "const interaction_name = interaction.data.name;",
+            this.#assumeTransformed ? `const interaction_name = interaction.${this.#customKeys?.name};` : "const interaction_name = interaction.data.name;",
             `if (interaction.type === ${InteractionType.APPLICATION_COMMAND}) {`
         ];
 
@@ -320,12 +326,10 @@ export class ApplicationCommandStore<U extends boolean> {
 
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         return new Function(
-            "transformer",
             "parseOpts",
             ...functionNames,
-            `return async (client, interaction) => { ${stack} }`
+            this.#assumeTransformed ? `return async (interaction) => { ${stack} }` : `return async (client, interaction) => { ${stack} }`
         )(
-            this.#transformer,
             innerOptionParser,
             ...handlers
         ) as never;

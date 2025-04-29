@@ -97,7 +97,7 @@ export class ListenerCompiler<C extends MockClient, T extends Transformers<C>> {
 
         readyArr.push(
             `,sessionId:payload.d.session_id,application:payload.d.application,ready:${once ? "false" : "true"}});`,
-            "Object.assign(resume_info_ptr{url:payload.d.resume_gateway_url,id:payload.d.session_id});"
+            "Object.assign(resume_info_ptr,{url:payload.d.resume_gateway_url,id:payload.d.session_id});"
         );
 
         if (typeof listener !== "undefined") this.#callbacks.set("ready", listener);
